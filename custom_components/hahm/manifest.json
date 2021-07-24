@@ -1,0 +1,16 @@
+{
+  "domain": "hahm",
+  "name": "Home Assistant Homematic(IP)",
+  "config_flow": true,
+  "documentation": "https://www.home-assistant.io/integrations/hahomematic",
+  "requirements": [
+    "git+https://github.com/danielperna84/hahomematic.git@devel#hahomematic"
+  ],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": ["@danielperna84"],
+  "iot_class": "local_polling",
+  "version": "2021.0.0"
+}
