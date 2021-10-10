@@ -6,30 +6,23 @@ https://github.com/danielperna84/hahomematic
 """
 
 from __future__ import annotations
-import functools
 
+import functools
+from typing import Any
+
+import hahomematic.config
+from hahomematic.client import Client
+from hahomematic.const import (ATTR_CALLBACK_IP, ATTR_CALLBACK_PORT,
+                               ATTR_HOSTNAME, ATTR_JSONPORT, ATTR_PASSWORD,
+                               ATTR_PATH, ATTR_PORT, ATTR_SSL, ATTR_USERNAME,
+                               ATTR_VERIFY_SSL, IP_ANY_V4, PORT_HMIP,
+                               PORT_JSONRPC)
+from hahomematic.server import Server
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, ATTR_INSTANCENAME, HAHM_CLIENT, HAHM_SERVER, HAHM_NAME
-
-import hahomematic.config
-from hahomematic.server import Server
-from hahomematic.client import Client
-from hahomematic.const import (
-    ATTR_HOSTNAME,
-    ATTR_PORT,
-    ATTR_PATH,
-    ATTR_USERNAME,
-    ATTR_PASSWORD,
-    ATTR_SSL,
-    ATTR_VERIFY_SSL,
-    ATTR_CALLBACK_IP,
-    ATTR_CALLBACK_PORT,
-    ATTR_JSONPORT,
-    PORT_HMIP,
-    PORT_JSONRPC,
-)
+from .const import (ATTR_INSTANCENAME, ATTR_INTERFACE, ATTR_JSONSSL, DOMAIN,
+                    HAHM_CLIENT, HAHM_NAME, HAHM_SERVER)
 
 # TODO List the platforms that you want to support.
 # For your initial PR, limit it to 1 platform.
@@ -45,34 +38,56 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hahomematic.config.INIT_TIMEOUT = 10
     hahomematic.config.CACHE_DIR = "cache"
 
-    hahm_server = Server(
-        local_ip=entry.options[ATTR_CALLBACK_IP],
-        local_port=entry.options[ATTR_CALLBACK_PORT],
-    )
-    hahm_client = await hass.async_add_executor_job(
-        functools.partial(
-            Client,
-            name=entry.data[ATTR_INSTANCENAME],
-            host=entry.options[ATTR_HOSTNAME],
-            port=entry.options[ATTR_PORT],
-            username=entry.options[ATTR_USERNAME],
-            password=entry.options[ATTR_PASSWORD],
-            local_port=hahm_server.local_port,
-        )
-    )
-    hahm_server.start()
-    await hass.async_add_executor_job(hahm_client.proxy_init)
+    hahm_server = await create_server(entry.data)
+    hahm_clients = []
 
-    hahm_data = hass.data.setdefault(DOMAIN, {})
-    hahm_data[entry.entry_id] = {
-        HAHM_CLIENT: hahm_client,
+    for interface_name in entry.data[ATTR_INTERFACE]:
+        hahm_client = await create_client(hass, hahm_server, entry.data, interface_name)
+        await hass.async_add_executor_job(hahm_client.proxy_init)
+        hahm_clients.append(hahm_client)
+
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][entry.entry_id] = {
+        HAHM_CLIENT: hahm_clients,
         HAHM_SERVER: hahm_server,
-        HAHM_NAME: ATTR_INSTANCENAME,
+        HAHM_NAME: entry.data[ATTR_INSTANCENAME],
     }
 
+    hahm_server.start()
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
     return True
+
+
+async def create_server(data: dict[str, Any]):
+    hahm_server = Server(
+        local_ip=data.get(ATTR_CALLBACK_IP),
+        local_port=data.get(ATTR_CALLBACK_PORT),
+    )
+    return hahm_server
+
+async def create_client(hass: HomeAssistant, hahm_server, data: dict[str, Any], interface_name: str):
+    interface = data[ATTR_INTERFACE][interface_name]
+    hahm_client = await hass.async_add_executor_job(
+        functools.partial(
+            Client,
+            name=f"{data[ATTR_INSTANCENAME]}-{interface_name}",
+            host=data[ATTR_HOSTNAME],
+            port=interface[ATTR_PORT],
+            path=interface[ATTR_PATH],
+            username=data[ATTR_USERNAME],
+            password=data[ATTR_PASSWORD],
+            tls=interface[ATTR_SSL],
+            verify_tls=interface[ATTR_VERIFY_SSL],
+            callback_hostname=data.get(ATTR_CALLBACK_IP) if not data.get(
+                ATTR_CALLBACK_IP) == IP_ANY_V4 else None,
+            callback_port=data.get(ATTR_CALLBACK_PORT),
+            local_port=hahm_server.local_port,
+            json_port=data[ATTR_JSONPORT],
+            json_tls=data[ATTR_JSONSSL],
+        )
+    )
+    return hahm_client
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

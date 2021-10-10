@@ -6,27 +6,31 @@
         "title": "Home Assistant integration with Homematic (IP)",
         "description": "Please fill the required fields.",
         "data": {
-          "instancename": "Integration instance name"
+          "instancename": "Integration instance name",
+          "hostname": "CCU Hostname",
+          "username": "CCU Username",
+          "password": "CCU Password",
+          "callbackip": "Callback IP",
+          "callbackport": "Callback XML-RPC Port",
+          "jsonport": "Remote JSON-RPC Port",
+          "jsonssl": "Use TLS for JSON"
         }
-      }
+      },
+      "interface": {
+        "description": "Configure the connection to your CCU2 or CCU3",
+        "data": {
+          "interfacename": "Interface Name",
+          "port": "CCU Port",
+          "path": "CCU Path",
+          "ssl": "Use TLS",
+          "verify_ssl": "Verify TLS connection",
+          "add_another_interface": "Add another interface"
+        }
     }
   },
   "options": {
     "step": {
-      "init": {
-        "description": "Configure the connection to your CCU2 or CCU3",
-        "data": {
-          "hostname": "CCU Hostname",
-          "port": "CCU Port",
-          "path": "CCU Path",
-          "username": "CCU Username",
-          "password": "CCU Password",
-          "ssl": "Use TLS",
-          "verify_ssl": "Verify TLS connection",
-          "callbackip": "Callback IP",
-          "callbackport": "Callback XML-RPC Port",
-          "jsonrpcport": "Remote JSON-RPC Port"
-        }
+
       }
     }
   }
