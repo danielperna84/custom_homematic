@@ -12,8 +12,10 @@
           "password": "CCU Password",
           "callbackip": "Callback IP",
           "callbackport": "Callback XML-RPC Port",
+          "tls": "Use TLS",
+          "verify_tls": "Verify TLS connection",
           "jsonport": "Remote JSON-RPC Port",
-          "jsonssl": "Use TLS for JSON"
+          "jsontls": "Use TLS for JSON"
         }
       },
       "interface": {
@@ -22,8 +24,6 @@
           "interfacename": "Interface Name",
           "port": "CCU Port",
           "path": "CCU Path",
-          "ssl": "Use TLS",
-          "verify_ssl": "Verify TLS connection",
           "add_another_interface": "Add another interface"
         }
     }

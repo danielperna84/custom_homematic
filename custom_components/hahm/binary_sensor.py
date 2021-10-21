@@ -1,17 +1,60 @@
 """binary_sensor for hahm."""
 import logging
 
-from hahomematic import data
-from hahomematic.platforms import binary_sensor
+from hahomematic.const import HA_PLATFORM_BINARY_SENSOR
+from hahomematic.platforms.binary_sensor import HM_Binary_Sensor
+from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.core import callback
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-from .const import ATTR_INSTANCENAME, DOMAIN
+from .const import DOMAIN
+from .control_unit import Control_Unit
+from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, entry, async_add_entities) -> None:
-    """Set up the hahm binary_sensor platform."""
-    hass_data = hass.data[DOMAIN][entry.entry_id]
+async def async_setup_entry2(hass, entry, async_add_entities) -> None:
+    """Set up the hahm binary sensor platform."""
+    cu: Control_Unit = hass.data[DOMAIN][entry.entry_id]
+    entities: list[HaHomematicGenericEntity] = []
+    for hm_entity in cu.get_new_hm_entities(HA_PLATFORM_BINARY_SENSOR):
+        entities.append(HaHomematicBinarySensor(cu, hm_entity))
+    async_add_entities(entities)
 
-    _LOGGER.debug("Sensor async_setup_entry")
 
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up the hahm binary sensor."""
+    cu: Control_Unit = hass.data[DOMAIN][entry.entry_id]
+
+    @callback
+    def async_add_binary_sensor(
+        hm_entities=cu.get_new_hm_entities(HA_PLATFORM_BINARY_SENSOR),
+    ):
+        """Add binary sensor from HAHM."""
+        entities = []
+
+        for hm_entity in hm_entities:
+            entities.append(HaHomematicBinarySensor(cu, hm_entity))
+
+        if entities:
+            async_add_entities(entities)
+
+    entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            cu.async_signal_new_hm_entity(HA_PLATFORM_BINARY_SENSOR),
+            async_add_binary_sensor,
+        )
+    )
+
+    async_add_binary_sensor()
+
+
+class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
+    """Representation of the Homematic binary sensor."""
+
+    @property
+    def is_on(self) -> bool:
+        """Return true if motion is detected."""
+        return self._hm_entity._state
