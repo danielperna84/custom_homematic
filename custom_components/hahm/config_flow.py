@@ -47,7 +47,7 @@ INTERFACE_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_INTERFACENAME): str,
         vol.Required(ATTR_PORT, default=PORT_HMIP): int,
-        vol.Optional(ATTR_PATH, default=DEFAULT_PATH): str,
+        vol.Optional(ATTR_PATH): str,
         vol.Optional(ATTR_ADD_ANOTHER_INTERFACE, default=False): bool,
     }
 )
@@ -83,7 +83,7 @@ async def validate_input(
     config.CACHE_DIR = "cache"
 
     cu = ControlUnit(hass, data=data)
-    await cu.create_server()
+    cu.create_server()
     try:
         await cu.create_clients()
     except ConnectionError as e:
@@ -114,12 +114,12 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ATTR_HOSTNAME: user_input[ATTR_HOSTNAME],
                 ATTR_USERNAME: user_input[ATTR_USERNAME],
                 ATTR_PASSWORD: user_input[ATTR_PASSWORD],
-                ATTR_CALLBACK_IP: user_input[ATTR_CALLBACK_IP],
-                ATTR_CALLBACK_PORT: user_input[ATTR_CALLBACK_PORT],
-                ATTR_TLS: user_input[ATTR_TLS],
-                ATTR_VERIFY_TLS: user_input[ATTR_VERIFY_TLS],
-                ATTR_JSONPORT: user_input[ATTR_JSONPORT],
-                ATTR_JSONTLS: user_input[ATTR_JSONTLS],
+                ATTR_CALLBACK_IP: user_input.get(ATTR_CALLBACK_IP),
+                ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
+                ATTR_TLS: user_input.get(ATTR_TLS),
+                ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
+                ATTR_JSONPORT: user_input.get(ATTR_JSONPORT),
+                ATTR_JSONTLS: user_input.get(ATTR_JSONTLS),
                 ATTR_INTERFACE: {},
             }
 
@@ -142,7 +142,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             interface_data = {
                 ATTR_PORT: user_input[ATTR_PORT],
-                ATTR_PATH: user_input[ATTR_PATH],
+                ATTR_PATH: user_input.get(ATTR_PATH),
             }
 
             self.data[ATTR_INTERFACE][user_input[ATTR_INTERFACENAME]] = interface_data

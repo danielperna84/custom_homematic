@@ -129,9 +129,8 @@ class ControlUnit:
                         *args,  # Don't send device if None, it would override default value in listeners
                     )
             return
-        elif src == "HH_EVENT_DEVICES_CREATED":
-            # start the platforms
-
+        elif src == HH_EVENT_NEW_DEVICES:
+            # ignore
             return
         elif src == HH_EVENT_DELETE_DEVICES:
             return

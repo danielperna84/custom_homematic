@@ -40,11 +40,9 @@ class HaHomematicGenericEntity(HAEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks."""
-        # self._hap.hmip_device_by_entity_id[self.entity_id] = self._device
         self._hm_entity.register_update_callback(self._async_device_changed)
+        # TODO: add remove handler
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
-
-        # self._device.on_remove(self._async_device_removed)
 
     @callback
     def _async_device_changed(self, *args, **kwargs) -> None:
@@ -64,9 +62,9 @@ class HaHomematicGenericEntity(HAEntity):
         """Run when hmip device will be removed from hass."""
 
         # Only go further if the device/entity should be removed from registries
-        # due to a removal of the HmIP device.
+        # due to a removal of the HM device.
 
-        if self.hmip_device_removed:
+        if self.hm_device_removed:
             try:
                 self._cu.remove_hm_entity(self)
                 await self.async_remove_from_registries()
@@ -77,8 +75,9 @@ class HaHomematicGenericEntity(HAEntity):
         """Remove entity/device from registry."""
 
         # Remove callback from device.
-        # self._device.remove_callback(self._async_device_changed)
-        # self._device.remove_callback(self._async_device_removed)
+        # TODO: create and user callback handler
+        self._hm_entity._update_callback = None
+        # TODO: add remove handler
 
         if not self.registry_entry:
             return
@@ -103,8 +102,8 @@ class HaHomematicGenericEntity(HAEntity):
     def _async_device_removed(self, *args, **kwargs) -> None:
         """Handle hm device removal."""
         # Set marker showing that the Hm device hase been removed.
-        # self.hmip_device_removed = True
-        # self.hass.async_create_task(self.async_remove(force_remove=True))
+        self.hm_device_removed = True
+        self.hass.async_create_task(self.async_remove(force_remove=True))
 
     @property
     def name(self) -> str:
@@ -126,11 +125,6 @@ class HaHomematicGenericEntity(HAEntity):
     def unique_id(self) -> str:
         """Return a unique ID."""
         return self._hm_entity.unique_id
-
-    # @property
-    # def icon(self) -> str | None:
-    #     """Return the icon."""
-    #     return self._hm_entity.icon
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
