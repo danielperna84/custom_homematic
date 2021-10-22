@@ -29,9 +29,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     cu = ControlUnit(hass, entry=entry)
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = cu
+    hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-
-    # hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
 
     return True
 

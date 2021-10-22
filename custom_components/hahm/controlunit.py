@@ -23,8 +23,14 @@ from hahomematic.const import (
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
     HA_PLATFORMS,
+    HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
+    HH_EVENT_ERROR,
+    HH_EVENT_LIST_DEVICES,
     HH_EVENT_NEW_DEVICES,
+    HH_EVENT_READDED_DEVICE,
+    HH_EVENT_REPLACE_DEVICE,
+    HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PORT_ANY,
 )
@@ -43,7 +49,9 @@ class ControlUnit:
     Central point to control a homematic ccu.
     """
 
-    def __init__(self, hass: HomeAssistant, data: dict[str, Any]={}, entry: ConfigEntry=None):
+    def __init__(
+        self, hass: HomeAssistant, data: dict[str, Any] = {}, entry: ConfigEntry = None
+    ):
         self._hass = hass
         self._data = data
         if entry:
@@ -81,20 +89,14 @@ class ControlUnit:
         """return the hahm server instance."""
         return self._server
 
-    def get_new_hm_entities(self, platform):
+    def get_new_hm_entities(self, new_unique_entity_ids=None):
         """
         Return all new hḿ-entities by unique_ids
         """
-        new_entities = []
-        if platform not in HA_PLATFORMS:
-            return
+        # remove already active entity unique_ids from new_unique_entity_ids
+        new_unique_entity_ids -= self._active_hm_entities.keys()
 
-        for (unique_id, hm_entity) in self._server.entities.items():
-            if platform == getattr(hm_entity, "platform", None):
-                if unique_id not in self._active_hm_entities.keys():
-                    new_entities.append(hm_entity)
-
-        return new_entities
+        return self._server.get_hm_entities_by_platform(new_unique_entity_ids)
 
     def add_hm_entity(self, hm_entity):
         """add entity to active entities"""
@@ -112,25 +114,36 @@ class ControlUnit:
     @callback
     def _system_callback(self, src, *args):
         """Callback for ccu based events."""
-        if src == HH_EVENT_NEW_DEVICES:
+        if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
             """Handle event of new device creation in HAHM."""
-            for (platform, hm_entities) in self._server.get_new_entities(
+            for (platform, hm_entities) in self.get_new_hm_entities(
                 new_entity_unique_ids
             ).items():
                 args = []
-                if hm_entities:
+                if hm_entities and len(hm_entities) > 0:
                     args.append([hm_entities])
-                async_dispatcher_send(
-                    self._hass,
-                    self.async_signal_new_hm_entity(platform),
-                    *args,  # Don't send device if None, it would override default value in listeners
-                )
+                    async_dispatcher_send(
+                        self._hass,
+                        self.async_signal_new_hm_entity(platform),
+                        *args,  # Don't send device if None, it would override default value in listeners
+                    )
             return
-
-        elif src == HH_EVENT_DEVICES_CREATED:
+        elif src == "HH_EVENT_DEVICES_CREATED":
             # start the platforms
-            self._hass.config_entries.async_setup_platforms(self._entry, HA_PLATFORMS)
+
+            return
+        elif src == HH_EVENT_DELETE_DEVICES:
+            return
+        elif src == HH_EVENT_ERROR:
+            return
+        elif src == HH_EVENT_LIST_DEVICES:
+            return
+        elif src == HH_EVENT_READDED_DEVICE:
+            return
+        elif src == HH_EVENT_REPLACE_DEVICE:
+            return
+        elif src == HH_EVENT_UPDATE_DEVICE:
             return
 
     @callback

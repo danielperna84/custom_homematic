@@ -2,7 +2,6 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_BINARY_SENSOR
-from hahomematic.platforms.binary_sensor import HM_Binary_Sensor
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -14,27 +13,16 @@ from .generic_entity import HaHomematicGenericEntity
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry2(hass, entry, async_add_entities) -> None:
-    """Set up the hahm binary sensor platform."""
-    cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
-    entities: list[HaHomematicGenericEntity] = []
-    for hm_entity in cu.get_new_hm_entities(HA_PLATFORM_BINARY_SENSOR):
-        entities.append(HaHomematicBinarySensor(cu, hm_entity))
-    async_add_entities(entities)
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm binary sensor."""
+    """Set up the hahm binary_sensor platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
-    def async_add_binary_sensor(
-        hm_entities=cu.get_new_hm_entities(HA_PLATFORM_BINARY_SENSOR),
-    ):
-        """Add binary sensor from HAHM."""
+    def async_add_binary_sensor(args):
+        """Add binary_sensor from HAHM."""
         entities = []
 
-        for hm_entity in hm_entities:
+        for hm_entity in args[0]:
             entities.append(HaHomematicBinarySensor(cu, hm_entity))
 
         if entities:
@@ -47,8 +35,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
             async_add_binary_sensor,
         )
     )
-
-    async_add_binary_sensor()
 
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):

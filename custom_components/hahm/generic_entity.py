@@ -109,7 +109,6 @@ class HaHomematicGenericEntity(HAEntity):
     @property
     def name(self) -> str:
         """Return the name of the generic entity."""
-
         return self._hm_entity.name
 
     @property
