@@ -1,14 +1,12 @@
 """Config flow for hahomematic integration."""
 from __future__ import annotations
 
-import functools
 import logging
 from typing import Any
 from xmlrpc.client import ProtocolError
 
 import voluptuous as vol
 from hahomematic import config
-from hahomematic.client import Client
 from hahomematic.const import (
     ATTR_CALLBACK_IP,
     ATTR_CALLBACK_PORT,
@@ -20,6 +18,7 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
+    DEFAULT_PATH,
     DEFAULT_TLS,
     IP_ANY_V4,
     PORT_ANY,
@@ -40,7 +39,7 @@ from .const import (
     ATTR_JSONTLS,
     DOMAIN,
 )
-from .control_unit import create_clients, create_server
+from .controlunit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +47,7 @@ INTERFACE_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_INTERFACENAME): str,
         vol.Required(ATTR_PORT, default=PORT_HMIP): int,
-        vol.Required(ATTR_PATH, default="/"): str,
+        vol.Optional(ATTR_PATH, default=DEFAULT_PATH): str,
         vol.Optional(ATTR_ADD_ANOTHER_INTERFACE, default=False): bool,
     }
 )
@@ -82,15 +81,11 @@ async def validate_input(
     # We have to set the cache location of stored data so the server can load
     # it while initializing.
     config.CACHE_DIR = "cache"
-    # Add callbacks to handle the events and see what happens on the system.
-    # config.CALLBACK_SYSTEM = systemcallback
-    # config.CALLBACK_EVENT = eventcallback
-    # config.CALLBACK_ENTITY_UPDATE = entityupdatecallback
-    # Create a server that listens on 127.0.0.1:* and identifies itself as instancename
 
-    server = create_server(data)
+    cu = ControlUnit(hass, data=data)
+    await cu.create_server()
     try:
-        await create_clients(hass, server, data)
+        await cu.create_clients()
     except ConnectionError as e:
         _LOGGER.exception(e)
         raise CannotConnect
@@ -105,7 +100,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a instance flow for hahomematic."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
+    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None

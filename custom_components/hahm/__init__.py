@@ -20,16 +20,16 @@ from .const import (
     HAHM_NAME,
     HAHM_SERVER,
 )
-from .control_unit import Control_Unit
+from .controlunit import ControlUnit
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
 
-    cu = Control_Unit(hass, entry)
+    cu = ControlUnit(hass, entry=entry)
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = cu
-    await cu.async_start()
+    await cu.start()
 
     # hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
 
