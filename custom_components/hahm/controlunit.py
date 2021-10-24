@@ -34,6 +34,7 @@ from hahomematic.const import (
     IP_ANY_V4,
     PORT_ANY,
 )
+from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -58,7 +59,7 @@ class ControlUnit:
             self._entry = entry
             self._data = self._entry.data
         self._server: Server = None
-        self._active_hm_entities = {}
+        self._active_hm_entities: dict[str, BaseEntity] = {}
 
     async def start(self):
         """Start the server."""
@@ -133,6 +134,11 @@ class ControlUnit:
             # ignore
             return
         elif src == HH_EVENT_DELETE_DEVICES:
+            """Handle event of device removed in HAHM."""
+            for address in args[1]:
+                entity = self._get_active_entity_by_address(address)
+                if entity:
+                    entity.remove_entity()
             return
         elif src == HH_EVENT_ERROR:
             return
@@ -187,3 +193,8 @@ class ControlUnit:
                 )
             )
         return clients
+
+    def _get_active_entity_by_address(self, address):
+        for entity in self._active_hm_entities.values():
+            if entity.address == address:
+                return entity

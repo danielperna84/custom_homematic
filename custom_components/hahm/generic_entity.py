@@ -41,7 +41,7 @@ class HaHomematicGenericEntity(HAEntity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks."""
         self._hm_entity.register_update_callback(self._async_device_changed)
-        # TODO: add remove handler
+        self._hm_entity.register_remove_callback(self._async_device_removed)
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
 
     @callback
@@ -75,9 +75,8 @@ class HaHomematicGenericEntity(HAEntity):
         """Remove entity/device from registry."""
 
         # Remove callback from device.
-        # TODO: create and user callback handler
-        self._hm_entity._update_callback = None
-        # TODO: add remove handler
+        self._hm_entity.unregister_update_callback()
+        self._hm_entity.unregister_remove_callback()
 
         if not self.registry_entry:
             return
