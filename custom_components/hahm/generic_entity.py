@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.entity import GenericEntity as HMEntity
+from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 class HaHomematicGenericEntity(HAEntity):
     """Representation of the HomematicIP generic entity."""
 
-    def __init__(self, cu: ControlUnit, hm_entity: HMEntity) -> None:
+    def __init__(self, cu: ControlUnit, hm_entity: BaseEntity) -> None:
         """Initialize the generic entity."""
         self._cu = cu
         self._hm_entity = hm_entity
@@ -34,7 +34,7 @@ class HaHomematicGenericEntity(HAEntity):
         return self._hm_entity.device_class
 
     @property
-    def device_info(self) -> DeviceInfo | None:
+    def device_info(self) -> DeviceInfo:
         """Return device specific attributes."""
         return self._hm_entity.device_info
 
@@ -43,19 +43,19 @@ class HaHomematicGenericEntity(HAEntity):
         self._hm_entity.register_update_callback(self._async_device_changed)
         self._hm_entity.register_remove_callback(self._async_device_removed)
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
+        await self.hass.async_add_executor_job(self._hm_entity.load_data)
 
     @callback
     def _async_device_changed(self, *args, **kwargs) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
-            _LOGGER.debug("Event %s (%s)", self.name, self._hm_entity.type)
+            _LOGGER.debug("Event %s", self.name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
-                "Device Changed Event for %s (%s) not fired. Entity is disabled",
+                "Device Changed Event for %s not fired. Entity is disabled",
                 self.name,
-                self._hm_entity.device_type,
             )
 
     async def async_will_remove_from_hass(self) -> None:

@@ -22,6 +22,7 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
+    HA_DOMAIN,
     HA_PLATFORMS,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
@@ -36,7 +37,7 @@ from hahomematic.const import (
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
@@ -65,10 +66,9 @@ class ControlUnit:
         """Start the server."""
         LOG.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCENAME])
         config.CACHE_DIR = "cache"
-        config.CALLBACK_SYSTEM = self._system_callback
-        config.CALLBACK_EVENT = self._event_callback
 
         self.create_server()
+
         await self.create_clients()
         self._server.start()
         await self.init_clients()
@@ -90,14 +90,24 @@ class ControlUnit:
         """return the hahm server instance."""
         return self._server
 
-    def get_new_hm_entities(self, new_unique_entity_ids=None):
+    def get_new_hm_entities(self, new_entities):
         """
-        Return all new hḿ-entities by unique_ids
+        Return all hm-entities by requested unique_ids
         """
-        # remove already active entity unique_ids from new_unique_entity_ids
-        new_unique_entity_ids -= self._active_hm_entities.keys()
+        # init dict
+        hm_entities = {}
+        for platform in HA_PLATFORMS:
+            hm_entities[platform] = []
 
-        return self._server.get_hm_entities_by_platform(new_unique_entity_ids)
+        for entity in new_entities:
+            if (
+                entity.unique_id not in self._active_hm_entities
+                and entity.create_in_ha
+                and entity.platform in HA_PLATFORMS
+            ):
+                hm_entities[entity.platform].append(entity)
+
+        return hm_entities
 
     def add_hm_entity(self, hm_entity):
         """add entity to active entities"""
@@ -152,7 +162,7 @@ class ControlUnit:
             return
 
     @callback
-    def _event_callback(self, address, interface_id, key, value):
+    def _event_callback(self, address, interface_id):
         return
 
     def create_server(self):
@@ -162,6 +172,8 @@ class ControlUnit:
             local_ip=self._data.get(ATTR_CALLBACK_IP),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
+        # register callback
+        self._server.callback_system = self._system_callback
 
     async def create_clients(self):
         """create clients for the server."""

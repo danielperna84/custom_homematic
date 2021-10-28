@@ -102,9 +102,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] = None) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
             await self.async_set_unique_id(user_input[ATTR_INSTANCENAME])
@@ -128,7 +126,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=DOMAIN_SCHEMA)
 
     async def async_step_interface(
-        self, user_input: dict[str, Any] | None = None
+        self, user_input: dict[str, Any] = None
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is None:
