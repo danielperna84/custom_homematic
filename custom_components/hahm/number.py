@@ -31,10 +31,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(HaHomematicNumber),
+            cu.async_signal_new_hm_entity(HA_PLATFORM_NUMBER),
             async_add_number,
         )
     )
+
+    async_add_number([cu.server.get_hm_entities_by_platform(HA_PLATFORM_NUMBER)])
 
 
 class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):

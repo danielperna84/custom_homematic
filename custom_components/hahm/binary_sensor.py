@@ -36,6 +36,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
+    async_add_binary_sensor(
+        [cu.server.get_hm_entities_by_platform(HA_PLATFORM_BINARY_SENSOR)]
+    )
+
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     """Representation of the Homematic binary sensor."""
@@ -43,4 +47,4 @@ class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return true if motion is detected."""
-        return self._hm_entity._state
+        return self._hm_entity.STATE

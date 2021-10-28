@@ -36,6 +36,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
+    async_add_switch([cu.server.get_hm_entities_by_platform(HA_PLATFORM_SWITCH)])
+
 
 class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
     """Representation of the HomematicIP switch entity."""

@@ -22,8 +22,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         """Add sensor from HAHM."""
         entities = []
 
-        # for hm_entity in args[0]:
-        #    entities.append(HaHomematicSensor(cu, hm_entity))
+        for hm_entity in args[0]:
+           entities.append(HaHomematicSensor(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -36,14 +36,16 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
+    async_add_sensor([cu.server.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
+
 
 class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
     @property
     def native_value(self):
-        self._hm_entity._state
+        return self._hm_entity.STATE
 
     @property
     def native_unit_of_measurement(self) -> str:
-        return "%"
+        return self._hm_entity.unit
