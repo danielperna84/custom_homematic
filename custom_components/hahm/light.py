@@ -2,6 +2,7 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_LIGHT
+
 from homeassistant.components.light import LightEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect

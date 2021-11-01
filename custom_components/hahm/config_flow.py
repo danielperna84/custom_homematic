@@ -26,6 +26,7 @@ from hahomematic.const import (
     PORT_JSONRPC,
 )
 from hahomematic.server import Server
+
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult

@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
+
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -117,8 +118,7 @@ class HaHomematicGenericEntity(HAEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        # TODO
-        return True
+        return self._hm_entity.available
 
     @property
     def unique_id(self) -> str:
@@ -128,6 +128,4 @@ class HaHomematicGenericEntity(HAEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        state_attr = {}
-
-        return state_attr
+        return self._hm_entity.extra_state_attributes

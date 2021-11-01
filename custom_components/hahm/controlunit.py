@@ -22,7 +22,6 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
-    HA_DOMAIN,
     HA_PLATFORMS,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
@@ -37,6 +36,7 @@ from hahomematic.const import (
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
+
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
@@ -48,7 +48,7 @@ LOG = logging.getLogger(__name__)
 
 class ControlUnit:
     """
-    Central point to control a homematic ccu.
+    Central point to control a Homematic CCU.
     """
 
     def __init__(
@@ -58,7 +58,10 @@ class ControlUnit:
         self._data = data
         if entry:
             self._entry = entry
+            self._entry_id = entry.entry_id
             self._data = self._entry.data
+        else:
+            self._entry_id = "solo"
         self._server: Server = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
 
@@ -89,6 +92,48 @@ class ControlUnit:
     def server(self):
         """return the hahm server instance."""
         return self._server
+
+    def reconnect(self):
+        """Reinit all Clients."""
+        if self._server:
+            self._server.proxyInit()
+
+    def get_all_system_variables(self):
+        """Get all system variables from CCU / Homegear"""
+        if self._server:
+            return self._server.get_all_system_variables()
+
+    def get_system_variable(self, name):
+        """Get single system variable from CCU / Homegear"""
+        if self._server:
+            return self._server.get_system_variable(name)
+
+    def set_system_variable(self, name, value):
+        """Set a system variable on CCU / Homegear"""
+        if self._server:
+            return self._server.set_system_variable(name, value)
+
+    def get_service_messages(self):
+        """Get service messages from CCU / Homegear"""
+        if self._server:
+            return self._server.get_service_messages()
+
+    def get_install_mode(self, interface_id):
+        """Get remaining time in seconds install mode is active from CCU / Homegear"""
+        if self._server:
+            return self._server.get_install_mode(interface_id)
+
+    def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
+        """Activate or deactivate installmode on CCU / Homegear"""
+        if self._server:
+            return self._server.set_install_mode(interface_id, on, t, mode, address)
+
+    def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
+        """Set paramsets manually"""
+        if self._server:
+            return self._server.put_paramset(
+                interface_id, address, paramset, value, rx_mode
+            )
 
     def get_new_hm_entities(self, new_entities):
         """
@@ -123,7 +168,7 @@ class ControlUnit:
         return f"hahm-new-entity-{device_type}"
 
     @callback
-    def _system_callback(self, src, *args):
+    def _callback_system_event(self, src, *args):
         """Callback for ccu based events."""
         if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
@@ -162,18 +207,28 @@ class ControlUnit:
             return
 
     @callback
-    def _event_callback(self, address, interface_id):
+    def _callback_device_event(self, address, interface_id):
+        return
+
+    @callback
+    def _callback_click_event(self, event_type, event_data):
+        self._hass.bus.fire(
+            event_type,
+            event_data,
+        )
         return
 
     def create_server(self):
         """create the server for ccu callbacks."""
         self._server = Server(
             instance_name=self._data[ATTR_INSTANCENAME],
+            entry_id=self._entry_id,
             local_ip=self._data.get(ATTR_CALLBACK_IP),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
         # register callback
-        self._server.callback_system = self._system_callback
+        self._server.callback_system_event = self._callback_system_event
+        self._server.callback_click_event = self._callback_click_event
 
     async def create_clients(self):
         """create clients for the server."""

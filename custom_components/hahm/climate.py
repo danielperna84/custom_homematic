@@ -3,6 +3,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HA_PLATFORM_CLIMATE
+
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect

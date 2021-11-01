@@ -2,6 +2,7 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_COVER
+
 from homeassistant.components.cover import CoverEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect

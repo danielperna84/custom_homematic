@@ -2,6 +2,7 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_SENSOR
+
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -23,7 +24,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-           entities.append(HaHomematicSensor(cu, hm_entity))
+            entities.append(HaHomematicSensor(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
