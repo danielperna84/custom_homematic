@@ -2,6 +2,7 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_BINARY_SENSOR
+
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect

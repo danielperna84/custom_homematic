@@ -2,6 +2,7 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_SWITCH
+
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -22,8 +23,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         """Add switch from HAHM."""
         entities = []
 
-        # for hm_entity in args[0]:
-        #    entities.append(HaHomematicSwitch(cu, hm_entity))
+        for hm_entity in args[0]:
+            entities.append(HaHomematicSwitch(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -41,3 +42,16 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
     """Representation of the HomematicIP switch entity."""
+
+    @property
+    def is_on(self) -> bool:
+        """Return true if switch is on."""
+        return self._hm_entity.STATE
+
+    def turn_on(self, **kwargs) -> None:
+        """Turn the switch on."""
+        self._hm_entity.STATE = True
+
+    def turn_off(self, **kwargs) -> None:
+        """Turn the switch off."""
+        self._hm_entity.STATE = False
