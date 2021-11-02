@@ -1,4 +1,4 @@
-"""binary_sensor for hahm."""
+"""binary_sensor for HAHM."""
 import logging
 
 from hahomematic.const import HA_PLATFORM_SELECT
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm select platform."""
+    """Set up the HAHM select platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -51,8 +51,8 @@ class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
     @property
     def current_option(self) -> str:
         """Return the currently selected option."""
-        return self._hm_entity.STATE
+        return self._hm_entity.state
 
     def select_option(self, option: str) -> None:
         """Select an option."""
-        self._hm_entity.STATE = option
+        self._hm_entity.state = option

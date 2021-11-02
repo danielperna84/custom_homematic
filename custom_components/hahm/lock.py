@@ -1,5 +1,6 @@
-"""binary_sensor for hahm."""
+"""binary_sensor for HAHM."""
 import logging
+from typing import Any
 
 from hahomematic.const import HA_PLATFORM_LOCK
 
@@ -7,7 +8,7 @@ from homeassistant.components.lock import LockEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-from .const import DOMAIN, HAHM_SERVER
+from .const import DOMAIN
 from .controlunit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
@@ -15,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm lock platform."""
+    """Set up the HAHM lock platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -42,3 +43,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     """Representation of the HomematicIP lock entity."""
+
+    def lock(self, **kwargs: Any) -> None:
+        pass
+
+    def unlock(self, **kwargs: Any) -> None:
+        pass
+
+    def open(self, **kwargs: Any) -> None:
+        pass

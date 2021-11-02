@@ -1,4 +1,4 @@
-"""binary_sensor for hahm."""
+"""binary_sensor for HAHM."""
 import logging
 
 from hahomematic.const import HA_PLATFORM_NUMBER
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm number platform."""
+    """Set up the HAHM number platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -66,8 +66,8 @@ class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
     @property
     def value(self):
         """Return the current value."""
-        return self._hm_entity.STATE
+        return self._hm_entity.state
 
     def set_value(self, value: float) -> None:
         """Update the current value."""
-        self._hm_entity.STATE = value
+        self._hm_entity.state = value

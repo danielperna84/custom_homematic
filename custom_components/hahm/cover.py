@@ -1,5 +1,6 @@
-"""binary_sensor for hahm."""
+"""binary_sensor for HAHM."""
 import logging
+from typing import Any
 
 from hahomematic.const import HA_PLATFORM_COVER
 
@@ -15,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm cover platform."""
+    """Set up the HAHM cover platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -42,3 +43,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 class HaHomematicCover(HaHomematicGenericEntity, CoverEntity):
     """Representation of the HomematicIP cover entity."""
+
+    def open_cover(self, **kwargs: Any) -> None:
+        pass
+
+    def close_cover(self, **kwargs: Any) -> None:
+        pass

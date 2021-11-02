@@ -1,4 +1,4 @@
-"""binary_switch for hahm."""
+"""binary_switch for HAHM."""
 import logging
 
 from hahomematic.const import HA_PLATFORM_SWITCH
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm switch platform."""
+    """Set up the HAHM switch platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -46,12 +46,12 @@ class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        return self._hm_entity.STATE
+        return self._hm_entity.state
 
     def turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
-        self._hm_entity.STATE = True
+        self._hm_entity.state = True
 
     def turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
-        self._hm_entity.STATE = False
+        self._hm_entity.state = False

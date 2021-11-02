@@ -4,23 +4,20 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
-
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.entity import Entity as HAEntity
+from homeassistant.helpers.entity import DeviceInfo, Entity
 
 from .controlunit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class HaHomematicGenericEntity(HAEntity):
+class HaHomematicGenericEntity(Entity):
     """Representation of the HomematicIP generic entity."""
 
-    def __init__(self, cu: ControlUnit, hm_entity: BaseEntity) -> None:
+    def __init__(self, cu: ControlUnit, hm_entity) -> None:
         """Initialize the generic entity."""
         self._cu = cu
         self._hm_entity = hm_entity

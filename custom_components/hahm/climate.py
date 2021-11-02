@@ -1,8 +1,9 @@
-"""climate for hahm."""
+"""climate for HAHM."""
 import logging
 from typing import Any
 
 from hahomematic.const import HA_PLATFORM_CLIMATE
+from hahomematic.entity import CustomEntity
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.core import callback
@@ -16,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm climate platform."""
+    """Set up the HAHM climate platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -83,13 +84,6 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
     def hvac_modes(self) -> list[str]:
         """Return the list of available hvac operation modes."""
         return self._hm_entity.hvac_modes
-
-    @property
-    def hvac_action(self) -> str:
-        """
-        Return the current hvac_action.
-        """
-        # return self._hm_entity.hvac_action
 
     @property
     def preset_mode(self) -> str:
