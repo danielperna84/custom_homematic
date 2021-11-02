@@ -8,24 +8,22 @@ from xmlrpc.client import ProtocolError
 import voluptuous as vol
 from hahomematic import config
 from hahomematic.const import (
-    ATTR_CALLBACK_IP,
+    ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
-    ATTR_HOSTNAME,
-    ATTR_JSONPORT,
+    ATTR_HOST,
+    ATTR_JSON_PORT,
     ATTR_PASSWORD,
     ATTR_PATH,
     ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
-    DEFAULT_PATH,
     DEFAULT_TLS,
     IP_ANY_V4,
     PORT_ANY,
     PORT_HMIP,
-    PORT_JSONRPC,
+    PORT_JSON_RPC,
 )
-from hahomematic.server import Server
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
@@ -34,10 +32,10 @@ from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
     ATTR_ADD_ANOTHER_INTERFACE,
-    ATTR_INSTANCENAME,
+    ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
-    ATTR_INTERFACENAME,
-    ATTR_JSONTLS,
+    ATTR_INTERFACE_NAME,
+    ATTR_JSON_TLS,
     DOMAIN,
 )
 from .controlunit import ControlUnit
@@ -46,7 +44,7 @@ _LOGGER = logging.getLogger(__name__)
 
 INTERFACE_SCHEMA = vol.Schema(
     {
-        vol.Required(ATTR_INTERFACENAME): str,
+        vol.Required(ATTR_INTERFACE_NAME): str,
         vol.Required(ATTR_PORT, default=PORT_HMIP): int,
         vol.Optional(ATTR_PATH): str,
         vol.Optional(ATTR_ADD_ANOTHER_INTERFACE, default=False): bool,
@@ -55,23 +53,23 @@ INTERFACE_SCHEMA = vol.Schema(
 
 DOMAIN_SCHEMA = vol.Schema(
     {
-        vol.Required(ATTR_INSTANCENAME): str,
-        vol.Required(ATTR_HOSTNAME): str,
+        vol.Required(ATTR_INSTANCE_NAME): str,
+        vol.Required(ATTR_HOST): str,
         vol.Optional(ATTR_USERNAME, default=""): str,
         vol.Optional(ATTR_PASSWORD, default=""): str,
-        vol.Optional(ATTR_CALLBACK_IP, default=IP_ANY_V4): str,
+        vol.Optional(ATTR_CALLBACK_HOST, default=IP_ANY_V4): str,
         vol.Optional(ATTR_CALLBACK_PORT, default=PORT_ANY): int,
         vol.Optional(ATTR_TLS, default=DEFAULT_TLS): bool,
         vol.Optional(ATTR_VERIFY_TLS, default=False): bool,
-        vol.Optional(ATTR_JSONPORT, default=PORT_JSONRPC): int,
-        vol.Optional(ATTR_JSONTLS, default=DEFAULT_TLS): bool,
+        vol.Optional(ATTR_JSON_PORT, default=PORT_JSON_RPC): int,
+        vol.Optional(ATTR_JSON_TLS, default=DEFAULT_TLS): bool,
     }
 )
 
 
 async def validate_input(
     hass: HomeAssistant, data: dict[str, Any], interface_name: str
-) -> dict[str, Any]:
+) -> bool:
     """Validate the user input allows us to connect.
 
     Data has the keys with values provided by the user.
@@ -87,6 +85,7 @@ async def validate_input(
     cu.create_server()
     try:
         await cu.create_clients()
+        return True
     except ConnectionError as e:
         _LOGGER.exception(e)
         raise CannotConnect
@@ -95,6 +94,7 @@ async def validate_input(
         raise InvalidAuth
     except Exception as e:
         _LOGGER.exception(e)
+    return False
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -103,22 +103,25 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
+    def __init__(self):
+        self.data = {}
+
     async def async_step_user(self, user_input: dict[str, Any] = None) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
-            await self.async_set_unique_id(user_input[ATTR_INSTANCENAME])
+            await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
             self._abort_if_unique_id_configured()
             self.data = {
-                ATTR_INSTANCENAME: user_input[ATTR_INSTANCENAME],
-                ATTR_HOSTNAME: user_input[ATTR_HOSTNAME],
+                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME],
+                ATTR_HOST: user_input[ATTR_HOST],
                 ATTR_USERNAME: user_input[ATTR_USERNAME],
                 ATTR_PASSWORD: user_input[ATTR_PASSWORD],
-                ATTR_CALLBACK_IP: user_input.get(ATTR_CALLBACK_IP),
+                ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST),
                 ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
                 ATTR_TLS: user_input.get(ATTR_TLS),
                 ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
-                ATTR_JSONPORT: user_input.get(ATTR_JSONPORT),
-                ATTR_JSONTLS: user_input.get(ATTR_JSONTLS),
+                ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
+                ATTR_JSON_TLS: user_input.get(ATTR_JSON_TLS),
                 ATTR_INTERFACE: {},
             }
 
@@ -144,13 +147,13 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ATTR_PATH: user_input.get(ATTR_PATH),
             }
 
-            self.data[ATTR_INTERFACE][user_input[ATTR_INTERFACENAME]] = interface_data
+            self.data[ATTR_INTERFACE][user_input[ATTR_INTERFACE_NAME]] = interface_data
 
         errors = {}
 
         try:
             info = await validate_input(
-                self.hass, self.data, user_input[ATTR_INTERFACENAME]
+                self.hass, self.data, user_input[ATTR_INTERFACE_NAME]
             )
         except CannotConnect:
             errors["base"] = "cannot_connect"
@@ -166,7 +169,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return await self.async_step_interface()
 
             return self.async_create_entry(
-                title=self.data[ATTR_INSTANCENAME], data=self.data
+                title=self.data[ATTR_INSTANCE_NAME], data=self.data
             )
 
         return self.async_show_form(

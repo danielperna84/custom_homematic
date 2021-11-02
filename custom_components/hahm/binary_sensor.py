@@ -1,7 +1,8 @@
-"""binary_sensor for hahm."""
+"""binary_sensor for HAHM."""
 import logging
 
 from hahomematic.const import HA_PLATFORM_BINARY_SENSOR
+from hahomematic.platforms.binary_sensor import HmBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
@@ -15,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up the hahm binary_sensor platform."""
+    """Set up the HAHM binary_sensor platform."""
     cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
@@ -24,7 +25,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicBinarySensor(cu, hm_entity))
+            if isinstance(hm_entity, HmBinarySensor):
+                entities.append(HaHomematicBinarySensor(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -48,4 +50,4 @@ class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return true if motion is detected."""
-        return self._hm_entity.STATE
+        return self._hm_entity.state

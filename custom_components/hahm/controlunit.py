@@ -7,15 +7,14 @@ https://github.com/danielperna84/hahomematic
 
 import logging
 from functools import partial
-from typing import Any
 
 from hahomematic import config
 from hahomematic.client import Client
 from hahomematic.const import (
-    ATTR_CALLBACK_IP,
+    ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
-    ATTR_HOSTNAME,
-    ATTR_JSONPORT,
+    ATTR_HOST,
+    ATTR_JSON_PORT,
     ATTR_PASSWORD,
     ATTR_PATH,
     ATTR_PORT,
@@ -28,7 +27,7 @@ from hahomematic.const import (
     HH_EVENT_ERROR,
     HH_EVENT_LIST_DEVICES,
     HH_EVENT_NEW_DEVICES,
-    HH_EVENT_READDED_DEVICE,
+    HH_EVENT_RE_ADDED_DEVICE,
     HH_EVENT_REPLACE_DEVICE,
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
@@ -37,11 +36,11 @@ from hahomematic.const import (
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
 
-from homeassistant.config_entries import ConfigEntry, ConfigEntryState
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from .const import ATTR_INSTANCENAME, ATTR_INTERFACE, ATTR_JSONTLS
+from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_JSON_TLS
 
 LOG = logging.getLogger(__name__)
 
@@ -51,9 +50,9 @@ class ControlUnit:
     Central point to control a Homematic CCU.
     """
 
-    def __init__(
-        self, hass: HomeAssistant, data: dict[str, Any] = {}, entry: ConfigEntry = None
-    ):
+    def __init__(self, hass: HomeAssistant, data=None, entry: ConfigEntry = None):
+        if data is None:
+            data = {}
         self._hass = hass
         self._data = data
         if entry:
@@ -67,7 +66,7 @@ class ControlUnit:
 
     async def start(self):
         """Start the server."""
-        LOG.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCENAME])
+        LOG.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
 
         self.create_server()
@@ -78,7 +77,7 @@ class ControlUnit:
 
     async def stop(self):
         """Stop the server."""
-        LOG.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCENAME])
+        LOG.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         for client in self._server.clients.values():
             await self._hass.async_add_executor_job(client.proxy_de_init)
         self._server.stop()
@@ -90,13 +89,13 @@ class ControlUnit:
 
     @property
     def server(self):
-        """return the hahm server instance."""
+        """return the HAHM server instance."""
         return self._server
 
     def reconnect(self):
         """Reinit all Clients."""
         if self._server:
-            self._server.proxyInit()
+            self._server.reconnect()
 
     def get_all_system_variables(self):
         """Get all system variables from CCU / Homegear"""
@@ -199,7 +198,7 @@ class ControlUnit:
             return
         elif src == HH_EVENT_LIST_DEVICES:
             return
-        elif src == HH_EVENT_READDED_DEVICE:
+        elif src == HH_EVENT_RE_ADDED_DEVICE:
             return
         elif src == HH_EVENT_REPLACE_DEVICE:
             return
@@ -221,9 +220,9 @@ class ControlUnit:
     def create_server(self):
         """create the server for ccu callbacks."""
         self._server = Server(
-            instance_name=self._data[ATTR_INSTANCENAME],
+            instance_name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
-            local_ip=self._data.get(ATTR_CALLBACK_IP),
+            local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
         # register callback
@@ -232,30 +231,30 @@ class ControlUnit:
 
     async def create_clients(self):
         """create clients for the server."""
-        clients: set(Client) = []
+        clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
-            clients.append(
+            clients.add(
                 await self._hass.async_add_executor_job(
                     partial(
                         Client,
                         server=self.server,
                         name=interface_name,
-                        host=self._data[ATTR_HOSTNAME],
+                        host=self._data[ATTR_HOST],
                         port=interface[ATTR_PORT],
                         path=interface[ATTR_PATH],
                         username=self._data[ATTR_USERNAME],
                         password=self._data[ATTR_PASSWORD],
                         tls=self._data[ATTR_TLS],
                         verify_tls=self._data[ATTR_VERIFY_TLS],
-                        callback_hostname=self._data.get(ATTR_CALLBACK_IP)
-                        if not self._data.get(ATTR_CALLBACK_IP) == IP_ANY_V4
+                        callback_host=self._data.get(ATTR_CALLBACK_HOST)
+                        if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
                         else None,
                         callback_port=self._data.get(ATTR_CALLBACK_PORT)
                         if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
                         else None,
-                        json_port=self._data[ATTR_JSONPORT],
-                        json_tls=self._data[ATTR_JSONTLS],
+                        json_port=self._data[ATTR_JSON_PORT],
+                        json_tls=self._data[ATTR_JSON_TLS],
                     )
                 )
             )

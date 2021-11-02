@@ -6,9 +6,10 @@ https://github.com/danielperna84/hahomematic
 """
 from __future__ import annotations
 
-import datetime
 import logging
+from datetime import datetime
 from functools import partial
+from typing import Optional
 
 import voluptuous as vol
 from hahomematic.const import (
@@ -31,18 +32,14 @@ from homeassistant.const import ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant
 
 from .const import (
-    ATTR_INSTANCENAME,
-    ATTR_JSONTLS,
+    ATTR_INSTANCE_NAME,
     DOMAIN,
-    HAHM_CLIENT,
-    HAHM_NAME,
-    HAHM_SERVER,
     SERVICE_PUT_PARAMSET,
     SERVICE_RECONNECT,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
-    SERVICE_VIRTUALKEY,
+    SERVICE_VIRTUAL_KEY,
 )
 from .controlunit import ControlUnit
 
@@ -138,7 +135,7 @@ def setup_services(hass: HomeAssistant) -> None:
 
     hass.services.register(
         domain=DOMAIN,
-        service=SERVICE_VIRTUALKEY,
+        service=SERVICE_VIRTUAL_KEY,
         service_func=_hm_service_virtualkey,
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
@@ -258,8 +255,6 @@ def setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_PUT_PARAMSET,
     )
 
-    return True
-
 
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
@@ -273,7 +268,7 @@ def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     return cu.server.get_hm_entity_by_parameter(address, parameter)
 
 
-def _get_cu_by_interface_id(hass, interface_id) -> ControlUnit:
+def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
     """
     Get ControlUnit by device address
     """
