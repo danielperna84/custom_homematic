@@ -2,7 +2,6 @@
 import logging
 
 from hahomematic.const import HA_PLATFORM_BINARY_SENSOR
-from hahomematic.platforms.binary_sensor import HmBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
@@ -25,8 +24,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            if isinstance(hm_entity, HmBinarySensor):
-                entities.append(HaHomematicBinarySensor(cu, hm_entity))
+            entities.append(HaHomematicBinarySensor(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -39,9 +37,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_binary_sensor(
-        [cu.server.get_hm_entities_by_platform(HA_PLATFORM_BINARY_SENSOR)]
-    )
+    async_add_binary_sensor([cu.get_hm_entities_by_platform(HA_PLATFORM_BINARY_SENSOR)])
 
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):

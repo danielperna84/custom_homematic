@@ -24,8 +24,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         """Add cover from HAHM."""
         entities = []
 
-        # for hm_entity in args[0]:
-        #    entities.append(HaHomematicCover(cu, hm_entity))
+        for hm_entity in args[0]:
+            entities.append(HaHomematicCover(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -38,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_cover([cu.server.get_hm_entities_by_platform(HA_PLATFORM_COVER)])
+    async_add_cover([cu.get_hm_entities_by_platform(HA_PLATFORM_COVER)])
 
 
 class HaHomematicCover(HaHomematicGenericEntity, CoverEntity):
