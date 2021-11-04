@@ -24,8 +24,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
         """Add lock from HAHM."""
         entities = []
 
-        # for hm_entity in args[0]:
-        #    entities.append(HaHomematicLock(cu, hm_entity))
+        for hm_entity in args[0]:
+            entities.append(HaHomematicLock(cu, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -38,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_lock([cu.server.get_hm_entities_by_platform(HA_PLATFORM_LOCK)])
+    async_add_lock([cu.get_hm_entities_by_platform(HA_PLATFORM_LOCK)])
 
 
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):

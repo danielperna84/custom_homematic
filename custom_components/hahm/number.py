@@ -4,6 +4,7 @@ import logging
 from hahomematic.const import HA_PLATFORM_NUMBER
 
 from homeassistant.components.number import NumberEntity
+from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
@@ -37,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_number([cu.server.get_hm_entities_by_platform(HA_PLATFORM_NUMBER)])
+    async_add_number([cu.get_hm_entities_by_platform(HA_PLATFORM_NUMBER)])
 
 
 class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
@@ -71,3 +72,8 @@ class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
     def set_value(self, value: float) -> None:
         """Update the current value."""
         self._hm_entity.state = value
+
+    @property
+    def entity_category(self) -> str:
+        """Return the entity categorie."""
+        return ENTITY_CATEGORY_CONFIG

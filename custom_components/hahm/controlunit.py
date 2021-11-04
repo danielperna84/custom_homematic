@@ -153,6 +153,21 @@ class ControlUnit:
 
         return hm_entities
 
+    def get_hm_entities_by_platform(self, platform):
+        """
+        Return all hm-entities by platform
+        """
+        hm_entities = []
+        for entity in self._server.hm_entities.values():
+            if (
+                entity.unique_id not in self._active_hm_entities
+                and entity.create_in_ha
+                and entity.platform == platform
+            ):
+                hm_entities.append(entity)
+
+        return hm_entities
+
     def add_hm_entity(self, hm_entity):
         """add entity to active entities"""
         self._active_hm_entities[hm_entity.unique_id] = hm_entity

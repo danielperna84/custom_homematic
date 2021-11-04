@@ -4,7 +4,7 @@
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/hahomematic",
   "requirements": [
-    "git+https://github.com/SukramJ/hahomematic.git@devel#hahomematic"
+    "git+https://github.com/danielperna84/hahomematic.git@devel#hahomematic"
   ],
   "ssdp": [],
   "zeroconf": [],

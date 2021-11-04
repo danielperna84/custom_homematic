@@ -4,11 +4,18 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from hahomematic.const import DATA_LOAD_FAIL
+
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
+from .const import (
+    PARAMETER_BINARY_SENSOR_DEVICE_CLASSES,
+    PARAMETER_ENTITY_CATEGORIES,
+    PARAMETER_SENSOR_DEVICE_CLASSES,
+)
 from .controlunit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,24 +31,74 @@ class HaHomematicGenericEntity(Entity):
 
         # Marker showing that the Hm device hase been removed.
         self.hm_device_removed = False
+        self._device_class = _get_device_class(self._hm_entity)
         _LOGGER.info("Setting up %s", self.name)
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._hm_entity.available
 
     @property
     def device_class(self) -> str:
         """Return the class of this sensor."""
-        return self._hm_entity.device_class
+        return self._device_class
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device specific attributes."""
         return self._hm_entity.device_info
 
+    @property
+    def entity_category(self) -> str | None:
+        """Return the entity categorie."""
+        if hasattr(self._hm_entity, "parameter"):
+            return PARAMETER_ENTITY_CATEGORIES.get(self._hm_entity.parameter)
+        return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        return self._hm_entity.extra_state_attributes
+
+    @property
+    def name(self) -> str:
+        """Return the name of the generic entity."""
+        return self._hm_entity.name
+
+    @property
+    def should_poll(self) -> bool:
+        """No polling needed."""
+        return False
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID."""
+        return self._hm_entity.unique_id
+
     async def async_added_to_hass(self) -> None:
         """Register callbacks."""
         self._hm_entity.register_update_callback(self._async_device_changed)
         self._hm_entity.register_remove_callback(self._async_device_removed)
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
-        await self.hass.async_add_executor_job(self._hm_entity.load_data)
+        await self._init_data()
+
+    async def async_update(self):
+        return
+
+    async def _init_data(self) -> None:
+        """Init data. Disable entity if data load fails due to missing device value."""
+        load_state = await self.hass.async_add_executor_job(self._hm_entity.load_data)
+        if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
+            await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
+        elif self.registry_entry.disabled_by == er.DISABLED_INTEGRATION:
+            await self._update_registry_entry(disabled_by=None)
+
+    async def _update_registry_entry(self, disabled_by) -> None:
+        """Update registry_entry disabled_by."""
+        (await er.async_get_registry(self.hass)).async_update_entity(
+            self.entity_id, disabled_by=disabled_by
+        )
 
     @callback
     def _async_device_changed(self, *args, **kwargs) -> None:
@@ -102,27 +159,13 @@ class HaHomematicGenericEntity(Entity):
         self.hm_device_removed = True
         self.hass.async_create_task(self.async_remove(force_remove=True))
 
-    @property
-    def name(self) -> str:
-        """Return the name of the generic entity."""
-        return self._hm_entity.name
 
-    @property
-    def should_poll(self) -> bool:
-        """No polling needed."""
-        return False
+def _get_device_class(hm_entity):
+    """get device_class by parameter"""
+    if hasattr(hm_entity, "parameter"):
+        if hm_entity.platform == "binary_sensor":
+            return PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
+        if hm_entity.platform == "sensor":
+            return PARAMETER_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
 
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self._hm_entity.available
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID."""
-        return self._hm_entity.unique_id
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic entity."""
-        return self._hm_entity.extra_state_attributes
+    return None

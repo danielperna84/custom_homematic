@@ -3,7 +3,6 @@ import logging
 from typing import Any
 
 from hahomematic.const import HA_PLATFORM_CLIMATE
-from hahomematic.entity import CustomEntity
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.core import callback
@@ -39,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_climate([cu.server.get_hm_entities_by_platform(HA_PLATFORM_CLIMATE)])
+    async_add_climate([cu.get_hm_entities_by_platform(HA_PLATFORM_CLIMATE)])
 
 
 class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):

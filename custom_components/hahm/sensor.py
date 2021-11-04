@@ -37,7 +37,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_sensor([cu.server.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
+    async_add_sensor([cu.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
 
 
 class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):

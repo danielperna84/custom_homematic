@@ -4,6 +4,7 @@ import logging
 from hahomematic.const import HA_PLATFORM_SELECT
 
 from homeassistant.components.select import SelectEntity
+from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
@@ -37,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_select([cu.server.get_hm_entities_by_platform(HA_PLATFORM_SELECT)])
+    async_add_select([cu.get_hm_entities_by_platform(HA_PLATFORM_SELECT)])
 
 
 class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
@@ -56,3 +57,8 @@ class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
     def select_option(self, option: str) -> None:
         """Select an option."""
         self._hm_entity.state = option
+
+    @property
+    def entity_category(self) -> str:
+        """Return the entity categorie."""
+        return ENTITY_CATEGORY_CONFIG
