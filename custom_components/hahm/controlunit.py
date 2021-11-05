@@ -6,7 +6,9 @@ https://github.com/danielperna84/hahomematic
 """
 
 import logging
+import homeassistant.helpers.config_validation as cv
 from functools import partial
+from datetime import timedelta
 
 from hahomematic import config
 from hahomematic.client import Client
@@ -21,6 +23,7 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
+    HA_DOMAIN,
     HA_PLATFORMS,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
@@ -36,13 +39,16 @@ from hahomematic.const import (
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
 
+from homeassistant.util import slugify
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-
+from homeassistant.helpers.entity import Entity
 from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_JSON_TLS
 
-LOG = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
+SCAN_INTERVAL_HUB = timedelta(seconds=300)
+SCAN_INTERVAL_VARIABLES = timedelta(seconds=30)
 
 
 class ControlUnit:
@@ -63,10 +69,11 @@ class ControlUnit:
             self._entry_id = "solo"
         self._server: Server = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
+        self._hub = None
 
     async def start(self):
         """Start the server."""
-        LOG.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
 
         self.create_server()
@@ -77,10 +84,13 @@ class ControlUnit:
 
     async def stop(self):
         """Stop the server."""
-        LOG.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         for client in self._server.clients.values():
             await self._hass.async_add_executor_job(client.proxy_de_init)
         self._server.stop()
+
+    def init_hub(self):
+        self._hub = HMHub(self._hass, self)
 
     async def init_clients(self):
         """Init clients related to server."""
@@ -279,3 +289,92 @@ class ControlUnit:
         for entity in self._active_hm_entities.values():
             if entity.address == address:
                 return entity
+
+
+class HMHub(Entity):
+    """The HomeMatic hub. (CCU2/HomeGear)."""
+
+    def __init__(self, hass, cu: ControlUnit):
+        """Initialize HomeMatic hub."""
+        self.hass = hass
+        self._cu: ControlUnit = cu
+        self._name = self._cu.server.instance_name
+        self.entity_id = f"{HA_DOMAIN}.{slugify(self._name.lower())}"
+        self._variables = {}
+        self._state = None
+
+        # Load data
+        self.hass.helpers.event.track_time_interval(self._update_hub, SCAN_INTERVAL_HUB)
+        self.hass.add_job(self._update_hub, None)
+
+        self.hass.helpers.event.track_time_interval(
+            self._update_variables, SCAN_INTERVAL_VARIABLES
+        )
+        self.hass.add_job(self._update_variables, None)
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return self._name
+
+    @property
+    def should_poll(self):
+        """Return false. HomeMatic Hub object updates variables."""
+        return False
+
+    @property
+    def state(self):
+        """Return the state of the entity."""
+        return self._state
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        return self._variables.copy()
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return "mdi:gradient-vertical"
+
+    def _update_hub(self, now):
+        """Retrieve latest state."""
+        service_message = self._cu.get_service_messages()
+        state = None if service_message is None else len(service_message)
+
+        # state have change?
+        if self._state != state:
+            self._state = state
+            self.schedule_update_ha_state()
+
+    def _update_variables(self, now):
+        """Retrieve all variable data and update hmvariable states."""
+        variables = self._cu.get_all_system_variables()
+        if variables is None:
+            return
+
+        state_change = False
+        for key, value in variables.items():
+            if key in self._variables and value == self._variables[key]:
+                continue
+
+            state_change = True
+            self._variables.update({key: value})
+
+        if state_change:
+            self.schedule_update_ha_state()
+
+    def hm_set_variable(self, name, value):
+        """Set variable value on CCU/Homegear."""
+        if name not in self._variables:
+            _LOGGER.error("Variable %s not found on %s", name, self.name)
+            return
+        old_value = self._variables.get(name)
+        if isinstance(old_value, bool):
+            value = cv.boolean(value)
+        else:
+            value = float(value)
+        self._cu.set_system_variable(name, value)
+
+        self._variables.update({name: value})
+        self.schedule_update_ha_state()
