@@ -7,7 +7,6 @@ https://github.com/danielperna84/hahomematic
 
 import logging
 import homeassistant.helpers.config_validation as cv
-from functools import partial
 from datetime import timedelta
 
 from hahomematic import config
