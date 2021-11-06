@@ -5,7 +5,7 @@
   "documentation": "https://github.com/danielperna84/custom_homematic",
   "issue_tracker": "https://github.com/danielperna84/custom_homematic/issues",
   "requirements": [
-    "git+https://github.com/danielperna84/hahomematic.git@devel#hahomematic"
+    "git+https://github.com/danielperna84/hahomematic.git@Async#hahomematic"
   ],
   "ssdp": [],
   "zeroconf": [],

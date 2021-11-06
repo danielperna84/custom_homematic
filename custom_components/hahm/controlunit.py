@@ -86,8 +86,8 @@ class ControlUnit:
         """Stop the server."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         for client in self._server.clients.values():
-            await self._hass.async_add_executor_job(client.proxy_de_init)
-        self._server.stop()
+            await client.proxy_de_init()
+        await self._server.stop()
 
     def init_hub(self):
         self._hub = HMHub(self._hass, self)
@@ -95,52 +95,52 @@ class ControlUnit:
     async def init_clients(self):
         """Init clients related to server."""
         for client in self._server.clients.values():
-            await self._hass.async_add_executor_job(client.proxy_init)
+            await client.proxy_init()
 
     @property
     def server(self):
         """return the HAHM server instance."""
         return self._server
 
-    def reconnect(self):
+    async def reconnect(self):
         """Reinit all Clients."""
         if self._server:
-            self._server.reconnect()
+            await self._server.reconnect()
 
-    def get_all_system_variables(self):
+    async def get_all_system_variables(self):
         """Get all system variables from CCU / Homegear"""
         if self._server:
-            return self._server.get_all_system_variables()
+            return await self._server.get_all_system_variables()
 
-    def get_system_variable(self, name):
+    async def get_system_variable(self, name):
         """Get single system variable from CCU / Homegear"""
         if self._server:
-            return self._server.get_system_variable(name)
+            return await self._server.get_system_variable(name)
 
-    def set_system_variable(self, name, value):
+    async def set_system_variable(self, name, value):
         """Set a system variable on CCU / Homegear"""
         if self._server:
-            return self._server.set_system_variable(name, value)
+            return await self._server.set_system_variable(name, value)
 
-    def get_service_messages(self):
+    async def get_service_messages(self):
         """Get service messages from CCU / Homegear"""
         if self._server:
-            return self._server.get_service_messages()
+            return await self._server.get_service_messages()
 
-    def get_install_mode(self, interface_id):
+    async def get_install_mode(self, interface_id):
         """Get remaining time in seconds install mode is active from CCU / Homegear"""
         if self._server:
-            return self._server.get_install_mode(interface_id)
+            return await self._server.get_install_mode(interface_id)
 
-    def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
+    async def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
         """Activate or deactivate installmode on CCU / Homegear"""
         if self._server:
-            return self._server.set_install_mode(interface_id, on, t, mode, address)
+            return await self._server.set_install_mode(interface_id, on, t, mode, address)
 
-    def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
+    async def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
         """Set paramsets manually"""
         if self._server:
-            return self._server.put_paramset(
+            return await self._server.put_paramset(
                 interface_id, address, paramset, value, rx_mode
             )
 
@@ -247,6 +247,7 @@ class ControlUnit:
         self._server = Server(
             instance_name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
+            loop= self._hass.loop,
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
@@ -260,27 +261,24 @@ class ControlUnit:
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
             clients.add(
-                await self._hass.async_add_executor_job(
-                    partial(
-                        Client,
-                        server=self.server,
-                        name=interface_name,
-                        host=self._data[ATTR_HOST],
-                        port=interface[ATTR_PORT],
-                        path=interface[ATTR_PATH],
-                        username=self._data[ATTR_USERNAME],
-                        password=self._data[ATTR_PASSWORD],
-                        tls=self._data[ATTR_TLS],
-                        verify_tls=self._data[ATTR_VERIFY_TLS],
-                        callback_host=self._data.get(ATTR_CALLBACK_HOST)
-                        if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
-                        else None,
-                        callback_port=self._data.get(ATTR_CALLBACK_PORT)
-                        if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
-                        else None,
-                        json_port=self._data[ATTR_JSON_PORT],
-                        json_tls=self._data[ATTR_JSON_TLS],
-                    )
+                Client(
+                    server=self.server,
+                    name=interface_name,
+                    host=self._data[ATTR_HOST],
+                    port=interface[ATTR_PORT],
+                    path=interface[ATTR_PATH],
+                    username=self._data[ATTR_USERNAME],
+                    password=self._data[ATTR_PASSWORD],
+                    tls=self._data[ATTR_TLS],
+                    verify_tls=self._data[ATTR_VERIFY_TLS],
+                    callback_host=self._data.get(ATTR_CALLBACK_HOST)
+                    if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
+                    else None,
+                    callback_port=self._data.get(ATTR_CALLBACK_PORT)
+                    if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
+                    else None,
+                    json_port=self._data[ATTR_JSON_PORT],
+                    json_tls=self._data[ATTR_JSON_TLS],
                 )
             )
         return clients
@@ -305,12 +303,12 @@ class HMHub(Entity):
 
         # Load data
         self.hass.helpers.event.track_time_interval(self._update_hub, SCAN_INTERVAL_HUB)
-        self.hass.add_job(self._update_hub, None)
+        self.hass.async_add_job(self._update_hub, None)
 
         self.hass.helpers.event.track_time_interval(
             self._update_variables, SCAN_INTERVAL_VARIABLES
         )
-        self.hass.add_job(self._update_variables, None)
+        self.hass.async_add_job(self._update_variables, None)
 
     @property
     def name(self):
@@ -337,19 +335,19 @@ class HMHub(Entity):
         """Return the icon to use in the frontend, if any."""
         return "mdi:gradient-vertical"
 
-    def _update_hub(self, now):
+    async def _update_hub(self, now):
         """Retrieve latest state."""
-        service_message = self._cu.get_service_messages()
+        service_message = await self._cu.get_service_messages()
         state = None if service_message is None else len(service_message)
 
         # state have change?
         if self._state != state:
             self._state = state
-            self.schedule_update_ha_state()
+            self.async_schedule_update_ha_state()
 
-    def _update_variables(self, now):
+    async def _update_variables(self, now):
         """Retrieve all variable data and update hmvariable states."""
-        variables = self._cu.get_all_system_variables()
+        variables = await self._cu.get_all_system_variables()
         if variables is None:
             return
 
@@ -362,9 +360,9 @@ class HMHub(Entity):
             self._variables.update({key: value})
 
         if state_change:
-            self.schedule_update_ha_state()
+            self.async_schedule_update_ha_state()
 
-    def hm_set_variable(self, name, value):
+    async def hm_set_variable(self, name, value):
         """Set variable value on CCU/Homegear."""
         if name not in self._variables:
             _LOGGER.error("Variable %s not found on %s", name, self.name)
@@ -374,7 +372,7 @@ class HMHub(Entity):
             value = cv.boolean(value)
         else:
             value = float(value)
-        self._cu.set_system_variable(name, value)
+        await self._cu.set_system_variable(name, value)
 
         self._variables.update({name: value})
-        self.schedule_update_ha_state()
+        self.async_schedule_update_ha_state()

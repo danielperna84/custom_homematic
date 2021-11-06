@@ -104,17 +104,17 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
         """Return the maximum temperature."""
         return self._hm_entity.max_temp
 
-    def set_temperature(self, **kwargs) -> None:
+    async def async_set_temperature(self, **kwargs) -> None:
         """Set new target temperature."""
-        self._hm_entity.set_temperature(**kwargs)
+        await self._hm_entity.set_temperature(**kwargs)
 
-    def set_hvac_mode(self, hvac_mode: str) -> None:
+    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """Set new target hvac mode."""
-        self._hm_entity.set_hvac_mode(hvac_mode)
+        await self._hm_entity.set_hvac_mode(hvac_mode)
 
-    def set_preset_mode(self, preset_mode: str) -> None:
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
-        self._hm_entity.set_preset_mode(preset_mode)
+        await self._hm_entity.set_preset_mode(preset_mode)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

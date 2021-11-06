@@ -44,8 +44,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
     """Representation of the HomematicIP light entity."""
 
-    def turn_on(self, **kwargs: Any) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         pass
 
-    def turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         pass

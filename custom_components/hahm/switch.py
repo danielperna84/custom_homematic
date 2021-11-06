@@ -48,10 +48,10 @@ class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
         """Return true if switch is on."""
         return self._hm_entity.state
 
-    def turn_on(self, **kwargs) -> None:
+    async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
-        self._hm_entity.state = True
+        await self._hm_entity.set_state(True)
 
-    def turn_off(self, **kwargs) -> None:
+    async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
-        self._hm_entity.state = False
+        await self._hm_entity.set_state(False)

@@ -88,7 +88,7 @@ class HaHomematicGenericEntity(Entity):
 
     async def _init_data(self) -> None:
         """Init data. Disable entity if data load fails due to missing device value."""
-        load_state = await self.hass.async_add_executor_job(self._hm_entity.load_data)
+        load_state = await self._hm_entity.load_data()
         if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
             await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
         elif self.registry_entry.disabled_by == er.DISABLED_INTEGRATION:
