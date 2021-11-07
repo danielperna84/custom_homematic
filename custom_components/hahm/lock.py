@@ -44,11 +44,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     """Representation of the HomematicIP lock entity."""
 
-    def lock(self, **kwargs: Any) -> None:
+    async def async_lock(self, **kwargs: Any) -> None:
         pass
 
-    def unlock(self, **kwargs: Any) -> None:
+    async def async_unlock(self, **kwargs: Any) -> None:
         pass
 
-    def open(self, **kwargs: Any) -> None:
+    async def async_open(self, **kwargs: Any) -> None:
         pass

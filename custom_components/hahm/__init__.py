@@ -104,7 +104,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = cu
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-    # await hass.async_add_executor_job(partial(setup_services, hass))
+    #await hass.async_add_executor_job(cu.init_hub)
+    #await async_setup_services(hass)
     return True
 
 
@@ -117,10 +118,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-def setup_services(hass: HomeAssistant) -> None:
+async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup servives"""
 
-    def _hm_service_virtualkey(service):
+    async def _hm_service_virtualkey(service):
         """Service to handle virtualkey servicecalls."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -131,16 +132,16 @@ def setup_services(hass: HomeAssistant) -> None:
             _LOGGER.error("%s not found for service virtualkey!", address)
             return
 
-        hm_entity.send_value(True)
+        await hm_entity.send_value(True)
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_VIRTUAL_KEY,
         service_func=_hm_service_virtualkey,
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
 
-    def _service_handle_value(service):
+    async def _service_handle_value(service):
         """Service to call setValue method for HomeMatic system variable."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         name = service.data[ATTR_NAME]
@@ -148,28 +149,28 @@ def setup_services(hass: HomeAssistant) -> None:
 
         cu = _get_cu_by_interface_id(hass, interface_id)
         if cu:
-            cu.set_system_variable(name, value)
+            await cu.set_system_variable(name, value)
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_VARIABLE_VALUE,
         service_func=_service_handle_value,
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
-    def _service_handle_reconnect(service):
+    async def _service_handle_reconnect(service):
         """Service to reconnect all HomeMatic hubs."""
         for cu in hass.data[DOMAIN]:
-            cu.reconnect()
+            await cu.reconnect()
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_RECONNECT,
         service_func=_service_handle_reconnect,
         schema=SCHEMA_SERVICE_RECONNECT,
     )
 
-    def _service_handle_device(service):
+    async def _service_handle_device(service):
         """Service to call setValue method for HomeMatic devices."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -198,16 +199,16 @@ def setup_services(hass: HomeAssistant) -> None:
             _LOGGER.error("%s not found!", address)
             return
 
-        hm_entity.send_value(value)
+        await hm_entity.send_value(value)
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_DEVICE_VALUE,
         service_func=_service_handle_device,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
-    def _service_handle_install_mode(service):
+    async def _service_handle_install_mode(service):
         """Service to set interface_id into install mode."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         mode = service.data.get(ATTR_MODE)
@@ -216,16 +217,16 @@ def setup_services(hass: HomeAssistant) -> None:
 
         cu = _get_cu_by_interface_id(hass, interface_id)
         if cu:
-            cu.set_install_mode(interface_id, t=time, mode=mode, address=address)
+            await cu.set_install_mode(interface_id, t=time, mode=mode, address=address)
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_INSTALL_MODE,
         service_func=_service_handle_install_mode,
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
-    def _service_put_paramset(service):
+    async def _service_put_paramset(service):
         """Service to call the putParamset method on a HomeMatic connection."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -246,9 +247,9 @@ def setup_services(hass: HomeAssistant) -> None:
         )
         cu = _get_cu_by_interface_id(hass, interface_id)
         if cu:
-            cu.put_paramset(interface_id, address, paramset_key, paramset, rx_mode)
+            await cu.put_paramset(interface_id, address, paramset_key, paramset, rx_mode)
 
-    hass.services.register(
+    hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_PUT_PARAMSET,
         service_func=_service_put_paramset,

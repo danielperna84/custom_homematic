@@ -44,8 +44,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HaHomematicCover(HaHomematicGenericEntity, CoverEntity):
     """Representation of the HomematicIP cover entity."""
 
-    def open_cover(self, **kwargs: Any) -> None:
+    async def async_open_cover(self, **kwargs: Any) -> None:
         pass
 
-    def close_cover(self, **kwargs: Any) -> None:
+    async def async_close_cover(self, **kwargs: Any) -> None:
         pass

@@ -54,9 +54,9 @@ class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
         """Return the currently selected option."""
         return self._hm_entity.state
 
-    def select_option(self, option: str) -> None:
+    async def async_select_option(self, option: str) -> None:
         """Select an option."""
-        self._hm_entity.state = option
+        await self._hm_entity.set_state(option)
 
     @property
     def entity_category(self) -> str:

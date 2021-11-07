@@ -69,9 +69,9 @@ class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
         """Return the current value."""
         return self._hm_entity.state
 
-    def set_value(self, value: float) -> None:
+    async def async_set_value(self, value: float) -> None:
         """Update the current value."""
-        self._hm_entity.state = value
+        await self._hm_entity.set_state(value)
 
     @property
     def entity_category(self) -> str:
