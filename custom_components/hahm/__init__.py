@@ -104,7 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = cu
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-    await hass.async_add_executor_job(cu.init_hub)
+    #await hass.async_add_executor_job(cu.init_hub)
     #await async_setup_services(hass)
     return True
 

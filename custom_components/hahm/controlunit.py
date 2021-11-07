@@ -74,6 +74,9 @@ class ControlUnit:
         """Start the server."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
+        config.TIMEOUT = 10
+        config.PROXY_EXECUTOR_MAX_WORKERS = 1
+        config.JSON_EXECUTOR_MAX_WORKERS = 4
 
         self.create_server()
 
