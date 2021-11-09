@@ -104,8 +104,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = cu
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-    #await hass.async_add_executor_job(cu.init_hub)
-    #await async_setup_services(hass)
+    # await hass.async_add_executor_job(cu.init_hub)
+    # await async_setup_services(hass)
     return True
 
 
@@ -247,7 +247,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         )
         cu = _get_cu_by_interface_id(hass, interface_id)
         if cu:
-            await cu.put_paramset(interface_id, address, paramset_key, paramset, rx_mode)
+            await cu.put_paramset(
+                interface_id, address, paramset_key, paramset, rx_mode
+            )
 
     hass.services.async_register(
         domain=DOMAIN,
