@@ -6,11 +6,10 @@ https://github.com/danielperna84/hahomematic
 """
 
 import logging
-import homeassistant.helpers.config_validation as cv
 from datetime import timedelta
 
 from hahomematic import config
-from hahomematic.client import Client
+from hahomematic.client import Client, ClientFactory
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -38,11 +37,14 @@ from hahomematic.const import (
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
 
-from homeassistant.util import slugify
+import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
+from homeassistant.util import slugify
+
 from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_JSON_TLS
 
 _LOGGER = logging.getLogger(__name__)
@@ -83,10 +85,12 @@ class ControlUnit:
         await self.create_clients()
         self._server.start()
         await self.init_clients()
+        self._server.start_connection_checker()
 
     async def stop(self):
         """Stop the server."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        await self._server.stop_connection_checker()
         for client in self._server.clients.values():
             await client.proxy_de_init()
         await self._server.stop()
@@ -137,7 +141,9 @@ class ControlUnit:
     async def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
         """Activate or deactivate installmode on CCU / Homegear"""
         if self._server:
-            return await self._server.set_install_mode(interface_id, on, t, mode, address)
+            return await self._server.set_install_mode(
+                interface_id, on, t, mode, address
+            )
 
     async def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
         """Set paramsets manually"""
@@ -249,7 +255,7 @@ class ControlUnit:
         self._server = Server(
             instance_name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
-            loop= self._hass.loop,
+            loop=self._hass.loop,
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
@@ -259,11 +265,12 @@ class ControlUnit:
 
     async def create_clients(self):
         """create clients for the server."""
+        client_session = aiohttp_client.async_get_clientsession(self._hass)
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
             clients.add(
-                Client(
+                await ClientFactory(
                     server=self.server,
                     name=interface_name,
                     host=self._data[ATTR_HOST],
@@ -273,6 +280,7 @@ class ControlUnit:
                     password=self._data[ATTR_PASSWORD],
                     tls=self._data[ATTR_TLS],
                     verify_tls=self._data[ATTR_VERIFY_TLS],
+                    client_session=client_session,
                     callback_host=self._data.get(ATTR_CALLBACK_HOST)
                     if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
                     else None,
@@ -281,7 +289,7 @@ class ControlUnit:
                     else None,
                     json_port=self._data[ATTR_JSON_PORT],
                     json_tls=self._data[ATTR_JSON_TLS],
-                )
+                ).get_client()
             )
         return clients
 
