@@ -12,6 +12,7 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
 from .const import (
+    DEVICE_PARAMETER_BINARY_SENSOR_DEVICE_CLASSES,
     PARAMETER_BINARY_SENSOR_DEVICE_CLASSES,
     PARAMETER_ENTITY_CATEGORIES,
     PARAMETER_SENSOR_DEVICE_CLASSES,
@@ -164,7 +165,11 @@ def _get_device_class(hm_entity):
     """get device_class by parameter"""
     if hasattr(hm_entity, "parameter"):
         if hm_entity.platform == "binary_sensor":
-            return PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
+            device_class = DEVICE_PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get((hm_entity._device.device_type, hm_entity.parameter))
+            if not device_class:
+                device_class = PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
+            return device_class
+
         if hm_entity.platform == "sensor":
             return PARAMETER_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
 
