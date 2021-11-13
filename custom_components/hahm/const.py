@@ -31,6 +31,8 @@ ATTR_INTERFACE = "interface"
 ATTR_INTERFACE_NAME = "interface_name"
 ATTR_JSON_TLS = "json_tls"
 
+CONF_ENABLE_VIRTUAL_CHANNELS = "enable_virtual_channels"
+
 SERVICE_VIRTUAL_KEY = "virtual_key"
 SERVICE_RECONNECT = "reconnect"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
@@ -84,9 +86,6 @@ PARAMETER_SENSOR_DEVICE_CLASSES = {
     # "WIND_DIR_RANGE",
     # "WIND_SPEED",
 }
-
-
-
 
 
 PARAMETER_ENTITY_CATEGORIES = {
