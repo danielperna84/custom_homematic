@@ -84,9 +84,6 @@ class HaHomematicGenericEntity(Entity):
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
         await self._init_data()
 
-    async def async_update(self):
-        return
-
     async def _init_data(self) -> None:
         """Init data. Disable entity if data load fails due to missing device value."""
         load_state = await self._hm_entity.load_data()
