@@ -4,11 +4,7 @@ from typing import Any
 
 from hahomematic.const import HA_PLATFORM_LIGHT
 
-from homeassistant.components.light import (
-    ATTR_BRIGHTNESS,
-    ATTR_HS_COLOR,
-    LightEntity,
-)
+from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_HS_COLOR, LightEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 

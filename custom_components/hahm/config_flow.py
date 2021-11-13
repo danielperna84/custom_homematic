@@ -26,7 +26,7 @@ from hahomematic.const import (
 )
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
@@ -36,6 +36,7 @@ from .const import (
     ATTR_INTERFACE,
     ATTR_INTERFACE_NAME,
     ATTR_JSON_TLS,
+    CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
 from .controlunit import ControlUnit
@@ -174,6 +175,45 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="interface", data_schema=INTERFACE_SCHEMA, errors=errors
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return HahmOptionsFlowHandler(config_entry)
+
+
+class HahmOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle hahm options."""
+
+    def __init__(self, config_entry):
+        """Initialize hahm options flow."""
+        self.config_entry = config_entry
+        self.options = dict(config_entry.options)
+        self._cu = None
+
+    async def async_step_init(self, user_input=None):
+        """Manage the hahm options."""
+        self._cu = self.hass.data[DOMAIN][self.config_entry.entry_id]
+        return await self.async_step_hahm_devices()
+
+    async def async_step_hahm_devices(self, user_input=None):
+        """Manage the deconz devices options."""
+        if user_input is not None:
+            self.options.update(user_input)
+            return self.async_create_entry(title="", data=self.options)
+
+        return self.async_show_form(
+            step_id="hahm_devices",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_ENABLE_VIRTUAL_CHANNELS,
+                        default=self._cu.enable_virtual_channels,
+                    ): bool,
+                }
+            ),
         )
 
 

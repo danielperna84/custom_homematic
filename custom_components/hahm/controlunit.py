@@ -45,7 +45,12 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_JSON_TLS
+from .const import (
+    ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
+    ATTR_JSON_TLS,
+    CONF_ENABLE_VIRTUAL_CHANNELS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL_HUB = timedelta(seconds=300)
@@ -66,8 +71,12 @@ class ControlUnit:
             self._entry = entry
             self._entry_id = entry.entry_id
             self._data = self._entry.data
+            self.enable_virtual_channels = self._entry.options.get(
+                CONF_ENABLE_VIRTUAL_CHANNELS, False
+            )
         else:
             self._entry_id = "solo"
+            self.enable_virtual_channels = False
         self._server: Server = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
         self._hub = None
@@ -258,6 +267,7 @@ class ControlUnit:
             loop=self._hass.loop,
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
+            enable_virtual_channels=self.enable_virtual_channels,
         )
         # register callback
         self._server.callback_system_event = self._callback_system_event
