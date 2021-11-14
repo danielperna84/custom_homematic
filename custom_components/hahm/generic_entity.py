@@ -4,19 +4,11 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import DATA_LOAD_FAIL
-
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.entity import DeviceInfo, Entity
-
-from .const import (
-    DEVICE_PARAMETER_BINARY_SENSOR_DEVICE_CLASSES,
-    PARAMETER_BINARY_SENSOR_DEVICE_CLASSES,
-    PARAMETER_ENTITY_CATEGORIES,
-    PARAMETER_SENSOR_DEVICE_CLASSES,
-)
+from homeassistant.helpers.entity import DeviceInfo, Entity, EntityDescription
+from .const import DOMAIN
 from .controlunit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,14 +17,20 @@ _LOGGER = logging.getLogger(__name__)
 class HaHomematicGenericEntity(Entity):
     """Representation of the HomematicIP generic entity."""
 
-    def __init__(self, cu: ControlUnit, hm_entity) -> None:
+    def __init__(
+        self,
+        cu: ControlUnit,
+        hm_entity,
+        entity_description: EntityDescription | None = None,
+    ) -> None:
         """Initialize the generic entity."""
         self._cu = cu
         self._hm_entity = hm_entity
+        if entity_description is not None:
+            self.entity_description = entity_description
 
         # Marker showing that the Hm device hase been removed.
         self.hm_device_removed = False
-        self._device_class = _get_device_class(self._hm_entity)
         _LOGGER.info("Setting up %s", self.name)
 
     @property
@@ -41,21 +39,19 @@ class HaHomematicGenericEntity(Entity):
         return self._hm_entity.available
 
     @property
-    def device_class(self) -> str:
-        """Return the class of this sensor."""
-        return self._device_class
-
-    @property
-    def device_info(self) -> DeviceInfo:
+    def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        return self._hm_entity.device_info
-
-    @property
-    def entity_category(self) -> str | None:
-        """Return the entity categorie."""
-        if hasattr(self._hm_entity, "parameter"):
-            return PARAMETER_ENTITY_CATEGORIES.get(self._hm_entity.parameter)
-        return None
+        # Only physical devices should be HA devices.
+        info = self._hm_entity.device_info
+        return DeviceInfo(
+            identifiers=info["identifiers"],
+            manufacturer=info["manufacturer"],
+            model=info["model"],
+            name=info["name"],
+            sw_version=info["sw_version"],
+            # Link to the homematic ip access point.
+            via_device=info["via_device"],
+        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -156,22 +152,3 @@ class HaHomematicGenericEntity(Entity):
         # Set marker showing that the Hm device hase been removed.
         self.hm_device_removed = True
         self.hass.async_create_task(self.async_remove(force_remove=True))
-
-
-def _get_device_class(hm_entity):
-    """get device_class by parameter"""
-    if hasattr(hm_entity, "parameter"):
-        if hm_entity.platform == "binary_sensor":
-            device_class = DEVICE_PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get(
-                (hm_entity._device.device_type, hm_entity.parameter)
-            )
-            if not device_class:
-                device_class = PARAMETER_BINARY_SENSOR_DEVICE_CLASSES.get(
-                    hm_entity.parameter
-                )
-            return device_class
-
-        if hm_entity.platform == "sensor":
-            return PARAMETER_SENSOR_DEVICE_CLASSES.get(hm_entity.parameter)
-
-    return None
