@@ -10,6 +10,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from .const import DOMAIN
 from .controlunit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
+from .helper import get_binary_sensor_entity_description
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +43,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     """Representation of the Homematic binary sensor."""
+
+    def __init__(self, cu: ControlUnit, hm_entity) -> None:
+        """Initialize the binary_sensor entity."""
+        entity_description = get_binary_sensor_entity_description(hm_entity.device_type, hm_entity.parameter)
+        super().__init__(
+            cu=cu, hm_entity=hm_entity, entity_description=entity_description
+        )
 
     @property
     def is_on(self) -> bool:
