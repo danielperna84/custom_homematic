@@ -46,7 +46,9 @@ class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
 
     def __init__(self, cu: ControlUnit, hm_entity) -> None:
         """Initialize the binary_sensor entity."""
-        entity_description = get_binary_sensor_entity_description(hm_entity.device_type, hm_entity.parameter)
+        entity_description = get_binary_sensor_entity_description(
+            hm_entity.device_type, hm_entity.parameter
+        )
         super().__init__(
             cu=cu, hm_entity=hm_entity, entity_description=entity_description
         )

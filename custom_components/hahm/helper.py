@@ -321,7 +321,9 @@ _BINARY_SENSOR_DESCRIPTIONS: dict[str, BinarySensorEntityDescription] = {
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE: dict[(str, str), BinarySensorEntityDescription] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE: dict[
+    (str, str), BinarySensorEntityDescription
+] = {
     ("HmIP-SWDO-I", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=DEVICE_CLASS_WINDOW,
@@ -350,7 +352,7 @@ def get_binary_sensor_entity_description(
     description = _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE.get((device_type, parameter))
     if description:
         return description
-    if parameter in ['STATE']:
+    if parameter in ["STATE"]:
         return None
     description = _BINARY_SENSOR_DESCRIPTIONS.get(parameter)
     if description:
@@ -358,7 +360,9 @@ def get_binary_sensor_entity_description(
     return None
 
 
-def get_sensor_entity_description(device_type: str, parameter: str) -> SensorEntityDescription | None:
+def get_sensor_entity_description(
+    device_type: str, parameter: str
+) -> SensorEntityDescription | None:
     """Get the entity_desription for sensor."""
     description = _SENSOR_DESCRIPTIONS_BY_DEVICE.get((device_type, parameter))
     if description:
@@ -367,7 +371,7 @@ def get_sensor_entity_description(device_type: str, parameter: str) -> SensorEnt
     if description:
         return description
 
-    if parameter in ['STATE']:
+    if parameter in ["STATE"]:
         return None
     return None
 
