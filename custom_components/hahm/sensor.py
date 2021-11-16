@@ -46,7 +46,9 @@ class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
 
     def __init__(self, cu: ControlUnit, hm_entity) -> None:
         """Initialize the sensor entity."""
-        entity_description = get_sensor_entity_description(hm_entity.device_type, hm_entity.parameter)
+        entity_description = get_sensor_entity_description(
+            hm_entity.device_type, hm_entity.parameter
+        )
         super().__init__(
             cu=cu, hm_entity=hm_entity, entity_description=entity_description
         )

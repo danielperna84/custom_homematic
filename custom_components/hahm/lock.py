@@ -4,7 +4,7 @@ from typing import Any
 
 from hahomematic.const import HA_PLATFORM_LOCK
 
-from homeassistant.components.lock import LockEntity
+from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
@@ -44,11 +44,24 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     """Representation of the HomematicIP lock entity."""
 
-    async def async_lock(self, **kwargs: Any) -> None:
-        pass
+    @property
+    def is_locked(self):
+        """Return true if lock is on."""
+        return self._hm_device.is_locked
 
-    async def async_unlock(self, **kwargs: Any) -> None:
-        pass
+    @property
+    def supported_features(self) -> int:
+        """Flag supported features."""
+        return SUPPORT_OPEN
+
+    async def async_lock(self, **kwargs):
+        """Lock the lock."""
+        await self._hm_device.async_lock()
+
+    async def async_unlock(self, **kwargs):
+        """Unlock the lock."""
+        await self._hm_device.async_unlock()
 
     async def async_open(self, **kwargs: Any) -> None:
-        pass
+        """Open the lock."""
+        await self._hm_device.async_open()
