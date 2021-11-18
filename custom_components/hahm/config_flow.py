@@ -7,6 +7,7 @@ from xmlrpc.client import ProtocolError
 
 import voluptuous as vol
 from hahomematic import config
+from hahomematic.client import Client
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -86,7 +87,8 @@ async def validate_input(
     cu.create_server()
     try:
         await cu.create_clients()
-        return True
+        first_client: Client = cu.server.clients[0]
+        return first_client.is_connected()
     except ConnectionError as e:
         _LOGGER.exception(e)
         raise CannotConnect
@@ -113,7 +115,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
             self._abort_if_unique_id_configured()
             self.data = {
-                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME],
+                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME].title(),
                 ATTR_HOST: user_input[ATTR_HOST],
                 ATTR_USERNAME: user_input[ATTR_USERNAME],
                 ATTR_PASSWORD: user_input[ATTR_PASSWORD],
