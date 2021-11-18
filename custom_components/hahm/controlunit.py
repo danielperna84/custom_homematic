@@ -36,11 +36,13 @@ from hahomematic.const import (
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.server import Server
+from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -85,14 +87,22 @@ class ControlUnit:
         """Start the server."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
-        config.TIMEOUT = 30
-        config.PROXY_EXECUTOR_MAX_WORKERS = 1
-        config.JSON_EXECUTOR_MAX_WORKERS = 4
+
+        if self._entry:
+            device_registry = dr.async_get(self._hass)
+            device_registry.async_get_or_create(
+                config_entry_id=self._entry.entry_id,
+                identifiers={(HA_DOMAIN, self._entry.unique_id)},
+                manufacturer="eQ-3",
+                model="Hub",
+                # Add the name from config entry.
+                name=self._entry.title.title(),
+            )
 
         self.create_server()
 
         await self.create_clients()
-        self._server.start()
+        self._server.create_devices()
         await self.init_clients()
         self._server.start_connection_checker()
 
@@ -105,7 +115,13 @@ class ControlUnit:
         await self._server.stop()
 
     def init_hub(self):
+        """Init the hub."""
         self._hub = HMHub(self._hass, self)
+
+    @property
+    def hub(self):
+        """Return the Hub."""
+        return self._hub
 
     async def init_clients(self):
         """Init clients related to server."""
@@ -204,9 +220,9 @@ class ControlUnit:
         del self._active_hm_entities[hm_entity.unique_id]
 
     @callback
-    def async_signal_new_hm_entity(self, device_type) -> str:
+    def async_signal_new_hm_entity(self, entry_id, device_type) -> str:
         """Gateway specific event to signal new device."""
-        return f"hahm-new-entity-{device_type}"
+        return f"hahm-new-entity-{entry_id}-{device_type}"
 
     @callback
     def _callback_system_event(self, src, *args):
@@ -222,7 +238,7 @@ class ControlUnit:
                     args.append([hm_entities])
                     async_dispatcher_send(
                         self._hass,
-                        self.async_signal_new_hm_entity(platform),
+                        self.async_signal_new_hm_entity(self._entry_id, platform),
                         *args,  # Don't send device if None, it would override default value in listeners
                     )
             return
@@ -261,12 +277,15 @@ class ControlUnit:
 
     def create_server(self):
         """create the server for ccu callbacks."""
+        xml_rpc_server = register_xml_rpc_server(
+            local_ip=self._data.get(ATTR_CALLBACK_HOST),
+            local_port=self._data.get(ATTR_CALLBACK_PORT),
+        )
         self._server = Server(
             instance_name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
             loop=self._hass.loop,
-            local_ip=self._data.get(ATTR_CALLBACK_HOST),
-            local_port=self._data.get(ATTR_CALLBACK_PORT),
+            xml_rpc_server=xml_rpc_server,
             enable_virtual_channels=self.enable_virtual_channels,
         )
         # register callback
@@ -358,7 +377,7 @@ class HMHub(Entity):
     async def _update_hub(self, now):
         """Retrieve latest state."""
         service_message = await self._cu.get_service_messages()
-        state = None if service_message is None else len(service_message)
+        state = 0 if service_message is None else len(service_message)
 
         # state have change?
         if self._state != state:
@@ -382,7 +401,7 @@ class HMHub(Entity):
         if state_change:
             self.async_schedule_update_ha_state()
 
-    async def hm_set_variable(self, name, value):
+    async def set_variable(self, name, value):
         """Set variable value on CCU/Homegear."""
         if name not in self._variables:
             _LOGGER.error("Variable %s not found on %s", name, self.name)
@@ -390,6 +409,8 @@ class HMHub(Entity):
         old_value = self._variables.get(name)
         if isinstance(old_value, bool):
             value = cv.boolean(value)
+        elif isinstance(old_value, str):
+            value = str(value)
         else:
             value = float(value)
         await self._cu.set_system_variable(name, value)

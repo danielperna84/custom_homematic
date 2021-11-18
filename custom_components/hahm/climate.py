@@ -33,7 +33,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(HA_PLATFORM_CLIMATE),
+            cu.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_CLIMATE),
             async_add_climate,
         )
     )

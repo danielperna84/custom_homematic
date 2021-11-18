@@ -1,12 +1,13 @@
 # Describes the format for available component services
 
-virtualkey:
+virtual_key:
   name: Virtual key
   description: Press a virtual key from CCU/Homegear or simulate keypress.
   fields:
-    interface:
+    interface_id:
       name: Interface
-      description: Set an interface value
+      description: Select the given interface into install mode
+      required: true
       example: Interfaces name from config
       selector:
         text:
@@ -17,8 +18,8 @@ virtualkey:
       example: BidCoS-RF
       selector:
         text:
-    param:
-      name: Param
+    parameter:
+      name: Parameter
       description: Event to send i.e. PRESS_LONG, PRESS_SHORT.
       required: true
       example: PRESS_LONG
@@ -54,7 +55,7 @@ set_device_value:
   name: Set device value
   description: Set a device property on RPC XML interface.
   fields:
-    interface:
+    interface_id:
       name: Interface
       description: Set an interface value
       example: Interfaces name from config
@@ -67,8 +68,8 @@ set_device_value:
       example: BidCoS-RF
       selector:
         text:
-    param:
-      name: Param
+    parameter:
+      name: Parameter
       description: Event to send i.e. PRESS_LONG, PRESS_SHORT
       required: true
       example: PRESS_LONG
@@ -93,15 +94,11 @@ set_device_value:
             - 'int'
             - 'string'
 
-reconnect:
-  name: Reconnect
-  description: Reconnect to all Homematic Hubs.
-
 set_install_mode:
   name: Set install mode
   description: Set a RPC XML interface into installation mode.
   fields:
-    interface:
+    interface_id:
       name: Interface
       description: Select the given interface into install mode
       required: true
@@ -136,7 +133,7 @@ put_paramset:
   name: Put paramset
   description: Call to putParamset in the RPC XML interface
   fields:
-    interface:
+    interface_id:
       name: Interface
       description: The interfaces name from the config
       required: true

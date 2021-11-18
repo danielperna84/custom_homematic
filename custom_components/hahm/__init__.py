@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
-from functools import partial
 from typing import Optional
 
 import voluptuous as vol
@@ -28,26 +27,28 @@ from hahomematic.entity import GenericEntity
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_MODE, ATTR_TIME
+from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    ATTR_CHANNEL,
     ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
+    ATTR_PARAM,
     DOMAIN,
     SERVICE_PUT_PARAMSET,
-    SERVICE_RECONNECT,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_VIRTUAL_KEY,
 )
-from .controlunit import ControlUnit
+from .controlunit import ControlUnit, HMHub
 
 _LOGGER = logging.getLogger(__name__)
 
 SCHEMA_SERVICE_VIRTUALKEY = vol.Schema(
     {
-        vol.Required(ATTR_INTERFACE_ID): cv.string,
+        vol.Optional(ATTR_INTERFACE_ID): cv.string,
         vol.Required(ATTR_ADDRESS): vol.All(cv.string, vol.Upper),
         vol.Required(ATTR_PARAMETER): cv.string,
     }
@@ -55,7 +56,7 @@ SCHEMA_SERVICE_VIRTUALKEY = vol.Schema(
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
-        vol.Required(ATTR_INTERFACE_ID): cv.string,
+        vol.Required(ATTR_ENTITY_ID): cv.string,
         vol.Required(ATTR_NAME): cv.string,
         vol.Required(ATTR_VALUE): cv.match_all,
     }
@@ -73,8 +74,6 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.Schema(
         vol.Optional(ATTR_INTERFACE_ID): cv.string,
     }
 )
-
-SCHEMA_SERVICE_RECONNECT = vol.Schema({})
 
 SCHEMA_SERVICE_SET_INSTALL_MODE = vol.Schema(
     {
@@ -104,8 +103,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = cu
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-    # await hass.async_add_executor_job(cu.init_hub)
-    # await async_setup_services(hass)
+    await hass.async_add_executor_job(cu.init_hub)
+    await async_setup_services(hass)
     return True
 
 
@@ -121,56 +120,44 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup servives"""
 
-    async def _hm_service_virtualkey(service):
+    async def _service_virtualkey(service):
         """Service to handle virtualkey servicecalls."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
         parameter = service.data[ATTR_PARAMETER]
 
-        hm_entity = _get_hm_entity(hass, interface_id, address, parameter)
-        if hm_entity is None:
+        action_event = _get_hm_entity(hass, interface_id, address, parameter)
+        if action_event is None:
             _LOGGER.error("%s not found for service virtualkey!", address)
             return
 
-        await hm_entity.send_value(True)
+        await action_event.send_value(True)
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_VIRTUAL_KEY,
-        service_func=_hm_service_virtualkey,
+        service_func=_service_virtualkey,
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
 
-    async def _service_handle_value(service):
+    async def _service_set_variable_value(service):
         """Service to call setValue method for HomeMatic system variable."""
-        interface_id = service.data[ATTR_INTERFACE_ID]
+        entity_id = service.data.get(ATTR_ENTITY_ID)
         name = service.data[ATTR_NAME]
         value = service.data[ATTR_VALUE]
 
-        cu = _get_cu_by_interface_id(hass, interface_id)
-        if cu:
-            await cu.set_system_variable(name, value)
+        hub = _get_hub_by_entity_id(hass, entity_id)
+        if hub:
+            await hub.set_variable(name, value)
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_VARIABLE_VALUE,
-        service_func=_service_handle_value,
+        service_func=_service_set_variable_value,
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
-    async def _service_handle_reconnect(service):
-        """Service to reconnect all HomeMatic hubs."""
-        for cu in hass.data[DOMAIN]:
-            await cu.reconnect()
-
-    hass.services.async_register(
-        domain=DOMAIN,
-        service=SERVICE_RECONNECT,
-        service_func=_service_handle_reconnect,
-        schema=SCHEMA_SERVICE_RECONNECT,
-    )
-
-    async def _service_handle_device(service):
+    async def _service_set_device_value(service):
         """Service to call setValue method for HomeMatic devices."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -204,11 +191,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_DEVICE_VALUE,
-        service_func=_service_handle_device,
+        service_func=_service_set_device_value,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
-    async def _service_handle_install_mode(service):
+    async def _service_set_install_mode(service):
         """Service to set interface_id into install mode."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         mode = service.data.get(ATTR_MODE)
@@ -222,7 +209,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_INSTALL_MODE,
-        service_func=_service_handle_install_mode,
+        service_func=_service_set_install_mode,
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
@@ -262,10 +249,10 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
 
-    if address == "BIDCOS-RF":
-        address = "BidCoS-RF"
-    if address == "HMIP-RCV-1":
-        address = "HmIP-RCV-1"
+    if address.startswith("BIDCOS-RF"):
+        address = address.replace("BIDCOS-RF", "BidCoS-RF")
+    if address.startswith("HMIP-RCV-1"):
+        address = address.replace("HMIP-RCV-1", "HmIP-RCV-1")
 
     cu = _get_cu_by_interface_id(hass, interface_id)
     return cu.server.get_hm_entity_by_parameter(address, parameter)
@@ -275,7 +262,17 @@ def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
     """
     Get ControlUnit by device address
     """
-    for cu in hass.data[DOMAIN]:
+    for cu in hass.data[DOMAIN].values():
         if cu.server.clients.get(interface_id):
             return cu
+    return None
+
+
+def _get_hub_by_entity_id(hass, entity_id) -> Optional[HMHub]:
+    """
+    Get ControlUnit by device address
+    """
+    for cu in hass.data[DOMAIN].values():
+        if cu.hub.entity_id == entity_id:
+            return cu.hub
     return None
