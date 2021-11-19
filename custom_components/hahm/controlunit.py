@@ -264,11 +264,15 @@ class ControlUnit:
             return
 
     @callback
-    def _callback_device_event(self, address, interface_id):
+    def _callback_click_event(self, event_type, event_data):
+        self._hass.bus.fire(
+            event_type,
+            event_data,
+        )
         return
 
     @callback
-    def _callback_click_event(self, event_type, event_data):
+    def _callback_alarm_event(self, event_type, event_data):
         self._hass.bus.fire(
             event_type,
             event_data,
@@ -291,6 +295,7 @@ class ControlUnit:
         # register callback
         self._server.callback_system_event = self._callback_system_event
         self._server.callback_click_event = self._callback_click_event
+        self._server.callback_alarm_event = self._callback_alarm_event
 
     async def create_clients(self):
         """create clients for the server."""
