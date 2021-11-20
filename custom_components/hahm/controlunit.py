@@ -355,6 +355,11 @@ class HMHub(Entity):
         self.hass.async_add_job(self._update_variables, None)
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._cu.server.available
+
+    @property
     def name(self):
         """Return the name of the device."""
         return self._name
@@ -391,7 +396,9 @@ class HMHub(Entity):
 
     async def _update_variables(self, now):
         """Retrieve all variable data and update hmvariable states."""
-        variables = await self._cu.get_all_system_variables()
+        variables = None
+        if self.available:
+            variables = await self._cu.get_all_system_variables()
         if variables is None:
             return
 
