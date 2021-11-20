@@ -22,6 +22,8 @@ from hahomematic.const import (
     ATTR_VALUE,
     ATTR_VALUE_TYPE,
     HA_PLATFORMS,
+    HM_VIRTUAL_REMOTE_HM,
+    HM_VIRTUAL_REMOTE_HMIP,
 )
 from hahomematic.entity import GenericEntity
 
@@ -126,12 +128,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         address = service.data[ATTR_ADDRESS]
         parameter = service.data[ATTR_PARAMETER]
 
-        action_event = _get_hm_entity(hass, interface_id, address, parameter)
-        if action_event is None:
-            _LOGGER.error("%s not found for service virtualkey!", address)
-            return
-
-        await action_event.send_value(True)
+        cu = _get_cu_by_interface_id(hass, interface_id)
+        await cu.server.press_virtual_remote_key(address, parameter)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -248,12 +246,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
-
-    if address.startswith("BIDCOS-RF"):
-        address = address.replace("BIDCOS-RF", "BidCoS-RF")
-    if address.startswith("HMIP-RCV-1"):
-        address = address.replace("HMIP-RCV-1", "HmIP-RCV-1")
-
     cu = _get_cu_by_interface_id(hass, interface_id)
     return cu.server.get_hm_entity_by_parameter(address, parameter)
 

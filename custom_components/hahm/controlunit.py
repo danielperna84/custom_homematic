@@ -264,11 +264,15 @@ class ControlUnit:
             return
 
     @callback
-    def _callback_device_event(self, address, interface_id):
+    def _callback_click_event(self, event_type, event_data):
+        self._hass.bus.fire(
+            event_type,
+            event_data,
+        )
         return
 
     @callback
-    def _callback_click_event(self, event_type, event_data):
+    def _callback_alarm_event(self, event_type, event_data):
         self._hass.bus.fire(
             event_type,
             event_data,
@@ -291,6 +295,7 @@ class ControlUnit:
         # register callback
         self._server.callback_system_event = self._callback_system_event
         self._server.callback_click_event = self._callback_click_event
+        self._server.callback_alarm_event = self._callback_alarm_event
 
     async def create_clients(self):
         """create clients for the server."""
@@ -350,6 +355,11 @@ class HMHub(Entity):
         self.hass.async_add_job(self._update_variables, None)
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._cu.server.available
+
+    @property
     def name(self):
         """Return the name of the device."""
         return self._name
@@ -386,7 +396,9 @@ class HMHub(Entity):
 
     async def _update_variables(self, now):
         """Retrieve all variable data and update hmvariable states."""
-        variables = await self._cu.get_all_system_variables()
+        variables = None
+        if self.available:
+            variables = await self._cu.get_all_system_variables()
         if variables is None:
             return
 
