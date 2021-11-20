@@ -42,6 +42,14 @@
   },
   "device_automation": {
     "trigger_type": {
+      "acoustic_alarm_active": "acoustic alarm active",
+      "alarmstate": "alarm state",
+      "dew_point_alarm": "dew point alarm",
+      "humidity_alarm": "humidity alarm",
+      "moisture_detected": "moisture detected",
+      "optical_alarm_active": "optical alarm active",
+      "smoke_detector_alarm_status": "alarm",
+      "waterlevel_detected": "waterlevel detected"
     }
   }
 }
