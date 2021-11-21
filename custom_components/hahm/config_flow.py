@@ -84,10 +84,10 @@ async def validate_input(
     config.CACHE_DIR = "cache"
 
     cu = ControlUnit(hass, data=data)
-    cu.create_server()
+    cu.create_central()
     try:
         await cu.create_clients()
-        first_client: Client = cu.server.clients[0]
+        first_client: Client = cu.central.clients[0]
         return first_client.is_connected()
     except ConnectionError as e:
         _LOGGER.exception(e)

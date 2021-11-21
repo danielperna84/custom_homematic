@@ -129,7 +129,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         parameter = service.data[ATTR_PARAMETER]
 
         cu = _get_cu_by_interface_id(hass, interface_id)
-        await cu.server.press_virtual_remote_key(address, parameter)
+        await cu.central.press_virtual_remote_key(address, parameter)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -247,7 +247,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
     cu = _get_cu_by_interface_id(hass, interface_id)
-    return cu.server.get_hm_entity_by_parameter(address, parameter)
+    return cu.central.get_hm_entity_by_parameter(address, parameter)
 
 
 def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
@@ -255,7 +255,7 @@ def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
     Get ControlUnit by device address
     """
     for cu in hass.data[DOMAIN].values():
-        if cu.server.clients.get(interface_id):
+        if cu.central.clients.get(interface_id):
             return cu
     return None
 

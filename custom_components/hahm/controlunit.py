@@ -35,7 +35,7 @@ from hahomematic.const import (
     PORT_ANY,
 )
 from hahomematic.entity import BaseEntity
-from hahomematic.server import Server
+from hahomematic.central_unit import CentralUnit
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 import homeassistant.helpers.config_validation as cv
@@ -79,12 +79,12 @@ class ControlUnit:
         else:
             self._entry_id = "solo"
             self.enable_virtual_channels = False
-        self._server: Server = None
+        self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
         self._hub = None
 
     async def start(self):
-        """Start the server."""
+        """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
 
@@ -99,20 +99,20 @@ class ControlUnit:
                 name=self._entry.title.title(),
             )
 
-        self.create_server()
+        self.create_central()
 
         await self.create_clients()
-        self._server.create_devices()
+        self._central.create_devices()
         await self.init_clients()
-        self._server.start_connection_checker()
+        self._central.start_connection_checker()
 
     async def stop(self):
-        """Stop the server."""
+        """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        await self._server.stop_connection_checker()
-        for client in self._server.clients.values():
+        await self._central.stop_connection_checker()
+        for client in self._central.clients.values():
             await client.proxy_de_init()
-        await self._server.stop()
+        await self._central.stop()
 
     def init_hub(self):
         """Init the hub."""
@@ -124,56 +124,56 @@ class ControlUnit:
         return self._hub
 
     async def init_clients(self):
-        """Init clients related to server."""
-        for client in self._server.clients.values():
+        """Init clients related to control unit."""
+        for client in self._central.clients.values():
             await client.proxy_init()
 
     @property
-    def server(self):
-        """return the HAHM server instance."""
-        return self._server
+    def central(self):
+        """return the HAHM central_unit instance."""
+        return self._central
 
     async def reconnect(self):
         """Reinit all Clients."""
-        if self._server:
-            await self._server.reconnect()
+        if self._central:
+            await self._central.reconnect()
 
     async def get_all_system_variables(self):
         """Get all system variables from CCU / Homegear"""
-        if self._server:
-            return await self._server.get_all_system_variables()
+        if self._central:
+            return await self._central.get_all_system_variables()
 
     async def get_system_variable(self, name):
         """Get single system variable from CCU / Homegear"""
-        if self._server:
-            return await self._server.get_system_variable(name)
+        if self._central:
+            return await self._central.get_system_variable(name)
 
     async def set_system_variable(self, name, value):
         """Set a system variable on CCU / Homegear"""
-        if self._server:
-            return await self._server.set_system_variable(name, value)
+        if self._central:
+            return await self._central.set_system_variable(name, value)
 
     async def get_service_messages(self):
         """Get service messages from CCU / Homegear"""
-        if self._server:
-            return await self._server.get_service_messages()
+        if self._central:
+            return await self._central.get_service_messages()
 
     async def get_install_mode(self, interface_id):
         """Get remaining time in seconds install mode is active from CCU / Homegear"""
-        if self._server:
-            return await self._server.get_install_mode(interface_id)
+        if self._central:
+            return await self._central.get_install_mode(interface_id)
 
     async def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
         """Activate or deactivate installmode on CCU / Homegear"""
-        if self._server:
-            return await self._server.set_install_mode(
+        if self._central:
+            return await self._central.set_install_mode(
                 interface_id, on, t, mode, address
             )
 
     async def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
         """Set paramsets manually"""
-        if self._server:
-            return await self._server.put_paramset(
+        if self._central:
+            return await self._central.put_paramset(
                 interface_id, address, paramset, value, rx_mode
             )
 
@@ -201,7 +201,7 @@ class ControlUnit:
         Return all hm-entities by platform
         """
         hm_entities = []
-        for entity in self._server.hm_entities.values():
+        for entity in self._central.hm_entities.values():
             if (
                 entity.unique_id not in self._active_hm_entities
                 and entity.create_in_ha
@@ -279,13 +279,13 @@ class ControlUnit:
         )
         return
 
-    def create_server(self):
-        """create the server for ccu callbacks."""
+    def create_central(self):
+        """create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
-        self._server = Server(
+        self._central = CentralUnit(
             instance_name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
             loop=self._hass.loop,
@@ -293,19 +293,19 @@ class ControlUnit:
             enable_virtual_channels=self.enable_virtual_channels,
         )
         # register callback
-        self._server.callback_system_event = self._callback_system_event
-        self._server.callback_click_event = self._callback_click_event
-        self._server.callback_alarm_event = self._callback_alarm_event
+        self._central.callback_system_event = self._callback_system_event
+        self._central.callback_click_event = self._callback_click_event
+        self._central.callback_alarm_event = self._callback_alarm_event
 
     async def create_clients(self):
-        """create clients for the server."""
+        """create clients for the central unit."""
         client_session = aiohttp_client.async_get_clientsession(self._hass)
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
             clients.add(
                 await ClientFactory(
-                    server=self.server,
+                    central=self.central,
                     name=interface_name,
                     host=self._data[ATTR_HOST],
                     port=interface[ATTR_PORT],
@@ -340,7 +340,7 @@ class HMHub(Entity):
         """Initialize HomeMatic hub."""
         self.hass = hass
         self._cu: ControlUnit = cu
-        self._name = self._cu.server.instance_name
+        self._name = self._cu.central.instance_name
         self.entity_id = f"{HA_DOMAIN}.{slugify(self._name.lower())}"
         self._variables = {}
         self._state = None
@@ -357,7 +357,7 @@ class HMHub(Entity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._cu.server.available
+        return self._cu.central.available
 
     @property
     def name(self):
