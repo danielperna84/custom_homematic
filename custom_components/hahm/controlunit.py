@@ -10,6 +10,7 @@ from datetime import timedelta
 
 from hahomematic import config
 from hahomematic.client import Client, ClientFactory
+
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -81,7 +82,6 @@ class ControlUnit:
             self.enable_virtual_channels = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
-        self._hub = None
 
     async def start(self):
         """Start the control unit."""
@@ -102,8 +102,10 @@ class ControlUnit:
         self.create_central()
 
         await self.create_clients()
+        await self.init_hub()
         self._central.create_devices()
         await self.init_clients()
+        #await self.init_hub()
         self._central.start_connection_checker()
 
     async def stop(self):
@@ -114,14 +116,22 @@ class ControlUnit:
             await client.proxy_de_init()
         await self._central.stop()
 
-    def init_hub(self):
+    async def init_hub(self):
         """Init the hub."""
-        self._hub = HMHub(self._hass, self)
+        await self._central.init_hub()
+        hm_entities = [self._central.hub]
+        args = [[hm_entities]]
+
+        async_dispatcher_send(
+            self._hass,
+            self.async_signal_new_hm_entity(self._entry_id, "hub"),
+            *args,  # Don't send device if None, it would override default value in listeners
+        )
 
     @property
     def hub(self):
         """Return the Hub."""
-        return self._hub
+        return self._central.hub
 
     async def init_clients(self):
         """Init clients related to control unit."""
@@ -333,7 +343,7 @@ class ControlUnit:
                 return entity
 
 
-class HMHub(Entity):
+class HMHub2(Entity):
     """The HomeMatic hub. (CCU2/HomeGear)."""
 
     def __init__(self, hass, cu: ControlUnit):
