@@ -34,6 +34,7 @@ from hahomematic.const import (
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PORT_ANY,
+    HM_VIRTUAL_REMOTES,
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.xml_rpc_server import register_xml_rpc_server
@@ -85,6 +86,7 @@ class ControlUnit:
             self.enable_sensors_for_own_system_variables = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
+        self._virtual_remotes_initialized = False
 
     async def start(self):
         """Start the control unit."""
@@ -98,6 +100,25 @@ class ControlUnit:
         await self.init_clients()
 
         self._central.start_connection_checker()
+
+    def init_virtual_remotes(self):
+        """Init the device for the virtual remotes."""
+        if self._virtual_remotes_initialized:
+            return
+        device_registry = dr.async_get(self._hass)
+        for client in self.server.clients.values():
+            virtual_device = client.get_virtual_remote()
+            if not virtual_device:
+                continue
+            device_registry.async_get_or_create(
+                config_entry_id=self._entry.entry_id,
+                identifiers={(HA_DOMAIN, virtual_device.address)},
+                manufacturer="eQ-3",
+                model=virtual_device.device_type,
+                # Add the name from config entry.
+                name=virtual_device.name,
+            )
+        self._virtual_remotes_initialized = True
 
     async def stop(self):
         """Stop the control unit."""
@@ -242,6 +263,7 @@ class ControlUnit:
                         self.async_signal_new_hm_entity(self._entry_id, platform),
                         *args,  # Don't send device if None, it would override default value in listeners
                     )
+            self.init_virtual_remotes()
             return
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
