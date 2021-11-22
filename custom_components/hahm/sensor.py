@@ -1,6 +1,7 @@
 """binary_sensor for HAHM."""
 import logging
 from datetime import timedelta
+
 from hahomematic.const import HA_PLATFORM_SENSOR
 
 from homeassistant.components.sensor import SensorEntity
@@ -86,9 +87,7 @@ class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
 
     def __init__(self, cu: ControlUnit, hm_entity) -> None:
         """Initialize the sensor entity."""
-        super().__init__(
-            cu=cu, hm_entity=hm_entity, entity_description=None
-        )
+        super().__init__(cu=cu, hm_entity=hm_entity, entity_description=None)
 
     @property
     def native_value(self):

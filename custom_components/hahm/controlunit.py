@@ -9,8 +9,8 @@ import logging
 from datetime import timedelta
 
 from hahomematic import config
+from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import Client, ClientConfig
-
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -36,7 +36,6 @@ from hahomematic.const import (
     PORT_ANY,
 )
 from hahomematic.entity import BaseEntity
-from hahomematic.central_unit import CentralUnit, CentralConfig
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 import homeassistant.helpers.config_validation as cv
@@ -51,8 +50,8 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_JSON_TLS,
-    CONF_ENABLE_VIRTUAL_CHANNELS,
     CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
+    CONF_ENABLE_VIRTUAL_CHANNELS,
 )
 
 _LOGGER = logging.getLogger(__name__)

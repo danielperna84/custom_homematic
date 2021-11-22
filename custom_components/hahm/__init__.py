@@ -22,8 +22,7 @@ from hahomematic.const import (
     ATTR_VALUE,
     ATTR_VALUE_TYPE,
     HA_PLATFORMS,
-    HM_VIRTUAL_REMOTE_HM,
-    HM_VIRTUAL_REMOTE_HMIP,
+
 )
 from hahomematic.entity import GenericEntity
 
