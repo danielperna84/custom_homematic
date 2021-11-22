@@ -22,8 +22,7 @@ from hahomematic.const import (
     ATTR_VALUE,
     ATTR_VALUE_TYPE,
     HA_PLATFORMS,
-    HM_VIRTUAL_REMOTE_HM,
-    HM_VIRTUAL_REMOTE_HMIP,
+
 )
 from hahomematic.entity import GenericEntity
 
@@ -44,7 +43,7 @@ from .const import (
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_VIRTUAL_KEY,
 )
-from .controlunit import ControlUnit, HMHub
+from .controlunit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -105,7 +104,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = cu
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
     await cu.start()
-    await hass.async_add_executor_job(cu.init_hub)
     await async_setup_services(hass)
     return True
 
@@ -129,7 +127,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         parameter = service.data[ATTR_PARAMETER]
 
         cu = _get_cu_by_interface_id(hass, interface_id)
-        await cu.server.press_virtual_remote_key(address, parameter)
+        await cu.central.press_virtual_remote_key(address, parameter)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -247,7 +245,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
     cu = _get_cu_by_interface_id(hass, interface_id)
-    return cu.server.get_hm_entity_by_parameter(address, parameter)
+    return cu.central.get_hm_entity_by_parameter(address, parameter)
 
 
 def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
@@ -255,7 +253,7 @@ def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
     Get ControlUnit by device address
     """
     for cu in hass.data[DOMAIN].values():
-        if cu.server.clients.get(interface_id):
+        if cu.central.clients.get(interface_id):
             return cu
     return None
 

@@ -13,6 +13,7 @@ ATTR_CHANNEL = "channel"
 ATTR_ADDRESS = "address"
 
 CONF_ENABLE_VIRTUAL_CHANNELS = "enable_virtual_channels"
+CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES = "enable_sensors_for_own_system_variables"
 
 SERVICE_VIRTUAL_KEY = "virtual_key"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
