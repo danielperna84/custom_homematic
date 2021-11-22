@@ -88,24 +88,12 @@ class ControlUnit:
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
 
-        if self._entry:
-            device_registry = dr.async_get(self._hass)
-            device_registry.async_get_or_create(
-                config_entry_id=self._entry.entry_id,
-                identifiers={(HA_DOMAIN, self._entry.unique_id)},
-                manufacturer="eQ-3",
-                model="Hub",
-                # Add the name from config entry.
-                name=self._entry.title.title(),
-            )
-
         self.create_central()
-
         await self.create_clients()
         await self.init_hub()
         self._central.create_devices()
         await self.init_clients()
-        #await self.init_hub()
+
         self._central.start_connection_checker()
 
     async def stop(self):

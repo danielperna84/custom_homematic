@@ -19,7 +19,7 @@
         }
       },
       "interface": {
-        "description": "Configure the connection to your CCU2 or CCU3",
+        "description": "Configure the interface ",
         "data": {
           "interface_name": "Interface Name",
           "port": "CCU Port",
