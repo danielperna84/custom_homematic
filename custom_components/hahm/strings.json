@@ -19,7 +19,7 @@
         }
       },
       "interface": {
-        "description": "Configure the interface ",
+        "description": "Configure the interface",
         "data": {
           "interface_name": "Interface Name",
           "port": "CCU Port",
@@ -33,7 +33,8 @@
     "step": {
       "hahm_devices": {
         "data": {
-          "enable_virtual_channels": "Enable virtual channels"
+          "enable_virtual_channels": "Enable virtual channels",
+          "enable_sensors_for_own_system_variables": "Enable sensors for own system variables"
         },
         "description": "Configure visibility of hahm device types",
         "title": "Hahm options"

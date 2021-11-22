@@ -43,7 +43,6 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -53,6 +52,7 @@ from .const import (
     ATTR_INTERFACE,
     ATTR_JSON_TLS,
     CONF_ENABLE_VIRTUAL_CHANNELS,
+    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,9 +77,13 @@ class ControlUnit:
             self.enable_virtual_channels = self._entry.options.get(
                 CONF_ENABLE_VIRTUAL_CHANNELS, False
             )
+            self.enable_sensors_for_own_system_variables = self._entry.options.get(
+                CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES, False
+            )
         else:
             self._entry_id = "solo"
             self.enable_virtual_channels = False
+            self.enable_sensors_for_own_system_variables = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
 
@@ -298,6 +302,7 @@ class ControlUnit:
             json_port=self._data[ATTR_JSON_PORT],
             json_tls=self._data[ATTR_JSON_TLS],
             enable_virtual_channels=self.enable_virtual_channels,
+            enable_sensors_for_own_system_variables=self.enable_sensors_for_own_system_variables,
         ).get_central()
         # register callback
         self._central.callback_system_event = self._callback_system_event

@@ -37,6 +37,7 @@ from .const import (
     ATTR_INTERFACE,
     ATTR_INTERFACE_NAME,
     ATTR_JSON_TLS,
+    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
@@ -213,6 +214,10 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Optional(
                         CONF_ENABLE_VIRTUAL_CHANNELS,
                         default=self._cu.enable_virtual_channels,
+                    ): bool,
+                    vol.Optional(
+                        CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
+                        default=self._cu.enable_sensors_for_own_system_variables,
                     ): bool,
                 }
             ),

@@ -89,8 +89,6 @@ class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
         super().__init__(
             cu=cu, hm_entity=hm_entity, entity_description=None
         )
-        if self.should_poll:
-            update_interval = timedelta(seconds=30)
 
     @property
     def native_value(self):
