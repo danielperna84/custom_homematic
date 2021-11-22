@@ -5,7 +5,7 @@ from typing import Any
 
 import voluptuous as vol
 from hahomematic.action_event import ClickEvent, ImpulseEvent
-from hahomematic.const import ALARM_EVENTS, CLICK_EVENTS, EVENT_ALARM, EVENT_KEYPRESS
+from hahomematic.const import ALARM_EVENTS, CLICK_EVENTS, EVENT_ALARM, EVENT_KEYPRESS, HM_VIRTUAL_REMOTES
 
 from homeassistant.components.automation import (
     AutomationActionType,
@@ -50,6 +50,8 @@ async def async_get_triggers(
     device_registry = dr.async_get(hass)
     device = device_registry.async_get(device_id)
     address = list(device.identifiers)[0][1]
+    if address.endswith(tuple(HM_VIRTUAL_REMOTES)):
+        address = address.split("_")[1]
     triggers = []
     for entry_id in device.config_entries:
         cu: ControlUnit = hass.data[DOMAIN][entry_id]

@@ -10,6 +10,7 @@ from datetime import timedelta
 
 from hahomematic import config
 from hahomematic.central_unit import CentralConfig, CentralUnit
+from homeassistant.helpers import device_registry as dr
 from hahomematic.client import Client, ClientConfig
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
@@ -34,6 +35,7 @@ from hahomematic.const import (
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PORT_ANY,
+    HM_VIRTUAL_REMOTES,
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.xml_rpc_server import register_xml_rpc_server
@@ -55,9 +57,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL_HUB = timedelta(seconds=300)
-SCAN_INTERVAL_VARIABLES = timedelta(seconds=30)
-
 
 class ControlUnit:
     """
@@ -85,6 +84,7 @@ class ControlUnit:
             self.enable_sensors_for_own_system_variables = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
+        self._virtual_remotes_initialized = False
 
     async def start(self):
         """Start the control unit."""
@@ -96,8 +96,27 @@ class ControlUnit:
         await self.init_hub()
         self._central.create_devices()
         await self.init_clients()
-
         self._central.start_connection_checker()
+        self.init_virtual_remotes()
+
+    def init_virtual_remotes(self):
+        """Init the device for the virtual remotes."""
+        if self._virtual_remotes_initialized:
+            return
+        device_registry = dr.async_get(self._hass)
+        for client in self.central.clients.values():
+            virtual_device = client.get_virtual_remote()
+            if not virtual_device:
+                continue
+            device_registry.async_get_or_create(
+                config_entry_id=self._entry.entry_id,
+                identifiers={(HA_DOMAIN, f"{self.central.instance_name}_{virtual_device.address}")},
+                manufacturer="eQ-3",
+                model=virtual_device.device_type,
+                # Add the name from config entry.
+                name=virtual_device.name,
+            )
+        self._virtual_remotes_initialized = True
 
     async def stop(self):
         """Stop the control unit."""
@@ -333,101 +352,3 @@ class ControlUnit:
         for entity in self._active_hm_entities.values():
             if entity.address == address:
                 return entity
-
-
-class HMHub2(Entity):
-    """The HomeMatic hub. (CCU2/HomeGear)."""
-
-    def __init__(self, hass, cu: ControlUnit):
-        """Initialize HomeMatic hub."""
-        self.hass = hass
-        self._cu: ControlUnit = cu
-        self._name = self._cu.central.instance_name
-        self.entity_id = f"{HA_DOMAIN}.{slugify(self._name.lower())}"
-        self._variables = {}
-        self._state = None
-
-        # Load data
-        self.hass.helpers.event.track_time_interval(self._update_hub, SCAN_INTERVAL_HUB)
-        self.hass.async_add_job(self._update_hub, None)
-
-        self.hass.helpers.event.track_time_interval(
-            self._update_variables, SCAN_INTERVAL_VARIABLES
-        )
-        self.hass.async_add_job(self._update_variables, None)
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self._cu.central.available
-
-    @property
-    def name(self):
-        """Return the name of the device."""
-        return self._name
-
-    @property
-    def should_poll(self):
-        """Return false. HomeMatic Hub object updates variables."""
-        return False
-
-    @property
-    def state(self):
-        """Return the state of the entity."""
-        return self._state
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return self._variables.copy()
-
-    @property
-    def icon(self):
-        """Return the icon to use in the frontend, if any."""
-        return "mdi:gradient-vertical"
-
-    async def _update_hub(self, now):
-        """Retrieve latest state."""
-        service_message = await self._cu.get_service_messages()
-        state = 0 if service_message is None else len(service_message)
-
-        # state have change?
-        if self._state != state:
-            self._state = state
-            self.async_schedule_update_ha_state()
-
-    async def _update_variables(self, now):
-        """Retrieve all variable data and update hmvariable states."""
-        variables = None
-        if self.available:
-            variables = await self._cu.get_all_system_variables()
-        if variables is None:
-            return
-
-        state_change = False
-        for key, value in variables.items():
-            if key in self._variables and value == self._variables[key]:
-                continue
-
-            state_change = True
-            self._variables.update({key: value})
-
-        if state_change:
-            self.async_schedule_update_ha_state()
-
-    async def set_variable(self, name, value):
-        """Set variable value on CCU/Homegear."""
-        if name not in self._variables:
-            _LOGGER.error("Variable %s not found on %s", name, self.name)
-            return
-        old_value = self._variables.get(name)
-        if isinstance(old_value, bool):
-            value = cv.boolean(value)
-        elif isinstance(old_value, str):
-            value = str(value)
-        else:
-            value = float(value)
-        await self._cu.set_system_variable(name, value)
-
-        self._variables.update({name: value})
-        self.async_schedule_update_ha_state()
