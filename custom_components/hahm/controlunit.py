@@ -9,7 +9,7 @@ import logging
 from datetime import timedelta
 
 from hahomematic import config
-from hahomematic.client import Client, ClientFactory
+from hahomematic.client import Client, ClientConfig
 
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
@@ -36,7 +36,7 @@ from hahomematic.const import (
     PORT_ANY,
 )
 from hahomematic.entity import BaseEntity
-from hahomematic.central_unit import CentralUnit
+from hahomematic.central_unit import CentralUnit, CentralConfig
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 import homeassistant.helpers.config_validation as cv
@@ -283,13 +283,22 @@ class ControlUnit:
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
             local_port=self._data.get(ATTR_CALLBACK_PORT),
         )
-        self._central = CentralUnit(
-            instance_name=self._data[ATTR_INSTANCE_NAME],
+        client_session = aiohttp_client.async_get_clientsession(self._hass)
+        self._central = CentralConfig(
+            name=self._data[ATTR_INSTANCE_NAME],
             entry_id=self._entry_id,
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
+            host=self._data[ATTR_HOST],
+            username=self._data[ATTR_USERNAME],
+            password=self._data[ATTR_PASSWORD],
+            tls=self._data[ATTR_TLS],
+            verify_tls=self._data[ATTR_VERIFY_TLS],
+            client_session=client_session,
+            json_port=self._data[ATTR_JSON_PORT],
+            json_tls=self._data[ATTR_JSON_TLS],
             enable_virtual_channels=self.enable_virtual_channels,
-        )
+        ).get_central()
         # register callback
         self._central.callback_system_event = self._callback_system_event
         self._central.callback_click_event = self._callback_click_event
@@ -297,30 +306,21 @@ class ControlUnit:
 
     async def create_clients(self):
         """create clients for the central unit."""
-        client_session = aiohttp_client.async_get_clientsession(self._hass)
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
             clients.add(
-                await ClientFactory(
+                await ClientConfig(
                     central=self.central,
                     name=interface_name,
-                    host=self._data[ATTR_HOST],
                     port=interface[ATTR_PORT],
                     path=interface[ATTR_PATH],
-                    username=self._data[ATTR_USERNAME],
-                    password=self._data[ATTR_PASSWORD],
-                    tls=self._data[ATTR_TLS],
-                    verify_tls=self._data[ATTR_VERIFY_TLS],
-                    client_session=client_session,
                     callback_host=self._data.get(ATTR_CALLBACK_HOST)
                     if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
                     else None,
                     callback_port=self._data.get(ATTR_CALLBACK_PORT)
                     if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
                     else None,
-                    json_port=self._data[ATTR_JSON_PORT],
-                    json_tls=self._data[ATTR_JSON_TLS],
                 ).get_client()
             )
         return clients
