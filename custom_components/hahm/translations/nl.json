@@ -11,7 +11,7 @@
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
           "callback_ip": "Callback IP",
-          "callback_port": "Callback XML-RPC poort",
+          "callback_port": "Callback XML-RPC Port",
           "tls": "Gebruik TLS",
           "verify_tls": "Verifier TLS connection",
           "json_port": "Externe JSON-RPC poort",
@@ -19,18 +19,17 @@
         }
       },
       "interface": {
-        "description": "Configureer de verbinding met uw CCU2 of CCU3",
+        "description": "Configureer de verbinding met uw CCU",
         "data": {
-          "hmip_rf_enabled": "Homematic IP inschakelen",
-          "hmip_rf_port": "HmIP-RF poort",
-          "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
-          "bidos_rf_port": "HM-RF Port",
-          "virtual_devices_enabled": "Groepen (Heating-Group) inschakelen",
-          "virtual_devices_port": "Groepen poort",
-          "virtual_devices_path": "Groepen Path",
-          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
-          "hs485d_port": "HS485D poort"
-        }
+          "hmip_rf_enabled": "enable Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "hm_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "hm_rf_port": "HM-RF Port",
+          "groups_enabled": "enable Groups (Heating-Group)",
+          "groups_port": "Groups Port",
+          "groups_path": "Groups Path",
+          "hs485d_enabled": "enable HS485D (HM-Wired)",
+          "hs485d_port": "HS485D Port"
         }
       }
     }
@@ -40,7 +39,7 @@
       "hahm_devices": {
         "data": {
           "enable_virtual_channels": "Virtuele kanalen inschakelen",
-          "enable_sensors_for_system_variables": "Activeer sensoren voor systeemvariabelen"
+		  "enable_sensors_for_own_system_variables": "Activeer sensoren voor eigen systeemvariabelen"
         },
         "description": "Configureer zichtbaarheid van hahm apparaattypes",
         "title": "Hahm opties"
