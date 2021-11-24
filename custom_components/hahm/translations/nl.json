@@ -11,7 +11,7 @@
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
           "callback_ip": "Callback IP",
-          "callback_port": "Callback XML-RPC poort",
+          "callback_port": "Callback XML-RPC Port",
           "tls": "Gebruik TLS",
           "verify_tls": "Verifier TLS connection",
           "json_port": "Externe JSON-RPC poort",
@@ -19,17 +19,12 @@
         }
       },
       "interface": {
-        "description": "Configureer de verbinding met uw CCU",
+        "description": "Configureer de verbinding met uw CCU2 of CCU3",
         "data": {
-          "hmip_rf_enabled": "Homematic IP inschakelen",
-          "hmip_rf_port": "HmIP-RF Poort",
-          "hm_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
-          "hm_rf_port": "HM-RF poort",
-          "groups_enabled": "Groepen (Heating-Groep) inschakelen",
-          "groups_port": "Groeps poort",
-          "groups_path": "Groeps pad",
-          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
-          "hs485d_port": "HS485D poort"
+          "interface_name": "Interface naam",
+          "port": "CCU Poort",
+          "path": "CCU Path",
+          "add_another_interface": "Een andere interface toevoegen"
         }
       }
     }
@@ -39,7 +34,7 @@
       "hahm_devices": {
         "data": {
           "enable_virtual_channels": "Virtuele kanalen inschakelen",
-		  "enable_sensors_for_system_variables": "Activeer sensoren voor eigen systeemvariabelen"
+		  "enable_sensors_for_own_system_variables": "Activeer sensoren voor eigen systeemvariabelen"
         },
         "description": "Configureer zichtbaarheid van hahm apparaattypes",
         "title": "Hahm opties"
