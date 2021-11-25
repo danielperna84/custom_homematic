@@ -6,11 +6,9 @@ https://github.com/danielperna84/hahomematic
 """
 
 import logging
-from datetime import timedelta
 
 from hahomematic import config
 from hahomematic.central_unit import CentralConfig, CentralUnit
-from homeassistant.helpers import device_registry as dr
 from hahomematic.client import Client, ClientConfig
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
@@ -23,7 +21,6 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
-    HA_DOMAIN,
     HA_PLATFORMS,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
@@ -35,18 +32,14 @@ from hahomematic.const import (
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PORT_ANY,
-    HM_VIRTUAL_REMOTES,
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.entity import Entity
-from homeassistant.util import slugify
 
 from .const import (
     ATTR_INSTANCE_NAME,
@@ -57,6 +50,7 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class ControlUnit:
     """
@@ -84,7 +78,6 @@ class ControlUnit:
             self.enable_sensors_for_own_system_variables = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
-        self._virtual_remotes_initialized = False
 
     async def start(self):
         """Start the control unit."""
@@ -97,26 +90,6 @@ class ControlUnit:
         self._central.create_devices()
         await self.init_clients()
         self._central.start_connection_checker()
-        self.init_virtual_remotes()
-
-    def init_virtual_remotes(self):
-        """Init the device for the virtual remotes."""
-        if self._virtual_remotes_initialized:
-            return
-        device_registry = dr.async_get(self._hass)
-        for client in self.central.clients.values():
-            virtual_device = client.get_virtual_remote()
-            if not virtual_device:
-                continue
-            device_registry.async_get_or_create(
-                config_entry_id=self._entry.entry_id,
-                identifiers={(HA_DOMAIN, f"{self.central.instance_name}_{virtual_device.address}")},
-                manufacturer="eQ-3",
-                model=virtual_device.device_type,
-                # Add the name from config entry.
-                name=virtual_device.name,
-            )
-        self._virtual_remotes_initialized = True
 
     async def stop(self):
         """Stop the control unit."""
@@ -183,6 +156,7 @@ class ControlUnit:
         if self._central:
             return await self._central.get_install_mode(interface_id)
 
+    # pylint: disable=invalid-name
     async def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
         """Activate or deactivate installmode on CCU / Homegear"""
         if self._central:
@@ -239,6 +213,7 @@ class ControlUnit:
         """remove entity from active entities"""
         del self._active_hm_entities[hm_entity.unique_id]
 
+    # pylint: disable=no-self-use
     @callback
     def async_signal_new_hm_entity(self, entry_id, device_type) -> str:
         """Gateway specific event to signal new device."""
@@ -249,7 +224,7 @@ class ControlUnit:
         """Callback for ccu based events."""
         if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
-            """Handle event of new device creation in HAHM."""
+            # Handle event of new device creation in HAHM.
             for (platform, hm_entities) in self.get_new_hm_entities(
                 new_entity_unique_ids
             ).items():
@@ -261,12 +236,11 @@ class ControlUnit:
                         self.async_signal_new_hm_entity(self._entry_id, platform),
                         *args,  # Don't send device if None, it would override default value in listeners
                     )
-            return
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
             return
         elif src == HH_EVENT_DELETE_DEVICES:
-            """Handle event of device removed in HAHM."""
+            # Handle event of device removed in HAHM.
             for address in args[1]:
                 entity = self._get_active_entity_by_address(address)
                 if entity:
@@ -289,7 +263,6 @@ class ControlUnit:
             event_type,
             event_data,
         )
-        return
 
     @callback
     def _callback_alarm_event(self, event_type, event_data):
@@ -297,7 +270,6 @@ class ControlUnit:
             event_type,
             event_data,
         )
-        return
 
     def create_central(self):
         """create the central unit for ccu callbacks."""

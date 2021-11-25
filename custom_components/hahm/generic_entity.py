@@ -4,6 +4,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from hahomematic.entity import CallbackEntity
+
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -19,12 +21,12 @@ class HaHomematicGenericEntity(Entity):
 
     def __init__(
         self,
-        cu: ControlUnit,
+        control_unit: ControlUnit,
         hm_entity,
         entity_description: EntityDescription | None = None,
     ) -> None:
         """Initialize the generic entity."""
-        self._cu = cu
+        self._cu = control_unit
         self._hm_entity = hm_entity
         if entity_description is not None:
             self.entity_description = entity_description
@@ -75,14 +77,16 @@ class HaHomematicGenericEntity(Entity):
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks."""
-        self._hm_entity.register_update_callback(self._async_device_changed)
-        self._hm_entity.register_remove_callback(self._async_device_removed)
+        if isinstance(self._hm_entity, CallbackEntity):
+            self._hm_entity.register_update_callback(self._async_device_changed)
+            self._hm_entity.register_remove_callback(self._async_device_removed)
         self._cu.add_hm_entity(hm_entity=self._hm_entity)
         await self._init_data()
 
     async def _init_data(self) -> None:
         """Init data. Disable entity if data load fails due to missing device value."""
-        load_state = await self._hm_entity.load_data()
+        if hasattr(self._hm_entity, "load_data"):
+            load_state = await self._hm_entity.load_data()
         # if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
         #    await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
         # elif self.registry_entry.disabled_by == er.DISABLED_INTEGRATION:

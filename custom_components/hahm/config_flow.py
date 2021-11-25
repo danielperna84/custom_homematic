@@ -84,20 +84,20 @@ async def validate_input(
     # it while initializing.
     config.CACHE_DIR = "cache"
 
-    cu = ControlUnit(hass, data=data)
-    cu.create_central()
+    control_unit = ControlUnit(hass, data=data)
+    control_unit.create_central()
     try:
-        await cu.create_clients()
-        first_client: Client = cu.central.clients[0]
+        await control_unit.create_clients()
+        first_client: Client = control_unit.central.clients[0]
         return first_client.is_connected()
-    except ConnectionError as e:
-        _LOGGER.exception(e)
-        raise CannotConnect
-    except ProtocolError as e:
-        _LOGGER.exception(e)
-        raise InvalidAuth
-    except Exception as e:
-        _LOGGER.exception(e)
+    except ConnectionError as cex:
+        _LOGGER.exception(cex)
+        raise CannotConnect from cex
+    except ProtocolError as cex:
+        _LOGGER.exception(cex)
+        raise InvalidAuth from cex
+    except Exception as cex:
+        _LOGGER.exception(cex)
     return False
 
 

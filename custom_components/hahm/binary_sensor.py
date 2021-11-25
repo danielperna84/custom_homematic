@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the HAHM binary_sensor platform."""
-    cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
     def async_add_binary_sensor(args):
@@ -25,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicBinarySensor(cu, hm_entity))
+            entities.append(HaHomematicBinarySensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -33,24 +33,30 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_BINARY_SENSOR),
+            control_unit.async_signal_new_hm_entity(
+                entry.entry_id, HA_PLATFORM_BINARY_SENSOR
+            ),
             async_add_binary_sensor,
         )
     )
 
-    async_add_binary_sensor([cu.get_hm_entities_by_platform(HA_PLATFORM_BINARY_SENSOR)])
+    async_add_binary_sensor(
+        [control_unit.get_hm_entities_by_platform(HA_PLATFORM_BINARY_SENSOR)]
+    )
 
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     """Representation of the Homematic binary sensor."""
 
-    def __init__(self, cu: ControlUnit, hm_entity) -> None:
+    def __init__(self, control_unit: ControlUnit, hm_entity) -> None:
         """Initialize the binary_sensor entity."""
         entity_description = get_binary_sensor_entity_description(
             hm_entity.device_type, hm_entity.parameter
         )
         super().__init__(
-            cu=cu, hm_entity=hm_entity, entity_description=entity_description
+            control_unit=control_unit,
+            hm_entity=hm_entity,
+            entity_description=entity_description,
         )
 
     @property

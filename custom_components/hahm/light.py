@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the HAHM light platform."""
-    cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
     def async_add_light(args):
@@ -25,7 +25,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicLight(cu, hm_entity))
+            entities.append(HaHomematicLight(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -33,12 +33,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_LIGHT),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_LIGHT),
             async_add_light,
         )
     )
 
-    async_add_light([cu.get_hm_entities_by_platform(HA_PLATFORM_LIGHT)])
+    async_add_light([control_unit.get_hm_entities_by_platform(HA_PLATFORM_LIGHT)])
 
 
 class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
@@ -90,8 +90,8 @@ class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
             # Minimum brightness is 10, otherwise the led is disabled
             brightness = max(10, brightness)
 
-        await self._hm_entity.async_turn_on(hs_color, brightness)
+        await self._hm_entity.turn_on(hs_color, brightness)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
-        await self._hm_entity.async_turn_off()
+        await self._hm_entity.turn_off()

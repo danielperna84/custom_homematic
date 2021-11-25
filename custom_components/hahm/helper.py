@@ -377,4 +377,5 @@ def get_sensor_entity_description(
 
 
 def get_default_description() -> EntityDescription:
+    """Return the default device description."""
     return copy(_DEFAULT_SENSOR_DESCRIPTION)

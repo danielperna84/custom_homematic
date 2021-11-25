@@ -22,9 +22,9 @@ from hahomematic.const import (
     ATTR_VALUE,
     ATTR_VALUE_TYPE,
     HA_PLATFORMS,
-
 )
 from hahomematic.entity import GenericEntity
+from hahomematic.hub import HmHub
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
@@ -99,11 +99,11 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
 
-    cu = ControlUnit(hass, entry=entry)
+    control_unit = ControlUnit(hass, entry=entry)
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = cu
+    hass.data[DOMAIN][entry.entry_id] = control_unit
     hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
-    await cu.start()
+    await control_unit.start()
     await async_setup_services(hass)
     return True
 
@@ -126,8 +126,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         address = service.data[ATTR_ADDRESS]
         parameter = service.data[ATTR_PARAMETER]
 
-        cu = _get_cu_by_interface_id(hass, interface_id)
-        await cu.central.press_virtual_remote_key(address, parameter)
+        control_unit = _get_cu_by_interface_id(hass, interface_id)
+        await control_unit.central.press_virtual_remote_key(address, parameter)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -198,9 +198,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         time = service.data.get(ATTR_TIME)
         address = service.data.get(ATTR_ADDRESS)
 
-        cu = _get_cu_by_interface_id(hass, interface_id)
-        if cu:
-            await cu.set_install_mode(interface_id, t=time, mode=mode, address=address)
+        control_unit = _get_cu_by_interface_id(hass, interface_id)
+        if control_unit:
+            await control_unit.set_install_mode(
+                interface_id, t=time, mode=mode, address=address
+            )
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -228,9 +230,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             paramset,
             rx_mode,
         )
-        cu = _get_cu_by_interface_id(hass, interface_id)
-        if cu:
-            await cu.put_paramset(
+        control_unit = _get_cu_by_interface_id(hass, interface_id)
+        if control_unit:
+            await control_unit.put_paramset(
                 interface_id, address, paramset_key, paramset, rx_mode
             )
 
@@ -244,25 +246,25 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
     """Get homematic entity."""
-    cu = _get_cu_by_interface_id(hass, interface_id)
-    return cu.central.get_hm_entity_by_parameter(address, parameter)
+    control_unit = _get_cu_by_interface_id(hass, interface_id)
+    return control_unit.central.get_hm_entity_by_parameter(address, parameter)
 
 
-def _get_cu_by_interface_id(hass, interface_id) -> Optional[ControlUnit]:
+def _get_cu_by_interface_id(hass, interface_id) -> ControlUnit | None:
     """
     Get ControlUnit by device address
     """
-    for cu in hass.data[DOMAIN].values():
-        if cu.central.clients.get(interface_id):
-            return cu
+    for control_unit in hass.data[DOMAIN].values():
+        if control_unit.central.clients.get(interface_id):
+            return control_unit
     return None
 
 
-def _get_hub_by_entity_id(hass, entity_id) -> Optional[HMHub]:
+def _get_hub_by_entity_id(hass, entity_id) -> HmHub | None:
     """
     Get ControlUnit by device address
     """
-    for cu in hass.data[DOMAIN].values():
-        if cu.hub.entity_id == entity_id:
-            return cu.hub
+    for control_unit in hass.data[DOMAIN].values():
+        if control_unit.hub.entity_id == entity_id:
+            return control_unit.hub
     return None
