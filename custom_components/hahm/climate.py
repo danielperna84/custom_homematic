@@ -99,12 +99,12 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
     @property
     def min_temp(self) -> float:
         """Return the minimum temperature."""
-        return float(self._hm_entity.min_temp)
+        return self._hm_entity.min_temp
 
     @property
     def max_temp(self) -> float:
         """Return the maximum temperature."""
-        return float(self._hm_entity.max_temp)
+        return self._hm_entity.max_temp
 
     async def async_set_temperature(self, **kwargs) -> None:
         """Set new target temperature."""
