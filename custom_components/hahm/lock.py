@@ -47,7 +47,7 @@ class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     @property
     def is_locked(self):
         """Return true if lock is on."""
-        return self._hm_device.is_locked
+        return self._hm_entity.is_locked
 
     @property
     def supported_features(self) -> int:
@@ -56,12 +56,12 @@ class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
 
     async def async_lock(self, **kwargs):
         """Lock the lock."""
-        await self._hm_device.lock()
+        await self._hm_entity.lock()
 
     async def async_unlock(self, **kwargs):
         """Unlock the lock."""
-        await self._hm_device.unlock()
+        await self._hm_entity.unlock()
 
     async def async_open(self, **kwargs: Any) -> None:
         """Open the lock."""
-        await self._hm_device.open()
+        await self._hm_entity.open()
