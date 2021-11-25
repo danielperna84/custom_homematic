@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the HAHM switch platform."""
-    cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
     def async_add_switch(args):
@@ -24,7 +24,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicSwitch(cu, hm_entity))
+            entities.append(HaHomematicSwitch(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -32,12 +32,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SWITCH),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SWITCH),
             async_add_switch,
         )
     )
 
-    async_add_switch([cu.get_hm_entities_by_platform(HA_PLATFORM_SWITCH)])
+    async_add_switch([control_unit.get_hm_entities_by_platform(HA_PLATFORM_SWITCH)])
 
 
 class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
@@ -50,8 +50,8 @@ class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Turn the switch on."""
-        await self._hm_entity.set_state(True)
+        await self._hm_entity.turn_on()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the switch off."""
-        await self._hm_entity.set_state(False)
+        await self._hm_entity.turn_off()

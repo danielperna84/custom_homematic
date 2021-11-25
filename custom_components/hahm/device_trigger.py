@@ -4,8 +4,11 @@ from __future__ import annotations
 from typing import Any
 
 import voluptuous as vol
-from hahomematic.action_event import ClickEvent, ImpulseEvent
-from hahomematic.const import ALARM_EVENTS, CLICK_EVENTS, EVENT_ALARM, EVENT_KEYPRESS, HM_VIRTUAL_REMOTES
+from hahomematic.const import (
+    CLICK_EVENTS,
+    HM_VIRTUAL_REMOTES,
+)
+from hahomematic.entity import ImpulseEvent
 
 from homeassistant.components.automation import (
     AutomationActionType,
@@ -30,7 +33,6 @@ from .controlunit import ControlUnit
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
 
-# TODO specify your supported trigger types.
 TRIGGER_TYPES = CLICK_EVENTS
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
@@ -54,8 +56,8 @@ async def async_get_triggers(
         address = address.split("_")[1]
     triggers = []
     for entry_id in device.config_entries:
-        cu: ControlUnit = hass.data[DOMAIN][entry_id]
-        hm_device = cu.central.hm_devices.get(address)
+        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        hm_device = control_unit.central.hm_devices.get(address)
         if hm_device:
             for action_event in hm_device.action_events.values():
                 if isinstance(action_event, ImpulseEvent):

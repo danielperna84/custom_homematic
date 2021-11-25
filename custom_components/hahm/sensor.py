@@ -20,7 +20,7 @@ SCAN_INTERVAL = timedelta(seconds=30)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the HAHM sensor platform."""
-    cu: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
 
     @callback
     def async_add_sensor(args):
@@ -28,7 +28,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicSensor(cu, hm_entity))
+            entities.append(HaHomematicSensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -39,10 +39,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
         entities = []
 
         for hm_entity in args[0]:
-            entities.append(HaHomematicHubSensor(cu, hm_entity))
+            entities.append(HaHomematicHubSensor(control_unit, hm_entity))
 
-        for hm_entity in cu.central.hub.hub_entities.values():
-            entities.append(HaHomematicHubSensor(cu, hm_entity))
+        for hm_entity in control_unit.central.hub.hub_entities.values():
+            entities.append(HaHomematicHubSensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -50,31 +50,33 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SENSOR),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SENSOR),
             async_add_sensor,
         )
     )
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            cu.async_signal_new_hm_entity(entry.entry_id, "hub"),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, "hub"),
             async_add_hub_sensors,
         )
     )
 
-    async_add_sensor([cu.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
+    async_add_sensor([control_unit.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
 
 
 class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
-    def __init__(self, cu: ControlUnit, hm_entity) -> None:
+    def __init__(self, control_unit: ControlUnit, hm_entity) -> None:
         """Initialize the sensor entity."""
         entity_description = get_sensor_entity_description(
             hm_entity.device_type, hm_entity.parameter
         )
         super().__init__(
-            cu=cu, hm_entity=hm_entity, entity_description=entity_description
+            control_unit=control_unit,
+            hm_entity=hm_entity,
+            entity_description=entity_description,
         )
 
     @property
@@ -85,9 +87,11 @@ class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
 class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
-    def __init__(self, cu: ControlUnit, hm_entity) -> None:
+    def __init__(self, control_unit: ControlUnit, hm_entity) -> None:
         """Initialize the sensor entity."""
-        super().__init__(cu=cu, hm_entity=hm_entity, entity_description=None)
+        super().__init__(
+            control_unit=control_unit, hm_entity=hm_entity, entity_description=None
+        )
 
     @property
     def native_value(self):
