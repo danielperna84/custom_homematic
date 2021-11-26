@@ -64,7 +64,7 @@ DOMAIN_SCHEMA = vol.Schema(
         vol.Optional(ATTR_CALLBACK_PORT, default=PORT_ANY): int,
         vol.Optional(ATTR_TLS, default=DEFAULT_TLS): bool,
         vol.Optional(ATTR_VERIFY_TLS, default=False): bool,
-        vol.Optional(ATTR_JSON_PORT, default=None): int,
+        vol.Optional(ATTR_JSON_PORT): int,
         vol.Optional(ATTR_JSON_TLS, default=DEFAULT_TLS): bool,
     }
 )
@@ -73,13 +73,11 @@ DOMAIN_SCHEMA = vol.Schema(
 async def validate_input(
     hass: HomeAssistant, data: dict[str, Any], interface_name: str
 ) -> bool:
-    """Validate the user input allows us to connect.
-
+    """
+    Validate the user input allows us to connect.
     Data has the keys with values provided by the user.
     """
 
-    # For testing we set a short INIT_TIMEOUT
-    config.INIT_TIMEOUT = 10
     # We have to set the cache location of stored data so the server can load
     # it while initializing.
     config.CACHE_DIR = "cache"
