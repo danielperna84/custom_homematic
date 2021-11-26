@@ -201,7 +201,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         control_unit = _get_cu_by_interface_id(hass, interface_id)
         if control_unit:
-            await control_unit.set_install_mode(
+            await control_unit.central.set_install_mode(
                 interface_id, t=time, mode=mode, address=address
             )
 
@@ -233,7 +233,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         )
         control_unit = _get_cu_by_interface_id(hass, interface_id)
         if control_unit:
-            await control_unit.put_paramset(
+            await control_unit.central.put_paramset(
                 interface_id, address, paramset_key, paramset, rx_mode
             )
 

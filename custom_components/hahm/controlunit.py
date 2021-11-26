@@ -126,51 +126,6 @@ class ControlUnit:
         """return the HAHM central_unit instance."""
         return self._central
 
-    async def reconnect(self):
-        """Reinit all Clients."""
-        if self._central:
-            await self._central.reconnect()
-
-    async def get_all_system_variables(self):
-        """Get all system variables from CCU / Homegear"""
-        if self._central:
-            return await self._central.get_all_system_variables()
-
-    async def get_system_variable(self, name):
-        """Get single system variable from CCU / Homegear"""
-        if self._central:
-            return await self._central.get_system_variable(name)
-
-    async def set_system_variable(self, name, value):
-        """Set a system variable on CCU / Homegear"""
-        if self._central:
-            return await self._central.set_system_variable(name, value)
-
-    async def get_service_messages(self):
-        """Get service messages from CCU / Homegear"""
-        if self._central:
-            return await self._central.get_service_messages()
-
-    async def get_install_mode(self, interface_id):
-        """Get remaining time in seconds install mode is active from CCU / Homegear"""
-        if self._central:
-            return await self._central.get_install_mode(interface_id)
-
-    # pylint: disable=invalid-name
-    async def set_install_mode(self, interface_id, on=True, t=60, mode=1, address=None):
-        """Activate or deactivate installmode on CCU / Homegear"""
-        if self._central:
-            return await self._central.set_install_mode(
-                interface_id, on, t, mode, address
-            )
-
-    async def put_paramset(self, interface_id, address, paramset, value, rx_mode=None):
-        """Set paramsets manually"""
-        if self._central:
-            return await self._central.put_paramset(
-                interface_id, address, paramset, value, rx_mode
-            )
-
     def get_new_hm_entities(self, new_entities):
         """
         Return all hm-entities by requested unique_ids
