@@ -64,7 +64,7 @@ DOMAIN_SCHEMA = vol.Schema(
         vol.Optional(ATTR_CALLBACK_PORT, default=PORT_ANY): int,
         vol.Optional(ATTR_TLS, default=DEFAULT_TLS): bool,
         vol.Optional(ATTR_VERIFY_TLS, default=False): bool,
-        vol.Optional(ATTR_JSON_PORT, default=PORT_JSON_RPC): int,
+        vol.Optional(ATTR_JSON_PORT, default=None): int,
         vol.Optional(ATTR_JSON_TLS, default=DEFAULT_TLS): bool,
     }
 )
