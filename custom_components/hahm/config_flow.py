@@ -88,8 +88,8 @@ async def validate_input(
     control_unit.create_central()
     try:
         await control_unit.create_clients()
-        first_client: Client = control_unit.central.clients[0]
-        return first_client.is_connected()
+        first_client: Client = control_unit.central.get_primary_client()
+        return await first_client.is_connected()
     except ConnectionError as cex:
         _LOGGER.exception(cex)
         raise CannotConnect from cex
@@ -202,7 +202,7 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
         return await self.async_step_hahm_devices()
 
     async def async_step_hahm_devices(self, user_input=None):
-        """Manage the deconz devices options."""
+        """Manage the hahm devices options."""
         if user_input is not None:
             self.options.update(user_input)
             return self.async_create_entry(title="", data=self.options)
