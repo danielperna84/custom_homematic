@@ -16,7 +16,6 @@ from hahomematic.const import (
     ATTR_HOST,
     ATTR_JSON_PORT,
     ATTR_PASSWORD,
-    ATTR_PATH,
     ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
@@ -45,6 +44,7 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_JSON_TLS,
+    ATTR_PATH,
     CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
 )

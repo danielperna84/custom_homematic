@@ -14,7 +14,6 @@ from hahomematic.const import (
     ATTR_HOST,
     ATTR_JSON_PORT,
     ATTR_PASSWORD,
-    ATTR_PATH,
     ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
@@ -23,7 +22,6 @@ from hahomematic.const import (
     IP_ANY_V4,
     PORT_ANY,
     PORT_HMIP,
-    PORT_JSON_RPC,
 )
 
 from homeassistant import config_entries
@@ -37,6 +35,7 @@ from .const import (
     ATTR_INTERFACE,
     ATTR_INTERFACE_NAME,
     ATTR_JSON_TLS,
+    ATTR_PATH,
     CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,

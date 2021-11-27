@@ -4,10 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 import voluptuous as vol
-from hahomematic.const import (
-    CLICK_EVENTS,
-    HM_VIRTUAL_REMOTES,
-)
+from hahomematic.const import CLICK_EVENTS, HM_VIRTUAL_REMOTES
 from hahomematic.entity import ImpulseEvent
 
 from homeassistant.components.automation import (

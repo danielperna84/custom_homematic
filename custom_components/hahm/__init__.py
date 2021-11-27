@@ -15,11 +15,7 @@ from hahomematic.const import (
     ATTR_INTERFACE_ID,
     ATTR_NAME,
     ATTR_PARAMETER,
-    ATTR_PARAMSET,
-    ATTR_PARAMSET_KEY,
-    ATTR_RX_MODE,
     ATTR_VALUE,
-    ATTR_VALUE_TYPE,
     HA_PLATFORMS,
 )
 from hahomematic.entity import GenericEntity
@@ -35,6 +31,10 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_PARAM,
+    ATTR_PARAMSET,
+    ATTR_PARAMSET_KEY,
+    ATTR_RX_MODE,
+    ATTR_VALUE_TYPE,
     DOMAIN,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
