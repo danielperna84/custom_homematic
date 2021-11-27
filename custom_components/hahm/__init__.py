@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
-from typing import Optional
 
 import voluptuous as vol
 from hahomematic.const import (
@@ -98,7 +97,6 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
-
     control_unit = ControlUnit(hass, entry=entry)
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = control_unit
@@ -110,6 +108,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+    control_unit = hass.data[DOMAIN][entry.entry_id]
+    await control_unit.stop()
+    control_unit.central.clear_all()
     unload_ok = await hass.config_entries.async_unload_platforms(entry, HA_PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
@@ -200,7 +201,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         control_unit = _get_cu_by_interface_id(hass, interface_id)
         if control_unit:
-            await control_unit.set_install_mode(
+            await control_unit.central.set_install_mode(
                 interface_id, t=time, mode=mode, address=address
             )
 
@@ -232,7 +233,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         )
         control_unit = _get_cu_by_interface_id(hass, interface_id)
         if control_unit:
-            await control_unit.put_paramset(
+            await control_unit.central.put_paramset(
                 interface_id, address, paramset_key, paramset, rx_mode
             )
 
