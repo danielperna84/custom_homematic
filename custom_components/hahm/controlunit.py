@@ -4,6 +4,7 @@ HomeMatic and homematic IP devices.
 Some other devices (f.ex. Bosch, Intertechno) might be supported as well.
 https://github.com/danielperna84/hahomematic
 """
+from __future__ import annotations
 
 import logging
 
