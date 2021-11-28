@@ -7,11 +7,11 @@ from typing import Any
 from hahomematic.entity import CallbackEntity
 
 from homeassistant.core import callback
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.entity import DeviceInfo, Entity, EntityDescription
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.entity import DeviceInfo, Entity
 
 from .controlunit import ControlUnit
+from .helper import get_entity_description
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,14 +23,13 @@ class HaHomematicGenericEntity(Entity):
         self,
         control_unit: ControlUnit,
         hm_entity,
-        entity_description: EntityDescription | None = None,
     ) -> None:
         """Initialize the generic entity."""
         self._cu = control_unit
         self._hm_entity = hm_entity
-        if entity_description is not None:
+        entity_description = get_entity_description(self._hm_entity)
+        if entity_description:
             self.entity_description = entity_description
-
         # Marker showing that the Hm device hase been removed.
         self.hm_device_removed = False
         _LOGGER.info("Setting up %s", self.name)

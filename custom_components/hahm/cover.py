@@ -1,8 +1,8 @@
 """binary_sensor for HAHM."""
 from __future__ import annotations
 
-import logging
 from abc import ABC
+import logging
 
 from hahomematic.const import HA_PLATFORM_COVER
 from hahomematic.devices.cover import HmBlind, HmCover

@@ -2,7 +2,15 @@
 from __future__ import annotations
 
 import logging
-from copy import copy
+
+from hahomematic.const import (
+    HA_PLATFORM_BINARY_SENSOR,
+    HA_PLATFORM_BUTTON,
+    HA_PLATFORM_COVER,
+    HA_PLATFORM_SENSOR,
+    HA_PLATFORM_SWITCH,
+)
+from hahomematic.entity import CustomEntity, GenericEntity
 
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_BATTERY,
@@ -15,10 +23,22 @@ from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_WINDOW,
     BinarySensorEntityDescription,
 )
+from homeassistant.components.button import ButtonEntityDescription
+from homeassistant.components.cover import (
+    DEVICE_CLASS_BLIND,
+    DEVICE_CLASS_SHADE,
+    DEVICE_CLASS_SHUTTER,
+    CoverEntityDescription,
+)
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
     STATE_CLASS_TOTAL_INCREASING,
     SensorEntityDescription,
+)
+from homeassistant.components.switch import (
+    DEVICE_CLASS_OUTLET,
+    DEVICE_CLASS_SWITCH,
+    SwitchEntityDescription,
 )
 from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
@@ -69,7 +89,7 @@ HM_STATE_HA_CAST = {
 }
 
 
-_SENSOR_DESCRIPTIONS: dict[str, SensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "HUMIDITY": SensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
@@ -253,17 +273,24 @@ _SENSOR_DESCRIPTIONS: dict[str, SensorEntityDescription] = {
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_DEVICE: dict[(str, str), SensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SensorEntityDescription] = {
     ("HmIP-SRH", "STATE"): SensorEntityDescription(
         key="STATE",
         device_class=DEVICE_CLASS_WINDOW,
     ),
 }
 
-
-_BINARY_SENSOR_DESCRIPTIONS: dict[str, BinarySensorEntityDescription] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] = {
     "ALARMSTATE": BinarySensorEntityDescription(
         key="ALARMSTATE",
+        device_class=DEVICE_CLASS_SAFETY,
+    ),
+    "ACOUSTIC_ALARM_ACTIVE": BinarySensorEntityDescription(
+        key="ACOUSTIC_ALARM_ACTIVE",
+        device_class=DEVICE_CLASS_SAFETY,
+    ),
+    "OPTICAL_ALARM_ACTIVE": BinarySensorEntityDescription(
+        key="OPTICAL_ALARM_ACTIVE",
         device_class=DEVICE_CLASS_SAFETY,
     ),
     "DUTY_CYCLE": BinarySensorEntityDescription(
@@ -321,7 +348,7 @@ _BINARY_SENSOR_DESCRIPTIONS: dict[str, BinarySensorEntityDescription] = {
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE: dict[
+_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     (str, str), BinarySensorEntityDescription
 ] = {
     ("HmIP-SWDO-I", "STATE"): BinarySensorEntityDescription(
@@ -338,44 +365,103 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE: dict[
     ),
 }
 
+_COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
+    "HmIP-BROLL": CoverEntityDescription(
+        key="BROLL",
+        device_class=DEVICE_CLASS_SHUTTER,
+    ),
+    "HmIP-FROLL": CoverEntityDescription(
+        key="FROLL",
+        device_class=DEVICE_CLASS_SHUTTER,
+    ),
+    "HmIP-BBL": CoverEntityDescription(
+        key="BBL",
+        device_class=DEVICE_CLASS_BLIND,
+    ),
+    "HmIP-FBL": CoverEntityDescription(
+        key="FBL",
+        device_class=DEVICE_CLASS_BLIND,
+    ),
+    "HmIP-DRBLI4": CoverEntityDescription(
+        key="DRBLI4",
+        device_class=DEVICE_CLASS_BLIND,
+    ),
+    "HmIPW-DRBL4": CoverEntityDescription(
+        key="HmIPW-DRBL4",
+        device_class=DEVICE_CLASS_BLIND,
+    ),
+    "HmIP-HDM1": CoverEntityDescription(
+        key="HDM1",
+        device_class=DEVICE_CLASS_SHADE,
+    ),
+}
 
-_DEFAULT_SENSOR_DESCRIPTION = EntityDescription(
-    key="",
-    entity_registry_enabled_default=True,
-)
+_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {
+    "HMIP-PS": SwitchEntityDescription(
+        key="PS",
+        device_class=DEVICE_CLASS_OUTLET,
+    ),
+    "HMIP-PSM": SwitchEntityDescription(
+        key="PSM",
+        device_class=DEVICE_CLASS_OUTLET,
+    ),
+}
+
+_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str, SwitchEntityDescription] = {}
+
+_SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SwitchEntityDescription] = {}
+
+_ENTITY_DESCRIPTION_DEVICE = {
+    HA_PLATFORM_COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
+    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
+}
+
+_ENTITY_DESCRIPTION_PARAM = {
+    HA_PLATFORM_BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HA_PLATFORM_SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
+    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
+}
+
+_ENTITY_DESCRIPTION_DEVICE_PARAM = {
+    HA_PLATFORM_BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HA_PLATFORM_SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
+}
+
+_DEFAULT_DESCRIPTION = {
+    HA_PLATFORM_BINARY_SENSOR: None,
+    HA_PLATFORM_BUTTON: ButtonEntityDescription(
+        key="button_default", icon="mdi:gesture-tap"
+    ),
+    HA_PLATFORM_COVER: None,
+    HA_PLATFORM_SENSOR: None,
+    HA_PLATFORM_SWITCH: SwitchEntityDescription(
+        key="switch_default", device_class=DEVICE_CLASS_SWITCH
+    ),
+}
 
 
-def get_binary_sensor_entity_description(
-    device_type: str, parameter: str
-) -> BinarySensorEntityDescription | None:
-    """Get the entity_desription for binary_sensor."""
-    description = _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE.get((device_type, parameter))
-    if description:
-        return description
-    if parameter in ["STATE"]:
-        return None
-    description = _BINARY_SENSOR_DESCRIPTIONS.get(parameter)
-    if description:
-        return description
+def get_entity_description(hm_entity) -> EntityDescription | None:
+    """Get the entity_description for platform."""
+    if isinstance(hm_entity, GenericEntity):
+        device_description = _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
+            hm_entity.platform, {}
+        ).get((hm_entity.device_type, hm_entity.parameter))
+        if device_description:
+            return device_description
+        if hm_entity.parameter in ["STATE"]:
+            return _DEFAULT_DESCRIPTION.get(hm_entity.platform, {})
+        param_description = _ENTITY_DESCRIPTION_PARAM.get(hm_entity.platform, {}).get(
+            hm_entity.parameter
+        )
+        if param_description:
+            return param_description
+    elif isinstance(hm_entity, CustomEntity):
+        custom_description = _ENTITY_DESCRIPTION_DEVICE.get(hm_entity.platform, {}).get(
+            hm_entity.device_type
+        )
+        if custom_description:
+            return custom_description
+    if hasattr(hm_entity, "platform"):
+        return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
     return None
-
-
-def get_sensor_entity_description(
-    device_type: str, parameter: str
-) -> SensorEntityDescription | None:
-    """Get the entity_desription for sensor."""
-    description = _SENSOR_DESCRIPTIONS_BY_DEVICE.get((device_type, parameter))
-    if description:
-        return description
-    description = _SENSOR_DESCRIPTIONS.get(parameter)
-    if description:
-        return description
-
-    if parameter in ["STATE"]:
-        return None
-    return None
-
-
-def get_default_description() -> EntityDescription:
-    """Return the default device description."""
-    return copy(_DEFAULT_SENSOR_DESCRIPTION)
