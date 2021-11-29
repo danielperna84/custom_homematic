@@ -26,6 +26,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import (
     DEVICE_CLASS_BLIND,
+    DEVICE_CLASS_GARAGE,
     DEVICE_CLASS_SHADE,
     DEVICE_CLASS_SHUTTER,
     CoverEntityDescription,
@@ -388,12 +389,20 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
         device_class=DEVICE_CLASS_BLIND,
     ),
     "HmIPW-DRBL4": CoverEntityDescription(
-        key="HmIPW-DRBL4",
+        key="W-DRBL4",
         device_class=DEVICE_CLASS_BLIND,
     ),
     "HmIP-HDM1": CoverEntityDescription(
         key="HDM1",
         device_class=DEVICE_CLASS_SHADE,
+    ),
+    "HmIP-MOD-HO": CoverEntityDescription(
+        key="MOD-HO",
+        device_class=DEVICE_CLASS_GARAGE,
+    ),
+    "HmIP-MOD-TM": CoverEntityDescription(
+        key="MOD-TM",
+        device_class=DEVICE_CLASS_GARAGE,
     ),
 }
 
