@@ -23,7 +23,6 @@ from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_WINDOW,
     BinarySensorEntityDescription,
 )
-from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import (
     DEVICE_CLASS_BLIND,
     DEVICE_CLASS_GARAGE,
@@ -58,7 +57,6 @@ from homeassistant.const import (
     ELECTRIC_POTENTIAL_VOLT,
     ENERGY_WATT_HOUR,
     ENTITY_CATEGORY_DIAGNOSTIC,
-    ENTITY_CATEGORY_SYSTEM,
     FREQUENCY_HERTZ,
     LENGTH_MILLIMETERS,
     LIGHT_LUX,
@@ -440,11 +438,6 @@ _ENTITY_DESCRIPTION_DEVICE_PARAM = {
 
 _DEFAULT_DESCRIPTION = {
     HA_PLATFORM_BINARY_SENSOR: None,
-    HA_PLATFORM_BUTTON: ButtonEntityDescription(
-        key="button_default",
-        icon="mdi:gesture-tap",
-        entity_category=ENTITY_CATEGORY_SYSTEM,
-    ),
     HA_PLATFORM_COVER: None,
     HA_PLATFORM_SENSOR: None,
     HA_PLATFORM_SWITCH: SwitchEntityDescription(
