@@ -6,10 +6,9 @@ https://github.com/danielperna84/hahomematic
 """
 from __future__ import annotations
 
-import logging
 from datetime import datetime
+import logging
 
-import voluptuous as vol
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_INTERFACE_ID,
@@ -20,11 +19,12 @@ from hahomematic.const import (
 )
 from hahomematic.entity import GenericEntity
 from hahomematic.hub import HmHub
+import voluptuous as vol
 
-import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant
+import homeassistant.helpers.config_validation as cv
 
 from .const import (
     ATTR_CHANNEL,

@@ -1,4 +1,6 @@
 """binary_switch for HAHM."""
+from __future__ import annotations
+
 import logging
 
 from hahomematic.const import HA_PLATFORM_SWITCH

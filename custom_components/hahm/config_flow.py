@@ -5,7 +5,6 @@ import logging
 from typing import Any
 from xmlrpc.client import ProtocolError
 
-import voluptuous as vol
 from hahomematic import config
 from hahomematic.client import Client
 from hahomematic.const import (
@@ -23,6 +22,7 @@ from hahomematic.const import (
     PORT_ANY,
     PORT_HMIP,
 )
+import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
