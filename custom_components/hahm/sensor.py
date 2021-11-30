@@ -79,7 +79,13 @@ class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
 
     @property
     def native_value(self):
+        """Return the native value of zhe entity."""
         return self._hm_entity.state
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of zhe entity."""
+        return self._hm_entity.unit
 
     @property
     def should_poll(self) -> bool:
