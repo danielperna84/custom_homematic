@@ -12,6 +12,7 @@ from hahomematic import config
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import Client, ClientConfig
 from hahomematic.const import (
+    ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
     ATTR_HOST,
@@ -37,8 +38,9 @@ from hahomematic.entity import BaseEntity
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .const import (
@@ -48,6 +50,7 @@ from .const import (
     ATTR_PATH,
     CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
+    DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -215,6 +218,11 @@ class ControlUnit:
 
     @callback
     def _callback_click_event(self, event_type, event_data):
+        """Fire event on click."""
+        device_id = self._get_device_id(event_data[ATTR_ADDRESS])
+        if device_id:
+            event_data[CONF_DEVICE_ID] = device_id
+
         self._hass.bus.fire(
             event_type,
             event_data,
@@ -222,10 +230,23 @@ class ControlUnit:
 
     @callback
     def _callback_alarm_event(self, event_type, event_data):
+        """Fire event on alarm."""
+        device_id = self._get_device_id(event_data[ATTR_ADDRESS])
+        if device_id:
+            event_data[CONF_DEVICE_ID] = device_id
+
         self._hass.bus.fire(
             event_type,
             event_data,
         )
+
+    def _get_device_id(self, address):
+        """Return the device id of the hahm device."""
+        hm_device = self.central.hm_devices.get(address)
+        identifiers = hm_device.device_info.get("identifiers")
+        device_registry = dr.async_get(self._hass)
+        device = device_registry.async_get_device(identifiers)
+        return device.id if device else None
 
     def create_central(self):
         """create the central unit for ccu callbacks."""
