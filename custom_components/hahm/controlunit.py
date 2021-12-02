@@ -6,6 +6,7 @@ https://github.com/danielperna84/hahomematic
 """
 from __future__ import annotations
 
+from datetime import timedelta
 import logging
 
 from hahomematic import config
@@ -35,6 +36,7 @@ from hahomematic.const import (
     PORT_ANY,
 )
 from hahomematic.entity import BaseEntity
+from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 from homeassistant.config_entries import ConfigEntry
@@ -42,6 +44,8 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_send
+from homeassistant.helpers.entity import Entity
+from homeassistant.util import slugify
 
 from .const import (
     ATTR_INSTANCE_NAME,
@@ -54,6 +58,7 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 
 class ControlUnit:
@@ -82,6 +87,7 @@ class ControlUnit:
             self.enable_sensors_for_own_system_variables = False
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
+        self._hub = None
 
     async def start(self):
         """Start the control unit."""
@@ -106,8 +112,10 @@ class ControlUnit:
     async def init_hub(self):
         """Init the hub."""
         await self._central.init_hub()
-        hm_entities = [self._central.hub]
-        args = [[hm_entities]]
+        self._hub = HaHub(self._hass, self)
+        await self._hub.init()
+        hm_entities = [self._central.hub.hub_entities.values()]
+        args = [hm_entities]
 
         async_dispatcher_send(
             self._hass,
@@ -118,7 +126,7 @@ class ControlUnit:
     @property
     def hub(self):
         """Return the Hub."""
-        return self._central.hub
+        return self._hub
 
     async def init_clients(self):
         """Init clients related to control unit."""
@@ -301,3 +309,66 @@ class ControlUnit:
         for entity in self._active_hm_entities.values():
             if entity.address == address:
                 return entity
+
+
+class HaHub(Entity):
+    """The HomeMatic hub. (CCU2/HomeGear)."""
+
+    def __init__(self, hass, cu: ControlUnit):
+        """Initialize HomeMatic hub."""
+        self.hass = hass
+        self._cu: ControlUnit = cu
+        self._hm_hub: HmHub = self._cu.central.hub
+        self._name = self._cu.central.instance_name
+        self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
+        self._hm_hub.register_update_callback(self._update_hub)
+
+    async def init(self):
+        """Init fetch scheduler."""
+        self.hass.helpers.event.async_track_time_interval(
+            self._fetch_data, SCAN_INTERVAL
+        )
+        await self._hm_hub.fetch_data()
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._hm_hub.available
+
+    @property
+    def name(self):
+        """Return the name of the device."""
+        return self._name
+
+    @property
+    def should_poll(self):
+        """Return false. HomeMatic Hub object updates variables."""
+        return False
+
+    async def _fetch_data(self, now):
+        """Fetch data from backend."""
+        await self._hm_hub.fetch_data()
+
+    @property
+    def state(self):
+        """Return the state of the entity."""
+        return self._hm_hub.state
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        return self._hm_hub.extra_state_attributes
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return "mdi:gradient-vertical"
+
+    async def set_variable(self, name, value):
+        """Set variable value on CCU/Homegear."""
+        await self._hm_hub.set_system_variable(name, value)
+
+    @callback
+    def _update_hub(self, *args):
+        """Update the HA hub."""
+        self.async_schedule_update_ha_state(True)
