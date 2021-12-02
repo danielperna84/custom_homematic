@@ -43,6 +43,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -366,6 +367,18 @@ class HaHub(Entity):
 
     async def set_variable(self, name, value):
         """Set variable value on CCU/Homegear."""
+        sensor = self._hm_hub.hub_entities.get(name)
+        if not sensor or name in self.extra_state_attributes:
+            _LOGGER.error("Variable %s not found on %s", name, self.name)
+            return
+
+        old_value = None
+        if sensor:
+            old_value = sensor.state
+        if old_value is None:
+            old_value = self.extra_state_attributes.get(name)
+
+        value = cv.boolean(value) if isinstance(old_value, bool) else float(value)
         await self._hm_hub.set_system_variable(name, value)
 
     @callback
