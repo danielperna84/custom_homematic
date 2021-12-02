@@ -42,9 +42,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
         for hm_entity in args[0]:
             entities.append(HaHomematicHubSensor(control_unit, hm_entity))
 
-        for hm_entity in control_unit.central.hub.hub_entities.values():
-            entities.append(HaHomematicHubSensor(control_unit, hm_entity))
-
         if entities:
             async_add_entities(entities)
 
