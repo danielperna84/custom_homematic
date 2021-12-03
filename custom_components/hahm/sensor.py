@@ -7,8 +7,10 @@ import logging
 from hahomematic.const import HmPlatform
 
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.core import callback
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
@@ -19,9 +21,13 @@ _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=30)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """Set up the HAHM sensor platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
     def async_add_sensor(args):
@@ -45,17 +51,19 @@ async def async_setup_entry(hass, entry, async_add_entities):
         if entities:
             async_add_entities(entities)
 
-    entry.async_on_unload(
+    config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HmPlatform.SENSOR),
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.SENSOR
+            ),
             async_add_sensor,
         )
     )
-    entry.async_on_unload(
+    config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, "hub"),
+            control_unit.async_signal_new_hm_entity(config_entry.entry_id, "hub"),
             async_add_hub_sensors,
         )
     )

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from typing import Any
 
 from hahomematic import config
 from hahomematic.central_unit import CentralConfig, CentralUnit
@@ -32,16 +33,15 @@ from hahomematic.const import (
     HH_EVENT_RE_ADDED_DEVICE,
     HH_EVENT_REPLACE_DEVICE,
     HH_EVENT_UPDATE_DEVICE,
-    HmEventType,
-    HmPlatform,
     IP_ANY_V4,
     PORT_ANY,
+    HmEventType,
+    HmPlatform,
 )
 from hahomematic.entity import BaseEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
@@ -70,25 +70,14 @@ class ControlUnit:
     Central point to control a Homematic CCU.
     """
 
-    def __init__(self, hass: HomeAssistant, data=None, entry: ConfigEntry = None):
-        if data is None:
-            data = {}
-        self._hass = hass
-        self._data = data
-        if entry:
-            self._entry = entry
-            self._entry_id = entry.entry_id
-            self._data = self._entry.data
-            self.enable_virtual_channels = self._entry.options.get(
-                CONF_ENABLE_VIRTUAL_CHANNELS, False
-            )
-            self.enable_sensors_for_own_system_variables = self._entry.options.get(
-                CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES, False
-            )
-        else:
-            self._entry_id = "solo"
-            self.enable_virtual_channels = False
-            self.enable_sensors_for_own_system_variables = False
+    def __init__(self, control_config):
+        self._hass = control_config.hass
+        self._entry_id = control_config.entry_id
+        self._data = control_config.data
+        self.enable_virtual_channels = control_config.enable_virtual_channels
+        self.enable_sensors_for_own_system_variables = (
+            control_config.enable_sensors_for_own_system_variables
+        )
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
         self._hub = None
@@ -313,6 +302,30 @@ class ControlUnit:
         for entity in self._active_hm_entities.values():
             if entity.address == address:
                 return entity
+
+
+class ControlConfig:
+    """Config for a ControlUnit."""
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry_id: str,
+        data: dict[str, Any],
+        enable_virtual_channels: bool = False,
+        enable_sensors_for_own_system_variables: bool = False,
+    ) -> None:
+        self.hass = hass
+        self.entry_id = entry_id
+        self.data = data
+        self.enable_virtual_channels = enable_virtual_channels
+        self.enable_sensors_for_own_system_variables = (
+            enable_sensors_for_own_system_variables
+        )
+
+    def get_control_unit(self) -> ControlUnit:
+        """Identify the used client."""
+        return ControlUnit(self)
 
 
 class HaHub(Entity):

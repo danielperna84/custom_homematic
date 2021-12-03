@@ -40,7 +40,7 @@ from .const import (
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
-from .control_unit import ControlUnit
+from .control_unit import ControlConfig
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -81,7 +81,9 @@ async def validate_input(
     # it while initializing.
     config.CACHE_DIR = "cache"
 
-    control_unit = ControlUnit(hass, data=data)
+    control_unit = ControlConfig(
+        hass=hass, entry_id="validate", data=data
+    ).get_control_unit()
     control_unit.create_central()
     try:
         await control_unit.create_clients()
@@ -153,9 +155,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            info = await validate_input(
-                self.hass, self.data, user_input[ATTR_INTERFACE_NAME]
-            )
+            await validate_input(self.hass, self.data, user_input[ATTR_INTERFACE_NAME])
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:

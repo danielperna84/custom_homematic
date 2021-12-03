@@ -89,12 +89,10 @@ class HaHomematicGenericEntity(Entity):
             load_state = await self._hm_entity.load_data()
         # if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
         #    await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
-        # elif self.registry_entry.disabled_by == er.DISABLED_INTEGRATION:
-        #    await self._update_registry_entry(disabled_by=None)
 
     async def _update_registry_entry(self, disabled_by) -> None:
         """Update registry_entry disabled_by."""
-        (await er.async_get_registry(self.hass)).async_update_entity(
+        await er.async_get_registry(self.hass).async_update_entity(
             self.entity_id, disabled_by=disabled_by
         )
 

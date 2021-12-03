@@ -34,6 +34,8 @@ from .const import (
     ATTR_PARAMSET_KEY,
     ATTR_RX_MODE,
     ATTR_VALUE_TYPE,
+    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
+    CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
     HAHM_PLATFORMS,
     SERVICE_PUT_PARAMSET,
@@ -42,7 +44,7 @@ from .const import (
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_VIRTUAL_KEY,
 )
-from .control_unit import ControlUnit
+from .control_unit import ControlConfig, ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -95,25 +97,37 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 )
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
-    control_unit = ControlUnit(hass, entry=entry)
+    control_unit = ControlConfig(
+        hass=hass,
+        entry_id=config_entry.entry_id,
+        data=config_entry.data,
+        enable_virtual_channels=config_entry.options.get(
+            CONF_ENABLE_VIRTUAL_CHANNELS, False
+        ),
+        enable_sensors_for_own_system_variables=config_entry.options.get(
+            CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES, False
+        ),
+    ).get_control_unit()
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = control_unit
-    hass.config_entries.async_setup_platforms(entry, HAHM_PLATFORMS)
+    hass.data[DOMAIN][config_entry.entry_id] = control_unit
+    hass.config_entries.async_setup_platforms(config_entry, HAHM_PLATFORMS)
     await control_unit.start()
     await async_setup_services(hass)
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    control_unit = hass.data[DOMAIN][entry.entry_id]
+    control_unit = hass.data[DOMAIN][config_entry.entry_id]
     await control_unit.stop()
     control_unit.central.clear_all()
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, HAHM_PLATFORMS)
+    unload_ok = await hass.config_entries.async_unload_platforms(
+        config_entry, HAHM_PLATFORMS
+    )
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        hass.data[DOMAIN].pop(config_entry.entry_id)
 
     return unload_ok
 
