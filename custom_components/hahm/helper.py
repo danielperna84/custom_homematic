@@ -424,24 +424,25 @@ _DEFAULT_DESCRIPTION = {
 def get_entity_description(hm_entity) -> EntityDescription | None:
     """Get the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
-        device_description = _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
+        if device_description := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
             hm_entity.platform, {}
-        ).get((hm_entity.device_type, hm_entity.parameter))
-        if device_description:
+        ).get((hm_entity.device_type, hm_entity.parameter)):
             return device_description
+
         if hm_entity.parameter in ["STATE"]:
             return _DEFAULT_DESCRIPTION.get(hm_entity.platform, {})
-        param_description = _ENTITY_DESCRIPTION_PARAM.get(hm_entity.platform, {}).get(
-            hm_entity.parameter
-        )
-        if param_description:
+
+        if param_description := _ENTITY_DESCRIPTION_PARAM.get(
+            hm_entity.platform, {}
+        ).get(hm_entity.parameter):
             return param_description
+
     elif isinstance(hm_entity, CustomEntity):
-        custom_description = _ENTITY_DESCRIPTION_DEVICE.get(hm_entity.platform, {}).get(
-            hm_entity.device_type
-        )
-        if custom_description:
+        if custom_description := _ENTITY_DESCRIPTION_DEVICE.get(
+            hm_entity.platform, {}
+        ).get(hm_entity.device_type):
             return custom_description
+
     if hasattr(hm_entity, "platform"):
         return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
     return None

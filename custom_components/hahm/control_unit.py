@@ -202,8 +202,7 @@ class ControlUnit:
         elif src == HH_EVENT_DELETE_DEVICES:
             # Handle event of device removed in HAHM.
             for address in args[1]:
-                entity = self._get_active_entity_by_address(address)
-                if entity:
+                if entity := self._get_active_entity_by_address(address):
                     entity.remove_entity()
             return
         elif src == HH_EVENT_ERROR:
@@ -220,8 +219,7 @@ class ControlUnit:
     @callback
     def _callback_click_event(self, hm_event_type: HmEventType, event_data):
         """Fire event on click."""
-        device_id = self._get_device_id(event_data[ATTR_ADDRESS])
-        if device_id:
+        if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
 
         self._hass.bus.fire(
@@ -232,8 +230,7 @@ class ControlUnit:
     @callback
     def _callback_alarm_event(self, hm_event_type: HmEventType, event_data):
         """Fire event on alarm."""
-        device_id = self._get_device_id(event_data[ATTR_ADDRESS])
-        if device_id:
+        if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
 
         self._hass.bus.fire(

@@ -28,8 +28,7 @@ class HaHomematicGenericEntity(Entity):
         """Initialize the generic entity."""
         self._cu = control_unit
         self._hm_entity = hm_entity
-        entity_description = get_entity_description(self._hm_entity)
-        if entity_description:
+        if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
         # Marker showing that the Hm device hase been removed.
         self.hm_device_removed = False
@@ -132,8 +131,7 @@ class HaHomematicGenericEntity(Entity):
         if not self.registry_entry:
             return
 
-        device_id = self.registry_entry.device_id
-        if device_id:
+        if device_id := self.registry_entry.device_id:
             # Remove from device registry.
             device_registry = await dr.async_get_registry(self.hass)
             if device_id in device_registry.devices:
@@ -142,8 +140,7 @@ class HaHomematicGenericEntity(Entity):
         else:
             # Remove from entity registry.
             # Only relevant for entities that do not belong to a device.
-            entity_id = self.registry_entry.entity_id
-            if entity_id:
+            if entity_id := self.registry_entry.entity_id:
                 entity_registry = await er.async_get_registry(self.hass)
                 if entity_id in entity_registry.entities:
                     entity_registry.async_remove(entity_id)

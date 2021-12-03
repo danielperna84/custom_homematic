@@ -123,10 +123,9 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
     control_unit = hass.data[DOMAIN][config_entry.entry_id]
     await control_unit.stop()
     control_unit.central.clear_all()
-    unload_ok = await hass.config_entries.async_unload_platforms(
+    if unload_ok := await hass.config_entries.async_unload_platforms(
         config_entry, HAHM_PLATFORMS
-    )
-    if unload_ok:
+    ):
         hass.data[DOMAIN].pop(config_entry.entry_id)
 
     return unload_ok
@@ -157,8 +156,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         name = service.data[ATTR_NAME]
         value = service.data[ATTR_VALUE]
 
-        hub = _get_hub_by_entity_id(hass, entity_id)
-        if hub:
+        if hub := _get_hub_by_entity_id(hass, entity_id):
             await hub.set_variable(name, value)
 
     hass.services.async_register(
@@ -174,11 +172,10 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         address = service.data[ATTR_ADDRESS]
         parameter = service.data[ATTR_PARAMETER]
         value = service.data[ATTR_VALUE]
-        value_type = service.data.get(ATTR_VALUE_TYPE)
 
         # Convert value into correct XML-RPC Type.
         # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
-        if value_type:
+        if value_type := service.data.get(ATTR_VALUE_TYPE):
             if value_type == "int":
                 value = int(value)
             elif value_type == "double":
@@ -192,8 +189,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                 value = str(value)
 
         # Device not found
-        hm_entity = _get_hm_entity(hass, interface_id, address, parameter)
-        if hm_entity is None:
+        if (
+            hm_entity := _get_hm_entity(hass, interface_id, address, parameter)
+        ) is None:
             _LOGGER.error("%s not found!", address)
             return
 
@@ -213,8 +211,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         time = service.data.get(ATTR_TIME)
         address = service.data.get(ATTR_ADDRESS)
 
-        control_unit = _get_cu_by_interface_id(hass, interface_id)
-        if control_unit:
+        if control_unit := _get_cu_by_interface_id(hass, interface_id):
             await control_unit.central.set_install_mode(
                 interface_id, t=time, mode=mode, address=address
             )
@@ -245,8 +242,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             paramset,
             rx_mode,
         )
-        control_unit = _get_cu_by_interface_id(hass, interface_id)
-        if control_unit:
+
+        if control_unit := _get_cu_by_interface_id(hass, interface_id):
             await control_unit.central.put_paramset(
                 interface_id, address, paramset_key, paramset, rx_mode
             )

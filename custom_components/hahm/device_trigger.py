@@ -54,8 +54,7 @@ async def async_get_triggers(
     triggers = []
     for entry_id in device.config_entries:
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
-        hm_device = control_unit.central.hm_devices.get(address)
-        if hm_device:
+        if hm_device := control_unit.central.hm_devices.get(address):
             for action_event in hm_device.action_events.values():
                 if isinstance(action_event, ImpulseEvent):
                     continue
