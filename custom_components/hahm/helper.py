@@ -17,31 +17,16 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 from homeassistant.components.button import ButtonEntityDescription
-from homeassistant.components.cover import (
-    CoverDeviceClass,
-    CoverEntityDescription,
-)
+from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.sensor import (
-    SensorStateClass,
+    SensorDeviceClass,
     SensorEntityDescription,
+    SensorStateClass,
 )
-from homeassistant.components.switch import (
-    SwitchDeviceClass,
-    SwitchEntityDescription,
-)
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
-    DEVICE_CLASS_CO2,
-    DEVICE_CLASS_CURRENT,
-    DEVICE_CLASS_ENERGY,
-    DEVICE_CLASS_GAS,
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_ILLUMINANCE,
-    DEVICE_CLASS_POWER,
-    DEVICE_CLASS_PRESSURE,
-    DEVICE_CLASS_TEMPERATURE,
-    DEVICE_CLASS_VOLTAGE,
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
     ENERGY_WATT_HOUR,
@@ -83,116 +68,116 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "HUMIDITY": SensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
-        device_class=DEVICE_CLASS_HUMIDITY,
+        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "ACTUAL_TEMPERATURE": SensorEntityDescription(
         key="ACTUAL_TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
-        device_class=DEVICE_CLASS_TEMPERATURE,
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "TEMPERATURE": SensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
-        device_class=DEVICE_CLASS_TEMPERATURE,
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "LUX": SensorEntityDescription(
         key="LUX",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "CURRENT_ILLUMINATION": SensorEntityDescription(
         key="CURRENT_ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "ILLUMINATION": SensorEntityDescription(
         key="ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "AVERAGE_ILLUMINATION": SensorEntityDescription(
         key="AVERAGE_ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "LOWEST_ILLUMINATION": SensorEntityDescription(
         key="LOWEST_ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "HIGHEST_ILLUMINATION": SensorEntityDescription(
         key="HIGHEST_ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
-        device_class=DEVICE_CLASS_ILLUMINANCE,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "POWER": SensorEntityDescription(
         key="POWER",
         native_unit_of_measurement=POWER_WATT,
-        device_class=DEVICE_CLASS_POWER,
+        device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "IEC_POWER": SensorEntityDescription(
         key="IEC_POWER",
         native_unit_of_measurement=POWER_WATT,
-        device_class=DEVICE_CLASS_POWER,
+        device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "CURRENT": SensorEntityDescription(
         key="CURRENT",
         native_unit_of_measurement=ELECTRIC_CURRENT_MILLIAMPERE,
-        device_class=DEVICE_CLASS_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "CONCENTRATION": SensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
-        device_class=DEVICE_CLASS_CO2,
+        device_class=SensorDeviceClass.CO2,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "ENERGY_COUNTER": SensorEntityDescription(
         key="ENERGY_COUNTER",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
-        device_class=DEVICE_CLASS_ENERGY,
+        device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "IEC_ENERGY_COUNTER": SensorEntityDescription(
         key="IEC_ENERGY_COUNTER",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
-        device_class=DEVICE_CLASS_ENERGY,
+        device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "VOLTAGE": SensorEntityDescription(
         key="VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
-        device_class=DEVICE_CLASS_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "OPERATING_VOLTAGE": SensorEntityDescription(
         key="OPERATING_VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
-        device_class=DEVICE_CLASS_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "GAS_POWER": SensorEntityDescription(
         key="GAS_POWER",
         native_unit_of_measurement=VOLUME_CUBIC_METERS,
-        device_class=DEVICE_CLASS_GAS,
+        device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "GAS_ENERGY_COUNTER": SensorEntityDescription(
         key="GAS_ENERGY_COUNTER",
         native_unit_of_measurement=VOLUME_CUBIC_METERS,
-        device_class=DEVICE_CLASS_GAS,
+        device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "RAIN_COUNTER": SensorEntityDescription(
@@ -219,7 +204,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "AIR_PRESSURE": SensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=PRESSURE_HPA,
-        device_class=DEVICE_CLASS_PRESSURE,
+        device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "FREQUENCY": SensorEntityDescription(
