@@ -15,7 +15,6 @@ from hahomematic.const import (
     ATTR_NAME,
     ATTR_PARAMETER,
     ATTR_VALUE,
-    HA_PLATFORMS,
 )
 from hahomematic.entity import GenericEntity
 from hahomematic.hub import HmHub
@@ -36,13 +35,14 @@ from .const import (
     ATTR_RX_MODE,
     ATTR_VALUE_TYPE,
     DOMAIN,
+    HAHM_PLATFORMS,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_VIRTUAL_KEY,
 )
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     control_unit = ControlUnit(hass, entry=entry)
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = control_unit
-    hass.config_entries.async_setup_platforms(entry, HA_PLATFORMS)
+    hass.config_entries.async_setup_platforms(entry, HAHM_PLATFORMS)
     await control_unit.start()
     await async_setup_services(hass)
     return True
@@ -111,7 +111,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     control_unit = hass.data[DOMAIN][entry.entry_id]
     await control_unit.stop()
     control_unit.central.clear_all()
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, HA_PLATFORMS)
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, HAHM_PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
 

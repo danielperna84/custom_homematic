@@ -23,7 +23,7 @@ from hahomematic.const import (
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
-    HA_PLATFORMS,
+    AVAILABLE_HM_PLATFORMS,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
@@ -32,6 +32,8 @@ from hahomematic.const import (
     HH_EVENT_RE_ADDED_DEVICE,
     HH_EVENT_REPLACE_DEVICE,
     HH_EVENT_UPDATE_DEVICE,
+    HmEventType,
+    HmPlatform,
     IP_ANY_V4,
     PORT_ANY,
 )
@@ -56,6 +58,7 @@ from .const import (
     CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
+    HAHM_PLATFORMS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -145,20 +148,20 @@ class ControlUnit:
         """
         # init dict
         hm_entities = {}
-        for platform in HA_PLATFORMS:
-            hm_entities[platform] = []
+        for hm_platform in AVAILABLE_HM_PLATFORMS:
+            hm_entities[hm_platform] = []
 
         for entity in new_entities:
             if (
                 entity.unique_id not in self._active_hm_entities
                 and entity.create_in_ha
-                and entity.platform in HA_PLATFORMS
+                and entity.platform.value in HAHM_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
 
         return hm_entities
 
-    def get_hm_entities_by_platform(self, platform):
+    def get_hm_entities_by_platform(self, platform: HmPlatform):
         """
         Return all hm-entities by platform
         """
@@ -226,26 +229,26 @@ class ControlUnit:
             return
 
     @callback
-    def _callback_click_event(self, event_type, event_data):
+    def _callback_click_event(self, hm_event_type: HmEventType, event_data):
         """Fire event on click."""
         device_id = self._get_device_id(event_data[ATTR_ADDRESS])
         if device_id:
             event_data[CONF_DEVICE_ID] = device_id
 
         self._hass.bus.fire(
-            event_type,
+            hm_event_type.value,
             event_data,
         )
 
     @callback
-    def _callback_alarm_event(self, event_type, event_data):
+    def _callback_alarm_event(self, hm_event_type: HmEventType, event_data):
         """Fire event on alarm."""
         device_id = self._get_device_id(event_data[ATTR_ADDRESS])
         if device_id:
             event_data[CONF_DEVICE_ID] = device_id
 
         self._hass.bus.fire(
-            event_type,
+            hm_event_type.value,
             event_data,
         )
 

@@ -4,14 +4,14 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import HA_PLATFORM_LIGHT
+from hahomematic.const import HmPlatform
 
 from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_HS_COLOR, LightEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import DOMAIN
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,12 +35,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_LIGHT),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HmPlatform.LIGHT),
             async_add_light,
         )
     )
 
-    async_add_light([control_unit.get_hm_entities_by_platform(HA_PLATFORM_LIGHT)])
+    async_add_light([control_unit.get_hm_entities_by_platform(HmPlatform.LIGHT)])
 
 
 class HaHomematicLight(HaHomematicGenericEntity, LightEntity):

@@ -11,7 +11,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .helper import get_entity_description
 
 _LOGGER = logging.getLogger(__name__)

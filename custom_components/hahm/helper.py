@@ -3,13 +3,7 @@ from __future__ import annotations
 
 import logging
 
-from hahomematic.const import (
-    HA_PLATFORM_BINARY_SENSOR,
-    HA_PLATFORM_BUTTON,
-    HA_PLATFORM_COVER,
-    HA_PLATFORM_SENSOR,
-    HA_PLATFORM_SWITCH,
-)
+from hahomematic.const import HmPlatform
 from hahomematic.entity import CustomEntity, GenericEntity
 
 from homeassistant.components.binary_sensor import (
@@ -395,32 +389,32 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str, SwitchEntityDescription] = {}
 _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SwitchEntityDescription] = {}
 
 _ENTITY_DESCRIPTION_DEVICE = {
-    HA_PLATFORM_COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
-    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
+    HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
 _ENTITY_DESCRIPTION_PARAM = {
-    HA_PLATFORM_BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
-    HA_PLATFORM_SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
-    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
 _ENTITY_DESCRIPTION_DEVICE_PARAM = {
-    HA_PLATFORM_BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
-    HA_PLATFORM_SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
-    HA_PLATFORM_SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
 }
 
 _DEFAULT_DESCRIPTION = {
-    HA_PLATFORM_BINARY_SENSOR: None,
-    HA_PLATFORM_BUTTON: ButtonEntityDescription(
+    HmPlatform.BINARY_SENSOR: None,
+    HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
         entity_category=ENTITY_CATEGORY_SYSTEM,
     ),
-    HA_PLATFORM_COVER: None,
-    HA_PLATFORM_SENSOR: None,
-    HA_PLATFORM_SWITCH: SwitchEntityDescription(
+    HmPlatform.COVER: None,
+    HmPlatform.SENSOR: None,
+    HmPlatform.SWITCH: SwitchEntityDescription(
         key="switch_default",
         device_class=SwitchDeviceClass.SWITCH,
     ),

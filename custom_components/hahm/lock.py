@@ -4,14 +4,14 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import HA_PLATFORM_LOCK
+from hahomematic.const import HmPlatform
 
 from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import DOMAIN
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,12 +35,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_LOCK),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HmPlatform.LOCK),
             async_add_lock,
         )
     )
 
-    async_add_lock([control_unit.get_hm_entities_by_platform(HA_PLATFORM_LOCK)])
+    async_add_lock([control_unit.get_hm_entities_by_platform(HmPlatform.LOCK)])
 
 
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):

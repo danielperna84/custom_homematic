@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 
-from hahomematic.const import HA_PLATFORM_SELECT
+from hahomematic.const import HmPlatform
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.const import ENTITY_CATEGORY_CONFIG
@@ -11,7 +11,7 @@ from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import DOMAIN
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,12 +35,12 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SELECT),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HmPlatform.SELECT),
             async_add_select,
         )
     )
 
-    async_add_select([control_unit.get_hm_entities_by_platform(HA_PLATFORM_SELECT)])
+    async_add_select([control_unit.get_hm_entities_by_platform(HmPlatform.SELECT)])
 
 
 class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):

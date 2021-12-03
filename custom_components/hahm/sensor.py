@@ -4,14 +4,14 @@ from __future__ import annotations
 from datetime import timedelta
 import logging
 
-from hahomematic.const import HA_PLATFORM_SENSOR
+from hahomematic.const import HmPlatform
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import DOMAIN
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_SENSOR),
+            control_unit.async_signal_new_hm_entity(entry.entry_id, HmPlatform.SENSOR),
             async_add_sensor,
         )
     )
@@ -60,7 +60,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
         )
     )
 
-    async_add_sensor([control_unit.get_hm_entities_by_platform(HA_PLATFORM_SENSOR)])
+    async_add_sensor([control_unit.get_hm_entities_by_platform(HmPlatform.SENSOR)])
 
 
 class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):

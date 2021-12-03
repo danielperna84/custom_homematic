@@ -40,7 +40,7 @@ from .const import (
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 

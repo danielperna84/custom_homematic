@@ -1,4 +1,6 @@
 """Constants."""
+from hahomematic.const import AVAILABLE_HM_PLATFORMS
+from homeassistant.const import Platform
 
 DOMAIN = "hahm"
 
@@ -24,3 +26,18 @@ SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_VIRTUAL_KEY = "virtual_key"
+
+
+def _get_hahm_platforms():
+    """Return relevant hahm platforms."""
+    platforms = [entry.value for entry in Platform]
+    hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
+    hahm_platforms = []
+    for hm_platform in hm_platforms:
+        if hm_platform in platforms:
+            hahm_platforms.append(hm_platform)
+
+    return hahm_platforms
+
+
+HAHM_PLATFORMS = _get_hahm_platforms()
