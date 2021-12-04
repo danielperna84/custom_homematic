@@ -5,6 +5,7 @@ from datetime import timedelta
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.platforms.sensor import HmSensor
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -73,6 +74,8 @@ async def async_setup_entry(
 
 class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
     """Representation of the HomematicIP sensor entity."""
+
+    _hm_entity: HmSensor
 
     @property
     def native_value(self):

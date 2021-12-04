@@ -22,7 +22,7 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
 import homeassistant.helpers.config_validation as cv
 
 from .const import (
@@ -134,7 +134,7 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup servives"""
 
-    async def _service_virtualkey(service):
+    async def _service_virtualkey(service: ServiceCall):
         """Service to handle virtualkey servicecalls."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -150,7 +150,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
 
-    async def _service_set_variable_value(service):
+    async def _service_set_variable_value(service: ServiceCall):
         """Service to call setValue method for HomeMatic system variable."""
         entity_id = service.data.get(ATTR_ENTITY_ID)
         name = service.data[ATTR_NAME]
@@ -166,7 +166,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
-    async def _service_set_device_value(service):
+    async def _service_set_device_value(service: ServiceCall):
         """Service to call setValue method for HomeMatic devices."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -204,7 +204,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
-    async def _service_set_install_mode(service):
+    async def _service_set_install_mode(service: ServiceCall):
         """Service to set interface_id into install mode."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         mode = service.data.get(ATTR_MODE)
@@ -223,7 +223,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
-    async def _service_put_paramset(service):
+    async def _service_put_paramset(service: ServiceCall):
         """Service to call the putParamset method on a HomeMatic connection."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -256,13 +256,17 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     )
 
 
-def _get_hm_entity(hass, interface_id, address, parameter) -> GenericEntity:
+def _get_hm_entity(
+    hass: HomeAssistant, interface_id: str, address: str, parameter: str
+) -> GenericEntity:
     """Get homematic entity."""
     control_unit = _get_cu_by_interface_id(hass, interface_id)
     return control_unit.central.get_hm_entity_by_parameter(address, parameter)
 
 
-def _get_cu_by_interface_id(hass, interface_id) -> ControlUnit | None:
+def _get_cu_by_interface_id(
+    hass: HomeAssistant, interface_id: str
+) -> ControlUnit | None:
     """
     Get ControlUnit by device address
     """
@@ -272,7 +276,7 @@ def _get_cu_by_interface_id(hass, interface_id) -> ControlUnit | None:
     return None
 
 
-def _get_hub_by_entity_id(hass, entity_id) -> HmHub | None:
+def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HmHub | None:
     """
     Get ControlUnit by device address
     """

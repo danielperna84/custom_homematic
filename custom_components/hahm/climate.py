@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
+from hahomematic.devices.climate import IPThermostat, RfThermostat, SimpleRfThermostat
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.config_entries import ConfigEntry
@@ -53,6 +54,8 @@ async def async_setup_entry(
 
 class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
     """Representation of the HomematicIP climate entity."""
+
+    _hm_entity: SimpleRfThermostat | RfThermostat | IPThermostat
 
     @property
     def temperature_unit(self) -> str:

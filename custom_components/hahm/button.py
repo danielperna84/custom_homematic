@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.platforms.button import HmButton
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
@@ -52,6 +53,8 @@ async def async_setup_entry(
 
 class HaHomematicButton(HaHomematicGenericEntity, ButtonEntity):
     """Representation of the Homematic button."""
+
+    _hm_entity: HmButton
 
     async def async_press(self) -> None:
         await self._hm_entity.press()

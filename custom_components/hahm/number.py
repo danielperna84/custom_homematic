@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.platforms.number import HmNumber
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
@@ -53,6 +54,8 @@ async def async_setup_entry(
 
 class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
     """Representation of the HomematicIP number entity."""
+
+    _hm_entity: HmNumber
 
     @property
     def min_value(self) -> float:

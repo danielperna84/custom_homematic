@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
+from hahomematic.devices.lock import IpLock, RfLock
 
 from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
 from homeassistant.config_entries import ConfigEntry
@@ -53,6 +54,8 @@ async def async_setup_entry(
 
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     """Representation of the HomematicIP lock entity."""
+
+    _hm_entity: IpLock | RfLock
 
     @property
     def is_locked(self):

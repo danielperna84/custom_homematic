@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.platforms.select import HmSelect
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -53,6 +54,8 @@ async def async_setup_entry(
 
 class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
     """Representation of the HomematicIP select entity."""
+
+    _hm_select: HmSelect
 
     @property
     def options(self) -> list[str]:

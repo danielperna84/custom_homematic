@@ -5,7 +5,7 @@ from abc import ABC
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.cover import HmBlind, HmCover
+from hahomematic.devices.cover import HmBlind, HmCover, HmGarage
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -40,7 +40,7 @@ async def async_setup_entry(
         for hm_entity in args[0]:
             if isinstance(hm_entity, HmBlind):
                 entities.append(HaHomematicBlind(control_unit, hm_entity))
-            elif isinstance(hm_entity, HmCover):
+            elif isinstance(hm_entity, (HmCover, HmGarage)):
                 entities.append(HaHomematicCover(control_unit, hm_entity))
 
         if entities:
@@ -61,6 +61,8 @@ async def async_setup_entry(
 
 class HaHomematicCover(HaHomematicGenericEntity, CoverEntity):
     """Representation of the HomematicIP cover entity."""
+
+    _hm_entity: HmCover | HmGarage
 
     @property
     def current_cover_position(self) -> int | None:
@@ -97,6 +99,8 @@ class HaHomematicCover(HaHomematicGenericEntity, CoverEntity):
 class HaHomematicBlind(HaHomematicCover, CoverEntity, ABC):
     """Representation of the HomematicIP blind entity."""
 
+    _hm_entity: HmBlind
+
     @property
     def current_cover_tilt_position(self) -> int | None:
         """
@@ -121,3 +125,9 @@ class HaHomematicBlind(HaHomematicCover, CoverEntity, ABC):
     async def async_stop_cover_tilt(self, **kwargs) -> None:
         """Stop the device if in motion."""
         await self._hm_entity.stop_cover_tilt()
+
+
+class HaHomematicGarage(HaHomematicCover, CoverEntity):
+    """Representation of the HomematicIP garage entity."""
+
+    _hm_entity: HmGarage

@@ -55,8 +55,6 @@ from .const import (
     ATTR_INTERFACE,
     ATTR_JSON_TLS,
     ATTR_PATH,
-    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
-    CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
     HAHM_PLATFORMS,
 )
@@ -82,7 +80,7 @@ class ControlUnit:
         self._active_hm_entities: dict[str, BaseEntity] = {}
         self._hub = None
 
-    async def start(self):
+    async def start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
@@ -94,7 +92,7 @@ class ControlUnit:
         await self.init_clients()
         self._central.start_connection_checker()
 
-    async def stop(self):
+    async def stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         await self._central.stop_connection_checker()
@@ -102,7 +100,7 @@ class ControlUnit:
             await client.proxy_de_init()
         await self._central.stop()
 
-    async def init_hub(self):
+    async def init_hub(self) -> None:
         """Init the hub."""
         await self._central.init_hub()
         self._hub = HaHub(self._hass, self)
@@ -117,7 +115,7 @@ class ControlUnit:
         )
 
     @property
-    def hub(self):
+    def hub(self) -> HaHub:
         """Return the Hub."""
         return self._hub
 
@@ -127,16 +125,16 @@ class ControlUnit:
             await client.proxy_init()
 
     @property
-    def central(self):
+    def central(self) -> CentralUnit:
         """return the HAHM central_unit instance."""
         return self._central
 
-    def get_new_hm_entities(self, new_entities):
+    def get_new_hm_entities(self, new_entities) -> dict[HmPlatform, list[BaseEntity]]:
         """
         Return all hm-entities by requested unique_ids
         """
         # init dict
-        hm_entities = {}
+        hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
         for hm_platform in AVAILABLE_HM_PLATFORMS:
             hm_entities[hm_platform] = []
 
@@ -150,7 +148,7 @@ class ControlUnit:
 
         return hm_entities
 
-    def get_hm_entities_by_platform(self, platform: HmPlatform):
+    def get_hm_entities_by_platform(self, platform: HmPlatform) -> list[BaseEntity]:
         """
         Return all hm-entities by platform
         """
@@ -165,22 +163,22 @@ class ControlUnit:
 
         return hm_entities
 
-    def add_hm_entity(self, hm_entity):
+    def add_hm_entity(self, hm_entity) -> None:
         """add entity to active entities"""
         self._active_hm_entities[hm_entity.unique_id] = hm_entity
 
-    def remove_hm_entity(self, hm_entity):
+    def remove_hm_entity(self, hm_entity) -> None:
         """remove entity from active entities"""
         del self._active_hm_entities[hm_entity.unique_id]
 
     # pylint: disable=no-self-use
     @callback
-    def async_signal_new_hm_entity(self, entry_id, device_type) -> str:
+    def async_signal_new_hm_entity(self, entry_id: str, device_type) -> str:
         """Gateway specific event to signal new device."""
         return f"hahm-new-entity-{entry_id}-{device_type}"
 
     @callback
-    def _callback_system_event(self, src, *args):
+    def _callback_system_event(self, src: str, *args):
         """Callback for ccu based events."""
         if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
@@ -217,7 +215,9 @@ class ControlUnit:
             return
 
     @callback
-    def _callback_click_event(self, hm_event_type: HmEventType, event_data):
+    def _callback_click_event(
+        self, hm_event_type: HmEventType, event_data: dict[str, Any]
+    ):
         """Fire event on click."""
         if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
@@ -228,7 +228,9 @@ class ControlUnit:
         )
 
     @callback
-    def _callback_alarm_event(self, hm_event_type: HmEventType, event_data):
+    def _callback_alarm_event(
+        self, hm_event_type: HmEventType, event_data: dict[str, Any]
+    ):
         """Fire event on alarm."""
         if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
@@ -238,7 +240,7 @@ class ControlUnit:
             event_data,
         )
 
-    def _get_device_id(self, address):
+    def _get_device_id(self, address: str) -> str:
         """Return the device id of the hahm device."""
         hm_device = self.central.hm_devices.get(address)
         identifiers = hm_device.device_info.get("identifiers")
@@ -246,7 +248,7 @@ class ControlUnit:
         device = device_registry.async_get_device(identifiers)
         return device.id if device else None
 
-    def create_central(self):
+    def create_central(self) -> None:
         """create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
             local_ip=self._data.get(ATTR_CALLBACK_HOST),
@@ -274,7 +276,7 @@ class ControlUnit:
         self._central.callback_click_event = self._callback_click_event
         self._central.callback_alarm_event = self._callback_alarm_event
 
-    async def create_clients(self):
+    async def create_clients(self) -> None:
         """create clients for the central unit."""
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
@@ -295,7 +297,7 @@ class ControlUnit:
             )
         return clients
 
-    def _get_active_entity_by_address(self, address):
+    def _get_active_entity_by_address(self, address: str) -> BaseEntity:
         for entity in self._active_hm_entities.values():
             if entity.address == address:
                 return entity
@@ -337,7 +339,7 @@ class HaHub(Entity):
         self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
         self._hm_hub.register_update_callback(self._update_hub)
 
-    async def init(self):
+    async def init(self) -> None:
         """Init fetch scheduler."""
         self.hass.helpers.event.async_track_time_interval(
             self._fetch_data, SCAN_INTERVAL
@@ -350,16 +352,16 @@ class HaHub(Entity):
         return self._hm_hub.available
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Return the name of the device."""
         return self._name
 
     @property
-    def should_poll(self):
+    def should_poll(self) -> bool:
         """Return false. HomeMatic Hub object updates variables."""
         return False
 
-    async def _fetch_data(self, now):
+    async def _fetch_data(self, now) -> None:
         """Fetch data from backend."""
         await self._hm_hub.fetch_data()
 
@@ -369,16 +371,16 @@ class HaHub(Entity):
         return self._hm_hub.state
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes."""
         return self._hm_hub.extra_state_attributes
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Return the icon to use in the frontend, if any."""
         return "mdi:gradient-vertical"
 
-    async def set_variable(self, name, value):
+    async def set_variable(self, name: str, value) -> None:
         """Set variable value on CCU/Homegear."""
         sensor = self._hm_hub.hub_entities.get(name)
         if not sensor or name in self.extra_state_attributes:
@@ -395,6 +397,6 @@ class HaHub(Entity):
         await self._hm_hub.set_system_variable(name, value)
 
     @callback
-    def _update_hub(self, *args):
+    def _update_hub(self, *args) -> None:
         """Update the HA hub."""
         self.async_schedule_update_ha_state(True)

@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.entity import CustomEntity, GenericEntity
+from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -421,7 +421,7 @@ _DEFAULT_DESCRIPTION = {
 }
 
 
-def get_entity_description(hm_entity) -> EntityDescription | None:
+def get_entity_description(hm_entity: BaseEntity) -> EntityDescription | None:
     """Get the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
         if device_description := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(

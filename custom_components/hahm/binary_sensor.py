@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.platforms.binary_sensor import HmBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -54,6 +55,8 @@ async def async_setup_entry(
 
 class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
     """Representation of the Homematic binary sensor."""
+
+    _hm_entity: HmBinarySensor
 
     @property
     def is_on(self) -> bool:

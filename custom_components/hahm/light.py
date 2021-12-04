@@ -5,6 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
+from hahomematic.devices.light import HmDimmer, HmLight, IPLightBSL
 
 from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_HS_COLOR, LightEntity
 from homeassistant.config_entries import ConfigEntry
@@ -53,6 +54,8 @@ async def async_setup_entry(
 
 class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
     """Representation of the HomematicIP light entity."""
+
+    _hm_entity: HmDimmer | HmLight | IPLightBSL
 
     @property
     def is_on(self) -> bool:

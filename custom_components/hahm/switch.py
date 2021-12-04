@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
+from hahomematic.devices.switch import HmSwitch
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -52,6 +53,8 @@ async def async_setup_entry(
 
 class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
     """Representation of the HomematicIP switch entity."""
+
+    _hm_entity: HmSwitch
 
     @property
     def is_on(self) -> bool:
