@@ -245,7 +245,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
 _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SensorEntityDescription] = {
     ("HmIP-SRH", "STATE"): SensorEntityDescription(
         key="STATE",
-        device_class=BinarySensorDeviceClass.WINDOW,
+        device_class="hahm__srh",
     ),
 }
 
