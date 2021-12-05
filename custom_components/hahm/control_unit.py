@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from types import MappingProxyType
 from typing import Any
 
 from hahomematic import config
@@ -186,13 +187,13 @@ class ControlUnit:
             for (platform, hm_entities) in self.get_new_hm_entities(
                 new_entity_unique_ids
             ).items():
-                args = []
                 if hm_entities and len(hm_entities) > 0:
-                    args.append([hm_entities])
                     async_dispatcher_send(
                         self._hass,
                         self.async_signal_new_hm_entity(self._entry_id, platform),
-                        *args,  # Don't send device if None, it would override default value in listeners
+                        [
+                            hm_entities
+                        ],  # Don't send device if None, it would override default value in listeners
                     )
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
@@ -240,7 +241,7 @@ class ControlUnit:
             event_data,
         )
 
-    def _get_device_id(self, address: str) -> str:
+    def _get_device_id(self, address: str) -> str | None:
         """Return the device id of the hahm device."""
         hm_device = self.central.hm_devices.get(address)
         identifiers = hm_device.device_info.get("identifiers")
@@ -276,7 +277,7 @@ class ControlUnit:
         self._central.callback_click_event = self._callback_click_event
         self._central.callback_alarm_event = self._callback_alarm_event
 
-    async def create_clients(self) -> None:
+    async def create_clients(self) -> set[Client]:
         """create clients for the central unit."""
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
@@ -310,7 +311,7 @@ class ControlConfig:
         self,
         hass: HomeAssistant,
         entry_id: str,
-        data: dict[str, Any],
+        data: MappingProxyType[str, Any],
         enable_virtual_channels: bool = False,
         enable_sensors_for_system_variables: bool = False,
     ) -> None:

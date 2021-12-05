@@ -10,6 +10,7 @@ from hahomematic.hub import BaseHubEntity
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.entity_registry import EntityRegistry
 
 from .control_unit import ControlUnit
 from .helper import get_entity_description
@@ -91,9 +92,8 @@ class HaHomematicGenericEntity(Entity):
 
     async def _update_registry_entry(self, disabled_by) -> None:
         """Update registry_entry disabled_by."""
-        await er.async_get_registry(self.hass).async_update_entity(
-            self.entity_id, disabled_by=disabled_by
-        )
+        entity_registry: EntityRegistry = await er.async_get_registry(self.hass)
+        entity_registry.async_update_entity(self.entity_id, disabled_by=disabled_by)
 
     @callback
     def _async_device_changed(self, *args, **kwargs) -> None:

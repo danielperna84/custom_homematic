@@ -93,8 +93,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         address = service.data[ATTR_ADDRESS]
         parameter = service.data[ATTR_PARAMETER]
 
-        control_unit = _get_cu_by_interface_id(hass, interface_id)
-        await control_unit.central.press_virtual_remote_key(address, parameter)
+        if control_unit := _get_cu_by_interface_id(hass, interface_id):
+            await control_unit.central.press_virtual_remote_key(address, parameter)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -105,7 +105,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
     async def _service_set_variable_value(service: ServiceCall):
         """Service to call setValue method for HomeMatic system variable."""
-        entity_id = service.data.get(ATTR_ENTITY_ID)
+        entity_id = service.data[ATTR_ENTITY_ID]
         name = service.data[ATTR_NAME]
         value = service.data[ATTR_VALUE]
 
@@ -211,10 +211,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 def _get_hm_entity(
     hass: HomeAssistant, interface_id: str, address: str, parameter: str
-) -> GenericEntity:
+) -> GenericEntity | None:
     """Get homematic entity."""
-    control_unit = _get_cu_by_interface_id(hass, interface_id)
-    return control_unit.central.get_hm_entity_by_parameter(address, parameter)
+    if control_unit := _get_cu_by_interface_id(hass, interface_id):
+        return control_unit.central.get_hm_entity_by_parameter(address, parameter)
+    return None
 
 
 def _get_cu_by_interface_id(

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from types import MappingProxyType
 from typing import Any
 from xmlrpc.client import ProtocolError
 
@@ -70,7 +71,7 @@ DOMAIN_SCHEMA = vol.Schema(
 
 
 async def validate_input(
-    hass: HomeAssistant, data: dict[str, Any], interface_name: str
+    hass: HomeAssistant, data: MappingProxyType[str, Any], interface_name: str
 ) -> bool:
     """
     Validate the user input allows us to connect.

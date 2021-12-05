@@ -44,10 +44,11 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
 
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
-) -> list[dict[str, Any]]:
+) -> list[dict[str, Any]] | None:
     """List device triggers for Home Assistant Homematic(IP) devices."""
     device_registry = dr.async_get(hass)
-    device = device_registry.async_get(device_id)
+    if (device := device_registry.async_get(device_id)) is None:
+        return None
     address = list(device.identifiers)[0][1]
     if address.endswith(tuple(HM_VIRTUAL_REMOTES)):
         address = address.split("_")[1]

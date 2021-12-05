@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
@@ -242,7 +243,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[tuple[str, str], SensorEntityDescription] = {
     ("HmIP-SRH", "STATE"): SensorEntityDescription(
         key="STATE",
         device_class="hahm__srh",
@@ -318,7 +319,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
 }
 
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
-    (str, str), BinarySensorEntityDescription
+    tuple[str, str], BinarySensorEntityDescription
 ] = {
     ("HmIP-SWDO-I", "STATE"): BinarySensorEntityDescription(
         key="STATE",
@@ -386,26 +387,28 @@ _SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {
 
 _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str, SwitchEntityDescription] = {}
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[(str, str), SwitchEntityDescription] = {}
+_SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
+    tuple[str, str], SwitchEntityDescription
+] = {}
 
-_ENTITY_DESCRIPTION_DEVICE = {
+_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, Any] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_PARAM = {
+_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, Any] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_DEVICE_PARAM = {
+_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[HmPlatform, Any] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
 }
 
-_DEFAULT_DESCRIPTION = {
+_DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
     HmPlatform.BINARY_SENSOR: None,
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
