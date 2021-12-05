@@ -19,13 +19,17 @@ from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
     ATTR_HOST,
+    ATTR_INTERFACE_ID,
     ATTR_JSON_PORT,
+    ATTR_PARAMETER,
     ATTR_PASSWORD,
     ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
+    ATTR_VALUE,
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
+    EVENT_STICKY_UN_REACH,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
@@ -216,30 +220,47 @@ class ControlUnit:
             return
 
     @callback
-    def _callback_click_event(
+    def _callback_ha_event(
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ):
-        """Fire event on click."""
         if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
 
-        self._hass.bus.fire(
-            hm_event_type.value,
-            event_data,
-        )
+        if hm_event_type == HmEventType.KEYPRESS:
+            self._hass.bus.fire(
+                hm_event_type.value,
+                event_data,
+            )
+        elif hm_event_type == HmEventType.ALARM:
+            if event_data[ATTR_VALUE] is True:
+                self._hass.bus.fire(
+                    hm_event_type.value,
+                    event_data,
+                )
+        elif hm_event_type is HmEventType.SPECIAL:
+            address = event_data[ATTR_ADDRESS]
+            interface_id = event_data[ATTR_INTERFACE_ID]
+            parameter = event_data[ATTR_PARAMETER]
+            value = event_data[ATTR_VALUE]
+            if parameter == EVENT_STICKY_UN_REACH:
+                if value is True:
+                    title = f"{DOMAIN}-Device not reachable"
+                    message = f"{address} on interface {interface_id}"
+                    self.create_persistant_notification(
+                        identifier=address, title=title, message=message
+                    )
+                else:
+                    self.dismiss_persistant_notification(identifier=address)
 
-    @callback
-    def _callback_alarm_event(
-        self, hm_event_type: HmEventType, event_data: dict[str, Any]
-    ):
-        """Fire event on alarm."""
-        if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
-            event_data[CONF_DEVICE_ID] = device_id
+    def create_persistant_notification(
+        self, identifier: str, title: str, message: str
+    ) -> None:
+        """Create a message for user to UI."""
+        self._hass.components.persistent_notification.create(message, title, identifier)
 
-        self._hass.bus.fire(
-            hm_event_type.value,
-            event_data,
-        )
+    def dismiss_persistant_notification(self, identifier: str) -> None:
+        """Dismiss a message for user on UI."""
+        self._hass.components.persistent_notification.dismiss(identifier)
 
     def _get_device_id(self, address: str) -> str | None:
         """Return the device id of the hahm device."""
@@ -274,8 +295,7 @@ class ControlUnit:
         ).get_central()
         # register callback
         self._central.callback_system_event = self._callback_system_event
-        self._central.callback_click_event = self._callback_click_event
-        self._central.callback_alarm_event = self._callback_alarm_event
+        self._central.callback_ha_event = self._callback_ha_event
 
     async def create_clients(self) -> set[Client]:
         """create clients for the central unit."""

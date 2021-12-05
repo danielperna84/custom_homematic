@@ -6,7 +6,6 @@ from homeassistant.const import Platform
 DOMAIN = "hahm"
 
 ATTR_ADD_ANOTHER_INTERFACE = "add_another_interface"
-ATTR_ADDRESS = "address"
 ATTR_CHANNEL = "channel"
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
