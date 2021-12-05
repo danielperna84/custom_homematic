@@ -19,7 +19,7 @@ ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
 ATTR_VALUE_TYPE = "value_type"
 
-CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES = "enable_sensors_for_own_system_variables"
+CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES = "enable_sensors_for_system_variables"
 CONF_ENABLE_VIRTUAL_CHANNELS = "enable_virtual_channels"
 
 SERVICE_PUT_PARAMSET = "put_paramset"

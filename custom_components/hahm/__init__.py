@@ -11,7 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from .const import (
-    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
+    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
     HAHM_PLATFORMS,
@@ -31,8 +31,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         enable_virtual_channels=config_entry.options.get(
             CONF_ENABLE_VIRTUAL_CHANNELS, False
         ),
-        enable_sensors_for_own_system_variables=config_entry.options.get(
-            CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES, False
+        enable_sensors_for_system_variables=config_entry.options.get(
+            CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES, False
         ),
     ).get_control_unit()
     hass.data.setdefault(DOMAIN, {})

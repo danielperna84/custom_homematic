@@ -73,8 +73,8 @@ class ControlUnit:
         self._entry_id = control_config.entry_id
         self._data = control_config.data
         self.enable_virtual_channels = control_config.enable_virtual_channels
-        self.enable_sensors_for_own_system_variables = (
-            control_config.enable_sensors_for_own_system_variables
+        self.enable_sensors_for_system_variables = (
+            control_config.enable_sensors_for_system_variables
         )
         self._central: CentralUnit = None
         self._active_hm_entities: dict[str, BaseEntity] = {}
@@ -269,7 +269,7 @@ class ControlUnit:
             json_port=self._data[ATTR_JSON_PORT],
             json_tls=self._data[ATTR_JSON_TLS],
             enable_virtual_channels=self.enable_virtual_channels,
-            enable_sensors_for_own_system_variables=self.enable_sensors_for_own_system_variables,
+            enable_sensors_for_system_variables=self.enable_sensors_for_system_variables,
         ).get_central()
         # register callback
         self._central.callback_system_event = self._callback_system_event
@@ -312,15 +312,13 @@ class ControlConfig:
         entry_id: str,
         data: dict[str, Any],
         enable_virtual_channels: bool = False,
-        enable_sensors_for_own_system_variables: bool = False,
+        enable_sensors_for_system_variables: bool = False,
     ) -> None:
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
         self.enable_virtual_channels = enable_virtual_channels
-        self.enable_sensors_for_own_system_variables = (
-            enable_sensors_for_own_system_variables
-        )
+        self.enable_sensors_for_system_variables = enable_sensors_for_system_variables
 
     def get_control_unit(self) -> ControlUnit:
         """Identify the used client."""
