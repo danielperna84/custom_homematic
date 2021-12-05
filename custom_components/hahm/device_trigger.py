@@ -64,7 +64,7 @@ async def async_get_triggers(
                     CONF_PLATFORM: "device",
                     CONF_DOMAIN: DOMAIN,
                     CONF_DEVICE_ID: device_id,
-                    CONF_EVENT_TYPE: action_event.event_type,
+                    CONF_EVENT_TYPE: action_event.event_type.value,
                 }
                 trigger.update(action_event.get_event_data())
                 triggers.append(trigger)
