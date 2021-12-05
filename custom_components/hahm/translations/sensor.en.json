@@ -1,0 +1,9 @@
+{
+  "state": {
+    "hahm__srh": {
+      "CLOSED": "Closed",
+      "TILTED": "Tilted",
+      "OPEN": "Open"
+    }
+  }
+}

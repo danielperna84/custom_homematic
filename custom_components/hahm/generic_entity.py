@@ -10,8 +10,9 @@ from hahomematic.hub import BaseHubEntity
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.entity_registry import EntityRegistry
 
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .helper import get_entity_description
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,8 +29,7 @@ class HaHomematicGenericEntity(Entity):
         """Initialize the generic entity."""
         self._cu = control_unit
         self._hm_entity = hm_entity
-        entity_description = get_entity_description(self._hm_entity)
-        if entity_description:
+        if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
         # Marker showing that the Hm device hase been removed.
         self.hm_device_removed = False
@@ -89,14 +89,11 @@ class HaHomematicGenericEntity(Entity):
             load_state = await self._hm_entity.load_data()
         # if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
         #    await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
-        # elif self.registry_entry.disabled_by == er.DISABLED_INTEGRATION:
-        #    await self._update_registry_entry(disabled_by=None)
 
     async def _update_registry_entry(self, disabled_by) -> None:
         """Update registry_entry disabled_by."""
-        (await er.async_get_registry(self.hass)).async_update_entity(
-            self.entity_id, disabled_by=disabled_by
-        )
+        entity_registry: EntityRegistry = await er.async_get_registry(self.hass)
+        entity_registry.async_update_entity(self.entity_id, disabled_by=disabled_by)
 
     @callback
     def _async_device_changed(self, *args, **kwargs) -> None:
@@ -134,8 +131,7 @@ class HaHomematicGenericEntity(Entity):
         if not self.registry_entry:
             return
 
-        device_id = self.registry_entry.device_id
-        if device_id:
+        if device_id := self.registry_entry.device_id:
             # Remove from device registry.
             device_registry = await dr.async_get_registry(self.hass)
             if device_id in device_registry.devices:
@@ -144,8 +140,7 @@ class HaHomematicGenericEntity(Entity):
         else:
             # Remove from entity registry.
             # Only relevant for entities that do not belong to a device.
-            entity_id = self.registry_entry.entity_id
-            if entity_id:
+            if entity_id := self.registry_entry.entity_id:
                 entity_registry = await er.async_get_registry(self.hass)
                 if entity_id in entity_registry.entities:
                     entity_registry.async_remove(entity_id)

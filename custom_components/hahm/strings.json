@@ -34,7 +34,7 @@
       "hahm_devices": {
         "data": {
           "enable_virtual_channels": "Enable virtual channels",
-          "enable_sensors_for_own_system_variables": "Enable sensors for own system variables"
+          "enable_sensors_for_system_variables": "Enable sensors for system variables"
         },
         "description": "Configure visibility of hahm device types",
         "title": "Hahm options"

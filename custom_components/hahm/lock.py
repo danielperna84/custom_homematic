@@ -4,22 +4,29 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import HA_PLATFORM_LOCK
+from hahomematic.const import HmPlatform
+from hahomematic.devices.lock import IpLock, RfLock
 
 from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
-from homeassistant.core import callback
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .controlunit import ControlUnit
+from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """Set up the HAHM lock platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
     def async_add_lock(args):
@@ -32,19 +39,23 @@ async def async_setup_entry(hass, entry, async_add_entities):
         if entities:
             async_add_entities(entities)
 
-    entry.async_on_unload(
+    config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(entry.entry_id, HA_PLATFORM_LOCK),
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.LOCK
+            ),
             async_add_lock,
         )
     )
 
-    async_add_lock([control_unit.get_hm_entities_by_platform(HA_PLATFORM_LOCK)])
+    async_add_lock([control_unit.get_hm_entities_by_platform(HmPlatform.LOCK)])
 
 
 class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
     """Representation of the HomematicIP lock entity."""
+
+    _hm_entity: IpLock | RfLock
 
     @property
     def is_locked(self):

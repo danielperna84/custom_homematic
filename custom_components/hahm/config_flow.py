@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from types import MappingProxyType
 from typing import Any
 from xmlrpc.client import ProtocolError
 
@@ -36,11 +37,11 @@ from .const import (
     ATTR_INTERFACE_NAME,
     ATTR_JSON_TLS,
     ATTR_PATH,
-    CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
+    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
-from .controlunit import ControlUnit
+from .control_unit import ControlConfig
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ DOMAIN_SCHEMA = vol.Schema(
 
 
 async def validate_input(
-    hass: HomeAssistant, data: dict[str, Any], interface_name: str
+    hass: HomeAssistant, data: MappingProxyType[str, Any], interface_name: str
 ) -> bool:
     """
     Validate the user input allows us to connect.
@@ -81,7 +82,9 @@ async def validate_input(
     # it while initializing.
     config.CACHE_DIR = "cache"
 
-    control_unit = ControlUnit(hass, data=data)
+    control_unit = ControlConfig(
+        hass=hass, entry_id="validate", data=data
+    ).get_control_unit()
     control_unit.create_central()
     try:
         await control_unit.create_clients()
@@ -153,9 +156,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            info = await validate_input(
-                self.hass, self.data, user_input[ATTR_INTERFACE_NAME]
-            )
+            await validate_input(self.hass, self.data, user_input[ATTR_INTERFACE_NAME])
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -213,8 +214,8 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
                         default=self._cu.enable_virtual_channels,
                     ): bool,
                     vol.Optional(
-                        CONF_ENABLE_SENSORS_FOR_OWN_SYSTEM_VARIABLES,
-                        default=self._cu.enable_sensors_for_own_system_variables,
+                        CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
+                        default=self._cu.enable_sensors_for_system_variables,
                     ): bool,
                 }
             ),
