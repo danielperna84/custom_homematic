@@ -1,0 +1,11 @@
+Version 0.0.17 (2021-12-05)
+- Add translation for HmIP-SRH states
+
+- Code quality:
+  - Use Enums from HaHomematic
+  - Add more type hints (fix mypy errors)
+  - Use assignment expressions
+  - Move services to own file
+
+Version 0.0.16 (2021-12-02)
+- Initial release
