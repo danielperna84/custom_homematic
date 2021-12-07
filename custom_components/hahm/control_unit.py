@@ -237,7 +237,7 @@ class ControlUnit:
                     hm_event_type.value,
                     event_data,
                 )
-        elif hm_event_type is HmEventType.SPECIAL:
+        elif hm_event_type == HmEventType.SPECIAL:
             address = event_data[ATTR_ADDRESS]
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
@@ -252,19 +252,22 @@ class ControlUnit:
                 else:
                     self.dismiss_persistant_notification(identifier=address)
 
+    @callback
     def create_persistant_notification(
         self, identifier: str, title: str, message: str
     ) -> None:
         """Create a message for user to UI."""
-        self._hass.components.persistent_notification.create(message, title, identifier)
+        self._hass.components.persistent_notification.async_create(message, title, identifier)
 
+    @callback
     def dismiss_persistant_notification(self, identifier: str) -> None:
         """Dismiss a message for user on UI."""
-        self._hass.components.persistent_notification.dismiss(identifier)
+        self._hass.components.persistent_notification.async_dismiss(identifier)
 
     def _get_device_id(self, address: str) -> str | None:
         """Return the device id of the hahm device."""
-        hm_device = self.central.hm_devices.get(address)
+        if (hm_device := self.central.hm_devices.get(address)) is None:
+            return None
         identifiers = hm_device.device_info.get("identifiers")
         device_registry = dr.async_get(self._hass)
         device = device_registry.async_get_device(identifiers)
