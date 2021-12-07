@@ -34,7 +34,7 @@
       "hahm_devices": {
         "data": {
           "enable_virtual_channels": "Virtuele kanalen inschakelen",
-		  "enable_sensors_for_own_system_variables": "Activeer sensoren voor eigen systeemvariabelen"
+		  "enable_sensors_for_system_variables": "Activeer sensoren voor eigen systeemvariabelen"
         },
         "description": "Configureer zichtbaarheid van hahm apparaattypes",
         "title": "Hahm opties"
