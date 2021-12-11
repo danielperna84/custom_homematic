@@ -438,20 +438,23 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
 def get_entity_description(hm_entity: HMEntityType) -> EntityDescription | None:
     """Get the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
+        entity_description: EntityDescription | None = None
         if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
             hm_entity.platform
         ):
-            return platform_device_param_descriptions.get(
+            entity_description = platform_device_param_descriptions.get(
                 (hm_entity.device_type, hm_entity.parameter)
             )
 
-        if hm_entity.sub_type:
+        if entity_description is None and hm_entity.sub_type :
             if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
                 hm_entity.platform
             ):
-                return platform_device_param_descriptions.get(
+                entity_description = platform_device_param_descriptions.get(
                     (hm_entity.sub_type, hm_entity.parameter)
                 )
+        if entity_description:
+            return entity_description
 
         if hm_entity.parameter in ["STATE"]:
             return _DEFAULT_DESCRIPTION.get(hm_entity.platform, {})
@@ -462,16 +465,20 @@ def get_entity_description(hm_entity: HMEntityType) -> EntityDescription | None:
             return platform_param_descriptions.get(hm_entity.parameter)
 
     elif isinstance(hm_entity, CustomEntity):
+        entity_description: EntityDescription | None = None
         if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
             hm_entity.platform
         ):
-            return platform_device_descriptions.get(hm_entity.device_type)
+            entity_description = platform_device_descriptions.get(hm_entity.device_type)
 
-        if hm_entity.sub_type:
+        if entity_description is None and hm_entity.sub_type:
             if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
                 hm_entity.platform
             ):
-                return platform_device_descriptions.get(hm_entity.sub_type)
+                entity_description = platform_device_descriptions.get(hm_entity.sub_type)
+                
+        if entity_description:
+            return entity_description
 
     if hasattr(hm_entity, "platform"):
         return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
