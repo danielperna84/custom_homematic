@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.climate import IPThermostat, RfThermostat, SimpleRfThermostat
+from hahomematic.devices.climate import BaseClimateEntity
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.config_entries import ConfigEntry
@@ -29,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_climate(args):
+    def async_add_climate(args: Any) -> None:
         """Add climate from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicClimate(control_unit, hm_entity))
@@ -52,10 +52,8 @@ async def async_setup_entry(
     async_add_climate([control_unit.get_hm_entities_by_platform(HmPlatform.CLIMATE)])
 
 
-class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
+class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEntity):
     """Representation of the HomematicIP climate entity."""
-
-    _hm_entity: SimpleRfThermostat | RfThermostat | IPThermostat
 
     @property
     def temperature_unit(self) -> str:
@@ -68,7 +66,7 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
         return self._hm_entity.supported_features
 
     @property
-    def target_temperature(self) -> float:
+    def target_temperature(self) -> float | None:
         """Return the temperature we try to reach."""
         return self._hm_entity.target_temperature
 
@@ -78,12 +76,12 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
         return self._hm_entity.target_temperature_step
 
     @property
-    def current_temperature(self) -> float:
+    def current_temperature(self) -> float | None:
         """Return the current temperature."""
         return self._hm_entity.current_temperature
 
     @property
-    def current_humidity(self) -> int:
+    def current_humidity(self) -> int | None:
         """Return the current humidity."""
         return self._hm_entity.current_humidity
 
@@ -117,7 +115,7 @@ class HaHomematicClimate(HaHomematicGenericEntity, ClimateEntity):
         """Return the maximum temperature."""
         return float(self._hm_entity.max_temp)
 
-    async def async_set_temperature(self, **kwargs) -> None:
+    async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
         await self._hm_entity.set_temperature(**kwargs)
 

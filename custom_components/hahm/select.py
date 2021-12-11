@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.select import HmSelect
@@ -29,9 +30,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_select(args):
+    def async_add_select(args: Any) -> None:
         """Add select from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicSelect(control_unit, hm_entity))
@@ -52,20 +53,20 @@ async def async_setup_entry(
     async_add_select([control_unit.get_hm_entities_by_platform(HmPlatform.SELECT)])
 
 
-class HaHomematicSelect(HaHomematicGenericEntity, SelectEntity):
+class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     """Representation of the HomematicIP select entity."""
-
-    _hm_select: HmSelect
 
     @property
     def options(self) -> list[str]:
         """Return the options."""
-        return self._hm_entity.value_list
+        if options := self._hm_entity.value_list:
+            return options
+        return []
 
     @property
-    def current_option(self) -> str:
+    def current_option(self) -> str | None:
         """Return the currently selected option."""
-        return self._hm_entity.state
+        return self._hm_entity.value
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""

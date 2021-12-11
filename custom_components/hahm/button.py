@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.button import HmButton
@@ -28,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_button(args):
+    def async_add_button(args: Any) -> None:
         """Add button from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicButton(control_unit, hm_entity))
@@ -51,10 +52,8 @@ async def async_setup_entry(
     async_add_button([control_unit.get_hm_entities_by_platform(HmPlatform.BUTTON)])
 
 
-class HaHomematicButton(HaHomematicGenericEntity, ButtonEntity):
+class HaHomematicButton(HaHomematicGenericEntity[HmButton], ButtonEntity):
     """Representation of the Homematic button."""
-
-    _hm_entity: HmButton
 
     async def async_press(self) -> None:
         await self._hm_entity.press()

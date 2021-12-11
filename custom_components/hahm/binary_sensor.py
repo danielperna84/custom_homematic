@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.binary_sensor import HmBinarySensor
@@ -28,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_binary_sensor(args):
+    def async_add_binary_sensor(args: Any) -> None:
         """Add binary_sensor from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicBinarySensor(control_unit, hm_entity))
@@ -53,12 +54,12 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicBinarySensor(HaHomematicGenericEntity, BinarySensorEntity):
+class HaHomematicBinarySensor(
+    HaHomematicGenericEntity[HmBinarySensor], BinarySensorEntity
+):
     """Representation of the Homematic binary sensor."""
-
-    _hm_entity: HmBinarySensor
 
     @property
     def is_on(self) -> bool:
         """Return true if motion is detected."""
-        return self._hm_entity.state
+        return self._hm_entity.state is True

@@ -12,7 +12,6 @@ from hahomematic.const import (
     ATTR_VALUE,
 )
 from hahomematic.entity import GenericEntity
-from hahomematic.hub import HmHub
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
@@ -31,7 +30,7 @@ from .const import (
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_VIRTUAL_KEY,
 )
-from .control_unit import ControlUnit
+from .control_unit import ControlUnit, HaHub
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,7 +86,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup servives"""
 
-    async def _service_virtualkey(service: ServiceCall):
+    async def _service_virtualkey(service: ServiceCall) -> None:
         """Service to handle virtualkey servicecalls."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -103,7 +102,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
 
-    async def _service_set_variable_value(service: ServiceCall):
+    async def _service_set_variable_value(service: ServiceCall) -> None:
         """Service to call setValue method for HomeMatic system variable."""
         entity_id = service.data[ATTR_ENTITY_ID]
         name = service.data[ATTR_NAME]
@@ -119,7 +118,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
-    async def _service_set_device_value(service: ServiceCall):
+    async def _service_set_device_value(service: ServiceCall) -> None:
         """Service to call setValue method for HomeMatic devices."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -157,11 +156,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
-    async def _service_set_install_mode(service: ServiceCall):
+    async def _service_set_install_mode(service: ServiceCall) -> None:
         """Service to set interface_id into install mode."""
         interface_id = service.data[ATTR_INTERFACE_ID]
-        mode = service.data.get(ATTR_MODE)
-        time = service.data.get(ATTR_TIME)
+        mode: int = service.data.get(ATTR_MODE, 1)
+        time: int = service.data.get(ATTR_TIME, 60)
         address = service.data.get(ATTR_ADDRESS)
 
         if control_unit := _get_cu_by_interface_id(hass, interface_id):
@@ -176,7 +175,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
-    async def _service_put_paramset(service: ServiceCall):
+    async def _service_put_paramset(service: ServiceCall) -> None:
         """Service to call the putParamset method on a HomeMatic connection."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -222,19 +221,21 @@ def _get_cu_by_interface_id(
     hass: HomeAssistant, interface_id: str
 ) -> ControlUnit | None:
     """
-    Get ControlUnit by device address
+    Get ControlUnit by interface_id
     """
-    for control_unit in hass.data[DOMAIN].values():
-        if control_unit.central.clients.get(interface_id):
+    for entry_id in hass.data[DOMAIN].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        if control_unit and control_unit.central.clients.get(interface_id):
             return control_unit
     return None
 
 
-def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HmHub | None:
+def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HaHub | None:
     """
     Get ControlUnit by device address
     """
-    for control_unit in hass.data[DOMAIN].values():
-        if control_unit.hub.entity_id == entity_id:
+    for entry_id in hass.data[DOMAIN].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        if control_unit and control_unit.hub and control_unit.hub.entity_id == entity_id:
             return control_unit.hub
     return None

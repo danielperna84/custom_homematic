@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.lock import IpLock, RfLock
+from hahomematic.devices.lock import BaseLock
 
 from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
 from homeassistant.config_entries import ConfigEntry
@@ -29,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_lock(args):
+    def async_add_lock(args: Any) -> None:
         """Add lock from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicLock(control_unit, hm_entity))
@@ -52,26 +52,24 @@ async def async_setup_entry(
     async_add_lock([control_unit.get_hm_entities_by_platform(HmPlatform.LOCK)])
 
 
-class HaHomematicLock(HaHomematicGenericEntity, LockEntity):
+class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
     """Representation of the HomematicIP lock entity."""
 
-    _hm_entity: IpLock | RfLock
-
     @property
-    def is_locked(self):
+    def is_locked(self) -> bool:
         """Return true if lock is on."""
-        return self._hm_entity.is_locked
+        return self._hm_entity.is_locked is True
 
     @property
     def supported_features(self) -> int:
         """Flag supported features."""
         return SUPPORT_OPEN
 
-    async def async_lock(self, **kwargs):
+    async def async_lock(self, **kwargs: Any) -> None:
         """Lock the lock."""
         await self._hm_entity.lock()
 
-    async def async_unlock(self, **kwargs):
+    async def async_unlock(self, **kwargs: Any) -> None:
         """Unlock the lock."""
         await self._hm_entity.unlock()
 

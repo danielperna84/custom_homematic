@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import logging
-from types import MappingProxyType
-from typing import Any
 from xmlrpc.client import ProtocolError
 
 from hahomematic import config
@@ -26,9 +24,11 @@ from hahomematic.const import (
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     ATTR_ADD_ANOTHER_INTERFACE,
@@ -70,9 +70,7 @@ DOMAIN_SCHEMA = vol.Schema(
 )
 
 
-async def validate_input(
-    hass: HomeAssistant, data: MappingProxyType[str, Any], interface_name: str
-) -> bool:
+async def validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     """
     Validate the user input allows us to connect.
     Data has the keys with values provided by the user.
@@ -88,8 +86,8 @@ async def validate_input(
     control_unit.create_central()
     try:
         await control_unit.create_clients()
-        first_client: Client = control_unit.central.get_primary_client()
-        return await first_client.is_connected()
+        if first_client := control_unit.central.get_primary_client():
+            return await first_client.is_connected()
     except ConnectionError as cex:
         _LOGGER.exception(cex)
         raise CannotConnect from cex
@@ -107,10 +105,10 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
-    def __init__(self):
-        self.data = {}
+    def __init__(self) -> None:
+        self.data: ConfigType = {}
 
-    async def async_step_user(self, user_input: dict[str, Any] = None) -> FlowResult:
+    async def async_step_user(self, user_input: ConfigType | None = None) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
             await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
@@ -134,7 +132,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=DOMAIN_SCHEMA)
 
     async def async_step_interface(
-        self, user_input: dict[str, Any] = None
+        self, user_input: ConfigType | None = None
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is None:
@@ -156,7 +154,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            await validate_input(self.hass, self.data, user_input[ATTR_INTERFACE_NAME])
+            await validate_input(self.hass, self.data)
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -180,7 +178,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
         """Get the options flow for this handler."""
         return HahmOptionsFlowHandler(config_entry)
 
@@ -188,18 +186,19 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class HahmOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle hahm options."""
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize hahm options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
-        self._cu = None
-
-    async def async_step_init(self, user_input=None):
-        """Manage the hahm options."""
         self._cu = self.hass.data[DOMAIN][self.config_entry.entry_id]
+
+    async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
+        """Manage the hahm options."""
         return await self.async_step_hahm_devices()
 
-    async def async_step_hahm_devices(self, user_input=None):
+    async def async_step_hahm_devices(
+        self, user_input: ConfigType | None = None
+    ) -> FlowResult:
         """Manage the hahm devices options."""
         if user_input is not None:
             self.options.update(user_input)

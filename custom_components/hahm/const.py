@@ -1,9 +1,18 @@
 """Constants."""
+from __future__ import annotations
+
+from typing import Union, TypeVar
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.const import Platform
+from hahomematic.entity import CustomEntity, GenericEntity, BaseParameterEntity
+from hahomematic.hub import BaseHubEntity
 
 DOMAIN = "hahm"
+
+HM_ENTITIES = Union[BaseHubEntity, BaseParameterEntity, CustomEntity, GenericEntity]
+HmCallbackEntity = (CustomEntity, GenericEntity)
+HMEntityType = TypeVar("HMEntityType", bound=HM_ENTITIES)
 
 ATTR_ADD_ANOTHER_INTERFACE = "add_another_interface"
 ATTR_CHANNEL = "channel"
@@ -28,11 +37,11 @@ SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_VIRTUAL_KEY = "virtual_key"
 
 
-def _get_hahm_platforms():
+def _get_hahm_platforms() -> list[str]:
     """Return relevant hahm platforms."""
     platforms = [entry.value for entry in Platform]
     hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
-    hahm_platforms = []
+    hahm_platforms: list[str] = []
     for hm_platform in hm_platforms:
         if hm_platform in platforms:
             hahm_platforms.append(hm_platform)
@@ -40,4 +49,4 @@ def _get_hahm_platforms():
     return hahm_platforms
 
 
-HAHM_PLATFORMS = _get_hahm_platforms()
+HAHM_PLATFORMS: list[str] = _get_hahm_platforms()
