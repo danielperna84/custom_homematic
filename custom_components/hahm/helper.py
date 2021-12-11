@@ -437,8 +437,8 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
 
 def get_entity_description(hm_entity: HMEntityType) -> EntityDescription | None:
     """Get the entity_description for platform."""
+    entity_description: EntityDescription | None = None
     if isinstance(hm_entity, GenericEntity):
-        entity_description: EntityDescription | None = None
         if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
             hm_entity.platform
         ):
@@ -465,7 +465,6 @@ def get_entity_description(hm_entity: HMEntityType) -> EntityDescription | None:
             return platform_param_descriptions.get(hm_entity.parameter)
 
     elif isinstance(hm_entity, CustomEntity):
-        entity_description: EntityDescription | None = None
         if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
             hm_entity.platform
         ):
