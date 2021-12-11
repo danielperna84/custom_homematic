@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 from hahomematic.entity import CallbackEntity
 from hahomematic.hub import BaseHubEntity
@@ -10,25 +10,26 @@ from hahomematic.hub import BaseHubEntity
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
-from homeassistant.helpers.entity_registry import EntityRegistry
+from homeassistant.helpers.entity_registry import EntityRegistry, RegistryEntryDisabler
 
 from .control_unit import ControlUnit
+from .const import HMEntityType
 from .helper import get_entity_description
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class HaHomematicGenericEntity(Entity):
+class HaHomematicGenericEntity(Generic[HMEntityType], Entity):
     """Representation of the HomematicIP generic entity."""
 
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity,
+        hm_entity: HMEntityType,
     ) -> None:
         """Initialize the generic entity."""
-        self._cu = control_unit
-        self._hm_entity = hm_entity
+        self._cu: ControlUnit = control_unit
+        self._hm_entity: HMEntityType = hm_entity
         if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
         # Marker showing that the Hm device hase been removed.
@@ -90,13 +91,13 @@ class HaHomematicGenericEntity(Entity):
         # if load_state == DATA_LOAD_FAIL and not self.registry_entry.disabled_by:
         #    await self._update_registry_entry(disabled_by=er.DISABLED_INTEGRATION)
 
-    async def _update_registry_entry(self, disabled_by) -> None:
+    async def _update_registry_entry(self, disabled_by: RegistryEntryDisabler) -> None:
         """Update registry_entry disabled_by."""
         entity_registry: EntityRegistry = await er.async_get_registry(self.hass)
         entity_registry.async_update_entity(self.entity_id, disabled_by=disabled_by)
 
     @callback
-    def _async_device_changed(self, *args, **kwargs) -> None:
+    def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
@@ -116,7 +117,7 @@ class HaHomematicGenericEntity(Entity):
 
         if self.hm_device_removed:
             try:
-                self._cu.remove_hm_entity(self)
+                self._cu.remove_hm_entity(self._hm_entity)
                 await self.async_remove_from_registries()
             except KeyError as err:
                 _LOGGER.debug("Error removing HM device from registry: %s", err)
@@ -125,8 +126,8 @@ class HaHomematicGenericEntity(Entity):
         """Remove entity/device from registry."""
 
         # Remove callback from device.
-        self._hm_entity.unregister_update_callback()
-        self._hm_entity.unregister_remove_callback()
+        self._hm_entity.unregister_update_callback(self._async_device_changed)
+        self._hm_entity.unregister_remove_callback(self._async_device_removed)
 
         if not self.registry_entry:
             return
@@ -146,7 +147,7 @@ class HaHomematicGenericEntity(Entity):
                     entity_registry.async_remove(entity_id)
 
     @callback
-    def _async_device_removed(self, *args, **kwargs) -> None:
+    def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
         """Handle hm device removal."""
         # Set marker showing that the Hm device hase been removed.
         self.hm_device_removed = True

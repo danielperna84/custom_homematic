@@ -3,9 +3,11 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.sensor import HmSensor
+from hahomematic.hub import HmSystemVariable
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -31,9 +33,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_sensor(args):
+    def async_add_sensor(args: Any) -> None:
         """Add sensor from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicSensor(control_unit, hm_entity))
@@ -41,7 +43,7 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
-    def async_add_hub_sensors(args):
+    def async_add_hub_sensors(args: Any) -> None:
         """Add hub sensor from HAHM."""
 
         entities = []
@@ -64,7 +66,9 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(config_entry.entry_id, "hub"),
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.HUB
+            ),
             async_add_hub_sensors,
         )
     )
@@ -72,21 +76,19 @@ async def async_setup_entry(
     async_add_sensor([control_unit.get_hm_entities_by_platform(HmPlatform.SENSOR)])
 
 
-class HaHomematicSensor(HaHomematicGenericEntity, SensorEntity):
+class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
-    _hm_entity: HmSensor
-
     @property
-    def native_value(self):
+    def native_value(self) -> Any:
         return self._hm_entity.state
 
 
-class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
+class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
     @property
-    def native_value(self):
+    def native_value(self) -> Any:
         """Return the native value of zhe entity."""
         return self._hm_entity.state
 
@@ -98,8 +100,8 @@ class HaHomematicHubSensor(HaHomematicGenericEntity, SensorEntity):
     @property
     def should_poll(self) -> bool:
         """No polling needed."""
-        return self._hm_entity.should_poll
+        return self._hm_entity.should_poll is True
 
-    async def async_update(self):
+    async def async_update(self) -> None:
         """Update the hub and all entities."""
         await self._hm_entity.fetch_data()

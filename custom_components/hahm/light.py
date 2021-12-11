@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.light import HmDimmer, HmLight, IPLightBSL
+from hahomematic.devices.light import BaseHmLight
 
 from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_HS_COLOR, LightEntity
 from homeassistant.config_entries import ConfigEntry
@@ -29,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_light(args):
+    def async_add_light(args: Any) -> None:
         """Add light from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicLight(control_unit, hm_entity))
@@ -52,15 +52,13 @@ async def async_setup_entry(
     async_add_light([control_unit.get_hm_entities_by_platform(HmPlatform.LIGHT)])
 
 
-class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
+class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
-
-    _hm_entity: HmDimmer | HmLight | IPLightBSL
 
     @property
     def is_on(self) -> bool:
         """Return true if dimmer is on."""
-        return self._hm_entity.is_on
+        return self._hm_entity.is_on is True
 
     @property
     def brightness(self) -> int:
@@ -73,7 +71,7 @@ class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
         return self._hm_entity.color_mode
 
     @property
-    def hs_color(self) -> tuple[float, float]:
+    def hs_color(self) -> tuple[float, float] | None:
         """Return the hue and saturation color value [float, float]."""
         return self._hm_entity.hs_color
 
@@ -86,13 +84,13 @@ class HaHomematicLight(HaHomematicGenericEntity, LightEntity):
         """Turn the light on."""
         # Use hs_color from kwargs,
         # if not applicable use current hs_color.
-        hs_color = None
+        hs_color: tuple[float, float] | None = None
         if hasattr(self, "hs_color"):
             hs_color = kwargs.get(ATTR_HS_COLOR, self.hs_color)
 
         # Use brightness from kwargs,
         # if not applicable use current brightness.
-        brightness = None
+        brightness: int = 255
         if hasattr(self, "brightness"):
             brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
 

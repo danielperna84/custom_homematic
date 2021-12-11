@@ -1,3 +1,9 @@
+Version 0.0.18 (2021-12-12)
+- Add type hints based on HA mypy config
+- Rename impulse to special event
+- Add persistant notification
+
+
 Version 0.0.17 (2021-12-05)
 - Add translation for HmIP-SRH states
 

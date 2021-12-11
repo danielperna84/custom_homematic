@@ -24,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
-    control_unit = ControlConfig(
+    control = ControlConfig(
         hass=hass,
         entry_id=config_entry.entry_id,
         data=config_entry.data,
@@ -36,18 +36,18 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         ),
     ).get_control_unit()
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][config_entry.entry_id] = control_unit
+    hass.data[DOMAIN][config_entry.entry_id] = control
     hass.config_entries.async_setup_platforms(config_entry, HAHM_PLATFORMS)
-    await control_unit.start()
+    await control.start()
     await async_setup_services(hass)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    control_unit = hass.data[DOMAIN][config_entry.entry_id]
-    await control_unit.stop()
-    control_unit.central.clear_all()
+    control = hass.data[DOMAIN][config_entry.entry_id]
+    await control.stop()
+    control.central.clear_all()
     if unload_ok := await hass.config_entries.async_unload_platforms(
         config_entry, HAHM_PLATFORMS
     ):

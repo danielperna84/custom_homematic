@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.number import HmNumber
@@ -29,9 +30,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_number(args):
+    def async_add_number(args: Any) -> None:
         """Add number from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicNumber(control_unit, hm_entity))
@@ -52,10 +53,8 @@ async def async_setup_entry(
     async_add_number([control_unit.get_hm_entities_by_platform(HmPlatform.NUMBER)])
 
 
-class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
+class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
-
-    _hm_entity: HmNumber
 
     @property
     def min_value(self) -> float:
@@ -73,12 +72,12 @@ class HaHomematicNumber(HaHomematicGenericEntity, NumberEntity):
         return 0.1
 
     @property
-    def unit_of_measurement(self) -> str:
+    def unit_of_measurement(self) -> str | None:
         """Return the unit of measurement."""
         return self._hm_entity.unit
 
     @property
-    def value(self):
+    def value(self) -> float | None:
         """Return the current value."""
         return self._hm_entity.state
 

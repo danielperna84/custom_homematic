@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.switch import HmSwitch
@@ -28,9 +29,9 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
-    def async_add_switch(args):
+    def async_add_switch(args: Any) -> None:
         """Add switch from HAHM."""
-        entities = []
+        entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
             entities.append(HaHomematicSwitch(control_unit, hm_entity))
@@ -51,20 +52,18 @@ async def async_setup_entry(
     async_add_switch([control_unit.get_hm_entities_by_platform(HmPlatform.SWITCH)])
 
 
-class HaHomematicSwitch(HaHomematicGenericEntity, SwitchEntity):
+class HaHomematicSwitch(HaHomematicGenericEntity[HmSwitch], SwitchEntity):
     """Representation of the HomematicIP switch entity."""
-
-    _hm_entity: HmSwitch
 
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        return self._hm_entity.state
+        return self._hm_entity.state is True
 
-    async def async_turn_on(self, **kwargs) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
         await self._hm_entity.turn_on()
 
-    async def async_turn_off(self, **kwargs) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         await self._hm_entity.turn_off()

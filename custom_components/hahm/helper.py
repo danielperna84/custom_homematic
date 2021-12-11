@@ -39,6 +39,7 @@ from homeassistant.const import (
     VOLUME_CUBIC_METERS,
 )
 from homeassistant.helpers.entity import EntityDescription
+from .generic_entity import HMEntityType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -321,19 +322,28 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str, str], BinarySensorEntityDescription
 ] = {
-    ("HmIP-SWDO-I", "STATE"): BinarySensorEntityDescription(
+    # HmIP-SWDO
+    ("SWD", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    ("HmIP-SWDO", "STATE"): BinarySensorEntityDescription(
+    # HmIP-SWDO-I
+    ("SWDO-I", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    ("HmIP-SWDM", "STATE"): BinarySensorEntityDescription(
+    # HmIP-SWDO-PL
+    ("SWDO-PL", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    ("HmIP-SCI", "STATE"): BinarySensorEntityDescription(
+    # HmIP-SWDM, HmIP-SWDM-B2
+    ("SWDM", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.WINDOW,
+    ),
+    # HmIP-SCI
+    ("SCI", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
@@ -379,34 +389,31 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
 }
 
 _SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {
-    "HMIP-PS": SwitchEntityDescription(
+    "PS": SwitchEntityDescription(
         key="PS",
         device_class=SwitchDeviceClass.OUTLET,
     ),
-    "HMIP-PSM": SwitchEntityDescription(
+    "PSM": SwitchEntityDescription(
         key="PSM",
         device_class=SwitchDeviceClass.OUTLET,
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str, SwitchEntityDescription] = {}
-
 _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str, str], SwitchEntityDescription
 ] = {}
 
-_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, Any] = {
+_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, Any] = {
+_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
-    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[HmPlatform, Any] = {
+_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[HmPlatform, dict[tuple[str, str], Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
@@ -428,27 +435,43 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
 }
 
 
-def get_entity_description(hm_entity: BaseEntity) -> EntityDescription | None:
+def get_entity_description(hm_entity: HMEntityType) -> EntityDescription | None:
     """Get the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
-        if device_description := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
-            hm_entity.platform, {}
-        ).get((hm_entity.device_type, hm_entity.parameter)):
-            return device_description
+        if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
+            hm_entity.platform
+        ):
+            return platform_device_param_descriptions.get(
+                (hm_entity.device_type, hm_entity.parameter)
+            )
+
+        if hm_entity.sub_type:
+            if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
+                hm_entity.platform
+            ):
+                return platform_device_param_descriptions.get(
+                    (hm_entity.sub_type, hm_entity.parameter)
+                )
 
         if hm_entity.parameter in ["STATE"]:
             return _DEFAULT_DESCRIPTION.get(hm_entity.platform, {})
 
-        if param_description := _ENTITY_DESCRIPTION_PARAM.get(
-            hm_entity.platform, {}
-        ).get(hm_entity.parameter):
-            return param_description
+        if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
+            hm_entity.platform
+        ):
+            return platform_param_descriptions.get(hm_entity.parameter)
 
     elif isinstance(hm_entity, CustomEntity):
-        if custom_description := _ENTITY_DESCRIPTION_DEVICE.get(
-            hm_entity.platform, {}
-        ).get(hm_entity.device_type):
-            return custom_description
+        if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
+            hm_entity.platform
+        ):
+            return platform_device_descriptions.get(hm_entity.device_type)
+
+        if hm_entity.sub_type:
+            if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
+                hm_entity.platform
+            ):
+                return platform_device_descriptions.get(hm_entity.sub_type)
 
     if hasattr(hm_entity, "platform"):
         return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
