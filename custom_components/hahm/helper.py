@@ -329,6 +329,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
+    ("HmIP-SWDM", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.WINDOW,
+    ),
     ("HmIP-SCI", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.SAFETY,
