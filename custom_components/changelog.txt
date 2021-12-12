@@ -1,3 +1,6 @@
+Version 0.0.20 (2021-12-XX)
+- Add device name to persistent notification
+
 Version 0.0.19 (2021-12-12)
 - Fix EntityDescriptions
 - Fix OptionFlow
