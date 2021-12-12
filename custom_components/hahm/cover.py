@@ -96,6 +96,7 @@ class HaHomematicCover(HaHomematicGenericEntity[HmCover], CoverEntity):
         """Stop the device if in motion."""
         await self._hm_entity.stop_cover()
 
+
 class HaHomematicBlind(HaHomematicGenericEntity[HmBlind], CoverEntity, ABC):
     """Representation of the HomematicIP blind entity."""
 

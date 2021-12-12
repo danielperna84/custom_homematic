@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic
 
 from hahomematic.entity import CallbackEntity
 from hahomematic.hub import BaseHubEntity
@@ -13,23 +13,23 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.entity_registry import EntityRegistry, RegistryEntryDisabler
 
 from .control_unit import ControlUnit
-from .const import HMEntityType
-from .helper import get_entity_description
+from .entity_helpers import get_entity_description
+from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class HaHomematicGenericEntity(Generic[HMEntityType], Entity):
+class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     """Representation of the HomematicIP generic entity."""
 
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HMEntityType,
+        hm_entity: HmGenericEntity,
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._hm_entity: HMEntityType = hm_entity
+        self._hm_entity: HmGenericEntity = hm_entity
         if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
         # Marker showing that the Hm device hase been removed.

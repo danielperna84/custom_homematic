@@ -30,6 +30,7 @@ from hahomematic.const import (
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
+    EVENT_UN_REACH,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
@@ -44,7 +45,7 @@ from hahomematic.const import (
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity
-from hahomematic.hub import HmHub, HmDummyHub
+from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 from homeassistant.const import CONF_DEVICE_ID
@@ -62,9 +63,8 @@ from .const import (
     ATTR_PATH,
     DOMAIN,
     HAHM_PLATFORMS,
-    HM_ENTITIES,
-    HmCallbackEntity
 )
+from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=30)
@@ -84,7 +84,7 @@ class ControlUnit:
             control_config.enable_sensors_for_system_variables
         )
         self._central: CentralUnit = self.create_central()
-        self._active_hm_entities: dict[str, HM_ENTITIES] = {}
+        self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
 
     async def start(self) -> None:
@@ -109,9 +109,12 @@ class ControlUnit:
     async def init_hub(self) -> None:
         """Init the hub."""
         await self._central.init_hub()
-        self._hub = HaHub(self._hass, self)
-        await self._hub.init()
-        hm_entities = [self._central.hub.hub_entities.values()] if self._central.hub else []
+        if self._central.hub:
+            self._hub = HaHub(self._hass, cu=self, hm_hub=self._central.hub)
+            await self._hub.init()
+        hm_entities = (
+            [self._central.hub.hub_entities.values()] if self._central.hub else []
+        )
         args = [hm_entities]
 
         async_dispatcher_send(
@@ -171,11 +174,11 @@ class ControlUnit:
 
         return hm_entities
 
-    def add_hm_entity(self, hm_entity: HM_ENTITIES) -> None:
+    def add_hm_entity(self, hm_entity: HmBaseEntity) -> None:
         """add entity to active entities"""
         self._active_hm_entities[hm_entity.unique_id] = hm_entity
 
-    def remove_hm_entity(self, hm_entity: HM_ENTITIES) -> None:
+    def remove_hm_entity(self, hm_entity: HmBaseEntity) -> None:
         """remove entity from active entities"""
         del self._active_hm_entities[hm_entity.unique_id]
 
@@ -246,9 +249,9 @@ class ControlUnit:
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
-            if parameter == EVENT_STICKY_UN_REACH:
+            if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 if value is True:
-                    title = f"{DOMAIN}-Device not reachable"
+                    title = f"{DOMAIN.upper()}-Device not reachable"
                     message = f"{address} on interface {interface_id}"
                     self.create_persistant_notification(
                         identifier=address, title=title, message=message
@@ -328,7 +331,7 @@ class ControlUnit:
             )
         return clients
 
-    def _get_active_entity_by_address(self, address: str) -> HM_ENTITIES | None:
+    def _get_active_entity_by_address(self, address: str) -> HmBaseEntity | None:
         for entity in self._active_hm_entities.values():
             if isinstance(entity, HmCallbackEntity) and entity.address == address:
                 return entity
@@ -360,11 +363,13 @@ class ControlConfig:
 class HaHub(Entity):
     """The HomeMatic hub. (CCU2/HomeGear)."""
 
-    def __init__(self, hass: HomeAssistant, cu: ControlUnit) -> None:
+    def __init__(
+        self, hass: HomeAssistant, cu: ControlUnit, hm_hub: HmHub | HmDummyHub
+    ) -> None:
         """Initialize HomeMatic hub."""
         self.hass = hass
         self._cu: ControlUnit = cu
-        self._hm_hub: HmHub | HmDummyHub = self._cu.central.hub
+        self._hm_hub: HmHub | HmDummyHub = hm_hub
         self._name: str = self._cu.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
         self._hm_hub.register_update_callback(self._update_hub)

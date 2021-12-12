@@ -5,7 +5,6 @@ import logging
 from xmlrpc.client import ProtocolError
 
 from hahomematic import config
-from hahomematic.client import Client
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -41,7 +40,7 @@ from .const import (
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
-from .control_unit import ControlConfig
+from .control_unit import ControlConfig, ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -94,7 +93,7 @@ async def validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     except ProtocolError as cex:
         _LOGGER.exception(cex)
         raise InvalidAuth from cex
-    except Exception as cex:
+    except Exception as cex:   # pylint: disable=broad-except
         _LOGGER.exception(cex)
     return False
 
@@ -190,7 +189,6 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize hahm options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
-        self._cu = self.hass.data[DOMAIN][self.config_entry.entry_id]
 
     async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
         """Manage the hahm options."""
@@ -219,6 +217,11 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
                 }
             ),
         )
+
+    @property
+    def _cu(self) -> ControlUnit:
+        control_unit: ControlUnit = self.hass.data[DOMAIN][self.config_entry.entry_id]
+        return control_unit
 
 
 class CannotConnect(HomeAssistantError):

@@ -236,6 +236,10 @@ def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HaHub | None:
     """
     for entry_id in hass.data[DOMAIN].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
-        if control_unit and control_unit.hub and control_unit.hub.entity_id == entity_id:
+        if (
+            control_unit
+            and control_unit.hub
+            and control_unit.hub.entity_id == entity_id
+        ):
             return control_unit.hub
     return None
