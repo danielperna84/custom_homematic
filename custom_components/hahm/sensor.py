@@ -6,8 +6,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.sensor import HmSensor
 from hahomematic.hub import HmSystemVariable
+from hahomematic.platforms.sensor import HmSensor
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry

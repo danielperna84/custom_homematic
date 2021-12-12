@@ -5,7 +5,6 @@ import logging
 from xmlrpc.client import ProtocolError
 
 from hahomematic import config
-from hahomematic.client import Client
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -41,7 +40,7 @@ from .const import (
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, ControlConfig
+from .control_unit import ControlConfig, ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -221,7 +220,7 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
 
     @property
     def _cu(self) -> ControlUnit:
-        control_unit: ControlUnit =  self.hass.data[DOMAIN][self.config_entry.entry_id]
+        control_unit: ControlUnit = self.hass.data[DOMAIN][self.config_entry.entry_id]
         return control_unit
 
 

@@ -1,18 +1,11 @@
 """Constants."""
 from __future__ import annotations
 
-from typing import Union, TypeVar
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.const import Platform
-from hahomematic.entity import CustomEntity, GenericEntity, BaseParameterEntity
-from hahomematic.hub import BaseHubEntity
 
 DOMAIN = "hahm"
-
-HM_ENTITIES = Union[BaseHubEntity, BaseParameterEntity, CustomEntity, GenericEntity]
-HmCallbackEntity = (CustomEntity, GenericEntity)
-HMEntityType = TypeVar("HMEntityType", bound=HM_ENTITIES)
 
 ATTR_ADD_ANOTHER_INTERFACE = "add_another_interface"
 ATTR_CHANNEL = "channel"
