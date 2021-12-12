@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_registry import EntityRegistry, RegistryEntryD
 
 from .control_unit import ControlUnit
 from .const import HMEntityType
-from .helper import get_entity_description
+from .entity_helper import get_entity_description
 
 _LOGGER = logging.getLogger(__name__)
 
