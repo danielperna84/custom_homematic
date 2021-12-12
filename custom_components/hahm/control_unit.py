@@ -52,6 +52,7 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -246,14 +247,15 @@ class ControlUnit:
                 )
         elif hm_event_type == HmEventType.SPECIAL:
             address = event_data[ATTR_ADDRESS]
+            name = self._get_device_name(address)
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 if value is True:
                     title = f"{DOMAIN.upper()}-Device not reachable"
-                    message = f"{address} on interface {interface_id}"
-                    self.create_persistant_notification(
+                    message = f"{name} / {address} on interface {interface_id}"
+                    self.create_persistent_notification(
                         identifier=address, title=title, message=message
                     )
                 else:
@@ -273,14 +275,25 @@ class ControlUnit:
         """Dismiss a message for user on UI."""
         self._hass.components.persistent_notification.async_dismiss(identifier)
 
+    def _get_device_name(self, address: str) -> str | None:
+        """Return the device name of the ha device."""
+        if device := self._get_device(address):
+            return device.name_by_user if device.name_by_user else device.name
+        return None
+
     def _get_device_id(self, address: str) -> str | None:
-        """Return the device id of the hahm device."""
+        """Return the device id of the ha device."""
+        if device := self._get_device(address):
+            return device.id
+        return None
+
+    def _get_device(self, address: str) -> DeviceEntry | None:
+        """Return the device of the ha device."""
         if (hm_device := self.central.hm_devices.get(address)) is None:
             return None
         identifiers: set[tuple[str, str]] = hm_device.device_info["identifiers"]
         device_registry = dr.async_get(self._hass)
-        device = device_registry.async_get_device(identifiers)
-        return device.id if device else None
+        return device_registry.async_get_device(identifiers)
 
     def create_central(self) -> CentralUnit:
         """create the central unit for ccu callbacks."""

@@ -93,7 +93,7 @@ async def validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     except ProtocolError as cex:
         _LOGGER.exception(cex)
         raise InvalidAuth from cex
-    except Exception as cex:   # pylint: disable=broad-except
+    except Exception as cex:  # pylint: disable=broad-except
         _LOGGER.exception(cex)
     return False
 
