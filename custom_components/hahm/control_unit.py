@@ -30,6 +30,7 @@ from hahomematic.const import (
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
+    EVENT_UN_REACH,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
@@ -247,9 +248,9 @@ class ControlUnit:
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
-            if parameter == EVENT_STICKY_UN_REACH:
+            if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 if value is True:
-                    title = f"{DOMAIN}-Device not reachable"
+                    title = f"{DOMAIN.upper()}-Device not reachable"
                     message = f"{address} on interface {interface_id}"
                     self.create_persistant_notification(
                         identifier=address, title=title, message=message
