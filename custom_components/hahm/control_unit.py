@@ -259,10 +259,10 @@ class ControlUnit:
                         identifier=address, title=title, message=message
                     )
                 else:
-                    self.dismiss_persistant_notification(identifier=address)
+                    self.dismiss_persistent_notification(identifier=address)
 
     @callback
-    def create_persistant_notification(
+    def create_persistent_notification(
         self, identifier: str, title: str, message: str
     ) -> None:
         """Create a message for user to UI."""
@@ -271,7 +271,7 @@ class ControlUnit:
         )
 
     @callback
-    def dismiss_persistant_notification(self, identifier: str) -> None:
+    def dismiss_persistent_notification(self, identifier: str) -> None:
         """Dismiss a message for user on UI."""
         self._hass.components.persistent_notification.async_dismiss(identifier)
 
