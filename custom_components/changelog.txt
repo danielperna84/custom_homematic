@@ -1,4 +1,10 @@
-Version 0.0.18 (2021-12-12)
+Version 0.0.19 (2021-12-12)
+- Fix EntityDescriptions
+- Fix OptionFlow
+- Rename helper to entity_helper
+- Add UNREACH to persistant notificationns
+
+Version 0.0.18 (2021-12-11)
 - Add type hints based on HA mypy config
 - Rename impulse to special event
 - Add persistant notification
