@@ -1,5 +1,7 @@
-Version 0.0.20 (2021-12-XX)
+
+Version 0.0.20 (2021-12-13)
 - Add device name to persistent notification
+- rearrange config flow
 
 Version 0.0.19 (2021-12-12)
 - Fix EntityDescriptions

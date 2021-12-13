@@ -7,13 +7,9 @@ from homeassistant.const import Platform
 
 DOMAIN = "hahm"
 
-ATTR_ADD_ANOTHER_INTERFACE = "add_another_interface"
-ATTR_CHANNEL = "channel"
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
-ATTR_INTERFACE_NAME = "interface_name"
 ATTR_JSON_TLS = "json_tls"
-ATTR_PARAM = "param"
 ATTR_PARAMSET = "paramset"
 ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"
