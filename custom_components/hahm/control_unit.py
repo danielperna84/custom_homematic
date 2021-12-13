@@ -333,7 +333,7 @@ class ControlUnit:
                     central=self.central,
                     name=interface_name,
                     port=interface[ATTR_PORT],
-                    path=interface[ATTR_PATH],
+                    path=interface.get(ATTR_PATH),
                     callback_host=self._data.get(ATTR_CALLBACK_HOST)
                     if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
                     else None,

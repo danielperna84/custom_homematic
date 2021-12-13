@@ -19,12 +19,17 @@
         }
       },
       "interface": {
-        "description": "Configure the interface",
+        "description": "Configure the interfaces to CCU",
         "data": {
-          "interface_name": "Interface Name",
-          "port": "CCU Port",
-          "path": "CCU Path",
-          "add_another_interface": "Add another interface"
+          "hmip_rf_enabled": "enable Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "hm_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "hm_rf_port": "HM-RF Port",
+          "groups_enabled": "enable Groups (Heating-Group)",
+          "groups_port": "Groups Port",
+          "groups_path": "Groups Path",
+          "hs485d_enabled": "enable HS485D (HM-Wired)",
+          "hs485d_port": "HS485D Port"
         }
       }
     }
