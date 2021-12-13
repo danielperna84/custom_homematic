@@ -11,7 +11,7 @@
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
           "callback_ip": "Callback IP",
-          "callback_port": "Callback XML-RPC Port",
+          "callback_port": "Callback XML-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "Verifier TLS connection",
           "json_port": "Externe JSON-RPC poort",
@@ -21,15 +21,15 @@
       "interface": {
         "description": "Configureer de verbinding met uw CCU",
         "data": {
-          "hmip_rf_enabled": "enable Homematic IP",
-          "hmip_rf_port": "HmIP-RF Port",
-          "hm_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "hm_rf_port": "HM-RF Port",
-          "groups_enabled": "enable Groups (Heating-Group)",
-          "groups_port": "Groups Port",
-          "groups_path": "Groups Path",
-          "hs485d_enabled": "enable HS485D (HM-Wired)",
-          "hs485d_port": "HS485D Port"
+          "hmip_rf_enabled": "Homematic IP inschakelen",
+          "hmip_rf_port": "HmIP-RF Poort",
+          "hm_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
+          "hm_rf_port": "HM-RF poort",
+          "groups_enabled": "Groepen (Heating-Groep) inschakelen",
+          "groups_port": "Groeps poort",
+          "groups_path": "Groeps pad",
+          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
+          "hs485d_port": "HS485D poort"
         }
       }
     }
