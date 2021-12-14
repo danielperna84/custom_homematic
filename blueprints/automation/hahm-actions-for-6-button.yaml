@@ -1,0 +1,144 @@
+blueprint:
+  name: Actions for 6-Button HAHM Device 
+  description: When a button is pressed, the defined actions will be executed. Please
+    keep in mind, that long-press actions might be executed multiple times, according
+    to your configured minimum duration for long press. This can be configured in
+    your CCU.
+  domain: automation
+  input:
+    remote:
+      name: 6-Button Device
+      description: Please select a 6-Button device of your HAHM integration.
+      selector:
+        device:
+          integration: hahm
+    action_left_top_short:
+      name: Action
+      description: Left-Top-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_left_top_long:
+      name: Action
+      description: Left-Top-Button, Long Press
+      default: []
+      selector:
+        action: {}
+    action_right_top_short:
+      name: Action
+      description: Right-Top-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_right_top_long:
+      name: Action
+      description: Right-Top-Button, Long Press
+      default: []
+      selector:
+        action: {}
+    action_left_middle_short:
+      name: Action
+      description: Left-Middle-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_left_middle_long:
+      name: Action
+      description: Left-Middle-Button, Long Press
+      default: []
+      selector:
+        action: {}
+    action_right_middle_short:
+      name: Action
+      description: Right-Middle-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_right_middle_long:
+      name: Action
+      description: Right-Middle-Button, Long Press
+      default: []
+      selector:
+        action: {}
+    action_left_bottom_short:
+      name: Action
+      description: Left-Bottom-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_left_bottom_long:
+      name: Action
+      description: Left-Bottom-Button, Long Press
+      default: []
+      selector:
+        action: {}
+    action_right_bottom_short:
+      name: Action
+      description: Right-Bottom-Button, Short Press
+      default: []
+      selector:
+        action: {}
+    action_right_bottom_long:
+      name: Action
+      description: Right-Bottom-Button, Long Press
+      default: []
+      selector:
+        action: {}
+trigger:
+- platform: event
+  event_type: homematic.keypress
+  event_data:
+    device_id: !input 'remote'
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_1_press_short'' }}'
+    sequence: !input 'action_left_top_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_1_press_log'' }}'
+    sequence: !input 'action_left_top_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_2_press_short'' }}'
+    sequence: !input 'action_right_top_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_2_press_long'' }}'
+    sequence: !input 'action_right_top_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_3_press_short'' }}'
+    sequence: !input 'action_left_middle_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_3_press_long'' }}'
+    sequence: !input 'action_left_middle_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_4_press_short'' }}'
+    sequence: !input 'action_right_middle_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_4_press_long'' }}'
+    sequence: !input 'action_right_middle_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_5_press_short'' }}'
+    sequence: !input 'action_left_bottom_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_5_press_long'' }}'
+    sequence: !input 'action_left_bottom_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_6_press_short'' }}'
+    sequence: !input 'action_right_bottom_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''channel_6_press_long'' }}'
+    sequence: !input 'action_right_bottom_long'
+mode: parallel
+max: 10

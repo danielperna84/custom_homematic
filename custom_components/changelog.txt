@@ -1,3 +1,5 @@
+Version 0.0.21 (2021-12-1X)
+- Add some blueprints for automation in GIT repo
 
 Version 0.0.20 (2021-12-13)
 - Add device name to persistent notification
