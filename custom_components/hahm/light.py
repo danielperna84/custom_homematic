@@ -55,6 +55,16 @@ async def async_setup_entry(
 class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
 
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: BaseHmLight,
+    ) -> None:
+        """Initialize the light entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._attr_color_mode = hm_entity.color_mode
+        self._attr_supported_color_modes = hm_entity.supported_color_modes
+
     @property
     def is_on(self) -> bool:
         """Return true if dimmer is on."""
@@ -66,19 +76,9 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         return self._hm_entity.brightness
 
     @property
-    def color_mode(self) -> str:
-        """Return the color mode of the light."""
-        return self._hm_entity.color_mode
-
-    @property
     def hs_color(self) -> tuple[float, float] | None:
         """Return the hue and saturation color value [float, float]."""
         return self._hm_entity.hs_color
-
-    @property
-    def supported_color_modes(self) -> set[str]:
-        """Flag supported color_modes."""
-        return self._hm_entity.supported_color_modes
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""

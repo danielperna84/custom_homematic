@@ -56,25 +56,19 @@ async def async_setup_entry(
 class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
 
-    @property
-    def min_value(self) -> float:
-        """Return the minimum value."""
-        return self._hm_entity.min
+    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+    _attr_step = 0.1
 
-    @property
-    def max_value(self) -> float:
-        """Return the maximum value."""
-        return self._hm_entity.max
-
-    @property
-    def step(self) -> float:
-        """Return the increment/decrement step."""
-        return 0.1
-
-    @property
-    def unit_of_measurement(self) -> str | None:
-        """Return the unit of measurement."""
-        return self._hm_entity.unit
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: HmNumber,
+    ) -> None:
+        """Initialize the number entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._attr_min_value = hm_entity.min
+        self._attr_max_value = hm_entity.max
+        self._attr_unit_of_measurement = hm_entity.unit
 
     @property
     def value(self) -> float | None:
@@ -84,8 +78,3 @@ class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     async def async_set_value(self, value: float) -> None:
         """Update the current value."""
         await self._hm_entity.set_state(value)
-
-    @property
-    def entity_category(self) -> str:
-        """Return the entity categorie."""
-        return ENTITY_CATEGORY_CONFIG

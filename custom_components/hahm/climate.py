@@ -55,25 +55,25 @@ async def async_setup_entry(
 class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEntity):
     """Representation of the HomematicIP climate entity."""
 
-    @property
-    def temperature_unit(self) -> str:
-        """Return the unit of measurement."""
-        return self._hm_entity.temperature_unit
-
-    @property
-    def supported_features(self) -> int:
-        """Return the list of supported features."""
-        return self._hm_entity.supported_features
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: BaseClimateEntity,
+    ) -> None:
+        """Initialize the climate entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._attr_temperature_unit = hm_entity.temperature_unit
+        self._attr_supported_features = hm_entity.supported_features
+        self._attr_target_temperature_step = hm_entity.target_temperature_step
+        self._attr_hvac_modes = hm_entity.hvac_modes
+        self._attr_preset_modes = hm_entity.preset_modes
+        self._attr_min_temp = float(hm_entity.min_temp)
+        self._attr_max_temp = float(hm_entity.max_temp)
 
     @property
     def target_temperature(self) -> float | None:
         """Return the temperature we try to reach."""
         return self._hm_entity.target_temperature
-
-    @property
-    def target_temperature_step(self) -> float:
-        """Return the target_temperature_step we use."""
-        return self._hm_entity.target_temperature_step
 
     @property
     def current_temperature(self) -> float | None:
@@ -91,29 +91,9 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         return self._hm_entity.hvac_mode
 
     @property
-    def hvac_modes(self) -> list[str]:
-        """Return the list of available hvac operation modes."""
-        return self._hm_entity.hvac_modes
-
-    @property
     def preset_mode(self) -> str:
         """Return the current preset mode."""
         return self._hm_entity.preset_mode
-
-    @property
-    def preset_modes(self) -> list[str]:
-        """Return a list of available preset modes incl. hmip profiles."""
-        return self._hm_entity.preset_modes
-
-    @property
-    def min_temp(self) -> float:
-        """Return the minimum temperature."""
-        return float(self._hm_entity.min_temp)
-
-    @property
-    def max_temp(self) -> float:
-        """Return the maximum temperature."""
-        return float(self._hm_entity.max_temp)
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
@@ -126,10 +106,3 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
         await self._hm_entity.set_preset_mode(preset_mode)
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the access point."""
-        state_attr = super().extra_state_attributes
-
-        return state_attr
