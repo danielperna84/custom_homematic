@@ -82,24 +82,13 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
-        # Use hs_color from kwargs,
-        # if not applicable use current hs_color.
-        hs_color: tuple[float, float] | None = None
-        if hasattr(self, "hs_color"):
-            hs_color = kwargs.get(ATTR_HS_COLOR, self.hs_color)
-
-        # Use brightness from kwargs,
-        # if not applicable use current brightness.
-        brightness: int = 255
-        if hasattr(self, "brightness"):
-            brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
-
-            # If no kwargs, use default value.
-            if not kwargs:
-                brightness = 255
-
-            # Minimum brightness is 10, otherwise the led is disabled
-            brightness = max(10, brightness)
+        # Use hs_color from kwargs, if not applicable use current hs_color.
+        hs_color: tuple[float, float] = kwargs.get(ATTR_HS_COLOR, self.hs_color)
+        # Use brightness from kwargs, if not applicable use current brightness.
+        brightness: int = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        # If no kwargs, use default value.
+        if not kwargs:
+            brightness = 255
 
         await self._hm_entity.turn_on(hs_color, brightness)
 
