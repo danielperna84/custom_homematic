@@ -1,5 +1,8 @@
-Version 0.0.21 (2021-12-1X)
+Version 0.0.21 (2021-12-15)
 - Add some blueprints for automation in GIT repo
+- Simplify light turn_on
+- Fix HmIP-BSL
+- Use _attr_ for entities
 
 Version 0.0.20 (2021-12-13)
 - Add device name to persistent notification
