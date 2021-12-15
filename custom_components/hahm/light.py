@@ -55,6 +55,16 @@ async def async_setup_entry(
 class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
 
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: BaseHmLight,
+    ) -> None:
+        """Initialize the light entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._attr_color_mode = hm_entity.color_mode
+        self._attr_supported_color_modes = hm_entity.supported_color_modes
+
     @property
     def is_on(self) -> bool:
         """Return true if dimmer is on."""
@@ -66,40 +76,19 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         return self._hm_entity.brightness
 
     @property
-    def color_mode(self) -> str:
-        """Return the color mode of the light."""
-        return self._hm_entity.color_mode
-
-    @property
     def hs_color(self) -> tuple[float, float] | None:
         """Return the hue and saturation color value [float, float]."""
         return self._hm_entity.hs_color
 
-    @property
-    def supported_color_modes(self) -> set[str]:
-        """Flag supported color_modes."""
-        return self._hm_entity.supported_color_modes
-
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
-        # Use hs_color from kwargs,
-        # if not applicable use current hs_color.
-        hs_color: tuple[float, float] | None = None
-        if hasattr(self, "hs_color"):
-            hs_color = kwargs.get(ATTR_HS_COLOR, self.hs_color)
-
-        # Use brightness from kwargs,
-        # if not applicable use current brightness.
-        brightness: int = 255
-        if hasattr(self, "brightness"):
-            brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
-
-            # If no kwargs, use default value.
-            if not kwargs:
-                brightness = 255
-
-            # Minimum brightness is 10, otherwise the led is disabled
-            brightness = max(10, brightness)
+        # Use hs_color from kwargs, if not applicable use current hs_color.
+        hs_color: tuple[float, float] = kwargs.get(ATTR_HS_COLOR, self.hs_color)
+        # Use brightness from kwargs, if not applicable use current brightness.
+        brightness: int = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        # If no kwargs, use default value.
+        if not kwargs:
+            brightness = 255
 
         await self._hm_entity.turn_on(hs_color, brightness)
 

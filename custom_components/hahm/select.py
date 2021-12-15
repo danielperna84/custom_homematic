@@ -56,6 +56,8 @@ async def async_setup_entry(
 class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     """Representation of the HomematicIP select entity."""
 
+    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+
     @property
     def options(self) -> list[str]:
         """Return the options."""
@@ -66,13 +68,8 @@ class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
-        return self._hm_entity.value
+        return self._hm_entity.state
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""
         await self._hm_entity.set_state(option)
-
-    @property
-    def entity_category(self) -> str:
-        """Return the entity categorie."""
-        return ENTITY_CATEGORY_CONFIG

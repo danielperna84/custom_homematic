@@ -55,15 +55,12 @@ async def async_setup_entry(
 class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
     """Representation of the HomematicIP lock entity."""
 
+    _attr_supported_features = SUPPORT_OPEN
+
     @property
     def is_locked(self) -> bool:
         """Return true if lock is on."""
         return self._hm_entity.is_locked is True
-
-    @property
-    def supported_features(self) -> int:
-        """Flag supported features."""
-        return SUPPORT_OPEN
 
     async def async_lock(self, **kwargs: Any) -> None:
         """Lock the lock."""

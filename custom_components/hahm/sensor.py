@@ -81,27 +81,23 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
 
     @property
     def native_value(self) -> Any:
+        """Return the native value of the entity."""
         return self._hm_entity.state
 
 
 class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEntity):
-    """Representation of the HomematicIP sensor entity."""
+    """Representation of the HomematicIP hub sensor entity."""
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: HmSystemVariable,
+    ) -> None:
+        """Initialize the sensor entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._attr_native_unit_of_measurement = hm_entity.unit
 
     @property
     def native_value(self) -> Any:
-        """Return the native value of zhe entity."""
+        """Return the native value of the entity."""
         return self._hm_entity.state
-
-    @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Return the unit of zhe entity."""
-        return self._hm_entity.unit
-
-    @property
-    def should_poll(self) -> bool:
-        """No polling needed."""
-        return self._hm_entity.should_poll is True
-
-    async def async_update(self) -> None:
-        """Update the hub and all entities."""
-        await self._hm_entity.fetch_data()
