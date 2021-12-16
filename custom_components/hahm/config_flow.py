@@ -44,27 +44,27 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_HMIP_RF_ENABLED = "hmip_rf_enabled"
 ATTR_HMIP_RF_PORT = "hmip_rf_port"
-ATTR_HM_RF_ENABLED = "hm_rf_enabled"
-ATTR_HM_RF_PORT = "hm_rf_port"
-ATTR_GROUPS_ENABLED = "groups_enabled"
-ATTR_GROUPS_PORT = "groups_port"
-ATTR_GROUPS_PATH = "groups_path"
+ATTR_BICDOS_RF_ENABLED = "bidos_rf_enabled"
+ATTR_BICDOS_RF_PORT = "bidos_rf_port"
+ATTR_VIRTUAL_DEVICES_ENABLED = "virtual_devices_enabled"
+ATTR_VIRTUAL_DEVICES_PORT = "virtual_devices_port"
+ATTR_VIRTUAL_DEVICES_PATH = "virtual_devices_path"
 ATTR_HS485D_ENABLED = "hs485d_enabled"
 ATTR_HS485D_PORT = "hs485d_port"
 
-IF_GROUPS_NAME = "Groups"
-IF_GROUPS_PORT = 9292
-IF_GROUPS_TLS_PORT = 49292
-IF_GROUPS_PATH = "/groups"
+IF_VIRTUAL_DEVICES_NAME = "VirtualDevices"
+IF_VIRTUAL_DEVICES_PORT = 9292
+IF_VIRTUAL_DEVICES_TLS_PORT = 49292
+IF_VIRTUAL_DEVICES_PATH = "/groups"
 IF_HMIP_RF_NAME = "HmIP-RF"
 IF_HMIP_RF_PORT = 2010
 IF_HMIP_RF_TLS_PORT = 42010
 IF_HS485D_NAME = "HS485D"
 IF_HS485D_PORT = 2000
 IF_HS485D_TLS_PORT = 42000
-IF_HM_RF_NAME = "HM-RF"
-IF_HM_RF_PORT = 2001
-IF_HM_RF_TLS_PORT = 42001
+IF_BIDCOS_RF_NAME = "BidCos-RF"
+IF_BICDOS_RF_PORT = 2001
+IF_BICDOS_RF_TLS_PORT = 42001
 
 DOMAIN_SCHEMA = vol.Schema(
     {
@@ -91,16 +91,21 @@ def get_interface_schema(use_tls: bool) -> Schema:
                 ATTR_HMIP_RF_PORT,
                 default=IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT,
             ): int,
-            vol.Required(ATTR_HM_RF_ENABLED, default=True): bool,
+            vol.Required(ATTR_BICDOS_RF_ENABLED, default=True): bool,
             vol.Required(
-                ATTR_HM_RF_PORT, default=IF_HM_RF_TLS_PORT if use_tls else IF_HM_RF_PORT
+                ATTR_BICDOS_RF_PORT,
+                default=IF_BICDOS_RF_TLS_PORT if use_tls else IF_BICDOS_RF_PORT,
             ): int,
-            vol.Required(ATTR_GROUPS_ENABLED, default=True): bool,
+            vol.Required(ATTR_VIRTUAL_DEVICES_ENABLED, default=True): bool,
             vol.Required(
-                ATTR_GROUPS_PORT,
-                default=IF_GROUPS_TLS_PORT if use_tls else IF_GROUPS_PORT,
+                ATTR_VIRTUAL_DEVICES_PORT,
+                default=IF_VIRTUAL_DEVICES_TLS_PORT
+                if use_tls
+                else IF_VIRTUAL_DEVICES_PORT,
             ): int,
-            vol.Required(ATTR_GROUPS_PATH, default=IF_GROUPS_PATH): str,
+            vol.Required(
+                ATTR_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH
+            ): str,
             vol.Required(ATTR_HS485D_ENABLED, default=False): bool,
             vol.Required(
                 ATTR_HS485D_PORT,
@@ -187,14 +192,14 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
                     ATTR_PORT: user_input[ATTR_HMIP_RF_PORT],
                 }
-            if user_input[ATTR_HM_RF_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_HM_RF_NAME] = {
-                    ATTR_PORT: user_input[ATTR_HM_RF_PORT],
+            if user_input[ATTR_BICDOS_RF_ENABLED]:
+                self.data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
+                    ATTR_PORT: user_input[ATTR_BICDOS_RF_PORT],
                 }
-            if user_input[ATTR_GROUPS_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_GROUPS_NAME] = {
-                    ATTR_PORT: user_input[ATTR_GROUPS_PORT],
-                    ATTR_PATH: user_input.get(ATTR_GROUPS_PATH),
+            if user_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
+                self.data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
+                    ATTR_PORT: user_input[ATTR_VIRTUAL_DEVICES_PORT],
+                    ATTR_PATH: user_input.get(ATTR_VIRTUAL_DEVICES_PATH),
                 }
             if user_input[ATTR_HS485D_ENABLED]:
                 self.data[ATTR_INTERFACE][IF_HS485D_NAME] = {
