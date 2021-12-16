@@ -1,6 +1,7 @@
 Version 0.0.22 (2021-12-16)
 - Fix resolve names for all given ports incl. tls (update hahomematic)
 - Rename attributes to match eQ-3 naming 
+- Don't use title() for instance_name
 
 Version 0.0.21 (2021-12-15)
 - Add some blueprints for automation in GIT repo

@@ -159,7 +159,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
             self._abort_if_unique_id_configured()
             self.data = {
-                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME].title(),
+                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME],
                 ATTR_HOST: user_input[ATTR_HOST],
                 ATTR_USERNAME: user_input[ATTR_USERNAME],
                 ATTR_PASSWORD: user_input[ATTR_PASSWORD],
