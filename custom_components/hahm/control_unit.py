@@ -92,11 +92,10 @@ class ControlUnit:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
-
         await self.create_clients()
-        await self.init_hub()
         self._central.create_devices()
         await self.init_clients()
+        await self.init_hub()
         self._central.start_connection_checker()
 
     async def stop(self) -> None:
@@ -110,19 +109,20 @@ class ControlUnit:
     async def init_hub(self) -> None:
         """Init the hub."""
         await self._central.init_hub()
-        if self._central.hub:
-            self._hub = HaHub(self._hass, cu=self, hm_hub=self._central.hub)
-            await self._hub.init()
+        if not self._central.hub:
+            return None
+        self._hub = HaHub(self._hass, cu=self, hm_hub=self._central.hub)
+        await self._hub.init()
         hm_entities = (
             [self._central.hub.hub_entities.values()] if self._central.hub else []
         )
-        args = [hm_entities]
-
-        async_dispatcher_send(
-            self._hass,
-            self.async_signal_new_hm_entity(self._entry_id, HmPlatform.HUB),
-            *args,  # Don't send device if None, it would override default value in listeners
-        )
+        if hm_entities:
+            args = [hm_entities]
+            async_dispatcher_send(
+                self._hass,
+                self.async_signal_new_hm_entity(self._entry_id, HmPlatform.HUB),
+                *args,  # Don't send device if None, it would override default value in listeners
+            )
 
     @property
     def hub(self) -> HaHub | None:
@@ -392,7 +392,7 @@ class HaHub(Entity):
         self.hass.helpers.event.async_track_time_interval(
             self._fetch_data, SCAN_INTERVAL
         )
-        await self._hm_hub.fetch_data()
+        await self._fetch_data(datetime.now())
 
     @property
     def available(self) -> bool:
