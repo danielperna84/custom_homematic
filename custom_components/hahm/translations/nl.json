@@ -11,7 +11,7 @@
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
           "callback_ip": "Callback IP",
-          "callback_port": "Callback XML-RPC Port",
+          "callback_port": "Callback XML-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "Verifier TLS connection",
           "json_port": "Externe JSON-RPC poort",
@@ -21,10 +21,16 @@
       "interface": {
         "description": "Configureer de verbinding met uw CCU2 of CCU3",
         "data": {
-          "interface_name": "Interface naam",
-          "port": "CCU Poort",
-          "path": "CCU Path",
-          "add_another_interface": "Een andere interface toevoegen"
+          "hmip_rf_enabled": "Homematic IP inschakelen",
+          "hmip_rf_port": "HmIP-RF poort",
+          "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
+          "bidos_rf_port": "HM-RF Port",
+          "virtual_devices_enabled": "Groepen (Heating-Group) inschakelen",
+          "virtual_devices_port": "Groepen poort",
+          "virtual_devices_path": "Groepen Path",
+          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
+          "hs485d_port": "HS485D poort"
+        }
         }
       }
     }
