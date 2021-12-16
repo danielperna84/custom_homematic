@@ -1,0 +1,61 @@
+{
+  "title": "Home-Assistant Integration für Homematic (IP)",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Home-Assistant Integration für Homematic (IP)",
+        "description": "Bitte Pflichtfelder ausfüllen",
+        "data": {
+          "instance_name": "Instanzname der Integration",
+          "host": "CCU Hostname/IP-Adresse",
+          "username": "CCU Benutzername",
+          "password": "CCU Passwort",
+          "callback_host": "Callback Hostname/IP-Adresse",
+          "callback_port": "Callback XML-RPC Port",
+          "tls": "verwende TLS",
+          "verify_tls": "TLS Verbindung überprüfen",
+          "json_port": "JSON-RPC Port",
+          "json_tls": "verwende TLS für JSON"
+        }
+      },
+      "interface": {
+        "description": "Konfiguration der CCU Schnittstellen",
+        "data": {
+          "hmip_rf_enabled": "aktiviere Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "bidos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
+          "bidos_rf_port": "HM-RF Port",
+          "virtual_devices_enabled": "aktiviere Heizgruppen",
+          "virtual_devices_port": "Gruppen Port",
+          "virtual_devices_path": "Gruppen Path",
+          "hs485d_enabled": "aktiviere HS485D (HM-Wired)",
+          "hs485d_port": "HS485D Port"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "hahm_devices": {
+        "data": {
+          "enable_virtual_channels": "aktiviere virtuelle Gerätekanäle",
+          "enable_sensors_for_system_variables": "aktiviere Sensoren für Systemvariablen"
+        },
+        "description": "Konfiguriere die Sichtbarkeit von HAHM Geräten",
+        "title": "HAHM Optionen"
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "acoustic_alarm_active": "Akustischer Alarm aktiv",
+      "alarmstate": "Alarmstatus",
+      "dew_point_alarm": "Taupunkt-Alarm",
+      "humidity_alarm": "Luftfeuchtigkeit-Alarm",
+      "moisture_detected": "Feuchtigkeit erkannt",
+      "optical_alarm_active": "Optischer Alarm aktiv",
+      "smoke_detector_alarm_status": "Rauschmelder-Alarm",
+      "waterlevel_detected": "Wasserstand erkannt"
+    }
+  }
+}

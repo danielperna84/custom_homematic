@@ -7,15 +7,15 @@
         "description": "Please fill the required fields.",
         "data": {
           "instance_name": "Integration instance name",
-          "host": "CCU Hostname",
+          "host": "CCU Hostname/IP-Address",
           "username": "CCU Username",
           "password": "CCU Password",
-          "callback_ip": "Callback IP",
+          "callback_host": "Callback Hostname/IP-Address",
           "callback_port": "Callback XML-RPC Port",
-          "tls": "Use TLS",
-          "verify_tls": "Verify TLS connection",
-          "json_port": "Remote JSON-RPC Port",
-          "json_tls": "Use TLS for JSON"
+          "tls": "use TLS",
+          "verify_tls": "verify TLS connection",
+          "json_port": "JSON-RPC Port",
+          "json_tls": "use TLS for JSON"
         }
       },
       "interface": {
@@ -38,8 +38,8 @@
     "step": {
       "hahm_devices": {
         "data": {
-          "enable_virtual_channels": "Enable virtual channels",
-          "enable_sensors_for_system_variables": "Enable sensors for system variables"
+          "enable_virtual_channels": "enable virtual channels",
+          "enable_sensors_for_system_variables": "enable sensors for system variables"
         },
         "description": "Configure visibility of hahm device types",
         "title": "Hahm options"

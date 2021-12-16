@@ -16,8 +16,6 @@ from hahomematic.const import (
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
     DEFAULT_TLS,
-    IP_ANY_V4,
-    PORT_ANY,
 )
 import voluptuous as vol
 from voluptuous.schema_builder import Schema
@@ -70,10 +68,10 @@ DOMAIN_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_INSTANCE_NAME): str,
         vol.Required(ATTR_HOST): str,
-        vol.Optional(ATTR_USERNAME, default=""): str,
-        vol.Optional(ATTR_PASSWORD, default=""): str,
-        vol.Optional(ATTR_CALLBACK_HOST, default=IP_ANY_V4): str,
-        vol.Optional(ATTR_CALLBACK_PORT, default=PORT_ANY): int,
+        vol.Optional(ATTR_USERNAME): str,
+        vol.Optional(ATTR_PASSWORD): str,
+        vol.Optional(ATTR_CALLBACK_HOST): str,
+        vol.Optional(ATTR_CALLBACK_PORT): int,
         vol.Optional(ATTR_TLS, default=DEFAULT_TLS): bool,
         vol.Optional(ATTR_VERIFY_TLS, default=False): bool,
         vol.Optional(ATTR_JSON_PORT): int,

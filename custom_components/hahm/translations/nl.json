@@ -10,7 +10,7 @@
           "host": "CCU Hostname",
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
-          "callback_ip": "Callback IP",
+          "callback_host": "Callback Hostname/IP",
           "callback_port": "Callback XML-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "Verifier TLS connection",
