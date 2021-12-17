@@ -36,6 +36,7 @@ from homeassistant.const import (
     SIGNAL_STRENGTH_DECIBELS,
     SPEED_KILOMETERS_PER_HOUR,
     TEMP_CELSIUS,
+    TIME_MINUTES,
     VOLUME_CUBIC_METERS,
 )
 from homeassistant.helpers.entity import EntityDescription
@@ -180,23 +181,28 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "RAIN_COUNTER": SensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=LENGTH_MILLIMETERS,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "WIND_SPEED": SensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
         icon="mdi:weather-windy",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "WIND_DIR": SensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "WIND_DIR_RANGE": SensorEntityDescription(
         key="WIND_DIR_RANGE",
         native_unit_of_measurement=DEGREE,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "SUNSHINEDURATION": SensorEntityDescription(
         key="SUNSHINEDURATION",
-        native_unit_of_measurement="#",
+        native_unit_of_measurement=TIME_MINUTES,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "AIR_PRESSURE": SensorEntityDescription(
         key="AIR_PRESSURE",
@@ -207,36 +213,52 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "FREQUENCY": SensorEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
+        device_class=SensorDeviceClass.FREQUENCY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "LEVEL": SensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "VALUE": SensorEntityDescription(
         key="VALUE",
         native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "VALVE_STATE": SensorEntityDescription(
         key="VALVE_STATE",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "CARRIER_SENSE_LEVEL": SensorEntityDescription(
         key="CARRIER_SENSE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "DUTY_CYCLE_LEVEL": SensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "BRIGHTNESS": SensorEntityDescription(
         key="BRIGHTNESS",
         native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:invert-colors",
     ),
     "RSSI_DEVICE": SensorEntityDescription(
         key="RSSI_DEVICE",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "RSSI_PEER": SensorEntityDescription(
         key="RSSI_PEER",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "IP_ADDRESS": SensorEntityDescription(
