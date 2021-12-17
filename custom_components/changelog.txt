@@ -1,3 +1,8 @@
+Version 0.1.0 (2021-12-XX)
+- Bump version to 0.1.0
+- Update EntityDescriptions
+- Add initial tests for config_flow
+
 Version 0.0.22.2 (2021-12-16)
 - Add DE translation
 - Update NL translation

@@ -1,6 +1,6 @@
 """
 hahomematic is a Python 3 module for Home Assistant to interact with
-HomeMatic and homematic IP devices.
+Homematic and Homematic IP devices.
 https://github.com/danielperna84/hahomematic
 """
 from __future__ import annotations
