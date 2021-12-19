@@ -4,6 +4,17 @@
       "CLOSED": "Gesloten",
       "TILTED": "Gekanteld",
       "OPEN": "Geopend"
+    },
+    "hahm__lock_state": {
+      "UNKNOWN": "Unknown",
+      "LOCKED": "Locked",
+      "UNLOCKED": "Unlocked"
+    },
+    "hahm__smoke_detector_alarm_status": {
+      "IDLE_OFF": "idle off",
+      "PRIMARY_ALARM": "Primary Alarm",
+      "INTRUSION_ALARM": "Intrusion Alarm",
+      "SECONDARY_ALARM": "Secondary Alarm"
     }
   }
 }

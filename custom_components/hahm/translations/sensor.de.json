@@ -4,6 +4,17 @@
       "CLOSED": "Geschlossen",
       "TILTED": "Gekippt",
       "OPEN": "Offen"
+    },
+    "hahm__lock_state": {
+      "UNKNOWN": "Unbekannt",
+      "LOCKED": "Verriegelt",
+      "UNLOCKED": "Unverriegelt"
+    },
+    "hahm__smoke_detector_alarm_status": {
+      "IDLE_OFF": "untätig",
+      "PRIMARY_ALARM": "Primär-Alarm",
+      "INTRUSION_ALARM": "Einbruch-Alarm",
+      "SECONDARY_ALARM": "Sekundär-Alarm"
     }
   }
 }
