@@ -111,7 +111,7 @@ class ControlUnit:
         await self._central.init_hub()
         if not self._central.hub:
             return None
-        self._hub = HaHub(self._hass, cu=self, hm_hub=self._central.hub)
+        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self._central.hub)
         await self._hub.init()
         hm_entities = (
             [self._central.hub.hub_entities.values()] if self._central.hub else []
@@ -377,13 +377,13 @@ class HaHub(Entity):
     """The HomeMatic hub. (CCU2/HomeGear)."""
 
     def __init__(
-        self, hass: HomeAssistant, cu: ControlUnit, hm_hub: HmHub | HmDummyHub
+        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub | HmDummyHub
     ) -> None:
         """Initialize HomeMatic hub."""
         self.hass = hass
-        self._cu: ControlUnit = cu
+        self._control: ControlUnit = control_unit
         self._hm_hub: HmHub | HmDummyHub = hm_hub
-        self._name: str = self._cu.central.instance_name
+        self._name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
         self._hm_hub.register_update_callback(self._update_hub)
 
