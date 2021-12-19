@@ -36,6 +36,7 @@ from homeassistant.const import (
     SIGNAL_STRENGTH_DECIBELS,
     SPEED_KILOMETERS_PER_HOUR,
     TEMP_CELSIUS,
+    TIME_MINUTES,
     VOLUME_CUBIC_METERS,
 )
 from homeassistant.helpers.entity import EntityDescription
@@ -43,22 +44,6 @@ from homeassistant.helpers.entity import EntityDescription
 from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
-
-HM_STATE_HA_CAST = {
-    "IPGarage": {0: "closed", 1: "open", 2: "ventilation", 3: None},
-    "RotaryHandleSensor": {0: "closed", 1: "tilted", 2: "open"},
-    "RotaryHandleSensorIP": {0: "closed", 1: "tilted", 2: "open"},
-    "WaterSensor": {0: "dry", 1: "wet", 2: "water"},
-    "CO2Sensor": {0: "normal", 1: "added", 2: "strong"},
-    "IPSmoke": {0: "off", 1: "primary", 2: "intrusion", 3: "secondary"},
-    "RFSiren": {
-        0: "disarmed",
-        1: "extsens_armed",
-        2: "allsens_armed",
-        3: "alarm_blocked",
-    },
-    "IPLockDLD": {0: None, 1: "locked", 2: "unlocked"},
-}
 
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
@@ -180,23 +165,32 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "RAIN_COUNTER": SensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=LENGTH_MILLIMETERS,
+        icon="mdi:weather-rainy",
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "WIND_SPEED": SensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
         icon="mdi:weather-windy",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "WIND_DIR": SensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
+        icon="mdi:windsock",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "WIND_DIR_RANGE": SensorEntityDescription(
         key="WIND_DIR_RANGE",
         native_unit_of_measurement=DEGREE,
+        icon="mdi:windsock",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "SUNSHINEDURATION": SensorEntityDescription(
         key="SUNSHINEDURATION",
-        native_unit_of_measurement="#",
+        native_unit_of_measurement=TIME_MINUTES,
+        icon="mdi:weather-sunny",
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "AIR_PRESSURE": SensorEntityDescription(
         key="AIR_PRESSURE",
@@ -207,41 +201,68 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "FREQUENCY": SensorEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
+        device_class=SensorDeviceClass.FREQUENCY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "LEVEL": SensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "VALUE": SensorEntityDescription(
         key="VALUE",
         native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "VALVE_STATE": SensorEntityDescription(
         key="VALVE_STATE",
         native_unit_of_measurement=PERCENTAGE,
+        icon="mdi:pipe-valve",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "CARRIER_SENSE_LEVEL": SensorEntityDescription(
         key="CARRIER_SENSE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "DUTY_CYCLE_LEVEL": SensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "BRIGHTNESS": SensorEntityDescription(
         key="BRIGHTNESS",
         native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:invert-colors",
     ),
     "RSSI_DEVICE": SensorEntityDescription(
         key="RSSI_DEVICE",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "RSSI_PEER": SensorEntityDescription(
         key="RSSI_PEER",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
     ),
     "IP_ADDRESS": SensorEntityDescription(
         key="IP_ADDRESS",
         entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+    ),
+    "SMOKE_DETECTOR_ALARM_STATUS": SensorEntityDescription(
+        key="SMOKE_DETECTOR_ALARM_STATUS",
+        icon="mdi:smoke-detector",
+        device_class="hahm__smoke_detector_alarm_status",
+    ),
+    "LOCK_STATE": SensorEntityDescription(
+        key="LOCK_STATE",
+        icon="mdi:lock",
+        device_class="hahm__lock_state",
     ),
 }
 
