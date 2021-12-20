@@ -7,14 +7,14 @@
         "description": "Gelieve de vereiste velden in te vullen.",
         "data": {
           "instance_name": "Integration instance naam",
-          "host": "CCU Hostname",
+          "host": "CCU Hostname/IP-adres",
           "username": "CCU Gebruikersnaam",
           "password": "CCU Wachtwoord",
-          "callback_ip": "Callback IP",
+          "callback_host": "Callback Hostname/IP-adres",
           "callback_port": "Callback XML-RPC poort",
           "tls": "Gebruik TLS",
-          "verify_tls": "Verifier TLS connection",
-          "json_port": "Externe JSON-RPC poort",
+          "verify_tls": "verifier TLS connection",
+          "json_port": "JSON-RPC poort",
           "json_tls": "TLS gebruiken voor JSON"
         }
       },
@@ -25,7 +25,7 @@
           "hmip_rf_port": "HmIP-RF poort",
           "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
           "bidos_rf_port": "HM-RF Port",
-          "virtual_devices_enabled": "Groepen (Heating-Group) inschakelen",
+          "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
           "virtual_devices_port": "Groepen poort",
           "virtual_devices_path": "Groepen Path",
           "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
