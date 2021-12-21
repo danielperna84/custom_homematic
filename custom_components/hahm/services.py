@@ -86,7 +86,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup servives"""
 
-    async def _service_virtualkey(service: ServiceCall) -> None:
+    async def _async_service_virtualkey(service: ServiceCall) -> None:
         """Service to handle virtualkey servicecalls."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -98,27 +98,27 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_VIRTUAL_KEY,
-        service_func=_service_virtualkey,
+        service_func=_async_service_virtualkey,
         schema=SCHEMA_SERVICE_VIRTUALKEY,
     )
 
-    async def _service_set_variable_value(service: ServiceCall) -> None:
+    async def _async_service_set_variable_value(service: ServiceCall) -> None:
         """Service to call setValue method for HomeMatic system variable."""
         entity_id = service.data[ATTR_ENTITY_ID]
         name = service.data[ATTR_NAME]
         value = service.data[ATTR_VALUE]
 
         if hub := _get_hub_by_entity_id(hass, entity_id):
-            await hub.set_variable(name, value)
+            await hub.async_set_variable(name, value)
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_VARIABLE_VALUE,
-        service_func=_service_set_variable_value,
+        service_func=_async_service_set_variable_value,
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
-    async def _service_set_device_value(service: ServiceCall) -> None:
+    async def _async_service_set_device_value(service: ServiceCall) -> None:
         """Service to call setValue method for HomeMatic devices."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -152,11 +152,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_DEVICE_VALUE,
-        service_func=_service_set_device_value,
+        service_func=_async_service_set_device_value,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
-    async def _service_set_install_mode(service: ServiceCall) -> None:
+    async def _async_service_set_install_mode(service: ServiceCall) -> None:
         """Service to set interface_id into install mode."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         mode: int = service.data.get(ATTR_MODE, 1)
@@ -171,11 +171,11 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_INSTALL_MODE,
-        service_func=_service_set_install_mode,
+        service_func=_async_service_set_install_mode,
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
-    async def _service_put_paramset(service: ServiceCall) -> None:
+    async def _async_service_put_paramset(service: ServiceCall) -> None:
         """Service to call the putParamset method on a HomeMatic connection."""
         interface_id = service.data[ATTR_INTERFACE_ID]
         address = service.data[ATTR_ADDRESS]
@@ -203,7 +203,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_PUT_PARAMSET,
-        service_func=_service_put_paramset,
+        service_func=_async_service_put_paramset,
         schema=SCHEMA_SERVICE_PUT_PARAMSET,
     )
 

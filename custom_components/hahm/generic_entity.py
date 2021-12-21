@@ -70,7 +70,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         if isinstance(self._hm_entity, (BaseHubEntity, CallbackEntity)):
             self._hm_entity.register_update_callback(self._async_device_changed)
             self._hm_entity.register_remove_callback(self._async_device_removed)
-        self._cu.add_hm_entity(hm_entity=self._hm_entity)
+        self._cu.async_add_hm_entity(hm_entity=self._hm_entity)
         # Init data of entity.
         if hasattr(self._hm_entity, "load_data"):
             await self._hm_entity.load_data()
@@ -96,12 +96,13 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if self._hm_device_removed:
             try:
-                self._cu.remove_hm_entity(self._hm_entity)
-                await self.async_remove_from_registries()
+                self._cu.async_remove_hm_entity(self._hm_entity)
+                self._async_remove_from_registries()
             except KeyError as err:
                 _LOGGER.debug("Error removing HM device from registry: %s", err)
 
-    async def async_remove_from_registries(self) -> None:
+    @callback
+    def _async_remove_from_registries(self) -> None:
         """Remove entity/device from registry."""
 
         # Remove callback from device.
@@ -113,7 +114,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if device_id := self.registry_entry.device_id:
             # Remove from device registry.
-            device_registry = await dr.async_get_registry(self.hass)
+            device_registry = dr.async_get(self.hass)
             if device_id in device_registry.devices:
                 # This will also remove associated entities from entity registry.
                 device_registry.async_remove_device(device_id)
@@ -121,7 +122,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             # Remove from entity registry.
             # Only relevant for entities that do not belong to a device.
             if entity_id := self.registry_entry.entity_id:
-                entity_registry = await er.async_get_registry(self.hass)
+                entity_registry = er.async_get(self.hass)
                 if entity_id in entity_registry.entities:
                     entity_registry.async_remove(entity_id)
 

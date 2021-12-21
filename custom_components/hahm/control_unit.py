@@ -80,39 +80,39 @@ class ControlUnit:
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
-        self.enable_virtual_channels = control_config.enable_virtual_channels
-        self.enable_sensors_for_system_variables = (
+        self.option_enable_virtual_channels = control_config.enable_virtual_channels
+        self.option_enable_sensors_for_system_variables = (
             control_config.enable_sensors_for_system_variables
         )
         self._central: CentralUnit = self.create_central()
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
 
-    async def start(self) -> None:
+    async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         config.CACHE_DIR = "cache"
-        await self.create_clients()
+        await self.async_create_clients()
         self._central.create_devices()
-        await self.init_clients()
-        await self.init_hub()
+        await self.async_init_clients()
+        await self.async_init_hub()
         self._central.start_connection_checker()
 
-    async def stop(self) -> None:
+    async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        await self._central.stop_connection_checker()
+        self._central.stop_connection_checker()
         for client in self._central.clients.values():
             await client.proxy_de_init()
         await self._central.stop()
 
-    async def init_hub(self) -> None:
+    async def async_init_hub(self) -> None:
         """Init the hub."""
         await self._central.init_hub()
         if not self._central.hub:
             return None
         self._hub = HaHub(self._hass, control_unit=self, hm_hub=self._central.hub)
-        await self._hub.init()
+        await self._hub.async_init()
         hm_entities = (
             [self._central.hub.hub_entities.values()] if self._central.hub else []
         )
@@ -129,7 +129,7 @@ class ControlUnit:
         """Return the Hub."""
         return self._hub
 
-    async def init_clients(self) -> None:
+    async def async_init_clients(self) -> None:
         """Init clients related to control unit."""
         for client in self._central.clients.values():
             await client.proxy_init()
@@ -139,7 +139,8 @@ class ControlUnit:
         """return the HAHM central_unit instance."""
         return self._central
 
-    def get_new_hm_entities(
+    @callback
+    def async_get_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """
@@ -160,7 +161,10 @@ class ControlUnit:
 
         return hm_entities
 
-    def get_hm_entities_by_platform(self, platform: HmPlatform) -> list[BaseEntity]:
+    @callback
+    def async_get_hm_entities_by_platform(
+        self, platform: HmPlatform
+    ) -> list[BaseEntity]:
         """
         Return all hm-entities by platform
         """
@@ -175,11 +179,13 @@ class ControlUnit:
 
         return hm_entities
 
-    def add_hm_entity(self, hm_entity: HmBaseEntity) -> None:
+    @callback
+    def async_add_hm_entity(self, hm_entity: HmBaseEntity) -> None:
         """add entity to active entities"""
         self._active_hm_entities[hm_entity.unique_id] = hm_entity
 
-    def remove_hm_entity(self, hm_entity: HmBaseEntity) -> None:
+    @callback
+    def async_remove_hm_entity(self, hm_entity: HmBaseEntity) -> None:
         """remove entity from active entities"""
         del self._active_hm_entities[hm_entity.unique_id]
 
@@ -190,12 +196,12 @@ class ControlUnit:
         return f"hahm-new-entity-{entry_id}-{platform.value}"
 
     @callback
-    def _callback_system_event(self, src: str, *args: Any) -> None:
+    def _async_callback_system_event(self, src: str, *args: Any) -> None:
         """Callback for ccu based events."""
         if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
             # Handle event of new device creation in HAHM.
-            for (platform, hm_entities) in self.get_new_hm_entities(
+            for (platform, hm_entities) in self.async_get_new_hm_entities(
                 new_entity_unique_ids
             ).items():
                 if hm_entities and len(hm_entities) > 0:
@@ -228,10 +234,10 @@ class ControlUnit:
             return None
 
     @callback
-    def _callback_ha_event(
+    def _async_callback_ha_event(
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
-        if device_id := self._get_device_id(event_data[ATTR_ADDRESS]):
+        if device_id := self._async_get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
 
         if hm_event_type == HmEventType.KEYPRESS:
@@ -247,7 +253,7 @@ class ControlUnit:
                 )
         elif hm_event_type == HmEventType.SPECIAL:
             address = event_data[ATTR_ADDRESS]
-            name = self._get_device_name(address)
+            name = self._async_get_device_name(address)
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
@@ -255,14 +261,14 @@ class ControlUnit:
                 if value is True:
                     title = f"{DOMAIN.upper()}-Device not reachable"
                     message = f"{name} / {address} on interface {interface_id}"
-                    self.create_persistent_notification(
+                    self._async_create_persistent_notification(
                         identifier=address, title=title, message=message
                     )
                 else:
-                    self.dismiss_persistent_notification(identifier=address)
+                    self._async_dismiss_persistent_notification(identifier=address)
 
     @callback
-    def create_persistent_notification(
+    def _async_create_persistent_notification(
         self, identifier: str, title: str, message: str
     ) -> None:
         """Create a message for user to UI."""
@@ -271,23 +277,26 @@ class ControlUnit:
         )
 
     @callback
-    def dismiss_persistent_notification(self, identifier: str) -> None:
+    def _async_dismiss_persistent_notification(self, identifier: str) -> None:
         """Dismiss a message for user on UI."""
         self._hass.components.persistent_notification.async_dismiss(identifier)
 
-    def _get_device_name(self, address: str) -> str | None:
+    @callback
+    def _async_get_device_name(self, address: str) -> str | None:
         """Return the device name of the ha device."""
-        if device := self._get_device(address):
+        if device := self._async_get_device(address):
             return device.name_by_user if device.name_by_user else device.name
         return None
 
-    def _get_device_id(self, address: str) -> str | None:
+    @callback
+    def _async_get_device_id(self, address: str) -> str | None:
         """Return the device id of the ha device."""
-        if device := self._get_device(address):
+        if device := self._async_get_device(address):
             return device.id
         return None
 
-    def _get_device(self, address: str) -> DeviceEntry | None:
+    @callback
+    def _async_get_device(self, address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
         if (hm_device := self.central.hm_devices.get(address)) is None:
             return None
@@ -315,15 +324,15 @@ class ControlUnit:
             client_session=client_session,
             json_port=self._data[ATTR_JSON_PORT],
             json_tls=self._data[ATTR_JSON_TLS],
-            enable_virtual_channels=self.enable_virtual_channels,
-            enable_sensors_for_system_variables=self.enable_sensors_for_system_variables,
+            enable_virtual_channels=self.option_enable_virtual_channels,
+            enable_sensors_for_system_variables=self.option_enable_sensors_for_system_variables,
         ).get_central()
         # register callback
-        central.callback_system_event = self._callback_system_event
-        central.callback_ha_event = self._callback_ha_event
+        central.callback_system_event = self._async_callback_system_event
+        central.callback_ha_event = self._async_callback_ha_event
         return central
 
-    async def create_clients(self) -> set[Client]:
+    async def async_create_clients(self) -> set[Client]:
         """create clients for the central unit."""
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
@@ -385,14 +394,14 @@ class HaHub(Entity):
         self._hm_hub: HmHub | HmDummyHub = hm_hub
         self._name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
-        self._hm_hub.register_update_callback(self._update_hub)
+        self._hm_hub.register_update_callback(self._async_update_hub)
 
-    async def init(self) -> None:
+    async def async_init(self) -> None:
         """Init fetch scheduler."""
         self.hass.helpers.event.async_track_time_interval(
-            self._fetch_data, SCAN_INTERVAL
+            self._async_fetch_data, SCAN_INTERVAL
         )
-        await self._fetch_data(datetime.now())
+        await self._async_fetch_data(datetime.now())
 
     @property
     def available(self) -> bool:
@@ -409,7 +418,7 @@ class HaHub(Entity):
         """Return false. HomeMatic Hub object updates variables."""
         return False
 
-    async def _fetch_data(self, now: datetime) -> None:
+    async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
         await self._hm_hub.fetch_data()
 
@@ -428,7 +437,7 @@ class HaHub(Entity):
         """Return the icon to use in the frontend, if any."""
         return "mdi:gradient-vertical"
 
-    async def set_variable(self, name: str, value: Any) -> None:
+    async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
         sensor = self._hm_hub.hub_entities.get(name)
         if not sensor or name in self.extra_state_attributes:
@@ -445,6 +454,6 @@ class HaHub(Entity):
         await self._hm_hub.set_system_variable(name, value)
 
     @callback
-    def _update_hub(self, *args: Any) -> None:
+    def _async_update_hub(self, *args: Any) -> None:
         """Update the HA hub."""
         self.async_schedule_update_ha_state(True)

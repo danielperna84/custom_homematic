@@ -38,7 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = control
     hass.config_entries.async_setup_platforms(config_entry, HAHM_PLATFORMS)
-    await control.start()
+    await control.async_start()
     await async_setup_services(hass)
     return True
 
@@ -46,7 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     control = hass.data[DOMAIN][config_entry.entry_id]
-    await control.stop()
+    await control.async_stop()
     control.central.clear_all()
     if unload_ok := await hass.config_entries.async_unload_platforms(
         config_entry, HAHM_PLATFORMS

@@ -34,7 +34,7 @@ TEST_PASSWORD = "test-password"
 
 async def test_form(hass: HomeAssistant) -> None:
     """Test we get the form."""
-    interface = await check_form(hass, interface_data={})
+    interface = await async_check_form(hass, interface_data={})
 
     if_hmip_rf = interface[IF_HMIP_RF_NAME]
     assert if_hmip_rf[ATTR_PORT] == 2010
@@ -48,7 +48,7 @@ async def test_form(hass: HomeAssistant) -> None:
 async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     """Test we get the form."""
     interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BICDOS_RF_PORT: 5555}
-    interface = await check_form(hass, interface_data=interface_data)
+    interface = await async_check_form(hass, interface_data=interface_data)
 
     assert interface.get(IF_HMIP_RF_NAME) is None
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
@@ -66,7 +66,7 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
         ATTR_VIRTUAL_DEVICES_ENABLED: False,
         ATTR_HS485D_ENABLED: True,
     }
-    interface = await check_form(hass, interface_data=interface_data)
+    interface = await async_check_form(hass, interface_data=interface_data)
 
     assert interface.get(IF_HMIP_RF_NAME) is None
     assert interface.get(IF_BIDCOS_RF_NAME) is None
@@ -78,7 +78,7 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
 
 async def test_form_tls(hass: HomeAssistant) -> None:
     """Test we get the form with tls."""
-    interface = await check_form(hass, interface_data={}, tls=True)
+    interface = await async_check_form(hass, interface_data={}, tls=True)
 
     if_hmip_rf = interface[IF_HMIP_RF_NAME]
     assert if_hmip_rf[ATTR_PORT] == 42010
@@ -89,7 +89,7 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     assert interface.get(IF_HS485D_NAME) is None
 
 
-async def check_form(
+async def async_check_form(
     hass: HomeAssistant, interface_data: dict[str, Any], tls: bool = False
 ) -> dict[str, Any]:
     """Test we get the form."""

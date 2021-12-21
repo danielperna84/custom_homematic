@@ -113,7 +113,7 @@ def get_interface_schema(use_tls: bool) -> Schema:
     )
 
 
-async def validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
+async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     """
     Validate the user input allows us to connect.
     Data has the keys with values provided by the user.
@@ -128,7 +128,7 @@ async def validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     ).get_control_unit()
     control_unit.create_central()
     try:
-        await control_unit.create_clients()
+        await control_unit.async_create_clients()
         if first_client := control_unit.central.get_primary_client():
             return await first_client.is_connected()
     except ConnectionError as cex:
@@ -207,7 +207,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            await validate_input(self.hass, self.data)
+            await _async_validate_input(self.hass, self.data)
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -259,11 +259,11 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
                 {
                     vol.Optional(
                         CONF_ENABLE_VIRTUAL_CHANNELS,
-                        default=self._cu.enable_virtual_channels,
+                        default=self._cu.option_enable_virtual_channels,
                     ): bool,
                     vol.Optional(
                         CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
-                        default=self._cu.enable_sensors_for_system_variables,
+                        default=self._cu.option_enable_sensors_for_system_variables,
                     ): bool,
                 }
             ),
