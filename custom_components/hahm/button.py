@@ -49,7 +49,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_button([control_unit.get_hm_entities_by_platform(HmPlatform.BUTTON)])
+    async_add_button(
+        [control_unit.async_get_hm_entities_by_platform(HmPlatform.BUTTON)]
+    )
 
 
 class HaHomematicButton(HaHomematicGenericEntity[HmButton], ButtonEntity):

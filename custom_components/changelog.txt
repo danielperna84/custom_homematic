@@ -1,3 +1,6 @@
+Versiom 0.1.1(2021-12-21)
+- rename async methods and @callback methods to async_*
+
 Version 0.1.0 (2021-12-XX)
 - Bump version to 0.1.0
 - Update EntityDescriptions

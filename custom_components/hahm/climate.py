@@ -49,7 +49,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_climate([control_unit.get_hm_entities_by_platform(HmPlatform.CLIMATE)])
+    async_add_climate(
+        [control_unit.async_get_hm_entities_by_platform(HmPlatform.CLIMATE)]
+    )
 
 
 class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEntity):
