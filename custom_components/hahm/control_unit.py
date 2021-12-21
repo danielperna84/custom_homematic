@@ -98,6 +98,16 @@ class ControlUnit:
         await self.async_init_hub()
         self._central.start_connection_checker()
 
+        device_registry = dr.async_get(self._hass)
+        device_registry.async_get_or_create(
+            config_entry_id=self._central.entry_id,
+            identifiers={(DOMAIN, self._central.instance_name)},
+            manufacturer="eQ-3",
+            model=self._central.model,
+            # Add the name from config entry.
+            name=self._central.instance_name,
+        )
+
     async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
