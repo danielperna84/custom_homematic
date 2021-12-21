@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic
 
-from hahomematic.const import HM_VIRTUAL_REMOTES
+from hahomematic.const import HM_VIRTUAL_REMOTES, IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CallbackEntity
 from hahomematic.helpers import get_device_address
 from hahomematic.hub import BaseHubEntity, HmSystemVariable
@@ -52,9 +52,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
+        info = self._hm_entity.device_info
 
         if isinstance(self._hm_entity, HmSystemVariable):
-            identifiers = {(DOMAIN, self._cu.central.instance_name)}
+            identifiers = info["identifiers"]
         else:
             address = get_device_address(self._hm_entity.address)
             if address in HM_VIRTUAL_REMOTES:
@@ -63,11 +64,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 (DOMAIN, address),
                 (
                     DOMAIN,
-                    f"{self._hm_entity.client.interface_id}%{get_device_address(self._hm_entity.address)}",
+                    f"{get_device_address(self._hm_entity.address)}{IDENTIFIERS_SEPARATOR}{self._hm_entity.client.interface_id}",
                 ),
             }
 
-        info = self._hm_entity.device_info
         return DeviceInfo(
             identifiers=identifiers,
             manufacturer=info["manufacturer"],

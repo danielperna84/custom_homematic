@@ -52,6 +52,7 @@ async def async_get_triggers(
         return None
     if (address := get_address_from_identifiers(device.identifiers)) is None:
         return None
+    # TODO: Can be deleted later
     if address.endswith(tuple(HM_VIRTUAL_REMOTES)):
         address = address.split("_")[1]
 

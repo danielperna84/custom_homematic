@@ -52,7 +52,7 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -104,8 +104,8 @@ class ControlUnit:
             identifiers={(DOMAIN, self._central.instance_name)},
             manufacturer="eQ-3",
             model=self._central.model,
-            # Add the name from config entry.
             name=self._central.instance_name,
+            entry_type=DeviceEntryType.SERVICE
         )
 
     async def async_stop(self) -> None:
