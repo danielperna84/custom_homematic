@@ -1,5 +1,9 @@
-Versiom 0.1.1(2021-12-21)
-- rename async methods and @callback methods to async_*
+Versiom 0.1.2 (2021-12-21)
+- Refactor device_info and identifier handling
+
+Versiom 0.1.1 (2021-12-21)
+- Rename async methods and @callback methods to async_*
+- Update device identifier with interface_id
 
 Version 0.1.0 (2021-12-XX)
 - Bump version to 0.1.0

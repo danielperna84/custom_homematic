@@ -4,12 +4,13 @@
   "config_flow": true,
   "documentation": "https://github.com/danielperna84/custom_homematic",
   "issue_tracker": "https://github.com/danielperna84/custom_homematic/issues",
-  "requirements": ["hahomematic==0.1.0"],
+  "requirements": ["hahomematic==0.1.2"],
+  "requirements2": ["git+https://github.com/SukramJ/hahomematic.git@Fix-device-identifier#hahomematic"],
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
   "dependencies": [],
   "codeowners": ["@danielperna84", "@SukramJ"],
   "iot_class": "local_push",
-  "version": "0.1.0"
+  "version": "0.1.2"
 }

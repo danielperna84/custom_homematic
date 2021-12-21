@@ -52,7 +52,7 @@ from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
@@ -97,6 +97,16 @@ class ControlUnit:
         await self.async_init_clients()
         await self.async_init_hub()
         self._central.start_connection_checker()
+
+        device_registry = dr.async_get(self._hass)
+        device_registry.async_get_or_create(
+            config_entry_id=self._central.entry_id,
+            identifiers={(DOMAIN, self._central.instance_name)},
+            manufacturer="eQ-3",
+            model=self._central.model,
+            name=self._central.instance_name,
+            entry_type=DeviceEntryType.SERVICE
+        )
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
