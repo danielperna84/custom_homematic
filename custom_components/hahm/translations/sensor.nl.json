@@ -11,10 +11,10 @@
       "UNLOCKED": "Unlocked"
     },
     "hahm__smoke_detector_alarm_status": {
-      "IDLE_OFF": "idle off",
-      "PRIMARY_ALARM": "Primary Alarm",
-      "INTRUSION_ALARM": "Intrusion Alarm",
-      "SECONDARY_ALARM": "Secondary Alarm"
+      "IDLE_OFF": "Ruststand uit",
+      "PRIMARY_ALARM": "Primair  Alarm",
+      "INTRUSION_ALARM": "Inbraakalarm",
+      "SECONDARY_ALARM": "Secundair Alarm"
     }
   }
 }
