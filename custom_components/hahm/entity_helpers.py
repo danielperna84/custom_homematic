@@ -25,8 +25,6 @@ from homeassistant.const import (
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
     ENERGY_WATT_HOUR,
-    ENTITY_CATEGORY_DIAGNOSTIC,
-    ENTITY_CATEGORY_SYSTEM,
     FREQUENCY_HERTZ,
     LENGTH_MILLIMETERS,
     LIGHT_LUX,
@@ -39,7 +37,7 @@ from homeassistant.const import (
     TIME_MINUTES,
     VOLUME_CUBIC_METERS,
 )
-from homeassistant.helpers.entity import EntityDescription
+from homeassistant.helpers.entity import EntityCategory, EntityDescription
 
 from .helpers import HmGenericEntity
 
@@ -47,40 +45,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
-    "HUMIDITY": SensorEntityDescription(
-        key="HUMIDITY",
-        native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.HUMIDITY,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
     "ACTUAL_TEMPERATURE": SensorEntityDescription(
         key="ACTUAL_TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "TEMPERATURE": SensorEntityDescription(
-        key="TEMPERATURE",
-        native_unit_of_measurement=TEMP_CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "LUX": SensorEntityDescription(
-        key="LUX",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "CURRENT_ILLUMINATION": SensorEntityDescription(
-        key="CURRENT_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "ILLUMINATION": SensorEntityDescription(
-        key="ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
+    "AIR_PRESSURE": SensorEntityDescription(
+        key="AIR_PRESSURE",
+        native_unit_of_measurement=PRESSURE_HPA,
+        device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "AVERAGE_ILLUMINATION": SensorEntityDescription(
@@ -89,28 +63,22 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "LOWEST_ILLUMINATION": SensorEntityDescription(
-        key="LOWEST_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
+    "BRIGHTNESS": SensorEntityDescription(
+        key="BRIGHTNESS",
+        native_unit_of_measurement="#",
         state_class=SensorStateClass.MEASUREMENT,
+        icon="mdi:invert-colors",
     ),
-    "HIGHEST_ILLUMINATION": SensorEntityDescription(
-        key="HIGHEST_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
+    "CARRIER_SENSE_LEVEL": SensorEntityDescription(
+        key="CARRIER_SENSE_LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "POWER": SensorEntityDescription(
-        key="POWER",
-        native_unit_of_measurement=POWER_WATT,
-        device_class=SensorDeviceClass.POWER,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "IEC_POWER": SensorEntityDescription(
-        key="IEC_POWER",
-        native_unit_of_measurement=POWER_WATT,
-        device_class=SensorDeviceClass.POWER,
+    "CONCENTRATION": SensorEntityDescription(
+        key="CONCENTRATION",
+        native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
+        device_class=SensorDeviceClass.CO2,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "CURRENT": SensorEntityDescription(
@@ -119,11 +87,17 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "CONCENTRATION": SensorEntityDescription(
-        key="CONCENTRATION",
-        native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
-        device_class=SensorDeviceClass.CO2,
+    "CURRENT_ILLUMINATION": SensorEntityDescription(
+        key="CURRENT_ILLUMINATION",
+        native_unit_of_measurement=LIGHT_LUX,
+        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "DUTY_CYCLE_LEVEL": SensorEntityDescription(
+        key="DUTY_CYCLE_LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "ENERGY_COUNTER": SensorEntityDescription(
         key="ENERGY_COUNTER",
@@ -131,29 +105,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "IEC_ENERGY_COUNTER": SensorEntityDescription(
-        key="IEC_ENERGY_COUNTER",
-        native_unit_of_measurement=ENERGY_WATT_HOUR,
-        device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
-    ),
-    "VOLTAGE": SensorEntityDescription(
-        key="VOLTAGE",
-        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
-        device_class=SensorDeviceClass.VOLTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "OPERATING_VOLTAGE": SensorEntityDescription(
-        key="OPERATING_VOLTAGE",
-        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
-        device_class=SensorDeviceClass.VOLTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "GAS_POWER": SensorEntityDescription(
-        key="GAS_POWER",
-        native_unit_of_measurement=VOLUME_CUBIC_METERS,
-        device_class=SensorDeviceClass.GAS,
+    "FREQUENCY": SensorEntityDescription(
+        key="FREQUENCY",
+        native_unit_of_measurement=FREQUENCY_HERTZ,
+        device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "GAS_ENERGY_COUNTER": SensorEntityDescription(
@@ -162,16 +117,134 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+    "GAS_POWER": SensorEntityDescription(
+        key="GAS_POWER",
+        native_unit_of_measurement=VOLUME_CUBIC_METERS,
+        device_class=SensorDeviceClass.GAS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "HIGHEST_ILLUMINATION": SensorEntityDescription(
+        key="HIGHEST_ILLUMINATION",
+        native_unit_of_measurement=LIGHT_LUX,
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "HUMIDITY": SensorEntityDescription(
+        key="HUMIDITY",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "IEC_ENERGY_COUNTER": SensorEntityDescription(
+        key="IEC_ENERGY_COUNTER",
+        native_unit_of_measurement=ENERGY_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    "IEC_POWER": SensorEntityDescription(
+        key="IEC_POWER",
+        native_unit_of_measurement=POWER_WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "ILLUMINATION": SensorEntityDescription(
+        key="ILLUMINATION",
+        native_unit_of_measurement=LIGHT_LUX,
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "IP_ADDRESS": SensorEntityDescription(
+        key="IP_ADDRESS",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    "LEVEL": SensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "LOCK_STATE": SensorEntityDescription(
+        key="LOCK_STATE",
+        icon="mdi:lock",
+        device_class="hahm__lock_state",
+    ),
+    "LOWEST_ILLUMINATION": SensorEntityDescription(
+        key="LOWEST_ILLUMINATION",
+        native_unit_of_measurement=LIGHT_LUX,
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "LUX": SensorEntityDescription(
+        key="LUX",
+        native_unit_of_measurement=LIGHT_LUX,
+        device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "OPERATING_VOLTAGE": SensorEntityDescription(
+        key="OPERATING_VOLTAGE",
+        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
+    "POWER": SensorEntityDescription(
+        key="POWER",
+        native_unit_of_measurement=POWER_WATT,
+        device_class=SensorDeviceClass.POWER,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "RAIN_COUNTER": SensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=LENGTH_MILLIMETERS,
         icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "WIND_SPEED": SensorEntityDescription(
-        key="WIND_SPEED",
-        native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
-        icon="mdi:weather-windy",
+    "RSSI_DEVICE": SensorEntityDescription(
+        key="RSSI_DEVICE",
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
+    "RSSI_PEER": SensorEntityDescription(
+        key="RSSI_PEER",
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
+    "TEMPERATURE": SensorEntityDescription(
+        key="TEMPERATURE",
+        native_unit_of_measurement=TEMP_CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "SMOKE_DETECTOR_ALARM_STATUS": SensorEntityDescription(
+        key="SMOKE_DETECTOR_ALARM_STATUS",
+        icon="mdi:smoke-detector",
+        device_class="hahm__smoke_detector_alarm_status",
+    ),
+    "SUNSHINEDURATION": SensorEntityDescription(
+        key="SUNSHINEDURATION",
+        native_unit_of_measurement=TIME_MINUTES,
+        icon="mdi:weather-sunny",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    "VALUE": SensorEntityDescription(
+        key="VALUE",
+        native_unit_of_measurement="#",
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "VALVE_STATE": SensorEntityDescription(
+        key="VALVE_STATE",
+        native_unit_of_measurement=PERCENTAGE,
+        icon="mdi:pipe-valve",
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "VOLTAGE": SensorEntityDescription(
+        key="VOLTAGE",
+        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+        device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "WIND_DIR": SensorEntityDescription(
@@ -186,83 +259,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         icon="mdi:windsock",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "SUNSHINEDURATION": SensorEntityDescription(
-        key="SUNSHINEDURATION",
-        native_unit_of_measurement=TIME_MINUTES,
-        icon="mdi:weather-sunny",
-        state_class=SensorStateClass.TOTAL_INCREASING,
-    ),
-    "AIR_PRESSURE": SensorEntityDescription(
-        key="AIR_PRESSURE",
-        native_unit_of_measurement=PRESSURE_HPA,
-        device_class=SensorDeviceClass.PRESSURE,
+    "WIND_SPEED": SensorEntityDescription(
+        key="WIND_SPEED",
+        native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
+        icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "FREQUENCY": SensorEntityDescription(
-        key="FREQUENCY",
-        native_unit_of_measurement=FREQUENCY_HERTZ,
-        device_class=SensorDeviceClass.FREQUENCY,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "LEVEL": SensorEntityDescription(
-        key="LEVEL",
-        native_unit_of_measurement="#",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "VALUE": SensorEntityDescription(
-        key="VALUE",
-        native_unit_of_measurement="#",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "VALVE_STATE": SensorEntityDescription(
-        key="VALVE_STATE",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:pipe-valve",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "CARRIER_SENSE_LEVEL": SensorEntityDescription(
-        key="CARRIER_SENSE_LEVEL",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "DUTY_CYCLE_LEVEL": SensorEntityDescription(
-        key="DUTY_CYCLE_LEVEL",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "BRIGHTNESS": SensorEntityDescription(
-        key="BRIGHTNESS",
-        native_unit_of_measurement="#",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:invert-colors",
-    ),
-    "RSSI_DEVICE": SensorEntityDescription(
-        key="RSSI_DEVICE",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "RSSI_PEER": SensorEntityDescription(
-        key="RSSI_PEER",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "IP_ADDRESS": SensorEntityDescription(
-        key="IP_ADDRESS",
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "SMOKE_DETECTOR_ALARM_STATUS": SensorEntityDescription(
-        key="SMOKE_DETECTOR_ALARM_STATUS",
-        icon="mdi:smoke-detector",
-        device_class="hahm__smoke_detector_alarm_status",
-    ),
-    "LOCK_STATE": SensorEntityDescription(
-        key="LOCK_STATE",
-        icon="mdi:lock",
-        device_class="hahm__lock_state",
     ),
 }
 
@@ -282,33 +283,31 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    "OPTICAL_ALARM_ACTIVE": BinarySensorEntityDescription(
-        key="OPTICAL_ALARM_ACTIVE",
-        device_class=BinarySensorDeviceClass.SAFETY,
+    "DUTYCYCLE": BinarySensorEntityDescription(
+        key="DUTYCYCLE",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     "DUTY_CYCLE": BinarySensorEntityDescription(
         key="DUTY_CYCLE",
         device_class=BinarySensorDeviceClass.PROBLEM,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
-    "DUTYCYCLE": BinarySensorEntityDescription(
-        key="DUTYCYCLE",
-        device_class=BinarySensorDeviceClass.PROBLEM,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     "HEATER_STATE": BinarySensorEntityDescription(
         key="HEATER_STATE",
         device_class=BinarySensorDeviceClass.HEAT,
     ),
-    "LOW_BAT": BinarySensorEntityDescription(
-        key="LOW_BAT",
-        device_class=BinarySensorDeviceClass.BATTERY,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
-    ),
     "LOWBAT": BinarySensorEntityDescription(
         key="LOWBAT",
         device_class=BinarySensorDeviceClass.BATTERY,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    "LOW_BAT": BinarySensorEntityDescription(
+        key="LOW_BAT",
+        device_class=BinarySensorDeviceClass.BATTERY,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "MOISTURE_DETECTED": BinarySensorEntityDescription(
         key="MOISTURE_DETECTED",
@@ -317,6 +316,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
     "MOTION": BinarySensorEntityDescription(
         key="MOTION",
         device_class=BinarySensorDeviceClass.MOTION,
+    ),
+    "OPTICAL_ALARM_ACTIVE": BinarySensorEntityDescription(
+        key="OPTICAL_ALARM_ACTIVE",
+        device_class=BinarySensorDeviceClass.SAFETY,
     ),
     "PRESENCE_DETECTION_STATE": BinarySensorEntityDescription(
         key="PRESENCE_DETECTION_STATE",
@@ -329,7 +332,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
     "SABOTAGE": BinarySensorEntityDescription(
         key="SABOTAGE",
         device_class=BinarySensorDeviceClass.SAFETY,
-        entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
@@ -344,6 +347,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str, str], BinarySensorEntityDescription
 ] = {
+    # HmIP-SCI
+    ("SCI", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.SAFETY,
+    ),
     # HmIP-SWDO
     ("SWD", "STATE"): BinarySensorEntityDescription(
         key="STATE",
@@ -354,39 +362,26 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    # HmIP-SWDO-PL
-    ("SWDO-PL", "STATE"): BinarySensorEntityDescription(
-        key="STATE",
-        device_class=BinarySensorDeviceClass.WINDOW,
-    ),
     # HmIP-SWDM, HmIP-SWDM-B2
     ("SWDM", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    # HmIP-SCI
-    ("SCI", "STATE"): BinarySensorEntityDescription(
+    # HmIP-SWDO-PL
+    ("SWDO-PL", "STATE"): BinarySensorEntityDescription(
         key="STATE",
-        device_class=BinarySensorDeviceClass.SAFETY,
+        device_class=BinarySensorDeviceClass.WINDOW,
     ),
 }
 
 _COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
-    "HmIP-BROLL": CoverEntityDescription(
-        key="BROLL",
-        device_class=CoverDeviceClass.SHUTTER,
-    ),
-    "HmIP-FROLL": CoverEntityDescription(
-        key="FROLL",
-        device_class=CoverDeviceClass.SHUTTER,
-    ),
     "HmIP-BBL": CoverEntityDescription(
         key="BBL",
         device_class=CoverDeviceClass.BLIND,
     ),
-    "HmIP-FBL": CoverEntityDescription(
-        key="FBL",
-        device_class=CoverDeviceClass.BLIND,
+    "HmIP-BROLL": CoverEntityDescription(
+        key="BROLL",
+        device_class=CoverDeviceClass.SHUTTER,
     ),
     "HmIP-DRBLI4": CoverEntityDescription(
         key="DRBLI4",
@@ -395,6 +390,14 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
     "HmIPW-DRBL4": CoverEntityDescription(
         key="W-DRBL4",
         device_class=CoverDeviceClass.BLIND,
+    ),
+    "HmIP-FBL": CoverEntityDescription(
+        key="FBL",
+        device_class=CoverDeviceClass.BLIND,
+    ),
+    "HmIP-FROLL": CoverEntityDescription(
+        key="FROLL",
+        device_class=CoverDeviceClass.SHUTTER,
     ),
     "HmIP-HDM1": CoverEntityDescription(
         key="HDM1",
@@ -446,7 +449,7 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
-        entity_category=ENTITY_CATEGORY_SYSTEM,
+        entity_category=EntityCategory.SYSTEM,
     ),
     HmPlatform.COVER: None,
     HmPlatform.SENSOR: None,
