@@ -3,6 +3,7 @@ Version 0.2.0 (2021-12-22)
 - Cleanup device_info
 - Add configuration_url to service device
 - Move parameters in internal config
+- Fix #80 broken config_flow
 
 Versiom 0.1.2 (2021-12-21)
 - Refactor device_info and identifier handling

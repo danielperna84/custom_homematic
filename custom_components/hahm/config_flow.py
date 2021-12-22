@@ -16,6 +16,8 @@ from hahomematic.const import (
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
     DEFAULT_TLS,
+    IP_ANY_V4,
+    PORT_ANY,
 )
 import voluptuous as vol
 from voluptuous.schema_builder import Schema
@@ -161,8 +163,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ATTR_HOST: user_input[ATTR_HOST],
                 ATTR_USERNAME: user_input[ATTR_USERNAME],
                 ATTR_PASSWORD: user_input[ATTR_PASSWORD],
-                ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST),
-                ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
+                ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
+                ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT, PORT_ANY),
                 ATTR_TLS: user_input.get(ATTR_TLS),
                 ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
                 ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
