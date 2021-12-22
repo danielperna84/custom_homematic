@@ -1,31 +1,5 @@
 # Describes the format for available component services
 
-virtual_key:
-  name: Virtual key
-  description: Press a virtual key from CCU/Homegear or simulate keypress.
-  fields:
-    interface_id:
-      name: Interface
-      description: Select the given interface into install mode
-      required: true
-      example: Interfaces name from config
-      selector:
-        text:
-    address:
-      name: Address
-      description: Address of homematic device or BidCoS-RF for virtual remote.
-      required: true
-      example: BidCoS-RF
-      selector:
-        text:
-    parameter:
-      name: Parameter
-      description: Event to send i.e. PRESS_LONG, PRESS_SHORT.
-      required: true
-      example: PRESS_LONG
-      selector:
-        text:
-
 set_variable_value:
   name: Set variable value
   description: Set the name of a node.
@@ -55,19 +29,20 @@ set_device_value:
   name: Set device value
   description: Set a device property on RPC XML interface.
   fields:
-    interface_id:
-      name: Interface
-      description: Set an interface value
-      example: Interfaces name from config
+    device_id:
+      name: Device
+      description: Select a device
       selector:
-        text:
-    address:
-      name: Address
-      description: Address of homematic device or BidCoS-RF for virtual remote
+        device:
+          domain: hahm
+    channel:
+      name: Channel
+      description: Channel for calling a parameter.
       required: true
-      example: BidCoS-RF
       selector:
-        text:
+        number:
+          min: 1
+          max: 6
     parameter:
       name: Parameter
       description: Event to send i.e. PRESS_LONG, PRESS_SHORT
@@ -93,6 +68,12 @@ set_device_value:
             - 'double'
             - 'int'
             - 'string'
+    rx_mode:
+      name: RX mode
+      description: The receive mode used.
+      example: BURST
+      selector:
+        text:
 
 set_install_mode:
   name: Set install mode
@@ -133,20 +114,20 @@ put_paramset:
   name: Put paramset
   description: Call to putParamset in the RPC XML interface
   fields:
-    interface_id:
-      name: Interface
-      description: The interfaces name from the config
-      required: true
-      example: wireless
+    device_id:
+      name: Device
+      description: Select a device
       selector:
-        text:
-    address:
-      name: Address
-      description: Address of Homematic device
+        device:
+          domain: hahm
+    channel:
+      name: Channel
+      description: Channel for calling a paramset.
       required: true
-      example: LEQ3948571:0
       selector:
-        text:
+        number:
+          min: 1
+          max: 6
     paramset_key:
       name: Paramset key
       description: The paramset_key argument to putParamset

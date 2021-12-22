@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic
+from typing import Any, Generic, cast, Tuple
 
 from hahomematic.const import HM_VIRTUAL_REMOTES, IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CallbackEntity
@@ -75,7 +75,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             name=info["name"],
             sw_version=info["sw_version"],
             # Link to the homematic control unit.
-            via_device=info.get("via_device"),
+            via_device=cast(Tuple[str, str], info.get("via_device")),
         )
 
     @property
