@@ -109,6 +109,7 @@ class ControlUnit:
             manufacturer=info["manufacturer"],
             name=info["name"],
             entry_type=DeviceEntryType.SERVICE,
+            configuration_url=info["device_url"],
         )
 
     async def async_stop(self) -> None:
@@ -336,8 +337,14 @@ class ControlUnit:
             client_session=client_session,
             json_port=self._data[ATTR_JSON_PORT],
             json_tls=self._data[ATTR_JSON_TLS],
-            enable_virtual_channels=self.option_enable_virtual_channels,
-            enable_sensors_for_system_variables=self.option_enable_sensors_for_system_variables,
+            callback_host=self._data.get(ATTR_CALLBACK_HOST)
+            if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
+            else None,
+            callback_port=self._data.get(ATTR_CALLBACK_PORT)
+            if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
+            else None,
+            option_enable_virtual_channels=self.option_enable_virtual_channels,
+            option_enable_sensors_for_system_variables=self.option_enable_sensors_for_system_variables,
         ).get_central()
         # register callback
         central.callback_system_event = self._async_callback_system_event
@@ -355,12 +362,6 @@ class ControlUnit:
                     name=interface_name,
                     port=interface[ATTR_PORT],
                     path=interface.get(ATTR_PATH),
-                    callback_host=self._data.get(ATTR_CALLBACK_HOST)
-                    if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
-                    else None,
-                    callback_port=self._data.get(ATTR_CALLBACK_PORT)
-                    if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
-                    else None,
                 ).get_client()
             )
         return clients

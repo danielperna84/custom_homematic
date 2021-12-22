@@ -1,6 +1,8 @@
 Version 0.2.0 (2021-12-22)
 - Sort and use more enums for EntityCategory
 - Cleanup device_info
+- Add configuration_url to service device
+- Move parameters in internal config
 
 Versiom 0.1.2 (2021-12-21)
 - Refactor device_info and identifier handling

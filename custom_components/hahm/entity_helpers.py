@@ -37,7 +37,7 @@ from homeassistant.const import (
     TIME_MINUTES,
     VOLUME_CUBIC_METERS,
 )
-from homeassistant.helpers.entity import EntityDescription, EntityCategory
+from homeassistant.helpers.entity import EntityCategory, EntityDescription
 
 from .helpers import HmGenericEntity
 
