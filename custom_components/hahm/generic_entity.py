@@ -74,8 +74,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             model=info["model"],
             name=info["name"],
             sw_version=info["sw_version"],
-            # Link to the homematic countrol unit.
-            via_device=info["via_device"],
+            # Link to the homematic control unit.
+            via_device=info.get("via_device"),
         )
 
     @property
