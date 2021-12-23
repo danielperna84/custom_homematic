@@ -13,6 +13,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
+from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
@@ -43,6 +44,22 @@ from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
+    "ACTIVE_PROFILE": NumberEntityDescription(
+        key="ACTIVE_PROFILE",
+        icon="mdi:hvac",
+        min_value=1,
+        max_value=6,
+        step=1,
+    ),
+    "LEVEL": NumberEntityDescription(
+        key="LEVEL",
+        icon="mdi:radiator",
+        min_value=0.0,
+        max_value=1.01,
+        step=0.1,
+    ),
+}
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     "ACTUAL_TEMPERATURE": SensorEntityDescription(
@@ -435,6 +452,7 @@ _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
 
 _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
 }
 
