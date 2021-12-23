@@ -48,16 +48,10 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
     "ACTIVE_PROFILE": NumberEntityDescription(
         key="ACTIVE_PROFILE",
         icon="mdi:hvac",
-        min_value=1,
-        max_value=6,
-        step=1,
     ),
     "LEVEL": NumberEntityDescription(
         key="LEVEL",
         icon="mdi:radiator",
-        min_value=0.0,
-        max_value=1.01,
-        step=0.1,
     ),
 }
 

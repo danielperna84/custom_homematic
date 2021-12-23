@@ -9,10 +9,10 @@ from hahomematic.platforms.number import HmNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
@@ -58,7 +58,7 @@ async def async_setup_entry(
 class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
 
-    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+    _attr_entity_category = EntityCategory.CONFIG
     _attr_mode = NumberMode.BOX
 
     def __init__(
