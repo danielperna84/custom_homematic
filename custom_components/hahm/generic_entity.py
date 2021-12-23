@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic, cast, Tuple
+from typing import Any, Generic, Tuple, cast
 
 from hahomematic.const import HM_VIRTUAL_REMOTES, IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CallbackEntity
@@ -64,7 +64,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 (DOMAIN, address),
                 (
                     DOMAIN,
-                    f"{get_device_address(self._hm_entity.address)}{IDENTIFIERS_SEPARATOR}{self._hm_entity.client.interface_id}",
+                    f"{get_device_address(self._hm_entity.address)}{IDENTIFIERS_SEPARATOR}{self._hm_entity._interface_id}",
                 ),
             }
 

@@ -7,7 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.number import HmNumber
 
-from homeassistant.components.number import NumberEntity
+from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import HomeAssistant, callback
@@ -59,7 +59,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
 
     _attr_entity_category = ENTITY_CATEGORY_CONFIG
-    _attr_step = 0.1
+    _attr_mode = NumberMode.BOX
 
     def __init__(
         self,
@@ -70,6 +70,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_min_value = hm_entity.min
         self._attr_max_value = hm_entity.max
+        self._attr_step = 1.0 if hm_entity.hmtype == 'INTEGER' else 0.1
         self._attr_unit_of_measurement = hm_entity.unit
 
     @property

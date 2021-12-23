@@ -190,9 +190,11 @@ async def _async_service_set_device_value(
             # Default is 'string'
             value = str(value)
 
-    if (address_data := _get_interface_channel_address(
-        hass=hass, device_id=device_id, channel=channel
-    )) is None:
+    if (
+        address_data := _get_interface_channel_address(
+            hass=hass, device_id=device_id, channel=channel
+        )
+    ) is None:
         return None
 
     interface_id: str = address_data[0]
@@ -247,9 +249,11 @@ async def _async_service_put_paramset(
     paramset = dict(service.data[ATTR_PARAMSET])
     rx_mode = service.data.get(ATTR_RX_MODE)
 
-    if (address_data := _get_interface_channel_address(
-        hass=hass, device_id=device_id, channel=channel
-    )) is None:
+    if (
+        address_data := _get_interface_channel_address(
+            hass=hass, device_id=device_id, channel=channel
+        )
+    ) is None:
         return None
 
     interface_id: str = address_data[0]
@@ -283,9 +287,9 @@ def _get_interface_channel_address(
     device_entry: DeviceEntry | None = device_registry.async_get(device_id)
     if not device_entry:
         return None
-    if (data := get_address_at_interface_from_identifiers(
-        device_entry.identifiers
-    )) is None:
+    if (
+        data := get_address_at_interface_from_identifiers(device_entry.identifiers)
+    ) is None:
         return None
 
     address = data[0]
