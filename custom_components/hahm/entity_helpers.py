@@ -344,6 +344,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         key="SABOTAGE",
         device_class=BinarySensorDeviceClass.SAFETY,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
