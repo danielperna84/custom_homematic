@@ -1,3 +1,10 @@
+Version 0.4.0 (2021-12-24)
+- Bump hahomematic to 0.4.0:
+  - Add ACTUAL_TEMPERATURE as separate entity by @towo
+  - Add HEATING_COOLING to IPThermostat and Group
+  - Add (*)HUMIDITY and (*)TEMPERATURE as separate entities for Bidcos thermostats
+  - use ACTIVE_PROFILE in climate presets
+
 Version 0.3.2 (2021-12-23)
 - Make HmIP-BSM a switch (only dimable devices should be lights). thanks to @itn3rd77
 
