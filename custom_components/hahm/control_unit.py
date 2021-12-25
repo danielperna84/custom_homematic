@@ -80,9 +80,11 @@ class ControlUnit:
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
-        self.option_enable_virtual_channels = control_config.enable_virtual_channels
+        self.option_enable_virtual_channels = (
+            control_config.option_enable_virtual_channels
+        )
         self.option_enable_sensors_for_system_variables = (
-            control_config.enable_sensors_for_system_variables
+            control_config.option_enable_sensors_for_system_variables
         )
         self._central: CentralUnit = self.create_central()
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
@@ -134,7 +136,9 @@ class ControlUnit:
             args = [hm_entities]
             async_dispatcher_send(
                 self._hass,
-                self.async_signal_new_hm_entity(self._entry_id, HmPlatform.HUB),
+                self.async_signal_new_hm_entity(
+                    entry_id=self._entry_id, platform=HmPlatform.HUB
+                ),
                 *args,  # Don't send device if None, it would override default value in listeners
             )
 
@@ -216,12 +220,14 @@ class ControlUnit:
             new_entity_unique_ids = args[1]
             # Handle event of new device creation in HAHM.
             for (platform, hm_entities) in self.async_get_new_hm_entities(
-                new_entity_unique_ids
+                new_entities=new_entity_unique_ids
             ).items():
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
                         self._hass,
-                        self.async_signal_new_hm_entity(self._entry_id, platform),
+                        self.async_signal_new_hm_entity(
+                            entry_id=self._entry_id, platform=platform
+                        ),
                         [
                             hm_entities
                         ],  # Don't send device if None, it would override default value in listeners
@@ -232,7 +238,7 @@ class ControlUnit:
         elif src == HH_EVENT_DELETE_DEVICES:
             # Handle event of device removed in HAHM.
             for address in args[1]:
-                if entity := self._get_active_entity_by_address(address):
+                if entity := self._get_active_entity_by_address(address=address):
                     if isinstance(entity, HmCallbackEntity):
                         entity.remove_entity()
             return None
@@ -266,20 +272,22 @@ class ControlUnit:
                     event_data,
                 )
         elif hm_event_type == HmEventType.SPECIAL:
-            address = event_data[ATTR_ADDRESS]
-            name = self._async_get_device_name(address)
+            device_address = event_data[ATTR_ADDRESS]
+            name = self._async_get_device_name(device_address=device_address)
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 if value is True:
                     title = f"{DOMAIN.upper()}-Device not reachable"
-                    message = f"{name} / {address} on interface {interface_id}"
+                    message = f"{name} / {device_address} on interface {interface_id}"
                     self._async_create_persistent_notification(
-                        identifier=address, title=title, message=message
+                        identifier=device_address, title=title, message=message
                     )
                 else:
-                    self._async_dismiss_persistent_notification(identifier=address)
+                    self._async_dismiss_persistent_notification(
+                        identifier=device_address
+                    )
 
     @callback
     def _async_create_persistent_notification(
@@ -296,27 +304,27 @@ class ControlUnit:
         self._hass.components.persistent_notification.async_dismiss(identifier)
 
     @callback
-    def _async_get_device_name(self, address: str) -> str | None:
+    def _async_get_device_name(self, device_address: str) -> str | None:
         """Return the device name of the ha device."""
-        if device := self._async_get_device(address):
+        if device := self._async_get_device(device_address=device_address):
             return device.name_by_user if device.name_by_user else device.name
         return None
 
     @callback
-    def _async_get_device_id(self, address: str) -> str | None:
+    def _async_get_device_id(self, device_address: str) -> str | None:
         """Return the device id of the ha device."""
-        if device := self._async_get_device(address):
+        if device := self._async_get_device(device_address=device_address):
             return device.id
         return None
 
     @callback
-    def _async_get_device(self, address: str) -> DeviceEntry | None:
+    def _async_get_device(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
-        if (hm_device := self.central.hm_devices.get(address)) is None:
+        if (hm_device := self.central.hm_devices.get(device_address)) is None:
             return None
         identifiers: set[tuple[str, str]] = hm_device.device_info["identifiers"]
         device_registry = dr.async_get(self._hass)
-        return device_registry.async_get_device(identifiers)
+        return device_registry.async_get_device(identifiers=identifiers)
 
     def create_central(self) -> CentralUnit:
         """create the central unit for ccu callbacks."""
@@ -368,7 +376,10 @@ class ControlUnit:
 
     def _get_active_entity_by_address(self, address: str) -> HmBaseEntity | None:
         for entity in self._active_hm_entities.values():
-            if isinstance(entity, HmCallbackEntity) and entity.address == address:
+            if isinstance(entity, HmCallbackEntity) and address in (
+                entity.channel_address,
+                entity.device_address,
+            ):
                 return entity
         return None
 
@@ -381,14 +392,16 @@ class ControlConfig:
         hass: HomeAssistant,
         entry_id: str,
         data: dict[str, Any] | MappingProxyType[str, Any],
-        enable_virtual_channels: bool = False,
-        enable_sensors_for_system_variables: bool = False,
+        option_enable_virtual_channels: bool = False,
+        option_enable_sensors_for_system_variables: bool = False,
     ) -> None:
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
-        self.enable_virtual_channels = enable_virtual_channels
-        self.enable_sensors_for_system_variables = enable_sensors_for_system_variables
+        self.option_enable_virtual_channels = option_enable_virtual_channels
+        self.option_enable_sensors_for_system_variables = (
+            option_enable_sensors_for_system_variables
+        )
 
     def get_control_unit(self) -> ControlUnit:
         """Identify the used client."""
@@ -414,7 +427,7 @@ class HaHub(Entity):
         self.hass.helpers.event.async_track_time_interval(
             self._async_fetch_data, SCAN_INTERVAL
         )
-        await self._async_fetch_data(datetime.now())
+        await self._async_fetch_data(now=datetime.now())
 
     @property
     def available(self) -> bool:
@@ -464,7 +477,7 @@ class HaHub(Entity):
             old_value = self.extra_state_attributes.get(name)
 
         value = cv.boolean(value) if isinstance(old_value, bool) else float(value)
-        await self._hm_hub.set_system_variable(name, value)
+        await self._hm_hub.set_system_variable(name=name, value=value)
 
     @callback
     def _async_update_hub(self, *args: Any) -> None:

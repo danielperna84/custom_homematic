@@ -26,7 +26,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import DOMAIN
 from .control_unit import ControlUnit
-from .helpers import get_address_from_identifiers
+from .helpers import get_device_address_from_identifiers
 
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
@@ -50,16 +50,20 @@ async def async_get_triggers(
     device_registry = dr.async_get(hass)
     if (device := device_registry.async_get(device_id)) is None:
         return None
-    if (address := get_address_from_identifiers(device.identifiers)) is None:
+    if (
+        device_address := get_device_address_from_identifiers(
+            identifiers=device.identifiers
+        )
+    ) is None:
         return None
     # TODO: Can be deleted later
-    if address.endswith(tuple(HM_VIRTUAL_REMOTES)):
-        address = address.split("_")[1]
+    if device_address.endswith(tuple(HM_VIRTUAL_REMOTES)):
+        device_address = device_address.split("_")[1]
 
     triggers = []
     for entry_id in device.config_entries:
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
-        if hm_device := control_unit.central.hm_devices.get(address):
+        if hm_device := control_unit.central.hm_devices.get(device_address):
             for action_event in hm_device.action_events.values():
                 if isinstance(action_event, SpecialEvent):
                     continue

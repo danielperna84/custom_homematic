@@ -32,7 +32,7 @@ from .const import (
     DOMAIN,
 )
 from .control_unit import ControlUnit, HaHub
-from .helpers import get_address_at_interface_from_identifiers
+from .helpers import get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,13 +106,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service_name = service.service
 
         if service_name == SERVICE_PUT_PARAMSET:
-            await _async_service_put_paramset(hass, service)
+            await _async_service_put_paramset(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
-            await _async_service_set_install_mode(hass, service)
+            await _async_service_set_install_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_DEVICE_VALUE:
-            await _async_service_set_device_value(hass, service)
+            await _async_service_set_device_value(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
-            await _async_service_set_variable_value(hass, service)
+            await _async_service_set_variable_value(hass=hass, service=service)
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -161,8 +161,8 @@ async def _async_service_set_variable_value(
     name = service.data[ATTR_NAME]
     value = service.data[ATTR_VALUE]
 
-    if hub := _get_hub_by_entity_id(hass, entity_id):
-        await hub.async_set_variable(name, value)
+    if hub := _get_hub_by_entity_id(hass=hass, entity_id=entity_id):
+        await hub.async_set_variable(name=name, value=value)
 
 
 async def _async_service_set_device_value(
@@ -211,11 +211,13 @@ async def _async_service_set_device_value(
     )
 
     if interface_id and channel_address:
-        if control_unit := _get_cu_by_interface_id(hass, interface_id):
+        if control_unit := _get_cu_by_interface_id(
+            hass=hass, interface_id=interface_id
+        ):
             await control_unit.central.set_value(
                 interface_id=interface_id,
-                address=channel_address,
-                value_key=parameter,
+                channel_address=channel_address,
+                parameter=parameter,
                 value=value,
                 rx_mode=rx_mode,
             )
@@ -228,11 +230,11 @@ async def _async_service_set_install_mode(
     interface_id = service.data[ATTR_INTERFACE_ID]
     mode: int = service.data.get(ATTR_MODE, 1)
     time: int = service.data.get(ATTR_TIME, 60)
-    address = service.data.get(ATTR_ADDRESS)
+    device_address = service.data.get(ATTR_ADDRESS)
 
-    if control_unit := _get_cu_by_interface_id(hass, interface_id):
+    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         await control_unit.central.set_install_mode(
-            interface_id, t=time, mode=mode, address=address
+            interface_id, t=time, mode=mode, device_address=device_address
         )
 
 
@@ -269,10 +271,12 @@ async def _async_service_put_paramset(
     )
 
     if interface_id and channel_address:
-        if control_unit := _get_cu_by_interface_id(hass, interface_id):
+        if control_unit := _get_cu_by_interface_id(
+            hass=hass, interface_id=interface_id
+        ):
             await control_unit.central.put_paramset(
                 interface_id=interface_id,
-                address=channel_address,
+                channel_address=channel_address,
                 paramset=paramset_key,
                 value=paramset,
                 rx_mode=rx_mode,
@@ -288,23 +292,27 @@ def _get_interface_channel_address(
     if not device_entry:
         return None
     if (
-        data := get_address_at_interface_from_identifiers(device_entry.identifiers)
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device_entry.identifiers
+        )
     ) is None:
         return None
 
-    address = data[0]
+    device_address = data[0]
     interface_id = data[1]
 
-    channel_address = f"{address}:{channel}"
+    channel_address = f"{device_address}:{channel}"
     return interface_id, channel_address
 
 
 def _get_hm_entity(
-    hass: HomeAssistant, interface_id: str, address: str, parameter: str
+    hass: HomeAssistant, interface_id: str, channel_address: str, parameter: str
 ) -> GenericEntity | None:
     """Get homematic entity."""
-    if control_unit := _get_cu_by_interface_id(hass, interface_id):
-        return control_unit.central.get_hm_entity_by_parameter(address, parameter)
+    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+        return control_unit.central.get_hm_entity_by_parameter(
+            channel_address=channel_address, parameter=parameter
+        )
     return None
 
 
