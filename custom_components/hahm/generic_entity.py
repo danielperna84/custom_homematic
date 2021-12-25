@@ -6,7 +6,6 @@ from typing import Any, Generic, Tuple, cast
 
 from hahomematic.const import HM_VIRTUAL_REMOTES, IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CallbackEntity
-from hahomematic.helpers import get_device_address
 from hahomematic.hub import BaseHubEntity, HmSystemVariable
 
 from homeassistant.core import callback
@@ -57,14 +56,14 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         if isinstance(self._hm_entity, HmSystemVariable):
             identifiers = info["identifiers"]
         else:
-            address = get_device_address(self._hm_entity.address)
-            if address in HM_VIRTUAL_REMOTES:
-                address = f"{self._cu.central.instance_name}_{address}"
+            device_address = self._hm_entity.device_address
+            if device_address in HM_VIRTUAL_REMOTES:
+                device_address = f"{self._cu.central.instance_name}_{device_address}"
             identifiers = {
-                (DOMAIN, address),
+                (DOMAIN, device_address),
                 (
                     DOMAIN,
-                    f"{get_device_address(self._hm_entity.address)}{IDENTIFIERS_SEPARATOR}{self._hm_entity._interface_id}",
+                    f"{self._hm_entity.device_address}{IDENTIFIERS_SEPARATOR}{self._hm_entity._interface_id}",
                 ),
             }
 
@@ -86,8 +85,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, (BaseHubEntity, CallbackEntity)):
-            self._hm_entity.register_update_callback(self._async_device_changed)
-            self._hm_entity.register_remove_callback(self._async_device_removed)
+            self._hm_entity.register_update_callback(
+                update_callback=self._async_device_changed
+            )
+            self._hm_entity.register_remove_callback(
+                remove_callback=self._async_device_removed
+            )
         self._cu.async_add_hm_entity(hm_entity=self._hm_entity)
         # Init data of entity.
         if hasattr(self._hm_entity, "load_data"):
@@ -124,8 +127,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Remove entity/device from registry."""
 
         # Remove callback from device.
-        self._hm_entity.unregister_update_callback(self._async_device_changed)
-        self._hm_entity.unregister_remove_callback(self._async_device_removed)
+        self._hm_entity.unregister_update_callback(
+            update_callback=self._async_device_changed
+        )
+        self._hm_entity.unregister_remove_callback(
+            remove_callback=self._async_device_removed
+        )
 
         if not self.registry_entry:
             return

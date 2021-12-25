@@ -28,10 +28,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         hass=hass,
         entry_id=config_entry.entry_id,
         data=config_entry.data,
-        enable_virtual_channels=config_entry.options.get(
+        option_enable_virtual_channels=config_entry.options.get(
             CONF_ENABLE_VIRTUAL_CHANNELS, False
         ),
-        enable_sensors_for_system_variables=config_entry.options.get(
+        option_enable_sensors_for_system_variables=config_entry.options.get(
             CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES, False
         ),
     ).get_control_unit()

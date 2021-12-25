@@ -11,8 +11,8 @@ from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
@@ -70,7 +70,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_min_value = hm_entity.min
         self._attr_max_value = hm_entity.max
-        self._attr_step = 1.0 if hm_entity.hmtype == 'INTEGER' else 0.1
+        self._attr_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.1
         self._attr_unit_of_measurement = hm_entity.unit
 
     @property
