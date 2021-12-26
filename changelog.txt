@@ -1,3 +1,7 @@
+Version 0.5.1 (2021-12-26)
+- Bump hahomematic to 0.5.1:
+    - Fix hm_light turn_off
+
 Version 0.5.0 (2021-12-25)
 - Separate device_address and channel_address
 
