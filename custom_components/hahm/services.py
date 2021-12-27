@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 
 from hahomematic.const import (
@@ -42,7 +42,6 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_CHANNEL = "channel"
 ATTR_DEVICE_ID = "device_id"
-ATTR_AWAY_START_TIME = "away_start_time"
 ATTR_AWAY_END_TIME = "away_end_time"
 ATTR_AWAY_SET_POINT_TEMPERATURE = "away_set_point_temperature"
 DEFAULT_CHANNEL = 1
@@ -73,7 +72,6 @@ SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
 SCHEMA_SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR = vol.Schema(
     {
         vol.Required(ATTR_ENTITY_ID): comp_entity_ids,
-        vol.Required(ATTR_AWAY_START_TIME): cv.datetime,
         vol.Required(ATTR_AWAY_END_TIME): cv.datetime,
         vol.Required(ATTR_AWAY_SET_POINT_TEMPERATURE, default=18.0): vol.All(
             vol.Coerce(float), vol.Range(min=4.5, max=30.5)
@@ -274,7 +272,7 @@ async def _async_service_enable_away_mode_by_calendar(
 ) -> None:
     """Service to set the away mode on HomeMatic climate devices."""
     entity_ids: str = service.data[ATTR_ENTITY_ID]
-    start = service.data[ATTR_AWAY_START_TIME]
+    start = datetime.now() - timedelta(minutes=10)
     end = service.data[ATTR_AWAY_END_TIME]
     away_temperature = service.data[ATTR_AWAY_SET_POINT_TEMPERATURE]
 
