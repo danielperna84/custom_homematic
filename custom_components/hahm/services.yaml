@@ -164,13 +164,6 @@ enable_away_mode_by_calendar:
       selector:
         entity:
           domain: climate
-    away_start_time:
-      name: Start time
-      description: The time when the away mode should automatically be enabled.
-      required: true
-      example: 2022-01-15 14:00
-      selector:
-        text:
     away_end_time:
       name: End time
       description: The time when the away mode should automatically be disabled.
