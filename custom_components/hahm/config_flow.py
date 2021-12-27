@@ -161,8 +161,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.data = {
                 ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME],
                 ATTR_HOST: user_input[ATTR_HOST],
-                ATTR_USERNAME: user_input[ATTR_USERNAME],
-                ATTR_PASSWORD: user_input[ATTR_PASSWORD],
+                ATTR_USERNAME: user_input.get(ATTR_USERNAME),
+                ATTR_PASSWORD: user_input.get(ATTR_PASSWORD),
                 ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
                 ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT, PORT_ANY),
                 ATTR_TLS: user_input.get(ATTR_TLS),

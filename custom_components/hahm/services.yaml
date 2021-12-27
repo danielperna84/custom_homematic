@@ -7,6 +7,7 @@ set_variable_value:
     entity_id:
       name: Entity
       description: Name(s) of homematic central to set value.
+      required: true
       selector:
         entity:
           domain: hahm
@@ -32,6 +33,7 @@ set_device_value:
     device_id:
       name: Device
       description: Select a device
+      required: true
       selector:
         device:
           domain: hahm
@@ -117,6 +119,7 @@ put_paramset:
     device_id:
       name: Device
       description: Select a device
+      required: true
       selector:
         device:
           domain: hahm
@@ -146,5 +149,55 @@ put_paramset:
       name: RX mode
       description: The receive mode used.
       example: BURST
+      selector:
+        text:
+
+enable_away_mode_by_calendar:
+  name: Enable climate away mode by calendar
+  description: Enable climate away mode by calendar.  (experimental)
+  fields:
+    entity_id:
+      name: Entity
+      description: The ID of the climate entity. Use 'all' keyword to enable the away mode for all entities.
+      required: true
+      example: climate.livingroom
+      selector:
+        entity:
+          domain: climate
+    away_start_time:
+      name: Start time
+      description: The time when the away mode should automatically be enabled.
+      required: true
+      example: 2022-01-15 14:00
+      selector:
+        text:
+    away_end_time:
+      name: End time
+      description: The time when the away mode should automatically be disabled.
+      required: true
+      example: 2022-01-28 14:00
+      selector:
+        text:
+    away_set_point_temperature:
+      name: Set point temperature
+      description: The temperature for the away mode.
+      required: true
+      default: 18.0
+      selector:
+        number:
+          min: 4.5
+          max: 30.5
+          step: 0.5
+          mode: slider
+
+disable_away_mode:
+  name: Disable climate away mode
+  description: Enable climate away mode by calendar.
+  fields:
+    entity_id:
+      name: Entity
+      description: The ID of the climate entity. Use 'all' keyword to diable the away mode for all entities.
+      required: true
+      example: climate.livingroom
       selector:
         text:

@@ -50,7 +50,7 @@ async def async_setup_entry(
     )
 
     async_add_binary_sensor(
-        [control_unit.async_get_hm_entities_by_platform(HmPlatform.BINARY_SENSOR)]
+        [control_unit.async_get_new_hm_entities_by_platform(HmPlatform.BINARY_SENSOR)]
     )
 
 

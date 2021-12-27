@@ -1,6 +1,7 @@
 """ hahomematic services """
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime
 import logging
 
@@ -10,14 +11,17 @@ from hahomematic.const import (
     ATTR_NAME,
     ATTR_PARAMETER,
     ATTR_VALUE,
+    HmPlatform,
 )
-from hahomematic.entity import GenericEntity
+from hahomematic.devices.climate import IPThermostat
+from hahomematic.entity import BaseEntity, GenericEntity
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.config_validation import comp_entity_ids
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.service import (
     async_register_admin_service,
@@ -38,16 +42,21 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_CHANNEL = "channel"
 ATTR_DEVICE_ID = "device_id"
-
+ATTR_AWAY_START_TIME = "away_start_time"
+ATTR_AWAY_END_TIME = "away_end_time"
+ATTR_AWAY_SET_POINT_TEMPERATURE = "away_set_point_temperature"
 DEFAULT_CHANNEL = 1
 
 SERVICE_PUT_PARAMSET = "put_paramset"
+SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR = "enable_away_mode_by_calendar"
+SERVICE_DISABLE_AWAY_MODE = "disable_away_mode"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
 HAHM_SERVICES = [
     SERVICE_PUT_PARAMSET,
+    SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
@@ -55,9 +64,26 @@ HAHM_SERVICES = [
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
-        vol.Required(ATTR_ENTITY_ID): cv.string,
+        vol.Required(ATTR_ENTITY_ID): comp_entity_ids,
         vol.Required(ATTR_NAME): cv.string,
         vol.Required(ATTR_VALUE): cv.match_all,
+    }
+)
+
+SCHEMA_SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR = vol.Schema(
+    {
+        vol.Required(ATTR_ENTITY_ID): comp_entity_ids,
+        vol.Required(ATTR_AWAY_START_TIME): cv.datetime,
+        vol.Required(ATTR_AWAY_END_TIME): cv.datetime,
+        vol.Required(ATTR_AWAY_SET_POINT_TEMPERATURE, default=18.0): vol.All(
+            vol.Coerce(float), vol.Range(min=4.5, max=30.5)
+        ),
+    }
+)
+
+SCHEMA_SERVICE_DISABLE_AWAY_MODE = vol.Schema(
+    {
+        vol.Required(ATTR_ENTITY_ID): comp_entity_ids,
     }
 )
 
@@ -95,7 +121,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 
 
 async def async_setup_services(hass: HomeAssistant) -> None:
-    """Setup servives"""
+    """Setup services"""
 
     if hass.services.async_services().get(DOMAIN):
         return
@@ -107,6 +133,12 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         if service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
+        if service_name == SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR:
+            await _async_service_enable_away_mode_by_calendar(
+                hass=hass, service=service
+            )
+        if service_name == SERVICE_DISABLE_AWAY_MODE:
+            await _async_service_disable_away_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
             await _async_service_set_install_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_DEVICE_VALUE:
@@ -119,6 +151,20 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_SET_VARIABLE_VALUE,
         service_func=async_call_hahm_service,
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
+        service_func=async_call_hahm_service,
+        schema=SCHEMA_SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_DISABLE_AWAY_MODE,
+        service_func=async_call_hahm_service,
+        schema=SCHEMA_SERVICE_DISABLE_AWAY_MODE,
     )
 
     hass.services.async_register(
@@ -223,6 +269,69 @@ async def _async_service_set_device_value(
             )
 
 
+async def _async_service_enable_away_mode_by_calendar(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to set the away mode on HomeMatic climate devices."""
+    entity_ids: str = service.data[ATTR_ENTITY_ID]
+    start = service.data[ATTR_AWAY_START_TIME]
+    end = service.data[ATTR_AWAY_END_TIME]
+    away_temperature = service.data[ATTR_AWAY_SET_POINT_TEMPERATURE]
+
+    async def _enable_away_mode_by_calendar(entity: BaseEntity) -> None:
+        if not isinstance(entity, IPThermostat):
+            return
+        hm_ip_thermostat: IPThermostat = entity
+
+        await hm_ip_thermostat.enable_away_mode_by_calendar(
+            start=start, end=end, away_temperature=away_temperature
+        )
+        _LOGGER.debug(
+            "Calling enable_away_mode_by_calendar: %s, %s, %s, %s",
+            entity.name,
+            start,
+            end,
+            away_temperature,
+        )
+        await asyncio.sleep(1)
+
+    if entity_ids == "all":
+        hm_entities = _get_entities_by_platform(hass=hass, platform=HmPlatform.CLIMATE)
+        for platform_entity in hm_entities:
+            await _enable_away_mode_by_calendar(entity=platform_entity)
+    else:
+        for entity_id in entity_ids:
+            if hm_entity := _get_entity(hass=hass, entity_id=entity_id):
+                await _enable_away_mode_by_calendar(entity=hm_entity)
+
+
+async def _async_service_disable_away_mode(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to disable the away mode on HomeMatic climate devices."""
+    entity_ids: str = service.data[ATTR_ENTITY_ID]
+
+    async def _disable_away_mode(entity: BaseEntity) -> None:
+        if not isinstance(entity, IPThermostat):
+            return
+        hm_ip_thermostat: IPThermostat = entity
+        await hm_ip_thermostat.disable_away_mode()
+        _LOGGER.debug(
+            "Calling disable_away_mode: %s",
+            entity.name,
+        )
+        await asyncio.sleep(1)
+
+    if entity_ids == "all":
+        hm_entities = _get_entities_by_platform(hass=hass, platform=HmPlatform.CLIMATE)
+        for platform_entity in hm_entities:
+            await _disable_away_mode(entity=platform_entity)
+    else:
+        for entity_id in entity_ids:
+            if hm_entity := _get_entity(hass=hass, entity_id=entity_id):
+                await _disable_away_mode(entity=hm_entity)
+
+
 async def _async_service_set_install_mode(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
@@ -303,6 +412,29 @@ def _get_interface_channel_address(
 
     channel_address = f"{device_address}:{channel}"
     return interface_id, channel_address
+
+
+def _get_entity(hass: HomeAssistant, entity_id: str) -> BaseEntity | None:
+    """Return entity by given entity_id."""
+    control_unit: ControlUnit
+    for control_unit in hass.data[DOMAIN].values():
+        if hm_entity := control_unit.async_get_hm_entity(entity_id=entity_id):
+            if isinstance(hm_entity, BaseEntity):
+                return hm_entity
+    return None
+
+
+def _get_entities_by_platform(
+    hass: HomeAssistant, platform: HmPlatform
+) -> list[BaseEntity]:
+    """Return entities by given platform."""
+    control_unit: ControlUnit
+    hm_entities: list[BaseEntity] = []
+    for control_unit in hass.data[DOMAIN].values():
+        hm_entities.extend(
+            control_unit.async_get_hm_entities_by_platform(platform=platform)
+        )
+    return hm_entities
 
 
 def _get_hm_entity(

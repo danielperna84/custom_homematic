@@ -87,6 +87,7 @@ class ControlUnit:
             control_config.option_enable_sensors_for_system_variables
         )
         self._central: CentralUnit = self.create_central()
+        # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
 
@@ -158,12 +159,20 @@ class ControlUnit:
         return self._central
 
     @callback
+    def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
+        """Return hm-entity by requested entity_id"""
+        return self._active_hm_entities.get(entity_id)
+
+    @callback
     def async_get_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """
         Return all hm-entities by requested unique_ids
         """
+        active_unique_ids = [
+            entity.unique_id for entity in self._active_hm_entities.values()
+        ]
         # init dict
         hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
         for hm_platform in AVAILABLE_HM_PLATFORMS:
@@ -171,11 +180,33 @@ class ControlUnit:
 
         for entity in new_entities:
             if (
-                entity.unique_id not in self._active_hm_entities
+                entity.unique_id not in active_unique_ids
                 and entity.create_in_ha
                 and entity.platform.value in HAHM_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
+
+        return hm_entities
+
+    @callback
+    def async_get_new_hm_entities_by_platform(
+        self, platform: HmPlatform
+    ) -> list[BaseEntity]:
+        """
+        Return all new hm-entities by platform
+        """
+        active_unique_ids = [
+            entity.unique_id for entity in self._active_hm_entities.values()
+        ]
+
+        hm_entities = []
+        for entity in self._central.hm_entities.values():
+            if (
+                entity.unique_id not in active_unique_ids
+                and entity.create_in_ha
+                and entity.platform == platform
+            ):
+                hm_entities.append(entity)
 
         return hm_entities
 
@@ -188,24 +219,20 @@ class ControlUnit:
         """
         hm_entities = []
         for entity in self._central.hm_entities.values():
-            if (
-                entity.unique_id not in self._active_hm_entities
-                and entity.create_in_ha
-                and entity.platform == platform
-            ):
+            if entity.create_in_ha and entity.platform == platform:
                 hm_entities.append(entity)
 
         return hm_entities
 
     @callback
-    def async_add_hm_entity(self, hm_entity: HmBaseEntity) -> None:
+    def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
         """add entity to active entities"""
-        self._active_hm_entities[hm_entity.unique_id] = hm_entity
+        self._active_hm_entities[entity_id] = hm_entity
 
     @callback
-    def async_remove_hm_entity(self, hm_entity: HmBaseEntity) -> None:
+    def async_remove_hm_entity(self, entity_id: str) -> None:
         """remove entity from active entities"""
-        del self._active_hm_entities[hm_entity.unique_id]
+        del self._active_hm_entities[entity_id]
 
     # pylint: disable=no-self-use
     @callback
