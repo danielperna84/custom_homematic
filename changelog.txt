@@ -1,9 +1,15 @@
-Version 0.6.1 (2021-12-28)
+Version 0.6.2 (2021-12-28)
+- Add selector to service disable_away_mode
+- Bump hahomematic to 0.6.1:
+    - Display profiles only when hvac_mode auto is enabled
+    - Fix binary sensor state update for hmip 2-state sensors
+
+Version 0.6.1 (2021-12-27)
 - Remove away mode start date
 
 Version 0.6.0 (2021-12-27)
 - Add climate services for away mode (experimental)
-- Bump hahomematic to 0.5.0:
+- Bump hahomematic to 0.6.0:
     - Fix HVAC_MODE_OFF for climate
 
 Version 0.5.1 (2021-12-26)

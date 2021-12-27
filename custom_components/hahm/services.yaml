@@ -154,7 +154,7 @@ put_paramset:
 
 enable_away_mode_by_calendar:
   name: Enable climate away mode by calendar
-  description: Enable climate away mode by calendar.  (experimental)
+  description: Enable climate away mode by calendar.
   fields:
     entity_id:
       name: Entity
@@ -193,4 +193,5 @@ disable_away_mode:
       required: true
       example: climate.livingroom
       selector:
-        text:
+        entity:
+          domain: climate

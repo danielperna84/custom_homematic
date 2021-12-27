@@ -62,4 +62,4 @@ class HaHomematicBinarySensor(
     @property
     def is_on(self) -> bool:
         """Return true if motion is detected."""
-        return self._hm_entity.state is True
+        return self._hm_entity.state
