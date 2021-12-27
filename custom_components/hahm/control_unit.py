@@ -438,6 +438,9 @@ class ControlConfig:
 class HaHub(Entity):
     """The HomeMatic hub. (CCU2/HomeGear)."""
 
+    _attr_should_poll = False
+    _attr_icon = "mdi:gradient-vertical"
+
     def __init__(
         self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub | HmDummyHub
     ) -> None:
@@ -445,8 +448,8 @@ class HaHub(Entity):
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub | HmDummyHub = hm_hub
-        self._name: str = self._control.central.instance_name
-        self.entity_id = f"{DOMAIN}.{slugify(self._name.lower())}"
+        self._attr_name: str = self._control.central.instance_name
+        self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
 
     async def async_init(self) -> None:
@@ -461,16 +464,6 @@ class HaHub(Entity):
         """Return if entity is available."""
         return self._hm_hub.available
 
-    @property
-    def name(self) -> str:
-        """Return the name of the device."""
-        return self._name
-
-    @property
-    def should_poll(self) -> bool:
-        """Return false. HomeMatic Hub object updates variables."""
-        return False
-
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
         await self._hm_hub.fetch_data()
@@ -484,11 +477,6 @@ class HaHub(Entity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes."""
         return self._hm_hub.extra_state_attributes
-
-    @property
-    def icon(self) -> str:
-        """Return the icon to use in the frontend, if any."""
-        return "mdi:gradient-vertical"
 
     async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
