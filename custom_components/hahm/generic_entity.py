@@ -91,7 +91,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             self._hm_entity.register_remove_callback(
                 remove_callback=self._async_device_removed
             )
-        self._cu.async_add_hm_entity(hm_entity=self._hm_entity)
+        self._cu.async_add_hm_entity(
+            entity_id=self.entity_id, hm_entity=self._hm_entity
+        )
         # Init data of entity.
         if hasattr(self._hm_entity, "load_data"):
             await self._hm_entity.load_data()
@@ -117,7 +119,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if self._hm_device_removed:
             try:
-                self._cu.async_remove_hm_entity(self._hm_entity)
+                self._cu.async_remove_hm_entity(self.entity_id)
                 self._async_remove_from_registries()
             except KeyError as err:
                 _LOGGER.debug("Error removing HM device from registry: %s", err)

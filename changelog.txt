@@ -1,9 +1,15 @@
+Version 0.6.0 (2021-12-27)
+- Add climate services for away mode (experimental)
+- Bump hahomematic to 0.5.0:
+    - Fix HVAC_MODE_OFF for climate
+
 Version 0.5.1 (2021-12-26)
 - Bump hahomematic to 0.5.1:
     - Fix hm_light turn_off
 
 Version 0.5.0 (2021-12-25)
-- Separate device_address and channel_address
+- Bump hahomematic to 0.5.0:
+    - Separate device_address and channel_address
 
 Version 0.4.0 (2021-12-24)
 - Bump hahomematic to 0.4.0:
