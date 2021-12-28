@@ -155,23 +155,50 @@ put_paramset:
 enable_away_mode_by_calendar:
   name: Enable climate away mode by calendar
   description: Enable climate away mode by calendar.
+  target:
+    entity:
+      integration: hahm
+      domain: climate
   fields:
-    entity_id:
-      name: Entity
-      description: The ID of the climate entity. Use 'all' keyword to enable the away mode for all entities.
-      required: true
-      example: climate.livingroom
-      selector:
-        entity:
-          domain: climate
-    away_end_time:
+    end:
       name: End time
       description: The time when the away mode should automatically be disabled.
       required: true
       example: 2022-01-28 14:00
       selector:
         text:
-    away_set_point_temperature:
+    away_temperature:
+      name: Set point temperature
+      description: The temperature for the away mode.
+      required: true
+      default: 18.0
+      selector:
+        number:
+          min: 4.5
+          max: 30.5
+          step: 0.5
+          mode: slider
+
+enable_away_mode_by_duration:
+  name: Enable climate away mode by duration
+  description: Enable climate away mode by duration.
+  target:
+    entity:
+      integration: hahm
+      domain: climate
+  fields:
+    hours:
+      name: Hours
+      description: The number of hours after the away mode should automatically be disabled.
+      required: true
+      default: 6
+      selector:
+        number:
+          min: 1
+          max: 99
+          step: 1
+          mode: slider
+    away_temperature:
       name: Set point temperature
       description: The temperature for the away mode.
       required: true
@@ -185,13 +212,8 @@ enable_away_mode_by_calendar:
 
 disable_away_mode:
   name: Disable climate away mode
-  description: Enable climate away mode by calendar.
-  fields:
-    entity_id:
-      name: Entity
-      description: The ID of the climate entity. Use 'all' keyword to diable the away mode for all entities.
-      required: true
-      example: climate.livingroom
-      selector:
-        entity:
-          domain: climate
+  description: Disable climate away mode.
+  target:
+    entity:
+      integration: hahm
+      domain: climate
