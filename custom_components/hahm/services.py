@@ -98,9 +98,6 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Setup services"""
 
-    if hass.services.async_services().get(DOMAIN):
-        return
-
     @verify_domain_control(hass, DOMAIN)
     async def async_call_hahm_service(service: ServiceCall) -> None:
         """Call correct HomematicIP Cloud service."""

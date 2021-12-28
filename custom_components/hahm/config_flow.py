@@ -21,7 +21,7 @@ from hahomematic.const import (
 )
 from hahomematic.xml_rpc_proxy import NoConnection
 import voluptuous as vol
-from voluptuous.schema_builder import Schema, UNDEFINED
+from voluptuous.schema_builder import UNDEFINED, Schema
 
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
