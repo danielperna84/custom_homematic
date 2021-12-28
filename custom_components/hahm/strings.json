@@ -32,6 +32,13 @@
           "hs485d_port": "HS485D Port"
         }
       }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
     }
   },
   "options": {

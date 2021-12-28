@@ -103,7 +103,7 @@ async def async_check_form(
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow.validate_input",
+        "homeassistant.components.hahm.config_flow._async_validate_input",
         return_value=True,
     ), patch(
         "homeassistant.components.hahm.async_setup_entry",
@@ -158,7 +158,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow.validate_input",
+        "homeassistant.components.hahm.config_flow._async_validate_input",
         side_effect=InvalidAuth,
     ), patch(
         "homeassistant.components.hahm.async_setup_entry",
@@ -205,7 +205,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow.validate_input",
+        "homeassistant.components.hahm.config_flow._async_validate_input",
         side_effect=CannotConnect,
     ), patch(
         "homeassistant.components.hahm.async_setup_entry",

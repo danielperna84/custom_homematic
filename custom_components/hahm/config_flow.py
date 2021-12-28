@@ -19,14 +19,16 @@ from hahomematic.const import (
     IP_ANY_V4,
     PORT_ANY,
 )
+from hahomematic.xml_rpc_proxy import NoConnection
 import voluptuous as vol
-from voluptuous.schema_builder import Schema
+from voluptuous.schema_builder import Schema, UNDEFINED
 
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -66,20 +68,41 @@ IF_BIDCOS_RF_NAME = "BidCos-RF"
 IF_BICDOS_RF_PORT = 2001
 IF_BICDOS_RF_TLS_PORT = 42001
 
-DOMAIN_SCHEMA = vol.Schema(
-    {
-        vol.Required(ATTR_INSTANCE_NAME): str,
-        vol.Required(ATTR_HOST): str,
-        vol.Optional(ATTR_USERNAME): str,
-        vol.Optional(ATTR_PASSWORD): str,
-        vol.Optional(ATTR_CALLBACK_HOST): str,
-        vol.Optional(ATTR_CALLBACK_PORT): int,
-        vol.Optional(ATTR_TLS, default=DEFAULT_TLS): bool,
-        vol.Optional(ATTR_VERIFY_TLS, default=False): bool,
-        vol.Optional(ATTR_JSON_PORT): int,
-        vol.Optional(ATTR_JSON_TLS, default=DEFAULT_TLS): bool,
-    }
-)
+
+def get_domain_schema(data: ConfigType) -> Schema:
+    """Return the interface schema with or without tls ports."""
+    return vol.Schema(
+        {
+            vol.Required(
+                ATTR_INSTANCE_NAME, default=data.get(ATTR_INSTANCE_NAME)
+            ): cv.string,
+            vol.Required(ATTR_HOST, default=data.get(ATTR_HOST)): cv.string,
+            vol.Optional(
+                ATTR_USERNAME, default=data.get(ATTR_USERNAME) or UNDEFINED
+            ): cv.string,
+            vol.Optional(
+                ATTR_PASSWORD, default=data.get(ATTR_PASSWORD) or UNDEFINED
+            ): cv.string,
+            vol.Optional(
+                ATTR_CALLBACK_HOST, default=data.get(ATTR_CALLBACK_HOST) or UNDEFINED
+            ): cv.string,
+            vol.Optional(
+                ATTR_CALLBACK_PORT, default=data.get(ATTR_CALLBACK_PORT) or UNDEFINED
+            ): cv.port,
+            vol.Optional(
+                ATTR_TLS, default=data.get(ATTR_TLS) or DEFAULT_TLS
+            ): cv.boolean,
+            vol.Optional(
+                ATTR_VERIFY_TLS, default=data.get(ATTR_VERIFY_TLS) or False
+            ): cv.boolean,
+            vol.Optional(
+                ATTR_JSON_PORT, default=data.get(ATTR_JSON_PORT) or UNDEFINED
+            ): cv.port,
+            vol.Optional(
+                ATTR_JSON_TLS, default=data.get(ATTR_JSON_TLS) or DEFAULT_TLS
+            ): cv.boolean,
+        }
+    )
 
 
 def get_interface_schema(use_tls: bool) -> Schema:
@@ -136,6 +159,12 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     except ConnectionError as cex:
         _LOGGER.exception(cex)
         raise CannotConnect from cex
+    except NoConnection as noc:
+        _LOGGER.exception(noc)
+        raise CannotConnect from noc
+    except OSError as oer:
+        _LOGGER.exception(oer)
+        raise CannotConnect from oer
     except ProtocolError as cex:
         _LOGGER.exception(cex)
         raise InvalidAuth from cex
@@ -174,36 +203,39 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             return await self.async_step_interface()
 
-        return self.async_show_form(step_id="user", data_schema=DOMAIN_SCHEMA)
+        return self.async_show_form(
+            step_id="user", data_schema=get_domain_schema(data=self.data)
+        )
 
     async def async_step_interface(
-        self, user_input: ConfigType | None = None
+        self,
+        interface_input: ConfigType | None = None,
     ) -> FlowResult:
         """Handle the initial step."""
         use_tls = self.data[ATTR_TLS]
-        if user_input is None:
+        if interface_input is None:
             _LOGGER.warning("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface", data_schema=get_interface_schema(use_tls)
             )
 
-        if user_input is not None:
-            if user_input[ATTR_HMIP_RF_ENABLED]:
+        if interface_input is not None:
+            if interface_input[ATTR_HMIP_RF_ENABLED]:
                 self.data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
-                    ATTR_PORT: user_input[ATTR_HMIP_RF_PORT],
+                    ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
                 }
-            if user_input[ATTR_BICDOS_RF_ENABLED]:
+            if interface_input[ATTR_BICDOS_RF_ENABLED]:
                 self.data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
-                    ATTR_PORT: user_input[ATTR_BICDOS_RF_PORT],
+                    ATTR_PORT: interface_input[ATTR_BICDOS_RF_PORT],
                 }
-            if user_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
+            if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
                 self.data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
-                    ATTR_PORT: user_input[ATTR_VIRTUAL_DEVICES_PORT],
-                    ATTR_PATH: user_input.get(ATTR_VIRTUAL_DEVICES_PATH),
+                    ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
+                    ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
                 }
-            if user_input[ATTR_HS485D_ENABLED]:
+            if interface_input[ATTR_HS485D_ENABLED]:
                 self.data[ATTR_INTERFACE][IF_HS485D_NAME] = {
-                    ATTR_PORT: user_input[ATTR_HS485D_PORT],
+                    ATTR_PORT: interface_input[ATTR_HS485D_PORT],
                 }
 
         errors = {}
@@ -223,8 +255,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(
-            step_id="interface",
-            data_schema=get_interface_schema(use_tls),
+            step_id="user",
+            data_schema=get_domain_schema(data=self.data),
             errors=errors,
         )
 
