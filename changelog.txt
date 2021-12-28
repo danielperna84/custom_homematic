@@ -1,5 +1,7 @@
 Version 0.7.0 (2021-12-28)
 - Use entity services for climate
+- Restart ConfigFlow on Error
+- Display error messages in config flow
 
 Version 0.6.2 (2021-12-27)
 - Add selector to service disable_away_mode
