@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 from xmlrpc.client import ProtocolError
 
-from hahomematic import config
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -143,18 +142,13 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     Validate the user input allows us to connect.
     Data has the keys with values provided by the user.
     """
-
-    # We have to set the cache location of stored data so the server can load
-    # it while initializing.
-    config.CACHE_DIR = "cache"
-
     control_unit = ControlConfig(
         hass=hass, entry_id="validate", data=data
     ).get_control_unit()
     control_unit.create_central()
     try:
         await control_unit.async_create_clients()
-        if first_client := control_unit.central.get_primary_client():
+        if first_client := control_unit.central.get_client():
             return await first_client.is_connected()
     except ConnectionError as cex:
         _LOGGER.exception(cex)

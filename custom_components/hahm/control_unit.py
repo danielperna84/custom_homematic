@@ -11,7 +11,6 @@ import logging
 from types import MappingProxyType
 from typing import Any
 
-from hahomematic import config
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import Client, ClientConfig
 from hahomematic.const import (
@@ -94,7 +93,6 @@ class ControlUnit:
     async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        config.CACHE_DIR = "cache"
         self._async_add_central_to_device_registry()
         await self.async_create_clients()
         self._central.create_devices()

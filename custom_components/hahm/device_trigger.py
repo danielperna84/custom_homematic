@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from hahomematic.const import CLICK_EVENTS, HM_VIRTUAL_REMOTES
+from hahomematic.const import CLICK_EVENTS
 from hahomematic.entity import SpecialEvent
 import voluptuous as vol
 
@@ -56,9 +56,6 @@ async def async_get_triggers(
         )
     ) is None:
         return None
-    # TODO: Can be deleted later
-    if device_address.endswith(tuple(HM_VIRTUAL_REMOTES)):
-        device_address = device_address.split("_")[1]
 
     triggers = []
     for entry_id in device.config_entries:
