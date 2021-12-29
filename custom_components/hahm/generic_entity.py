@@ -4,15 +4,13 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic, Tuple, cast
 
-from hahomematic.const import HM_VIRTUAL_REMOTES, IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CallbackEntity
-from hahomematic.hub import BaseHubEntity, HmSystemVariable
+from hahomematic.hub import BaseHubEntity
 
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
-from .const import DOMAIN
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .helpers import HmGenericEntity
@@ -52,23 +50,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
         info = self._hm_entity.device_info
-
-        if isinstance(self._hm_entity, HmSystemVariable):
-            identifiers = info["identifiers"]
-        else:
-            device_address = self._hm_entity.device_address
-            if device_address in HM_VIRTUAL_REMOTES:
-                device_address = f"{self._cu.central.instance_name}_{device_address}"
-            identifiers = {
-                (DOMAIN, device_address),
-                (
-                    DOMAIN,
-                    f"{self._hm_entity.device_address}{IDENTIFIERS_SEPARATOR}{self._hm_entity._interface_id}",
-                ),
-            }
-
         return DeviceInfo(
-            identifiers=identifiers,
+            identifiers=info["identifiers"],
             manufacturer=info["manufacturer"],
             model=info["model"],
             name=info["name"],
