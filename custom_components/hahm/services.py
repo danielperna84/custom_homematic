@@ -12,7 +12,9 @@ from hahomematic.const import (
     ATTR_VALUE,
     HmPlatform,
 )
+from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, GenericEntity
+from hahomematic.central_unit import CentralUnit
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
@@ -42,17 +44,25 @@ ATTR_CHANNEL = "channel"
 ATTR_DEVICE_ID = "device_id"
 DEFAULT_CHANNEL = 1
 
+SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
 HAHM_SERVICES = [
+    SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
 ]
+
+SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
+    {
+        vol.Required(ATTR_DEVICE_ID): cv.string,
+    }
+)
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
@@ -103,7 +113,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         """Call correct HomematicIP Cloud service."""
         service_name = service.service
 
-        if service_name == SERVICE_PUT_PARAMSET:
+        if service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
+            await _async_service_export_device_definition(hass=hass, service=service)
+        elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
             await _async_service_set_install_mode(hass=hass, service=service)
@@ -111,6 +123,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_device_value(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_EXPORT_DEVICE_DEFINITION,
+        service_func=async_call_hahm_service,
+        schema=SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION,
+    )
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -149,6 +168,22 @@ async def async_unload_services(hass: HomeAssistant) -> None:
 
     for hahm_service in HAHM_SERVICES:
         hass.services.async_remove(domain=DOMAIN, service=hahm_service)
+
+
+async def _async_service_export_device_definition(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to call setValue method for HomeMatic devices."""
+    device_id = service.data[ATTR_DEVICE_ID]
+
+    hm_device: HmDevice = _get_device(hass=hass, device_id=device_id)
+    await hm_device.export_device_definition()
+
+    _LOGGER.debug(
+        "Calling export_device_definition: %s, %s",
+        hm_device.name,
+        hm_device.device_address,
+    )
 
 
 async def _async_service_set_variable_value(
@@ -279,6 +314,26 @@ async def _async_service_put_paramset(
                 value=paramset,
                 rx_mode=rx_mode,
             )
+
+
+def _get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+    """Return the homematic device."""
+    device_registry = dr.async_get(hass)
+    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
+    if not device_entry:
+        return None
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device_entry.identifiers
+        )
+    ) is None:
+        return None
+
+    device_address = data[0]
+    interface_id = data[1]
+
+    cu: ControlUnit = _get_cu_by_interface_id(hass=hass, interface_id=interface_id)
+    return cu.central.hm_devices.get(device_address)
 
 
 def _get_interface_channel_address(

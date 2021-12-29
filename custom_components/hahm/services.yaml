@@ -1,5 +1,17 @@
 # Describes the format for available component services
 
+export_device_definition:
+  name: Export device definition
+  description: Export a device definition to 'Your home-assistant config directory'/hahm/export*
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: true
+      selector:
+        device:
+          domain: hahm
+
 set_variable_value:
   name: Set variable value
   description: Set the name of a node.
