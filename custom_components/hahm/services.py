@@ -4,7 +4,6 @@ from __future__ import annotations
 from datetime import datetime
 import logging
 
-from hahomematic.central_unit import CentralUnit
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_INTERFACE_ID,
@@ -176,14 +175,14 @@ async def _async_service_export_device_definition(
     """Service to call setValue method for HomeMatic devices."""
     device_id = service.data[ATTR_DEVICE_ID]
 
-    hm_device: HmDevice = _get_device(hass=hass, device_id=device_id)
-    await hm_device.export_device_definition()
+    if hm_device := _get_device(hass=hass, device_id=device_id):
+        await hm_device.export_device_definition()
 
-    _LOGGER.debug(
-        "Calling export_device_definition: %s, %s",
-        hm_device.name,
-        hm_device.device_address,
-    )
+        _LOGGER.debug(
+            "Calling export_device_definition: %s, %s",
+            hm_device.name,
+            hm_device.device_address,
+        )
 
 
 async def _async_service_set_variable_value(
@@ -332,8 +331,9 @@ def _get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     device_address = data[0]
     interface_id = data[1]
 
-    cu: ControlUnit = _get_cu_by_interface_id(hass=hass, interface_id=interface_id)
-    return cu.central.hm_devices.get(device_address)
+    if control_unit:= _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+        return control_unit.central.hm_devices.get(device_address)
+    return None
 
 
 def _get_interface_channel_address(

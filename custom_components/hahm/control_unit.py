@@ -44,12 +44,12 @@ from hahomematic.const import (
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity
-from hahomematic.helpers import get_device_address
 from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-from homeassistant.const import CONF_DEVICE_ID, CONF_NAME
+from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
@@ -86,15 +86,19 @@ class ControlUnit:
         self.option_enable_sensors_for_system_variables = (
             control_config.option_enable_sensors_for_system_variables
         )
-        self._central: CentralUnit = self.create_central()
+        self._central: CentralUnit | None = None
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
 
+    async def async_init_central(self) -> None:
+        """Start the control unit."""
+        self._central = await self.async_create_central()
+        self._async_add_central_to_device_registry()
+
     async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        self._async_add_central_to_device_registry()
         await self.async_create_clients()
         self._central.create_devices()
         await self.async_init_clients()
@@ -117,20 +121,20 @@ class ControlUnit:
     async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        self._central.stop_connection_checker()
-        for client in self._central.clients.values():
+        self.central.stop_connection_checker()
+        for client in self.central.clients.values():
             await client.proxy_de_init()
-        await self._central.stop()
+        await self.central.stop()
 
     async def async_init_hub(self) -> None:
         """Init the hub."""
-        await self._central.init_hub()
-        if not self._central.hub:
+        await self.central.init_hub()
+        if not self.central.hub:
             return None
-        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self._central.hub)
+        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
         await self._hub.async_init()
         hm_entities = (
-            [self._central.hub.hub_entities.values()] if self._central.hub else []
+            [self.central.hub.hub_entities.values()] if self.central.hub else []
         )
         if hm_entities:
             args = [hm_entities]
@@ -149,13 +153,15 @@ class ControlUnit:
 
     async def async_init_clients(self) -> None:
         """Init clients related to control unit."""
-        for client in self._central.clients.values():
+        for client in self.central.clients.values():
             await client.proxy_init()
 
     @property
     def central(self) -> CentralUnit:
         """return the HAHM central_unit instance."""
-        return self._central
+        if self._central is not None:
+            return self._central
+        raise HomeAssistantError("hahm.central not initialized")
 
     @callback
     def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
@@ -199,7 +205,7 @@ class ControlUnit:
         ]
 
         hm_entities = []
-        for entity in self._central.hm_entities.values():
+        for entity in self.central.hm_entities.values():
             if (
                 entity.unique_id not in active_unique_ids
                 and entity.create_in_ha
@@ -217,7 +223,7 @@ class ControlUnit:
         Return all hm-entities by platform
         """
         hm_entities = []
-        for entity in self._central.hm_entities.values():
+        for entity in self.central.hm_entities.values():
             if entity.create_in_ha and entity.platform == platform:
                 hm_entities.append(entity)
 
@@ -352,14 +358,14 @@ class ControlUnit:
         device_registry = dr.async_get(self._hass)
         return device_registry.async_get_device(identifiers=identifiers)
 
-    def create_central(self) -> CentralUnit:
+    async def async_create_central(self) -> CentralUnit:
         """create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
             local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
             local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
         )
         client_session = aiohttp_client.async_get_clientsession(self._hass)
-        central = CentralConfig(
+        central = await CentralConfig(
             name=self._data[ATTR_INSTANCE_NAME],
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
@@ -429,9 +435,11 @@ class ControlConfig:
             option_enable_sensors_for_system_variables
         )
 
-    def get_control_unit(self) -> ControlUnit:
+    async def async_get_control_unit(self) -> ControlUnit:
         """Identify the used client."""
-        return ControlUnit(self)
+        control_unit = ControlUnit(self)
+        await control_unit.async_init_central()
+        return control_unit
 
 
 class HaHub(Entity):
