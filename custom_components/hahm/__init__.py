@@ -24,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
-    control = ControlConfig(
+    control = await ControlConfig(
         hass=hass,
         entry_id=config_entry.entry_id,
         data=config_entry.data,
@@ -34,7 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         option_enable_sensors_for_system_variables=config_entry.options.get(
             CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES, False
         ),
-    ).get_control_unit()
+    ).async_get_control_unit()
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = control
     hass.config_entries.async_setup_platforms(config_entry, HAHM_PLATFORMS)

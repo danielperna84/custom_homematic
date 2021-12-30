@@ -142,10 +142,10 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     Validate the user input allows us to connect.
     Data has the keys with values provided by the user.
     """
-    control_unit = ControlConfig(
+    control_unit = await ControlConfig(
         hass=hass, entry_id="validate", data=data
-    ).get_control_unit()
-    control_unit.create_central()
+    ).async_get_control_unit()
+    await control_unit.async_create_central()
     try:
         await control_unit.async_create_clients()
         if first_client := control_unit.central.get_client():
