@@ -39,7 +39,7 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
         vol.Required(CONF_INTERFACE_ID): str,
         vol.Required(CONF_ADDRESS): str,
         vol.Required(CONF_TYPE): str,
-        vol.Required(CONF_SUBTYPE): str,
+        vol.Required(CONF_SUBTYPE): int,
         vol.Required(CONF_EVENT_TYPE): str,
     }
 )
