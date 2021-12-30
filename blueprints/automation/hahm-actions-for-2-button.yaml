@@ -46,19 +46,19 @@ action:
 - choose:
   - conditions:
     - condition: template
-      value_template: '{{ trigger.event.data.type  == ''channel_2_press_short'' }}'
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 2 }}'
     sequence: !input 'action_top_short'
   - conditions:
     - condition: template
-      value_template: '{{ trigger.event.data.type  == ''channel_2_press_long'' }}'
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 2 }}'
     sequence: !input 'action_top_long'
   - conditions:
     - condition: template
-      value_template: '{{ trigger.event.data.type  == ''channel_1_press_short'' }}'
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 1 }}'
     sequence: !input 'action_bottom_short'
   - conditions:
     - condition: template
-      value_template: '{{ trigger.event.data.type  == ''channel_1_press_long'' }}'
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 1 }}'
     sequence: !input 'action_bottom_long'
 mode: parallel
 max: 10
