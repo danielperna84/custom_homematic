@@ -22,7 +22,6 @@ def get_device_address_from_identifiers(
     for identifier in identifiers:
         if IDENTIFIERS_SEPARATOR in identifier[1]:
             return identifier[1].split(IDENTIFIERS_SEPARATOR)[0]
-        return identifier[1]
     return None
 
 

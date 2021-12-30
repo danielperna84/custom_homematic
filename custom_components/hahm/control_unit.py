@@ -44,10 +44,11 @@ from hahomematic.const import (
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity
+from hahomematic.helpers import get_device_address
 from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-from homeassistant.const import CONF_DEVICE_ID
+from homeassistant.const import CONF_DEVICE_ID, CONF_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 import homeassistant.helpers.config_validation as cv

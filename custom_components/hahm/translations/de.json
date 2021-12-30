@@ -57,12 +57,18 @@
     "trigger_type": {
       "acoustic_alarm_active": "Akustischer Alarm aktiv",
       "alarmstate": "Alarmstatus",
-      "dew_point_alarm": "Taupunkt-Alarm",
-      "humidity_alarm": "Luftfeuchtigkeit-Alarm",
+      "dew_point_alarm": "Taupunkt-Alarm ausgelöst",
+      "humidity_alarm": "Luftfeuchtigkeit-Alarm ausgelöst",
       "moisture_detected": "Feuchtigkeit erkannt",
       "optical_alarm_active": "Optischer Alarm aktiv",
-      "smoke_detector_alarm_status": "Rauschmelder-Alarm",
-      "waterlevel_detected": "Wasserstand erkannt"
+      "smoke_detector_alarm_status": "Rauschmelder-Alarm ausgelöst",
+      "waterlevel_detected": "Wasserstand erkannt",
+      "press": "Taster \"{subtype}\" wurde gedrückt",
+      "press_short": "Taster \"{subtype}\" wurde gedrückt",
+      "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
+      "press_cont": "Taster \"{subtype}\" wird dauerhaft gedrückt",
+      "press_long_release": "Taster \"{subtype}\" wurde nach langem Tastendruck los gelassen",
+      "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet"
     }
   }
 }

@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 import logging
 
+from hahomematic.central_unit import CentralUnit
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_INTERFACE_ID,
@@ -14,7 +15,6 @@ from hahomematic.const import (
 )
 from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, GenericEntity
-from hahomematic.central_unit import CentralUnit
 import voluptuous as vol
 
 from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME

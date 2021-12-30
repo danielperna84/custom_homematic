@@ -30,6 +30,7 @@ from .helpers import get_device_address_from_identifiers
 
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
+CONF_SUBTYPE = "subtype"
 
 TRIGGER_TYPES = CLICK_EVENTS
 
@@ -37,8 +38,9 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_INTERFACE_ID): str,
         vol.Required(CONF_ADDRESS): str,
-        vol.Required(CONF_EVENT_TYPE): str,
         vol.Required(CONF_TYPE): str,
+        vol.Required(CONF_SUBTYPE): str,
+        vol.Required(CONF_EVENT_TYPE): str,
     }
 )
 
@@ -88,6 +90,7 @@ async def async_attach_trigger(
         CONF_INTERFACE_ID: config[CONF_INTERFACE_ID],
         CONF_ADDRESS: config[CONF_ADDRESS],
         CONF_TYPE: config[CONF_TYPE],
+        CONF_SUBTYPE: config[CONF_SUBTYPE],
     }
 
     event_config = {

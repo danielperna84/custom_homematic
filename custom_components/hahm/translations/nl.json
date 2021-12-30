@@ -62,7 +62,14 @@
       "moisture_detected": "vocht gedetecteerd",
       "optical_alarm_active": "optisch alarm actief",
       "smoke_detector_alarm_status": "alarm",
-      "waterlevel_detected": "waterlevel gedetecteerd"
+      "waterlevel_detected": "waterlevel gedetecteerd",
+      "press": "Button \"{subtype}\" pressed",
+      "press_short": "Button \"{subtype}\" pressed",
+      "press_long": "Button \"{subtype}\" long pressed",
+      "press_cont": "Button \"{subtype}\" continuously pressed",
+      "press_long_release": "Button \"{subtype}\" long press released",
+      "press_long_start": "Button \"{subtype}\" started long press"
+
     }
   }
 }
