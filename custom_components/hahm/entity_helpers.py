@@ -44,14 +44,25 @@ from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
-    "ACTIVE_PROFILE": NumberEntityDescription(
-        key="ACTIVE_PROFILE",
-        icon="mdi:hvac",
+
+_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {
+    "RESET_MOTION": ButtonEntityDescription(
+        key="RESET_MOTION",
+        icon="mdi:gesture-tap",
+        entity_registry_enabled_default=False,
     ),
+    "RESET_PRESENCE": ButtonEntityDescription(
+        key="RESET_PRESENCE",
+        icon="mdi:gesture-tap",
+        entity_registry_enabled_default=False,
+    ),
+}
+
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
     "LEVEL": NumberEntityDescription(
         key="LEVEL",
         icon="mdi:radiator",
+        entity_registry_enabled_default=False,
     ),
 }
 
@@ -447,6 +458,7 @@ _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
 
 _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.BUTTON: _BUTTON_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
 }
@@ -500,7 +512,14 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
         if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
             hm_entity.platform
         ):
-            return platform_param_descriptions.get(hm_entity.parameter)
+            entity_description = platform_param_descriptions.get(hm_entity.parameter)
+
+
+        if entity_description:
+            return entity_description
+
+        if hasattr(hm_entity, "platform"):
+            return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
 
     elif isinstance(hm_entity, CustomEntity):
         if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(

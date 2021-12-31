@@ -6,6 +6,7 @@ https://github.com/danielperna84/hahomematic
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime, timedelta
 import logging
 from types import MappingProxyType
@@ -121,6 +122,8 @@ class ControlUnit:
     async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        if self._hub:
+            self._hub.de_init()
         self.central.stop_connection_checker()
         for client in self.central.clients.values():
             await client.proxy_de_init()
@@ -458,13 +461,19 @@ class HaHub(Entity):
         self._attr_name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
+        self.remove_listener: Callable | None = None
 
     async def async_init(self) -> None:
         """Init fetch scheduler."""
-        self.hass.helpers.event.async_track_time_interval(
+        self.remove_listener = self.hass.helpers.event.async_track_time_interval(
             self._async_fetch_data, SCAN_INTERVAL
         )
         await self._async_fetch_data(now=datetime.now())
+
+    def de_init(self):
+        """De_init the hub."""
+        if callback(self.remove_listener):
+            self.remove_listener()
 
     @property
     def available(self) -> bool:

@@ -331,7 +331,7 @@ def _get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     device_address = data[0]
     interface_id = data[1]
 
-    if control_unit:= _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         return control_unit.central.hm_devices.get(device_address)
     return None
 
