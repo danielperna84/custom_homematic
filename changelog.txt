@@ -1,5 +1,7 @@
 Version 0.10.0 (2021-12-31)
 - Add Github Basics
+- Add button entity_description
+
 
 Version 0.9.2 (2021-12-30)
 - Adopt async changes from hahomematic

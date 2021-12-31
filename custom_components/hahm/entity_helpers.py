@@ -44,14 +44,25 @@ from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
-    "ACTIVE_PROFILE": NumberEntityDescription(
-        key="ACTIVE_PROFILE",
-        icon="mdi:hvac",
+
+_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {
+    "RESET_MOTION": ButtonEntityDescription(
+        key="RESET_MOTION",
+        icon="mdi:gesture-tap",
+        entity_registry_enabled_default=False,
     ),
+    "RESET_PRESENCE": ButtonEntityDescription(
+        key="RESET_PRESENCE",
+        icon="mdi:gesture-tap",
+        entity_registry_enabled_default=False,
+    ),
+}
+
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
     "LEVEL": NumberEntityDescription(
         key="LEVEL",
         icon="mdi:radiator",
+        entity_registry_enabled_default=False,
     ),
 }
 
@@ -447,6 +458,7 @@ _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
 
 _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.BUTTON: _BUTTON_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
 }
