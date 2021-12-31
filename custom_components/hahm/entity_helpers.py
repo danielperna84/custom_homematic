@@ -512,7 +512,14 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
         if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
             hm_entity.platform
         ):
-            return platform_param_descriptions.get(hm_entity.parameter)
+            entity_description = platform_param_descriptions.get(hm_entity.parameter)
+
+
+        if entity_description:
+            return entity_description
+
+        if hasattr(hm_entity, "platform"):
+            return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
 
     elif isinstance(hm_entity, CustomEntity):
         if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
