@@ -1,3 +1,8 @@
+Version 0.11.1 (2021-01-02)
+- Bump hahomematic to 0.11.2
+    - Precise entity definitions
+    - Improve detection of multi channel devices
+
 Version 0.11.0 (2021-01-02)
 - Bump hahomematic to 0.11.0
     - Add transition to dimmer
