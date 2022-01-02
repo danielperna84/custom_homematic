@@ -1,8 +1,4 @@
-"""
-hahomematic is a Python 3 module for Home Assistant to interact with
-Homematic and Homematic IP devices.
-https://github.com/danielperna84/hahomematic
-"""
+"""HaHomematic is a Python 3 module for Home Assistant and Homemaatic(IP) devices."""
 from __future__ import annotations
 
 import logging
@@ -16,7 +12,7 @@ from .const import (
     DOMAIN,
     HAHM_PLATFORMS,
 )
-from .control_unit import ControlConfig, ControlUnit
+from .control_unit import ControlConfig
 from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)

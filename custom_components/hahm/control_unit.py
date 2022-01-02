@@ -1,9 +1,4 @@
-"""
-hahomematic is a Python 3 (>= 3.6) module for Home Assistant to interact with
-HomeMatic and homematic IP devices.
-Some other devices (f.ex. Bosch, Intertechno) might be supported as well.
-https://github.com/danielperna84/hahomematic
-"""
+"""HaHomematic is a Python 3 module for Home Assistant and Homemaatic(IP) devices."""
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -73,11 +68,10 @@ SCAN_INTERVAL = timedelta(seconds=30)
 
 
 class ControlUnit:
-    """
-    Central point to control a Homematic CCU.
-    """
+    """Central point to control a Homematic CCU."""
 
     def __init__(self, control_config: ControlConfig) -> None:
+        """Init the control unit."""
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
@@ -100,11 +94,17 @@ class ControlUnit:
     async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
-        await self.async_create_clients()
-        self._central.create_devices()
-        await self.async_init_clients()
-        await self.async_init_hub()
-        self._central.start_connection_checker()
+        if self._central:
+            await self.async_create_clients()
+            self._central.create_devices()
+            await self.async_init_clients()
+            await self.async_init_hub()
+            self._central.start_connection_checker()
+        else:
+            _LOGGER.exception(
+                "Starting HAHM ControlUnit %s not possible, CentralUnit is not available",
+                self._data[ATTR_INSTANCE_NAME],
+            )
 
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
@@ -161,23 +161,21 @@ class ControlUnit:
 
     @property
     def central(self) -> CentralUnit:
-        """return the HAHM central_unit instance."""
+        """Return the HAHM central_unit instance."""
         if self._central is not None:
             return self._central
         raise HomeAssistantError("hahm.central not initialized")
 
     @callback
     def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
-        """Return hm-entity by requested entity_id"""
+        """Return hm-entity by requested entity_id."""
         return self._active_hm_entities.get(entity_id)
 
     @callback
     def async_get_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
-        """
-        Return all hm-entities by requested unique_ids
-        """
+        """Return all hm-entities by requested unique_ids."""
         active_unique_ids = [
             entity.unique_id for entity in self._active_hm_entities.values()
         ]
@@ -200,9 +198,7 @@ class ControlUnit:
     def async_get_new_hm_entities_by_platform(
         self, platform: HmPlatform
     ) -> list[BaseEntity]:
-        """
-        Return all new hm-entities by platform
-        """
+        """Return all new hm-entities by platform."""
         active_unique_ids = [
             entity.unique_id for entity in self._active_hm_entities.values()
         ]
@@ -222,9 +218,7 @@ class ControlUnit:
     def async_get_hm_entities_by_platform(
         self, platform: HmPlatform
     ) -> list[BaseEntity]:
-        """
-        Return all hm-entities by platform
-        """
+        """Return all hm-entities by platform."""
         hm_entities = []
         for entity in self.central.hm_entities.values():
             if entity.create_in_ha and entity.platform == platform:
@@ -234,12 +228,12 @@ class ControlUnit:
 
     @callback
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
-        """add entity to active entities"""
+        """Add entity to active entities."""
         self._active_hm_entities[entity_id] = hm_entity
 
     @callback
     def async_remove_hm_entity(self, entity_id: str) -> None:
-        """remove entity from active entities"""
+        """Remove entity from active entities."""
         del self._active_hm_entities[entity_id]
 
     # pylint: disable=no-self-use
@@ -250,7 +244,7 @@ class ControlUnit:
 
     @callback
     def _async_callback_system_event(self, src: str, *args: Any) -> None:
-        """Callback for ccu based events."""
+        """Execute the callback for system based events."""
         if src == HH_EVENT_DEVICES_CREATED:
             new_entity_unique_ids = args[1]
             # Handle event of new device creation in HAHM.
@@ -292,6 +286,7 @@ class ControlUnit:
     def _async_callback_ha_event(
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
+        """Execute the callback used for device related events."""
         if device_id := self._async_get_device_id(event_data[ATTR_ADDRESS]):
             event_data[CONF_DEVICE_ID] = device_id
 
@@ -362,7 +357,7 @@ class ControlUnit:
         return device_registry.async_get_device(identifiers=identifiers)
 
     async def async_create_central(self) -> CentralUnit:
-        """create the central unit for ccu callbacks."""
+        """Create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
             local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
             local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
@@ -395,7 +390,7 @@ class ControlUnit:
         return central
 
     async def async_create_clients(self) -> set[Client]:
-        """create clients for the central unit."""
+        """Create clients for the central unit."""
         clients: set[Client] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
@@ -410,6 +405,7 @@ class ControlUnit:
         return clients
 
     def _get_active_entity_by_address(self, address: str) -> HmBaseEntity | None:
+        """Return used hm_entities by address."""
         for entity in self._active_hm_entities.values():
             if isinstance(entity, HmCallbackEntity) and address in (
                 entity.channel_address,
@@ -430,6 +426,7 @@ class ControlConfig:
         option_enable_virtual_channels: bool = False,
         option_enable_sensors_for_system_variables: bool = False,
     ) -> None:
+        """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
@@ -470,9 +467,9 @@ class HaHub(Entity):
         )
         await self._async_fetch_data(now=datetime.now())
 
-    def de_init(self):
+    def de_init(self) -> None:
         """De_init the hub."""
-        if callback(self.remove_listener):
+        if self.remove_listener and callback(self.remove_listener):
             self.remove_listener()
 
     @property
@@ -486,8 +483,8 @@ class HaHub(Entity):
 
     @property
     def state(self) -> Any | None:
-        """Return the state of the entity."""
-        return self._hm_hub.state
+        """Return the value of the entity."""
+        return self._hm_hub.value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -503,7 +500,7 @@ class HaHub(Entity):
 
         old_value = None
         if sensor:
-            old_value = sensor.state
+            old_value = sensor.value
         if old_value is None:
             old_value = self.extra_state_attributes.get(name)
 

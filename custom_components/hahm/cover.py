@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.cover import HmBlind, HmCover, HmGarage
+from hahomematic.devices.cover import CeBlind, CeCover, CeGarage
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -39,11 +39,11 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
-            if isinstance(hm_entity, HmBlind):
+            if isinstance(hm_entity, CeBlind):
                 entities.append(HaHomematicBlind(control_unit, hm_entity))
-            elif isinstance(hm_entity, HmCover):
+            elif isinstance(hm_entity, CeCover):
                 entities.append(HaHomematicCover(control_unit, hm_entity))
-            elif isinstance(hm_entity, HmGarage):
+            elif isinstance(hm_entity, CeGarage):
                 entities.append(HaHomematicGarage(control_unit, hm_entity))
 
         if entities:
@@ -64,14 +64,12 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicCover(HaHomematicGenericEntity[HmCover], CoverEntity):
+class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
     """Representation of the HomematicIP cover entity."""
 
     @property
     def current_cover_position(self) -> int | None:
-        """
-        Return current position of cover.
-        """
+        """Return current position of cover."""
         return self._hm_entity.current_cover_position
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
@@ -99,14 +97,12 @@ class HaHomematicCover(HaHomematicGenericEntity[HmCover], CoverEntity):
         await self._hm_entity.stop_cover()
 
 
-class HaHomematicBlind(HaHomematicGenericEntity[HmBlind], CoverEntity, ABC):
+class HaHomematicBlind(HaHomematicGenericEntity[CeBlind], CoverEntity, ABC):
     """Representation of the HomematicIP blind entity."""
 
     @property
     def current_cover_position(self) -> int | None:
-        """
-        Return current position of cover.
-        """
+        """Return current position of cover."""
         return self._hm_entity.current_cover_position
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
@@ -135,9 +131,7 @@ class HaHomematicBlind(HaHomematicGenericEntity[HmBlind], CoverEntity, ABC):
 
     @property
     def current_cover_tilt_position(self) -> int | None:
-        """
-        Return current tilt position of cover.
-        """
+        """Return current tilt position of cover."""
         return self._hm_entity.current_cover_tilt_position
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
@@ -159,14 +153,12 @@ class HaHomematicBlind(HaHomematicGenericEntity[HmBlind], CoverEntity, ABC):
         await self._hm_entity.stop_cover_tilt()
 
 
-class HaHomematicGarage(HaHomematicGenericEntity[HmGarage], CoverEntity):
+class HaHomematicGarage(HaHomematicGenericEntity[CeGarage], CoverEntity):
     """Representation of the HomematicIP garage entity."""
 
     @property
     def current_cover_position(self) -> int | None:
-        """
-        Return current position of cover.
-        """
+        """Return current position of cover."""
         return self._hm_entity.current_cover_position
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:

@@ -138,10 +138,7 @@ def get_interface_schema(use_tls: bool) -> Schema:
 
 
 async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
-    """
-    Validate the user input allows us to connect.
-    Data has the keys with values provided by the user.
-    """
+    """Validate the user input allows us to connect."""
     control_unit = await ControlConfig(
         hass=hass, entry_id="validate", data=data
     ).async_get_control_unit()
@@ -174,6 +171,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
+        """Init the ConfigFlow."""
         self.data: ConfigType = {}
 
     async def async_step_user(self, user_input: ConfigType | None = None) -> FlowResult:

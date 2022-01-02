@@ -7,7 +7,12 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.devices.light import BaseHmLight
 
-from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_HS_COLOR, LightEntity
+from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
+    ATTR_HS_COLOR,
+    ATTR_TRANSITION,
+    LightEntity,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -66,6 +71,7 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_color_mode = hm_entity.color_mode
         self._attr_supported_color_modes = hm_entity.supported_color_modes
+        self._attr_supported_features = hm_entity.supported_features
 
     @property
     def is_on(self) -> bool:
@@ -88,11 +94,15 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         hs_color: tuple[float, float] = kwargs.get(ATTR_HS_COLOR, self.hs_color)
         # Use brightness from kwargs, if not applicable use current brightness.
         brightness: int = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        # Use transition from kwargs, if not applicable use 0.
+        ramp_time: int = kwargs.get(ATTR_TRANSITION, 0)
         # If no kwargs, use default value.
         if not kwargs:
             brightness = 255
 
-        await self._hm_entity.turn_on(hs_color, brightness)
+        await self._hm_entity.turn_on(
+            hs_color=hs_color, brightness=brightness, ramp_time=ramp_time
+        )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""

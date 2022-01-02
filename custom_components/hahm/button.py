@@ -58,4 +58,5 @@ class HaHomematicButton(HaHomematicGenericEntity[HmButton], ButtonEntity):
     """Representation of the Homematic button."""
 
     async def async_press(self) -> None:
+        """Execute a button press."""
         await self._hm_entity.press()

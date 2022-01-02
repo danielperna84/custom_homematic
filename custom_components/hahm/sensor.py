@@ -84,7 +84,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
-        return self._hm_entity.state
+        return self._hm_entity.value
 
 
 class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEntity):
@@ -102,4 +102,4 @@ class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEnt
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
-        return self._hm_entity.state
+        return self._hm_entity.value
