@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Union
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.switch import HmSwitch
+from hahomematic.devices.switch import CeSwitch
+from hahomematic.platforms.switch import HmSwitch
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -54,13 +55,15 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicSwitch(HaHomematicGenericEntity[HmSwitch], SwitchEntity):
+class HaHomematicSwitch(
+    HaHomematicGenericEntity[Union[CeSwitch, HmSwitch]], SwitchEntity
+):
     """Representation of the HomematicIP switch entity."""
 
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        return self._hm_entity.state is True
+        return self._hm_entity.value is True
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""

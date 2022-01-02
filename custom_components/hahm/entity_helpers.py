@@ -503,23 +503,14 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
                 entity_description = platform_device_param_descriptions.get(
                     (hm_entity.sub_type, hm_entity.parameter)
                 )
-        if entity_description:
-            return entity_description
 
-        if hm_entity.parameter in ["STATE"]:
-            return _DEFAULT_DESCRIPTION.get(hm_entity.platform, {})
-
-        if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
-            hm_entity.platform
-        ):
-            entity_description = platform_param_descriptions.get(hm_entity.parameter)
-
-
-        if entity_description:
-            return entity_description
-
-        if hasattr(hm_entity, "platform"):
-            return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
+        if entity_description is None:
+            if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
+                hm_entity.platform
+            ):
+                entity_description = platform_param_descriptions.get(
+                    hm_entity.parameter
+                )
 
     elif isinstance(hm_entity, CustomEntity):
         if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(
@@ -535,8 +526,8 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
                     hm_entity.sub_type
                 )
 
-        if entity_description:
-            return entity_description
+    if entity_description:
+        return entity_description
 
     if hasattr(hm_entity, "platform"):
         return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)

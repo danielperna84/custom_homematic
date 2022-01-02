@@ -56,7 +56,7 @@ set_device_value:
       selector:
         number:
           min: 1
-          max: 6
+          max: 99
     parameter:
       name: Parameter
       description: Event to send i.e. PRESS_LONG, PRESS_SHORT
@@ -142,7 +142,7 @@ put_paramset:
       selector:
         number:
           min: 1
-          max: 6
+          max: 99
     paramset_key:
       name: Paramset key
       description: The paramset_key argument to putParamset

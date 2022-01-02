@@ -1,4 +1,4 @@
-""" hahomematic services """
+"""Module with hahomematic services."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -105,7 +105,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
 
 
 async def async_setup_services(hass: HomeAssistant) -> None:
-    """Setup services"""
+    """Create the hahomematic services."""
 
     @verify_domain_control(hass, DOMAIN)
     async def async_call_hahm_service(service: ServiceCall) -> None:
@@ -395,9 +395,7 @@ def _get_hm_entity(
 def _get_cu_by_interface_id(
     hass: HomeAssistant, interface_id: str
 ) -> ControlUnit | None:
-    """
-    Get ControlUnit by interface_id
-    """
+    """Get ControlUnit by interface_id."""
     for entry_id in hass.data[DOMAIN].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
         if control_unit and control_unit.central.clients.get(interface_id):
@@ -406,9 +404,7 @@ def _get_cu_by_interface_id(
 
 
 def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HaHub | None:
-    """
-    Get ControlUnit by device address
-    """
+    """Get ControlUnit by device address."""
     for entry_id in hass.data[DOMAIN].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
         if (

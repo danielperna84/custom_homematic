@@ -1,3 +1,11 @@
+Version 0.11.0 (2021-01-02)
+- Bump hahomematic to 0.11.0
+    - Add transition to dimmer
+    - Remove channel no, if channel is the only_primary_channel
+- Follow change from hahomematic
+- Update docstrings
+- Add transition to dimmer
+
 Version 0.10.0 (2021-12-31)
 - Add Github Basics
 - Add button entity_description
