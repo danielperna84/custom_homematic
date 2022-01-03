@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.number import HmNumber
+from hahomematic.platforms.number import BaseNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
@@ -55,7 +55,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
+class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
 
     _attr_entity_category = EntityCategory.CONFIG
@@ -64,7 +64,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[HmNumber], NumberEntity):
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HmNumber,
+        hm_entity: BaseNumber,
     ) -> None:
         """Initialize the number entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)

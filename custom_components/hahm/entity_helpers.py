@@ -62,7 +62,6 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
     "LEVEL": NumberEntityDescription(
         key="LEVEL",
         icon="mdi:radiator",
-        entity_registry_enabled_default=False,
     ),
 }
 
