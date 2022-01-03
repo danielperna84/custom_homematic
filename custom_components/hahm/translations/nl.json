@@ -1,9 +1,9 @@
 {
-  "title": "Home Assistant integratie met Homematic (IP)",
+  "title": "Homematic(IP) Local",
   "config": {
     "step": {
       "user": {
-        "title": "Home Assistant integratie met Homematic (IP)",
+        "title": "Homematic(IP) Local",
         "description": "Gelieve de vereiste velden in te vullen.",
         "data": {
           "instance_name": "Integration instance naam",
