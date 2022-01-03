@@ -364,6 +364,7 @@ class ControlUnit:
         )
         client_session = aiohttp_client.async_get_clientsession(self._hass)
         central = await CentralConfig(
+            domain=DOMAIN,
             name=self._data[ATTR_INSTANCE_NAME],
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
