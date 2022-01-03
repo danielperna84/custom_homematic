@@ -1,9 +1,9 @@
 {
-  "title": "Home-Assistant Integration für Homematic (IP)",
+  "title": "Homematic(IP) Local",
   "config": {
     "step": {
       "user": {
-        "title": "Home-Assistant Integration für Homematic (IP)",
+        "title": "Homematic(IP) Local",
         "description": "Bitte Pflichtfelder ausfüllen",
         "data": {
           "instance_name": "Instanzname der Integration",
