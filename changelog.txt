@@ -1,3 +1,10 @@
+Version 0.13.1 (2021-01-04)
+- Bump hahomematic to 0.13.2
+    - Fix cover state
+    - Add method to delete a single device to central
+- Add a service to delete a homematic device from HM (No delete in CCU!)
+- Fix read of previous device options
+
 Version 0.13.0 (2021-01-04)
 - Bump hahomematic to 0.13.1
     - Fix unique_id for heating_groups (Breaking Change)

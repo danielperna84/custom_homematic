@@ -52,7 +52,15 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN, HAHM_PLATFORMS
+from .const import (
+    ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
+    ATTR_PATH,
+    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
+    CONF_ENABLE_VIRTUAL_CHANNELS,
+    DOMAIN,
+    HAHM_PLATFORMS,
+)
 from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -67,12 +75,6 @@ class ControlUnit:
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
-        self.option_enable_virtual_channels = (
-            control_config.option_enable_virtual_channels
-        )
-        self.option_enable_sensors_for_system_variables = (
-            control_config.option_enable_sensors_for_system_variables
-        )
         self._central: CentralUnit | None = None
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
@@ -373,8 +375,12 @@ class ControlUnit:
             callback_port=self._data.get(ATTR_CALLBACK_PORT)
             if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
             else None,
-            option_enable_virtual_channels=self.option_enable_virtual_channels,
-            option_enable_sensors_for_system_variables=self.option_enable_sensors_for_system_variables,
+            option_enable_virtual_channels=self._data.get(
+                CONF_ENABLE_VIRTUAL_CHANNELS, False
+            ),
+            option_enable_sensors_for_system_variables=self._data.get(
+                CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES, False
+            ),
         ).get_central()
         # register callback
         central.callback_system_event = self._async_callback_system_event
@@ -415,17 +421,11 @@ class ControlConfig:
         hass: HomeAssistant,
         entry_id: str,
         data: Mapping[str, Any],
-        option_enable_virtual_channels: bool = False,
-        option_enable_sensors_for_system_variables: bool = False,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
-        self.option_enable_virtual_channels = option_enable_virtual_channels
-        self.option_enable_sensors_for_system_variables = (
-            option_enable_sensors_for_system_variables
-        )
 
     async def async_get_control_unit(self) -> ControlUnit:
         """Identify the used client."""
