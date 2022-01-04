@@ -2,7 +2,7 @@
   "title": "Homematic(IP) Local",
   "config": {
     "step": {
-      "user": {
+      "central": {
         "title": "Homematic(IP) Local",
         "description": "Gelieve de vereiste velden in te vullen.",
         "data": {
@@ -12,10 +12,11 @@
           "password": "CCU Wachtwoord",
           "callback_host": "Callback Hostname/IP-adres",
           "callback_port": "Callback XML-RPC poort",
+          "json_port": "JSON-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "verifier TLS connection",
-          "json_port": "JSON-RPC poort",
-          "json_tls": "TLS gebruiken voor JSON"
+          "enable_virtual_channels": "Virtuele kanalen inschakelen",
+          "enable_sensors_for_system_variables": "Activeer sensoren voor systeemvariabelen"
         }
       },
       "interface": {
@@ -43,14 +44,43 @@
   },
   "options": {
     "step": {
-      "hahm_devices": {
+      "central": {
+        "description": "Configureer zichtbaarheid van hahm apparaattypes",
+        "title": "Configureer de CCU opnieuw",
         "data": {
+          "host": "CCU Hostname/IP-adres",
+          "username": "CCU Gebruikersnaam",
+          "password": "CCU Wachtwoord",
+          "callback_host": "Callback Hostname/IP-adres",
+          "callback_port": "Callback XML-RPC poort",
+          "json_port": "JSON-RPC poort",
+          "tls": "Gebruik TLS",
+          "verify_tls": "verifier TLS connection",
           "enable_virtual_channels": "Virtuele kanalen inschakelen",
           "enable_sensors_for_system_variables": "Activeer sensoren voor systeemvariabelen"
-        },
-        "description": "Configureer zichtbaarheid van hahm apparaattypes",
-        "title": "Hahm opties"
+        }
+      },
+      "interface": {
+        "description": "Configureer de verbinding met uw CCU2 of CCU3",
+        "data": {
+          "hmip_rf_enabled": "Homematic IP inschakelen",
+          "hmip_rf_port": "HmIP-RF poort",
+          "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
+          "bidos_rf_port": "HM-RF Port",
+          "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
+          "virtual_devices_port": "Groepen poort",
+          "virtual_devices_path": "Groepen Path",
+          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
+          "hs485d_port": "HS485D poort"
+        }
       }
+    },
+    "error": {
+      "cannot_connect": "Kon niet verbinden",
+      "invalid_auth": "Ongeldige authenticatie",
+      "unknown": "Onverwachte fout"
+    },
+    "abort": {
     }
   },
   "device_automation": {

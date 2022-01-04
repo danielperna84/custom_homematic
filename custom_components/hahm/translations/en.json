@@ -2,7 +2,7 @@
   "title": "Homematic(IP) Local",
   "config": {
     "step": {
-      "user": {
+      "central": {
         "title": "Homematic(IP) Local",
         "description": "Please fill the required fields.",
         "data": {
@@ -15,7 +15,8 @@
           "tls": "use TLS",
           "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
-          "json_tls": "use TLS for JSON"
+          "enable_virtual_channels": "enable virtual channels",
+          "enable_sensors_for_system_variables": "enable sensors for system variables"
         }
       },
       "interface": {
@@ -43,14 +44,43 @@
   },
   "options": {
     "step": {
-      "hahm_devices": {
+      "central": {
+        "title": "Homematic(IP) Local",
+        "description": "Re-Configure the CCU",
         "data": {
+          "host": "CCU Hostname/IP-Address",
+          "username": "CCU Username",
+          "password": "CCU Password",
+          "callback_host": "Callback Hostname/IP-Address",
+          "callback_port": "Callback XML-RPC Port",
+          "tls": "use TLS",
+          "verify_tls": "verify TLS connection",
+          "json_port": "JSON-RPC Port",
           "enable_virtual_channels": "enable virtual channels",
           "enable_sensors_for_system_variables": "enable sensors for system variables"
-        },
-        "description": "Configure visibility of hahm device types",
-        "title": "Hahm options"
+        }
+      },
+      "interface": {
+        "description": "Re-Configure the interfaces to CCU",
+        "data": {
+          "hmip_rf_enabled": "enable Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "bidos_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "bidos_rf_port": "HM-RF Port",
+          "virtual_devices_enabled": "enable Groups (Heating-Group)",
+          "virtual_devices_port": "Groups Port",
+          "virtual_devices_path": "Groups Path",
+          "hs485d_enabled": "enable HS485D (HM-Wired)",
+          "hs485d_port": "HS485D Port"
+        }
       }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
     }
   },
   "device_automation": {

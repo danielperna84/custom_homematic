@@ -33,7 +33,6 @@ from homeassistant.helpers.typing import ConfigType
 from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
-    ATTR_JSON_TLS,
     ATTR_PATH,
     CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
@@ -73,15 +72,11 @@ def get_domain_schema(data: ConfigType) -> Schema:
     return vol.Schema(
         {
             vol.Required(
-                ATTR_INSTANCE_NAME, default=data.get(ATTR_INSTANCE_NAME)
+                ATTR_INSTANCE_NAME, default=data.get(ATTR_INSTANCE_NAME) or UNDEFINED
             ): cv.string,
             vol.Required(ATTR_HOST, default=data.get(ATTR_HOST)): cv.string,
-            vol.Optional(
-                ATTR_USERNAME, default=data.get(ATTR_USERNAME) or UNDEFINED
-            ): cv.string,
-            vol.Optional(
-                ATTR_PASSWORD, default=data.get(ATTR_PASSWORD) or UNDEFINED
-            ): cv.string,
+            vol.Required(ATTR_USERNAME, default=data.get(ATTR_USERNAME)): cv.string,
+            vol.Required(ATTR_PASSWORD, default=data.get(ATTR_PASSWORD)): cv.string,
             vol.Optional(
                 ATTR_CALLBACK_HOST, default=data.get(ATTR_CALLBACK_HOST) or UNDEFINED
             ): cv.string,
@@ -98,10 +93,22 @@ def get_domain_schema(data: ConfigType) -> Schema:
                 ATTR_JSON_PORT, default=data.get(ATTR_JSON_PORT) or UNDEFINED
             ): cv.port,
             vol.Optional(
-                ATTR_JSON_TLS, default=data.get(ATTR_JSON_TLS) or DEFAULT_TLS
-            ): cv.boolean,
+                CONF_ENABLE_VIRTUAL_CHANNELS,
+                default=data.get(CONF_ENABLE_VIRTUAL_CHANNELS) or False,
+            ): bool,
+            vol.Optional(
+                CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
+                default=data.get(CONF_ENABLE_VIRTUAL_CHANNELS) or False,
+            ): bool,
         }
     )
+
+
+def get_options_schema(data: ConfigType) -> Schema:
+    """Return the interface schema with or without tls ports."""
+    options_schema = get_domain_schema(data=data)
+    del options_schema.schema[ATTR_INSTANCE_NAME]
+    return options_schema
 
 
 def get_interface_schema(use_tls: bool) -> Schema:
@@ -165,7 +172,7 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a instance flow for hahomematic."""
+    """Handle the instance flow for hahomematic."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
@@ -176,27 +183,18 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input: ConfigType | None = None) -> FlowResult:
         """Handle the initial step."""
+        return await self.async_step_central(user_input=user_input)
+
+    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
+        """Handle the initial step."""
         if user_input is not None:
             await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
             self._abort_if_unique_id_configured()
-            self.data = {
-                ATTR_INSTANCE_NAME: user_input[ATTR_INSTANCE_NAME],
-                ATTR_HOST: user_input[ATTR_HOST],
-                ATTR_USERNAME: user_input.get(ATTR_USERNAME),
-                ATTR_PASSWORD: user_input.get(ATTR_PASSWORD),
-                ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
-                ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT, PORT_ANY),
-                ATTR_TLS: user_input.get(ATTR_TLS),
-                ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
-                ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
-                ATTR_JSON_TLS: user_input.get(ATTR_JSON_TLS),
-                ATTR_INTERFACE: {},
-            }
-
+            self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
 
         return self.async_show_form(
-            step_id="user", data_schema=get_domain_schema(data=self.data)
+            step_id="central", data_schema=get_domain_schema(data=self.data)
         )
 
     async def async_step_interface(
@@ -204,32 +202,14 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         interface_input: ConfigType | None = None,
     ) -> FlowResult:
         """Handle the initial step."""
-        use_tls = self.data[ATTR_TLS]
         if interface_input is None:
             _LOGGER.warning("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
-                step_id="interface", data_schema=get_interface_schema(use_tls)
+                step_id="interface",
+                data_schema=get_interface_schema(self.data[ATTR_TLS]),
             )
 
-        if interface_input is not None:
-            if interface_input[ATTR_HMIP_RF_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
-                    ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
-                }
-            if interface_input[ATTR_BICDOS_RF_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
-                    ATTR_PORT: interface_input[ATTR_BICDOS_RF_PORT],
-                }
-            if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
-                    ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
-                    ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
-                }
-            if interface_input[ATTR_HS485D_ENABLED]:
-                self.data[ATTR_INTERFACE][IF_HS485D_NAME] = {
-                    ATTR_PORT: interface_input[ATTR_HS485D_PORT],
-                }
-
+        _update_interface_input(data=self.data, interface_input=interface_input)
         errors = {}
 
         try:
@@ -247,7 +227,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(
-            step_id="user",
+            step_id="central",
             data_schema=get_domain_schema(data=self.data),
             errors=errors,
         )
@@ -265,38 +245,62 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize hahm options flow."""
         self.config_entry = config_entry
-        self.options = dict(config_entry.options)
+        self.data: ConfigType = dict(self.config_entry.data.items())
 
     async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
         """Manage the hahm options."""
-        return await self.async_step_hahm_devices()
+        return await self.async_step_central(user_input=user_input)
 
-    async def async_step_hahm_devices(
+    async def async_step_central(
         self, user_input: ConfigType | None = None
     ) -> FlowResult:
         """Manage the hahm devices options."""
         if user_input is not None:
-            self.options.update(user_input)
-            return self.async_create_entry(title="", data=self.options)
+            self.data = _get_ccu_data(self.data, user_input=user_input)
+            return await self.async_step_interface()
 
         return self.async_show_form(
-            step_id="hahm_devices",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(
-                        CONF_ENABLE_VIRTUAL_CHANNELS,
-                        default=self._cu.option_enable_virtual_channels,
-                    ): bool,
-                    vol.Optional(
-                        CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
-                        default=self._cu.option_enable_sensors_for_system_variables,
-                    ): bool,
-                }
-            ),
+            step_id="central", data_schema=get_options_schema(data=self.data)
+        )
+
+    async def async_step_interface(
+        self,
+        interface_input: ConfigType | None = None,
+    ) -> FlowResult:
+        """Handle the initial step."""
+        if interface_input is None:
+            _LOGGER.warning("ConfigFlow.step_interface, no user input")
+            return self.async_show_form(
+                step_id="interface",
+                data_schema=get_interface_schema(self.data[ATTR_TLS]),
+            )
+
+        _update_interface_input(data=self.data, interface_input=interface_input)
+        errors = {}
+
+        try:
+            await _async_validate_input(self.hass, self.data)
+        except CannotConnect:
+            errors["base"] = "cannot_connect"
+        except InvalidAuth:
+            errors["base"] = "invalid_auth"
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.exception("Unexpected exception")
+            errors["base"] = "unknown"
+        else:
+            self.hass.config_entries.async_update_entry(
+                entry=self.config_entry, data=self.data
+            )
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="central",
+            data_schema=get_options_schema(data=self.data),
+            errors=errors,
         )
 
     @property
-    def _cu(self) -> ControlUnit:
+    def _control_unit(self) -> ControlUnit:
         control_unit: ControlUnit = self.hass.data[DOMAIN][self.config_entry.entry_id]
         return control_unit
 
@@ -307,3 +311,45 @@ class CannotConnect(HomeAssistantError):
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
+
+
+def _get_ccu_data(data: ConfigType, user_input: ConfigType):
+    return {
+        ATTR_INSTANCE_NAME: user_input.get(
+            ATTR_INSTANCE_NAME, data.get(ATTR_INSTANCE_NAME)
+        ),
+        ATTR_HOST: user_input[ATTR_HOST],
+        ATTR_USERNAME: user_input.get(ATTR_USERNAME),
+        ATTR_PASSWORD: user_input.get(ATTR_PASSWORD),
+        ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
+        ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT, PORT_ANY),
+        ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
+        ATTR_TLS: user_input.get(ATTR_TLS),
+        ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
+        CONF_ENABLE_VIRTUAL_CHANNELS: user_input.get(CONF_ENABLE_VIRTUAL_CHANNELS),
+        CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES: user_input.get(
+            CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES
+        ),
+        ATTR_INTERFACE: {},
+    }
+
+
+def _update_interface_input(data: ConfigType, interface_input: ConfigType):
+    if interface_input is not None:
+        if interface_input[ATTR_HMIP_RF_ENABLED]:
+            data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
+                ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
+            }
+        if interface_input[ATTR_BICDOS_RF_ENABLED]:
+            data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
+                ATTR_PORT: interface_input[ATTR_BICDOS_RF_PORT],
+            }
+        if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
+            data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
+                ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
+                ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
+            }
+        if interface_input[ATTR_HS485D_ENABLED]:
+            data[ATTR_INTERFACE][IF_HS485D_NAME] = {
+                ATTR_PORT: interface_input[ATTR_HS485D_PORT],
+            }
