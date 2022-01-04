@@ -43,6 +43,7 @@ ATTR_CHANNEL = "channel"
 ATTR_DEVICE_ID = "device_id"
 DEFAULT_CHANNEL = 1
 
+SERVICE_DELETE_DEVICE = "delete_device"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
@@ -50,12 +51,19 @@ SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
 HAHM_SERVICES = [
+    SERVICE_DELETE_DEVICE,
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
 ]
+
+SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
+    {
+        vol.Required(ATTR_DEVICE_ID): cv.string,
+    }
+)
 
 SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
     {
@@ -112,7 +120,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         """Call correct HomematicIP Cloud service."""
         service_name = service.service
 
-        if service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
+        if service_name == SERVICE_DELETE_DEVICE:
+            await _async_service_delete_device(hass=hass, service=service)
+        elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
@@ -122,6 +132,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_device_value(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_DELETE_DEVICE,
+        service_func=async_call_hahm_service,
+        schema=SCHEMA_SERVICE_DELETE_DEVICE,
+    )
 
     hass.services.async_register(
         domain=DOMAIN,
@@ -169,6 +186,34 @@ async def async_unload_services(hass: HomeAssistant) -> None:
         hass.services.async_remove(domain=DOMAIN, service=hahm_service)
 
 
+async def _async_service_delete_device(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to delete a HomeMatic device from HA."""
+    device_id = service.data[ATTR_DEVICE_ID]
+
+    if (
+            address_data := _get_interface_address(
+                hass=hass, device_id=device_id
+            )
+    ) is None:
+        return None
+
+    interface_id: str = address_data[0]
+    device_address: str = address_data[1]
+
+    if interface_id and device_address:
+        if control_unit := _get_cu_by_interface_id(
+                hass=hass, interface_id=interface_id
+        ):
+            await control_unit.central.delete_device(interface_id=interface_id, device_address=device_address)
+            _LOGGER.debug(
+                "Called delete_device: %s, %s",
+                interface_id,
+                device_address,
+            )
+
+
 async def _async_service_export_device_definition(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
@@ -179,7 +224,7 @@ async def _async_service_export_device_definition(
         await hm_device.export_device_definition()
 
         _LOGGER.debug(
-            "Calling export_device_definition: %s, %s",
+            "Called export_device_definition: %s, %s",
             hm_device.name,
             hm_device.device_address,
         )
@@ -223,7 +268,7 @@ async def _async_service_set_device_value(
             value = str(value)
 
     if (
-        address_data := _get_interface_channel_address(
+        address_data := _get_interface_address(
             hass=hass, device_id=device_id, channel=channel
         )
     ) is None:
@@ -284,7 +329,7 @@ async def _async_service_put_paramset(
     rx_mode = service.data.get(ATTR_RX_MODE)
 
     if (
-        address_data := _get_interface_channel_address(
+        address_data := _get_interface_address(
             hass=hass, device_id=device_id, channel=channel
         )
     ) is None:
@@ -336,8 +381,8 @@ def _get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     return None
 
 
-def _get_interface_channel_address(
-    hass: HomeAssistant, device_id: str, channel: int
+def _get_interface_address(
+    hass: HomeAssistant, device_id: str, channel: int | None = None
 ) -> tuple[str, str] | None:
     """Return interface and channel_address with given device_id and channel."""
     device_registry = dr.async_get(hass)
@@ -354,8 +399,8 @@ def _get_interface_channel_address(
     device_address = data[0]
     interface_id = data[1]
 
-    channel_address = f"{device_address}:{channel}"
-    return interface_id, channel_address
+    address = f"{device_address}:{channel}" if channel is not None else device_address
+    return interface_id, address
 
 
 def _get_entity(hass: HomeAssistant, entity_id: str) -> BaseEntity | None:

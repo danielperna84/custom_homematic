@@ -1,5 +1,17 @@
 # Describes the format for available component services
 
+delete_device:
+  name: Delete a device
+  description: Delete a device from HA.
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: true
+      selector:
+        device:
+          domain: hahm
+
 export_device_definition:
   name: Export device definition
   description: Export a device definition to 'Your home-assistant config directory'/hahm/export*

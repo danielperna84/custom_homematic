@@ -185,7 +185,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         return await self.async_step_central(user_input=user_input)
 
-    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
+    async def async_step_central(
+        self, user_input: ConfigType | None = None
+    ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
             await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
@@ -313,7 +315,7 @@ class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
 
 
-def _get_ccu_data(data: ConfigType, user_input: ConfigType):
+def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
     return {
         ATTR_INSTANCE_NAME: user_input.get(
             ATTR_INSTANCE_NAME, data.get(ATTR_INSTANCE_NAME)
@@ -334,7 +336,7 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType):
     }
 
 
-def _update_interface_input(data: ConfigType, interface_input: ConfigType):
+def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> None:
     if interface_input is not None:
         if interface_input[ATTR_HMIP_RF_ENABLED]:
             data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
