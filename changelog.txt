@@ -1,8 +1,9 @@
 Version 0.13.0 (2021-01-04)
-- Bump hahomematic to 0.13.0
+- Bump hahomematic to 0.13.1
     - Fix unique_id for heating_groups (Breaking Change)
       Solution: remove greyed-put climate entity, rename entity_id of new entity afterwards.
     - Remove dedicated json tls option
+    - Use generic climate profiles list
 - Adopt changes from hahomematic
 - Redesign ConfigFlow and OptionsFlow
     - Username and Password are mandatory
