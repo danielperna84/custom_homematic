@@ -1,10 +1,9 @@
 """HaHomematic is a Python 3 module for Home Assistant and Homemaatic(IP) devices."""
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from datetime import datetime, timedelta
 import logging
-from types import MappingProxyType
 from typing import Any
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
@@ -53,14 +52,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-from .const import (
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_JSON_TLS,
-    ATTR_PATH,
-    DOMAIN,
-    HAHM_PLATFORMS,
-)
+from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN, HAHM_PLATFORMS
 from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -364,6 +356,7 @@ class ControlUnit:
         )
         client_session = aiohttp_client.async_get_clientsession(self._hass)
         central = await CentralConfig(
+            domain=DOMAIN,
             name=self._data[ATTR_INSTANCE_NAME],
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
@@ -374,7 +367,6 @@ class ControlUnit:
             verify_tls=self._data[ATTR_VERIFY_TLS],
             client_session=client_session,
             json_port=self._data[ATTR_JSON_PORT],
-            json_tls=self._data[ATTR_JSON_TLS],
             callback_host=self._data.get(ATTR_CALLBACK_HOST)
             if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
             else None,
@@ -422,7 +414,7 @@ class ControlConfig:
         self,
         hass: HomeAssistant,
         entry_id: str,
-        data: dict[str, Any] | MappingProxyType[str, Any],
+        data: Mapping[str, Any],
         option_enable_virtual_channels: bool = False,
         option_enable_sensors_for_system_variables: bool = False,
     ) -> None:

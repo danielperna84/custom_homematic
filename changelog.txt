@@ -1,7 +1,17 @@
+Version 0.13.0 (2021-01-04)
+- Bump hahomematic to 0.13.0
+    - Fix unique_id for heating_groups (Breaking Change)
+      Solution: remove greyed-put climate entity, rename entity_id of new entity afterwards.
+    - Remove dedicated json tls option
+- Adopt changes from hahomematic
+- Redesign ConfigFlow and OptionsFlow
+    - Username and Password are mandatory
+    - OptionsFlow allows Reconfiguration of Setup (requires restart)
+
 Version 0.12.0 (2021-01-03)
 - Bump hahomematic to 0.12.0
     - Split number to integer and float
-- Follow changes from hahomematic
+- Adopt changes from hahomematic
 - Rename integration
 
 Version 0.11.1 (2021-01-02)
@@ -13,7 +23,7 @@ Version 0.11.0 (2021-01-02)
 - Bump hahomematic to 0.11.0
     - Add transition to dimmer
     - Remove channel no, if channel is the only_primary_channel
-- Follow change from hahomematic
+- Adopt change from hahomematic
 - Update docstrings
 - Add transition to dimmer
 

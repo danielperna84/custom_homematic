@@ -9,7 +9,6 @@ DOMAIN = "hahm"
 
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
-ATTR_JSON_TLS = "json_tls"
 ATTR_PARAMSET = "paramset"
 ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"
