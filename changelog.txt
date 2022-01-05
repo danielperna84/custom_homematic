@@ -1,7 +1,9 @@
 Version 0.13.2 (2021-01-05)
 - Bump hahomematic to 0.13.3
-    -  HM cover fix: check level for None
-- Fix: duplicate remove exception after delte_device
+    - HM cover fix: check level for None
+    - Fix: max_temp issue for hm thermostats
+    - Fix: hm const are str instead of int
+- Fix: duplicate remove exception after delete_device
 
 Version 0.13.1 (2021-01-04)
 - Bump hahomematic to 0.13.2
