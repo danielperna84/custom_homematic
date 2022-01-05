@@ -261,8 +261,11 @@ class ControlUnit:
         elif src == HH_EVENT_DELETE_DEVICES:
             # Handle event of device removed in HAHM.
             for address in args[1]:
-                if entity := self._get_active_entity_by_address(address=address):
-                    if isinstance(entity, HmCallbackEntity):
+                # HA only needs channel_addresses
+                if ":" in address:
+                    continue
+                if entities := self._get_active_entities_by_device_address(device_address=address):
+                    for entity in entities:
                         entity.remove_entity()
             return None
         elif src == HH_EVENT_ERROR:
@@ -402,15 +405,13 @@ class ControlUnit:
             )
         return clients
 
-    def _get_active_entity_by_address(self, address: str) -> HmBaseEntity | None:
+    def _get_active_entities_by_device_address(self, device_address: str) -> list[HmBaseEntity]:
         """Return used hm_entities by address."""
+        entities: list[HmBaseEntity] = []
         for entity in self._active_hm_entities.values():
-            if isinstance(entity, HmCallbackEntity) and address in (
-                entity.channel_address,
-                entity.device_address,
-            ):
-                return entity
-        return None
+            if isinstance(entity, HmCallbackEntity) and device_address == entity.device_address:
+                entities.append(entity)
+        return entities
 
 
 class ControlConfig:
