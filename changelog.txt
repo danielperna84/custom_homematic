@@ -1,3 +1,9 @@
+Version 0.14.0 (2021-01-06)
+- Bump hahomematic to 0.14.0
+    - Switch some HM-LC-Bl1 to cover
+    - Don't exclude DutyCycle, needed for old rf-modules
+    - Don't exclude Watchdog from SV sensor
+
 Version 0.13.2 (2021-01-05)
 - Bump hahomematic to 0.13.3
     - HM cover fix: check level for None
