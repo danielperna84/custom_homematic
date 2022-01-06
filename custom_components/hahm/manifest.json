@@ -1,6 +1,6 @@
 {
   "domain": "hahm",
-  "name": "Home Assistant Homematic(IP)",
+  "name": "Homematic(IP) Local",
   "config_flow": true,
   "documentation": "https://github.com/danielperna84/hahomematic",
   "issue_tracker": "https://github.com/danielperna84/hahomematic/issues",
