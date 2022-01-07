@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from hahomematic.const import CLICK_EVENTS
+from hahomematic.const import EVENT_PRESS_SHORT, EVENT_PRESS_LONG
 from hahomematic.internal.action import HmAction
 import voluptuous as vol
 
@@ -17,7 +17,8 @@ from .const import CONF_SUBTYPE
 from .control_unit import ControlUnit
 from .helpers import get_device_address_at_interface_from_identifiers
 
-ACTION_TYPES = {"press_short", "press_long"}
+ACTION_PARAMS = {EVENT_PRESS_LONG, EVENT_PRESS_SHORT}
+ACTION_TYPES = {param.lower() for param in ACTION_PARAMS}
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
     {
@@ -54,7 +55,7 @@ async def async_get_actions(
             for entity in hm_device.entities.values():
                 if not isinstance(entity, HmAction):
                     continue
-                if entity.parameter not in CLICK_EVENTS:
+                if entity.parameter not in ACTION_PARAMS:
                     continue
 
                 action = {

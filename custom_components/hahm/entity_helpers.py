@@ -22,6 +22,7 @@ from homeassistant.components.sensor import (
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     DEGREE,
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
@@ -44,24 +45,39 @@ from .helpers import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
+CONCENTRATION_CM3 = "1/cm\u00b3"
+PARTICLESIZE = "\u00b5m"
 
-_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {
-    "RESET_MOTION": ButtonEntityDescription(
-        key="RESET_MOTION",
-        icon="mdi:gesture-tap",
-        entity_registry_enabled_default=False,
-    ),
-    "RESET_PRESENCE": ButtonEntityDescription(
-        key="RESET_PRESENCE",
-        icon="mdi:gesture-tap",
-        entity_registry_enabled_default=False,
-    ),
-}
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {
-    "LEVEL": NumberEntityDescription(
+_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {}
+
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {}
+
+_NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[tuple[str, str], NumberEntityDescription] = {
+    # HmIP-eTRV, HmIP-eTRV-2
+    ("TRV", "LEVEL"): NumberEntityDescription(
         key="LEVEL",
-        icon="mdi:radiator",
+        icon="mdi:pipe-valve",
+    ),
+    # HmIP-eTRV-B
+    ("TRV-B", "LEVEL"): NumberEntityDescription(
+        key="LEVEL",
+        icon="mdi:pipe-valve",
+    ),
+    # HmIP-eTRV-C
+    ("TRV-C", "LEVEL"): NumberEntityDescription(
+        key="LEVEL",
+        icon="mdi:pipe-valve",
+    ),
+    #HmIP-FALMOT-C12
+    ("HMIP_FALMOT-C12", "LEVEL"): NumberEntityDescription(
+        key="LEVEL",
+        icon="mdi:pipe-valve",
+    ),
+    #HmIPW-FALMOT-C12
+    ("HMIPW_FALMOT-C12", "LEVEL"): NumberEntityDescription(
+        key="LEVEL",
+        icon="mdi:pipe-valve",
     ),
 }
 
@@ -198,6 +214,65 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
         key="LUX",
         native_unit_of_measurement=LIGHT_LUX,
         device_class=SensorDeviceClass.ILLUMINANCE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_1": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_1",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM1,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_1_24H_AVERAGE": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_1_24H_AVERAGE",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM1,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_10": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_10",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM10,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_10_24H_AVERAGE": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_10_24H_AVERAGE",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM10,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_2_5": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_2_5",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM25,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE": SensorEntityDescription(
+        key="MASS_CONCENTRATION_PM_2_5_24H_AVERAGE",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM25,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "NUMBER_CONCENTRATION_PM_1": SensorEntityDescription(
+        key="NUMBER_CONCENTRATION_PM_1",
+        native_unit_of_measurement=CONCENTRATION_CM3,
+        device_class=SensorDeviceClass.PM1,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "NUMBER_CONCENTRATION_PM_10": SensorEntityDescription(
+        key="NUMBER_CONCENTRATION_PM_10",
+        native_unit_of_measurement=CONCENTRATION_CM3,
+        device_class=SensorDeviceClass.PM10,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "NUMBER_CONCENTRATION_PM_2_5": SensorEntityDescription(
+        key="NUMBER_CONCENTRATION_PM_2_5",
+        native_unit_of_measurement=CONCENTRATION_CM3,
+        device_class=SensorDeviceClass.PM25,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "TYPICAL_PARTICLE_SIZE": SensorEntityDescription(
+        key="TYPICAL_PARTICLE_SIZE",
+        native_unit_of_measurement=PARTICLESIZE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "OPERATING_VOLTAGE": SensorEntityDescription(
@@ -464,6 +539,7 @@ _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
 
 _ENTITY_DESCRIPTION_DEVICE_PARAM: dict[HmPlatform, dict[tuple[str, str], Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
 }
@@ -473,7 +549,7 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
-        entity_category=EntityCategory.SYSTEM,
+        entity_registry_enabled_default=False,
     ),
     HmPlatform.COVER: None,
     HmPlatform.SENSOR: None,
