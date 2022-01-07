@@ -29,13 +29,13 @@ from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE
 from .control_unit import ControlUnit
 from .helpers import get_device_address_at_interface_from_identifiers
 
-TRIGGER_TYPES = CLICK_EVENTS
+TRIGGER_TYPES = {param.lower() for param in CLICK_EVENTS}
 
 TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_INTERFACE_ID): str,
         vol.Required(CONF_ADDRESS): str,
-        vol.Required(CONF_TYPE): str,
+        vol.Required(CONF_TYPE): vol.In(TRIGGER_TYPES),
         vol.Required(CONF_SUBTYPE): int,
         vol.Required(CONF_EVENT_TYPE): str,
     }
