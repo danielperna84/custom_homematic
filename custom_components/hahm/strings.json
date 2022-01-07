@@ -101,8 +101,8 @@
       "press_long_start": "Button \"{subtype}\" started long press"
     },
     "action_type": {
-      "turn_on": "Turn on {entity_name}",
-      "turn_off": "Turn off {entity_name}"
+      "press_short": "Short press Button \"{subtype}\"",
+      "press_long": "Long press Button \"{subtype}\""
     }
   }
 }

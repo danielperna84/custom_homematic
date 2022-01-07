@@ -1,7 +1,9 @@
 Version 0.15.0 (2021-01-07)
 - Bump hahomematic to 0.15.0
-    - Remove Virtual Remotes from buttons
+    - Remove Virtual Remotes from buttons (BREAKING CHANGE)
+      Solution: obsolete entities (buttons) can be deleted in entities overview.
 - Update integration name in comments
+- Add device actions to call actions on virtual remotes
 
 Version 0.14.0 (2021-01-06)
 - Bump hahomematic to 0.14.0

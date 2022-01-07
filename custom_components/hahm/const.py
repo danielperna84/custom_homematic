@@ -17,6 +17,9 @@ ATTR_VALUE_TYPE = "value_type"
 
 CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES = "enable_sensors_for_system_variables"
 CONF_ENABLE_VIRTUAL_CHANNELS = "enable_virtual_channels"
+CONF_INTERFACE_ID = "interface_id"
+CONF_EVENT_TYPE = "event_type"
+CONF_SUBTYPE = "subtype"
 
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"

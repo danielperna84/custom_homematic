@@ -1,63 +1,69 @@
 """Provides device actions for Homematic(IP) Local."""
 from __future__ import annotations
 
+from typing import Any
+
+from hahomematic.const import CLICK_EVENTS
+from hahomematic.internal.action import HmAction
 import voluptuous as vol
 
-from homeassistant.const import (
-    ATTR_ENTITY_ID,
-    CONF_DEVICE_ID,
-    CONF_DOMAIN,
-    CONF_ENTITY_ID,
-    CONF_TYPE,
-    SERVICE_TURN_OFF,
-    SERVICE_TURN_ON,
-)
+from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_TYPE
 from homeassistant.core import Context, HomeAssistant
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
 
 from . import DOMAIN
+from .const import CONF_SUBTYPE
+from .control_unit import ControlUnit
+from .helpers import get_device_address_at_interface_from_identifiers
 
-# TODO specify your supported action types.
-ACTION_TYPES = {"turn_on", "turn_off"}
+ACTION_TYPES = {"press_short", "press_long"}
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): vol.In(ACTION_TYPES),
-        vol.Required(CONF_ENTITY_ID): cv.entity_domain(DOMAIN),
+        vol.Required(CONF_SUBTYPE): int,
     }
 )
 
 
 async def async_get_actions(
     hass: HomeAssistant, device_id: str
-) -> list[dict[str, str]]:
+) -> list[dict[str, Any]]:
     """List device actions for Homematic(IP) Local devices."""
-    registry = await entity_registry.async_get_registry(hass)
+
+    device_registry = dr.async_get(hass)
+    if (device := device_registry.async_get(device_id)) is None:
+        return []
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device.identifiers
+        )
+    ) is None:
+        return []
+
+    device_address = data[0]
+    interface_id = data[1]
+
     actions = []
-
-    # TODO Read this comment and remove it.
-    # This example shows how to iterate over the entities of this device
-    # that match this integration. If your actions instead rely on
-    # calling services, do something like:
-    # zha_device = await _async_get_zha_device(hass, device_id)
-    # return zha_device.device_actions
-
-    # Get all the integrations entities for this device
-    for entry in entity_registry.async_entries_for_device(registry, device_id):
-        if entry.domain != DOMAIN:
+    for entry_id in device.config_entries:
+        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        if control_unit.central.clients.get(interface_id) is None:
             continue
+        if hm_device := control_unit.central.hm_devices.get(device_address):
+            for entity in hm_device.entities.values():
+                if not isinstance(entity, HmAction):
+                    continue
+                if entity.parameter not in CLICK_EVENTS:
+                    continue
 
-        # Add actions for each entity that belongs to this integration
-        # TODO add your own actions.
-        base_action = {
-            CONF_DEVICE_ID: device_id,
-            CONF_DOMAIN: DOMAIN,
-            CONF_ENTITY_ID: entry.entity_id,
-        }
-
-        actions.append({**base_action, CONF_TYPE: "turn_on"})
-        actions.append({**base_action, CONF_TYPE: "turn_off"})
+                action = {
+                    CONF_DOMAIN: DOMAIN,
+                    CONF_DEVICE_ID: device_id,
+                    CONF_TYPE: entity.parameter.lower(),
+                    CONF_SUBTYPE: entity.channel_no,
+                }
+                actions.append(action)
 
     return actions
 
@@ -66,13 +72,33 @@ async def async_call_action_from_config(
     hass: HomeAssistant, config: dict, variables: dict, context: Context | None
 ) -> None:
     """Execute a device action."""
-    service_data = {ATTR_ENTITY_ID: config[CONF_ENTITY_ID]}
+    device_id: str = config[CONF_DEVICE_ID]
+    action_type: str = config[CONF_TYPE]
+    action_subtype: int = config[CONF_SUBTYPE]
 
-    if config[CONF_TYPE] == "turn_on":
-        service = SERVICE_TURN_ON
-    elif config[CONF_TYPE] == "turn_off":
-        service = SERVICE_TURN_OFF
+    device_registry = dr.async_get(hass)
+    if (device := device_registry.async_get(device_id)) is None:
+        return None
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device.identifiers
+        )
+    ) is None:
+        return None
 
-    await hass.services.async_call(
-        DOMAIN, service, service_data, blocking=True, context=context
-    )
+    device_address = data[0]
+    interface_id = data[1]
+
+    for entry_id in device.config_entries:
+        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        if control_unit.central.clients.get(interface_id) is None:
+            continue
+        if hm_device := control_unit.central.hm_devices.get(device_address):
+            for entity in hm_device.entities.values():
+                if not isinstance(entity, HmAction):
+                    continue
+                if (
+                    entity.parameter == action_type.upper()
+                    and entity.channel_no == action_subtype
+                ):
+                    await entity.send_value(True)

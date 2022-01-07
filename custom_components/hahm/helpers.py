@@ -4,11 +4,11 @@ from __future__ import annotations
 from typing import TypeVar, Union
 
 from hahomematic.const import IDENTIFIERS_SEPARATOR
-from hahomematic.entity import BaseParameterEntity, CustomEntity, GenericEntity
+from hahomematic.entity import CustomEntity, GenericEntity
 from hahomematic.hub import BaseHubEntity
 
 # Union for entity types used as base class for entities
-HmBaseEntity = Union[BaseHubEntity, BaseParameterEntity, CustomEntity, GenericEntity]
+HmBaseEntity = Union[BaseHubEntity, CustomEntity, GenericEntity]
 # Entities that support callbacks from backend
 HmCallbackEntity = (CustomEntity, GenericEntity)
 # Generic base type used for entities in Homematic(IP) Local

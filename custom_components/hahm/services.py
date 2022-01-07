@@ -192,11 +192,7 @@ async def _async_service_delete_device(
     """Service to delete a HomeMatic device from HA."""
     device_id = service.data[ATTR_DEVICE_ID]
 
-    if (
-            address_data := _get_interface_address(
-                hass=hass, device_id=device_id
-            )
-    ) is None:
+    if (address_data := _get_interface_address(hass=hass, device_id=device_id)) is None:
         return None
 
     interface_id: str = address_data[0]
@@ -204,9 +200,11 @@ async def _async_service_delete_device(
 
     if interface_id and device_address:
         if control_unit := _get_cu_by_interface_id(
-                hass=hass, interface_id=interface_id
+            hass=hass, interface_id=interface_id
         ):
-            await control_unit.central.delete_device(interface_id=interface_id, device_address=device_address)
+            await control_unit.central.delete_device(
+                interface_id=interface_id, device_address=device_address
+            )
             _LOGGER.debug(
                 "Called delete_device: %s, %s",
                 interface_id,
