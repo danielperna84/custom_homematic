@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from datetime import datetime, timedelta
 import logging
-from typing import Any
+from typing import Any, Tuple, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import Client, ClientConfig
@@ -95,6 +95,7 @@ class ControlUnit:
             await self.async_create_clients()
             self._central.create_devices()
             await self.async_init_clients()
+            self.async_add_virtual_remotes_to_device_registry()
             await self.async_init_hub()
             self._central.start_connection_checker()
         else:
@@ -111,10 +112,45 @@ class ControlUnit:
             config_entry_id=self._entry_id,
             identifiers=info["identifiers"],
             manufacturer=info["manufacturer"],
+            model="CU",
             name=info["name"],
             entry_type=DeviceEntryType.SERVICE,
             configuration_url=info["device_url"],
         )
+
+    @callback
+    def async_add_virtual_remotes_to_device_registry(self) -> None:
+        """Add the virtual remotes to device registry."""
+        if not self._central:
+            _LOGGER.error(
+                "Cannot create Homematic(IP) Local ControlUnit %s virtual remote devices. No central",
+                self._data[ATTR_INSTANCE_NAME],
+            )
+            return
+
+        if not self._central.clients:
+            _LOGGER.error(
+                "Cannot create Homematic(IP) Local ControlUnit %s virtual remote devices. No clients",
+                self._data[ATTR_INSTANCE_NAME],
+            )
+            return
+
+        device_registry = dr.async_get(self._hass)
+        for client in self._central.clients.values():
+            if virtual_remote := client.get_virtual_remote():
+                device_registry.async_get_or_create(
+                    config_entry_id=self._entry_id,
+                    identifiers=virtual_remote.device_info["identifiers"],
+                    manufacturer=virtual_remote.device_info["manufacturer"],
+                    name=virtual_remote.device_info["name"],
+                    model=virtual_remote.device_info["model"],
+                    sw_version=virtual_remote.device_info["sw_version"],
+                    entry_type=DeviceEntryType.SERVICE,
+                    # Link to the homematic control unit.
+                    via_device=cast(
+                        Tuple[str, str], virtual_remote.device_info.get("via_device")
+                    ),
+                )
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
