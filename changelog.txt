@@ -1,7 +1,10 @@
 Version 0.15.1 (2021-01-07)
-- Bump hahomematic to 0.15.1
+- Bump hahomematic to 0.15.2
     - Identify virtual remote by device type
     - Fix Device Exporter / format output
+    - Add devices to CustomEntity
+        - HmIP-WGC
+        - HmIP-WHS
 - Identify virtual remote by device type
 - Cleanup DeviceTrigger/Action
 - Add more EntityDescriptions
