@@ -99,6 +99,10 @@
       "press_cont": "Button \"{subtype}\" continuously pressed",
       "press_long_release": "Button \"{subtype}\" long press released",
       "press_long_start": "Button \"{subtype}\" started long press"
+    },
+    "action_type": {
+      "turn_on": "Turn on {entity_name}",
+      "turn_off": "Turn off {entity_name}"
     }
   }
 }
