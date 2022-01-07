@@ -34,7 +34,7 @@ async def test_get_actions(
     device_reg: device_registry.DeviceRegistry,
     entity_reg: entity_registry.EntityRegistry,
 ) -> None:
-    """Test we get the expected actions from a hahm."""
+    """Test we get the expected actions from a Homematic(IP) Local."""
     config_entry = MockConfigEntry(domain="test", data={})
     config_entry.add_to_hass(hass)
     device_entry = device_reg.async_get_or_create(

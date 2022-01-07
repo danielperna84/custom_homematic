@@ -11,7 +11,7 @@ from hahomematic.hub import BaseHubEntity
 HmBaseEntity = Union[BaseHubEntity, BaseParameterEntity, CustomEntity, GenericEntity]
 # Entities that support callbacks from backend
 HmCallbackEntity = (CustomEntity, GenericEntity)
-# Generic base type usedcfor entities in hahm
+# Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 
 

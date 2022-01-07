@@ -178,7 +178,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 
 async def async_unload_services(hass: HomeAssistant) -> None:
-    """Unload HAHM services."""
+    """Unload Homematic(IP) Local services."""
     if hass.data[DOMAIN]:
         return
 

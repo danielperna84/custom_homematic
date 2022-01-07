@@ -87,7 +87,7 @@ class ControlUnit:
 
     async def async_start(self) -> None:
         """Start the control unit."""
-        _LOGGER.debug("Starting HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        _LOGGER.debug("Starting Homematic(IP) Local ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         if self._central:
             await self.async_create_clients()
             self._central.create_devices()
@@ -96,7 +96,7 @@ class ControlUnit:
             self._central.start_connection_checker()
         else:
             _LOGGER.exception(
-                "Starting HAHM ControlUnit %s not possible, CentralUnit is not available",
+                "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
                 self._data[ATTR_INSTANCE_NAME],
             )
 
@@ -115,7 +115,7 @@ class ControlUnit:
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
-        _LOGGER.debug("Stopping HAHM ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
+        _LOGGER.debug("Stopping Homematic(IP) Local ControlUnit %s", self._data[ATTR_INSTANCE_NAME])
         if self._hub:
             self._hub.de_init()
         self.central.stop_connection_checker()
@@ -155,10 +155,10 @@ class ControlUnit:
 
     @property
     def central(self) -> CentralUnit:
-        """Return the HAHM central_unit instance."""
+        """Return the Homematic(IP) Local central_unit instance."""
         if self._central is not None:
             return self._central
-        raise HomeAssistantError("hahm.central not initialized")
+        raise HomeAssistantError("homematicip_local.central not initialized")
 
     @callback
     def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:

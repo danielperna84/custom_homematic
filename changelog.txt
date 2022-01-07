@@ -1,3 +1,8 @@
+Version 0.15.0 (2021-01-07)
+- Bump hahomematic to 0.15.0
+    - Remove Virtual Remotes from buttons
+- Update integration name in comments
+
 Version 0.14.0 (2021-01-06)
 - Bump hahomematic to 0.14.0
     - Switch some HM-LC-Bl1 to cover

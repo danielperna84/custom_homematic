@@ -26,7 +26,7 @@ SERVICE_VIRTUAL_KEY = "virtual_key"
 
 
 def _get_hahm_platforms() -> list[str]:
-    """Return relevant hahm platforms."""
+    """Return relevant Homematic(IP) Local platforms."""
     platforms = [entry.value for entry in Platform]
     hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
     hahm_platforms: list[str] = []

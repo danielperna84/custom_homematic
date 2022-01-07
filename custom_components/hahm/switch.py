@@ -1,4 +1,4 @@
-"""binary_switch for HAHM."""
+"""binary_switch for Homematic(IP) Local."""
 from __future__ import annotations
 
 import logging
@@ -26,7 +26,7 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the HAHM switch platform."""
+    """Set up the Homematic(IP) Local switch platform."""
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback

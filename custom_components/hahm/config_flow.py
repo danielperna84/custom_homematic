@@ -242,21 +242,21 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class HahmOptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle hahm options."""
+    """Handle Homematic(IP) Local options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize hahm options flow."""
+        """Initialize Homematic(IP) Local options flow."""
         self.config_entry = config_entry
         self.data: ConfigType = dict(self.config_entry.data.items())
 
     async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
-        """Manage the hahm options."""
+        """Manage the Homematic(IP) Local options."""
         return await self.async_step_central(user_input=user_input)
 
     async def async_step_central(
         self, user_input: ConfigType | None = None
     ) -> FlowResult:
-        """Manage the hahm devices options."""
+        """Manage the Homematic(IP) Local devices options."""
         if user_input is not None:
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
