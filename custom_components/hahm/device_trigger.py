@@ -25,12 +25,9 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
 from . import DOMAIN
+from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE
 from .control_unit import ControlUnit
-from .helpers import get_device_address_from_identifiers
-
-CONF_INTERFACE_ID = "interface_id"
-CONF_EVENT_TYPE = "event_type"
-CONF_SUBTYPE = "subtype"
+from .helpers import get_device_address_at_interface_from_identifiers
 
 TRIGGER_TYPES = CLICK_EVENTS
 
@@ -53,15 +50,20 @@ async def async_get_triggers(
     if (device := device_registry.async_get(device_id)) is None:
         return None
     if (
-        device_address := get_device_address_from_identifiers(
+        data := get_device_address_at_interface_from_identifiers(
             identifiers=device.identifiers
         )
     ) is None:
         return None
 
+    device_address = data[0]
+    interface_id = data[1]
+
     triggers = []
     for entry_id in device.config_entries:
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        if control_unit.central.clients.get(interface_id) is None:
+            continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
             for action_event in hm_device.action_events.values():
                 if isinstance(action_event, SpecialEvent):

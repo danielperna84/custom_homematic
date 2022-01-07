@@ -99,6 +99,10 @@
       "press_cont": "Taster \"{subtype}\" wird dauerhaft gedrückt",
       "press_long_release": "Taster \"{subtype}\" wurde nach langem Tastendruck los gelassen",
       "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet"
+    },
+    "action_type": {
+      "press_short": "Kurzer Tastendruck auf Taster \"{subtype}\"",
+      "press_long": "Langer Tastendruck auf Taster \"{subtype}\""
     }
   }
 }

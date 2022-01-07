@@ -1,4 +1,4 @@
-"""climate for HAHM."""
+"""climate for Homematic(IP) Local."""
 from __future__ import annotations
 
 from datetime import datetime, timedelta
@@ -36,12 +36,12 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the HAHM climate platform."""
+    """Set up the Homematic(IP) Local climate platform."""
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
     def async_add_climate(args: Any) -> None:
-        """Add climate from HAHM."""
+        """Add climate from Homematic(IP) Local."""
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:

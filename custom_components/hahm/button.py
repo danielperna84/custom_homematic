@@ -1,4 +1,4 @@
-"""binary_sensor for HAHM."""
+"""binary_sensor for Homematic(IP) Local."""
 from __future__ import annotations
 
 import logging
@@ -25,12 +25,12 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the HAHM binary_sensor platform."""
+    """Set up the Homematic(IP) Local binary_sensor platform."""
     control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
 
     @callback
     def async_add_button(args: Any) -> None:
-        """Add button from HAHM."""
+        """Add button from Homematic(IP) Local."""
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args[0]:
