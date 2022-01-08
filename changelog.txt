@@ -1,3 +1,8 @@
+Version 0.16.0 (2021-01-08)
+- Bump hahomematic to 0.16.0
+    - Return unique_id if name is not in cache
+    - Remove no longer needed press_virtual_remote_key
+
 Version 0.15.1 (2021-01-07)
 - Bump hahomematic to 0.15.2
     - Identify virtual remote by device type
