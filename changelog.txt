@@ -1,3 +1,9 @@
+Version 0.16.1 (2021-01-08)
+- Bump hahomematic to 0.16.1
+    - Add logging to show usage of unique_id in name
+    - Add HmIPW-WRC6 to custom entities
+    - Add HmIP-SCTH230 to custom entities
+
 Version 0.16.0 (2021-01-08)
 - Bump hahomematic to 0.16.0
     - Return unique_id if name is not in cache

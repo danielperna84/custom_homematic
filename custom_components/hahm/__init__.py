@@ -13,7 +13,7 @@ from .const import (
     HAHM_PLATFORMS,
 )
 from .control_unit import ControlConfig
-from .services import async_setup_services
+from .services import async_setup_services, async_unload_services
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,6 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     control = hass.data[DOMAIN][config_entry.entry_id]
+    await async_unload_services(hass)
     await control.async_stop()
     await control.central.clear_all()
     if unload_ok := await hass.config_entries.async_unload_platforms(
