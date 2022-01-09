@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from hahomematic.const import EVENT_PRESS_SHORT, EVENT_PRESS_LONG
+from hahomematic.const import EVENT_PRESS_LONG, EVENT_PRESS_SHORT
 from hahomematic.internal.action import HmAction
 import voluptuous as vol
 
