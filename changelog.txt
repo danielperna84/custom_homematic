@@ -1,3 +1,7 @@
+Version 0.17.0 (2021-01-08)
+- Bump hahomematic to 0.17.0
+- Adopt change changes from hahomematic
+
 Version 0.16.1 (2021-01-08)
 - Bump hahomematic to 0.16.1
     - Add logging to show usage of unique_id in name

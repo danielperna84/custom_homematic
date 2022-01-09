@@ -21,8 +21,8 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
-    CONCENTRATION_PARTS_PER_MILLION,
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
@@ -69,12 +69,12 @@ _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[tuple[str, str], NumberEntityDescript
         key="LEVEL",
         icon="mdi:pipe-valve",
     ),
-    #HmIP-FALMOT-C12
+    # HmIP-FALMOT-C12
     ("HMIP_FALMOT-C12", "LEVEL"): NumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
     ),
-    #HmIPW-FALMOT-C12
+    # HmIPW-FALMOT-C12
     ("HMIPW_FALMOT-C12", "LEVEL"): NumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
