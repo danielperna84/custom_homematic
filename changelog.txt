@@ -1,8 +1,12 @@
-Version 0.17.1 (2021-01-08)
+Version 0.17.2 (2021-01-10)
+- Bump hahomematic to 0.17.2
+    - Add config option to specify storage directory
+
+Version 0.17.1 (2021-01-09)
 - Bump hahomematic to 0.17.1
     - Fix naming for multi channel custom entities
 
-Version 0.17.0 (2021-01-08)
+Version 0.17.0 (2021-01-09)
 - Bump hahomematic to 0.17.0
 - Adopt change changes from hahomematic
 

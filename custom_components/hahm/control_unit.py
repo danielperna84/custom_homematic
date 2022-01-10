@@ -418,12 +418,15 @@ class ControlUnit:
             local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
             local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
         )
+
+        storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"
         client_session = aiohttp_client.async_get_clientsession(self._hass)
         central = await CentralConfig(
             domain=DOMAIN,
             name=self._data[ATTR_INSTANCE_NAME],
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
+            storage_folder=storage_folder,
             host=self._data[ATTR_HOST],
             username=self._data[ATTR_USERNAME],
             password=self._data[ATTR_PASSWORD],
