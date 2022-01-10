@@ -57,7 +57,6 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_PATH,
-    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
     HAHM_PLATFORMS,
@@ -176,17 +175,22 @@ class ControlUnit:
             return None
         self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
         await self._hub.async_init()
-        hm_entities = (
-            [self.central.hub.hub_entities.values()] if self.central.hub else []
-        )
-        if hm_entities:
-            args = [hm_entities]
+        if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
+            sensors = hub_entities_by_platform.get(HmPlatform.HUB_SENSOR)
             async_dispatcher_send(
                 self._hass,
                 self.async_signal_new_hm_entity(
-                    entry_id=self._entry_id, platform=HmPlatform.HUB
+                    entry_id=self._entry_id, platform=HmPlatform.HUB_SENSOR
                 ),
-                *args,  # Don't send device if None, it would override default value in listeners
+                sensors,
+            )
+            binary_sensors = hub_entities_by_platform.get(HmPlatform.HUB_BINARY_SENSOR)
+            async_dispatcher_send(
+                self._hass,
+                self.async_signal_new_hm_entity(
+                    entry_id=self._entry_id, platform=HmPlatform.HUB_BINARY_SENSOR
+                ),
+                binary_sensors,
             )
 
     @property
@@ -226,7 +230,7 @@ class ControlUnit:
 
         for entity in new_entities:
             if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                self._create_in_ha(usage=entity.usage)
                 and entity.unique_id not in active_unique_ids
                 and entity.platform.value in HAHM_PLATFORMS
             ):
@@ -246,13 +250,26 @@ class ControlUnit:
         hm_entities = []
         for entity in self.central.hm_entities.values():
             if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                self._create_in_ha(usage=entity.usage)
                 and entity.unique_id not in active_unique_ids
                 and entity.platform == platform
             ):
                 hm_entities.append(entity)
 
         return hm_entities
+
+    def _create_in_ha(self, usage: HmEntityUsage) -> bool:
+        """Return, if entity should be enabled in HA."""
+        if usage == HmEntityUsage.ENTITY_NO_CREATE:
+            return False
+        if usage in (HmEntityUsage.CE_PRIMARY, HmEntityUsage.ENTITY):
+            return True
+        if self.enable_virtual_channels is True and usage in (
+            HmEntityUsage.CE_SECONDARY,
+            HmEntityUsage.CE_SENSOR,
+        ):
+            return True
+        return False
 
     @callback
     def async_get_hm_entities_by_platform(
@@ -261,10 +278,7 @@ class ControlUnit:
         """Return all hm-entities by platform."""
         hm_entities = []
         for entity in self.central.hm_entities.values():
-            if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
-                and entity.platform == platform
-            ):
+            if self._create_in_ha(usage=entity.usage) and entity.platform == platform:
                 hm_entities.append(entity)
 
         return hm_entities
@@ -300,9 +314,7 @@ class ControlUnit:
                         self.async_signal_new_hm_entity(
                             entry_id=self._entry_id, platform=platform
                         ),
-                        [
-                            hm_entities
-                        ],  # Don't send device if None, it would override default value in listeners
+                        hm_entities,  # Don't send device if None, it would override default value in listeners
                     )
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
@@ -432,9 +444,6 @@ class ControlUnit:
             callback_port=self._data.get(ATTR_CALLBACK_PORT)
             if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
             else None,
-            option_enable_sensors_for_system_variables=self._data.get(
-                CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES, False
-            ),
         ).get_central()
         # register callback
         central.callback_system_event = self._async_callback_system_event

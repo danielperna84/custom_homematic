@@ -15,8 +15,7 @@
           "json_port": "JSON-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "verifier TLS connection",
-          "enable_virtual_channels": "Virtuele kanalen inschakelen",
-          "enable_sensors_for_system_variables": "Activeer sensoren voor systeemvariabelen"
+          "enable_virtual_channels": "Virtuele kanalen inschakelen"
         }
       },
       "interface": {
@@ -56,8 +55,7 @@
           "json_port": "JSON-RPC poort",
           "tls": "Gebruik TLS",
           "verify_tls": "verifier TLS connection",
-          "enable_virtual_channels": "Virtuele kanalen inschakelen",
-          "enable_sensors_for_system_variables": "Activeer sensoren voor systeemvariabelen"
+          "enable_virtual_channels": "Virtuele kanalen inschakelen"
         }
       },
       "interface": {

@@ -34,7 +34,6 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_PATH,
-    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
     CONF_ENABLE_VIRTUAL_CHANNELS,
     DOMAIN,
 )
@@ -94,10 +93,6 @@ def get_domain_schema(data: ConfigType) -> Schema:
             ): cv.port,
             vol.Optional(
                 CONF_ENABLE_VIRTUAL_CHANNELS,
-                default=data.get(CONF_ENABLE_VIRTUAL_CHANNELS) or False,
-            ): bool,
-            vol.Optional(
-                CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
                 default=data.get(CONF_ENABLE_VIRTUAL_CHANNELS) or False,
             ): bool,
         }
@@ -329,9 +324,6 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         ATTR_TLS: user_input.get(ATTR_TLS),
         ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
         CONF_ENABLE_VIRTUAL_CHANNELS: user_input.get(CONF_ENABLE_VIRTUAL_CHANNELS),
-        CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES: user_input.get(
-            CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES
-        ),
         ATTR_INTERFACE: {},
     }
 

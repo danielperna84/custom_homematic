@@ -1,7 +1,10 @@
-Version 0.17.2 (2021-01-10)
-- Bump hahomematic to 0.17.2
-    - Add config option to specify storage directory
+Version 0.18.0 (2021-01-10)
+- Bump hahomematic to 0.18.0
 - Set entity enabled default by entity usage enum
+- Remove enable_sensors_for_system_variables from config flow
+- Bool SysVars are now binary sensors
+- All Sysvars are now disabled by default
+- Add instance name to system variable name
 
 Version 0.17.1 (2021-01-09)
 - Bump hahomematic to 0.17.1

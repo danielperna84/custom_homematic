@@ -37,18 +37,19 @@ async def async_setup_entry(
         """Add sensor from Homematic(IP) Local."""
         entities: list[HaHomematicGenericEntity] = []
 
-        for hm_entity in args[0]:
+        for hm_entity in args:
             entities.append(HaHomematicSensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
 
+    @callback
     def async_add_hub_sensors(args: Any) -> None:
         """Add hub sensor from Homematic(IP) Local."""
 
         entities = []
 
-        for hm_entity in args[0]:
+        for hm_entity in args:
             entities.append(HaHomematicHubSensor(control_unit, hm_entity))
 
         if entities:
@@ -67,14 +68,14 @@ async def async_setup_entry(
         async_dispatcher_connect(
             hass,
             control_unit.async_signal_new_hm_entity(
-                config_entry.entry_id, HmPlatform.HUB
+                config_entry.entry_id, HmPlatform.HUB_SENSOR
             ),
             async_add_hub_sensors,
         )
     )
 
     async_add_sensor(
-        [control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SENSOR)]
+        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SENSOR)
     )
 
 
@@ -98,6 +99,7 @@ class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEnt
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_native_unit_of_measurement = hm_entity.unit
+        self._attr_entity_registry_enabled_default = False
 
     @property
     def native_value(self) -> Any:

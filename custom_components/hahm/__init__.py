@@ -6,12 +6,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import (
-    CONF_ENABLE_SENSORS_FOR_SYSTEM_VARIABLES,
-    CONF_ENABLE_VIRTUAL_CHANNELS,
-    DOMAIN,
-    HAHM_PLATFORMS,
-)
+from .const import CONF_ENABLE_VIRTUAL_CHANNELS, DOMAIN, HAHM_PLATFORMS
 from .control_unit import ControlConfig
 from .services import async_setup_services, async_unload_services
 

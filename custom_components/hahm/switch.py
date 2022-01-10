@@ -34,7 +34,7 @@ async def async_setup_entry(
         """Add switch from HAHM."""
         entities: list[HaHomematicGenericEntity] = []
 
-        for hm_entity in args[0]:
+        for hm_entity in args:
             entities.append(HaHomematicSwitch(control_unit, hm_entity))
 
         if entities:
@@ -51,7 +51,7 @@ async def async_setup_entry(
     )
 
     async_add_switch(
-        [control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SWITCH)]
+        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SWITCH)
     )
 
 
