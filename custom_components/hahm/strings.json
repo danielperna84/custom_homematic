@@ -15,8 +15,7 @@
           "tls": "use TLS",
           "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
-          "enable_virtual_channels": "enable virtual channels",
-          "enable_sensors_for_system_variables": "enable sensors for system variables"
+          "enable_virtual_channels": "enable virtual channels"
         }
       },
       "interface": {
@@ -56,8 +55,7 @@
           "tls": "use TLS",
           "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
-          "enable_virtual_channels": "enable virtual channels",
-          "enable_sensors_for_system_variables": "enable sensors for system variables"
+          "enable_virtual_channels": "enable virtual channels"
         }
       },
       "interface": {

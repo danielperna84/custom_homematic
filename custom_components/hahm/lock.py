@@ -33,7 +33,7 @@ async def async_setup_entry(
         """Add lock from Homematic(IP) Local."""
         entities: list[HaHomematicGenericEntity] = []
 
-        for hm_entity in args[0]:
+        for hm_entity in args:
             entities.append(HaHomematicLock(control_unit, hm_entity))
 
         if entities:
@@ -49,9 +49,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_lock(
-        [control_unit.async_get_new_hm_entities_by_platform(HmPlatform.LOCK)]
-    )
+    async_add_lock(control_unit.async_get_new_hm_entities_by_platform(HmPlatform.LOCK))
 
 
 class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
