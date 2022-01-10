@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic, Tuple, cast
 
+from hahomematic.const import HmEntityUsage
 from hahomematic.entity import CallbackEntity
 from hahomematic.hub import BaseHubEntity
 
@@ -33,12 +34,16 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._hm_entity: HmGenericEntity = hm_entity
         if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
+        if (
+            entity_registry_enabled_default := self._get_entity_registry_enabled_default()
+        ) is not None:
+            self._attr_entity_registry_enabled_default = entity_registry_enabled_default
+
         # Marker showing that the Hm device hase been removed.
         self._hm_device_removed = False
 
         self._attr_name = hm_entity.name
         self._attr_unique_id = hm_entity.unique_id
-
         _LOGGER.debug("Setting up %s", self.name)
 
     @property
@@ -80,6 +85,18 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         # Init data of entity.
         if hasattr(self._hm_entity, "load_data"):
             await self._hm_entity.load_data()
+
+    def _get_entity_registry_enabled_default(self) -> bool | None:
+        """Return, if entity should be enabled based on usage attribute."""
+        if self._hm_entity.usage in {
+            HmEntityUsage.CE_SECONDARY,
+            HmEntityUsage.CE_SENSOR,
+            HmEntityUsage.ENTITY_NO_CREATE,
+        }:
+            return False
+        if self._hm_entity.usage in {HmEntityUsage.CE_PRIMARY}:
+            return True
+        return None
 
     @callback
     def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:

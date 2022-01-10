@@ -1,6 +1,7 @@
 Version 0.17.2 (2021-01-10)
 - Bump hahomematic to 0.17.2
     - Add config option to specify storage directory
+- Set entity enabled default by entity usage enum
 
 Version 0.17.1 (2021-01-09)
 - Bump hahomematic to 0.17.1

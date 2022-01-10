@@ -80,7 +80,9 @@ class ControlUnit:
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
-        self.enable_virtual_channels = control_config.data.get(CONF_ENABLE_VIRTUAL_CHANNELS, False)
+        self.enable_virtual_channels = control_config.data.get(
+            CONF_ENABLE_VIRTUAL_CHANNELS, False
+        )
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
@@ -224,8 +226,8 @@ class ControlUnit:
 
         for entity in new_entities:
             if (
-                entity.unique_id not in active_unique_ids
-                and self._create_in_ha(usage=entity.usage)
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                and entity.unique_id not in active_unique_ids
                 and entity.platform.value in HAHM_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
@@ -244,8 +246,8 @@ class ControlUnit:
         hm_entities = []
         for entity in self.central.hm_entities.values():
             if (
-                entity.unique_id not in active_unique_ids
-                and self._create_in_ha(usage=entity.usage)
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                and entity.unique_id not in active_unique_ids
                 and entity.platform == platform
             ):
                 hm_entities.append(entity)
@@ -259,23 +261,13 @@ class ControlUnit:
         """Return all hm-entities by platform."""
         hm_entities = []
         for entity in self.central.hm_entities.values():
-            if self._create_in_ha(usage=entity.usage) and entity.platform == platform:
+            if (
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                and entity.platform == platform
+            ):
                 hm_entities.append(entity)
 
         return hm_entities
-
-    def _create_in_ha(self, usage: HmEntityUsage) -> bool:
-        """Return, if entity should be enabled in HA."""
-        if usage == HmEntityUsage.ENTITY_NO_CREATE:
-            return False
-        if usage in (HmEntityUsage.CE_PRIMARY, HmEntityUsage.ENTITY):
-            return True
-        if (
-            self.enable_virtual_channels is True
-            and usage == HmEntityUsage.CE_SECONDARY
-        ):
-            return True
-        return False
 
     @callback
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
