@@ -73,7 +73,7 @@ SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
-        vol.Required(ATTR_ENTITY_ID): comp_entity_ids,
+        vol.Required(ATTR_ENTITY_ID): cv.string,
         vol.Required(ATTR_NAME): cv.string,
         vol.Required(ATTR_VALUE): cv.match_all,
     }
