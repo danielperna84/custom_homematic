@@ -1,3 +1,6 @@
+Version 0.19.1 (2021-01-11)
+- Fix set_variable_value
+
 Version 0.19.0 (2021-01-11)
 - Bump hahomematic to 0.19.0
     - Mark secondary channels name with a V --> Vch
