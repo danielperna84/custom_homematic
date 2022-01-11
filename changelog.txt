@@ -1,3 +1,7 @@
+Version 0.18.1 (2021-01-10)
+- Bump hahomematic to 0.18.1
+    - Fix callback to notify un_reach
+
 Version 0.18.0 (2021-01-10)
 - Bump hahomematic to 0.18.0
 - Set entity enabled default by entity usage enum
