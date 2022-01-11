@@ -30,13 +30,7 @@ from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import (
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_PATH,
-    CONF_ENABLE_VIRTUAL_CHANNELS,
-    DOMAIN,
-)
+from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN
 from .control_unit import ControlConfig, ControlUnit
 
 _LOGGER = logging.getLogger(__name__)
@@ -91,10 +85,6 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Optional(
                 ATTR_JSON_PORT, default=data.get(ATTR_JSON_PORT) or UNDEFINED
             ): cv.port,
-            vol.Optional(
-                CONF_ENABLE_VIRTUAL_CHANNELS,
-                default=data.get(CONF_ENABLE_VIRTUAL_CHANNELS) or False,
-            ): bool,
         }
     )
 
@@ -323,7 +313,6 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
         ATTR_TLS: user_input.get(ATTR_TLS),
         ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
-        CONF_ENABLE_VIRTUAL_CHANNELS: user_input.get(CONF_ENABLE_VIRTUAL_CHANNELS),
         ATTR_INTERFACE: {},
     }
 

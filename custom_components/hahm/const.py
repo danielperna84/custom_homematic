@@ -15,7 +15,6 @@ ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
 ATTR_VALUE_TYPE = "value_type"
 
-CONF_ENABLE_VIRTUAL_CHANNELS = "enable_virtual_channels"
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
 CONF_SUBTYPE = "subtype"
