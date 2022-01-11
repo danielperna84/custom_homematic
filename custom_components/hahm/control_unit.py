@@ -53,14 +53,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-from .const import (
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_PATH,
-    CONF_ENABLE_VIRTUAL_CHANNELS,
-    DOMAIN,
-    HAHM_PLATFORMS,
-)
+from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN, HAHM_PLATFORMS
 from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,9 +72,6 @@ class ControlUnit:
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         self._hub: HaHub | None = None
-        self.enable_virtual_channels = control_config.data.get(
-            CONF_ENABLE_VIRTUAL_CHANNELS, False
-        )
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
@@ -148,7 +138,6 @@ class ControlUnit:
                     name=virtual_remote.device_info["name"],
                     model=virtual_remote.device_info["model"],
                     sw_version=virtual_remote.device_info["sw_version"],
-                    entry_type=DeviceEntryType.SERVICE,
                     # Link to the homematic control unit.
                     via_device=cast(
                         Tuple[str, str], virtual_remote.device_info.get("via_device")
@@ -230,7 +219,7 @@ class ControlUnit:
 
         for entity in new_entities:
             if (
-                self._create_in_ha(usage=entity.usage)
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
                 and entity.unique_id not in active_unique_ids
                 and entity.platform.value in HAHM_PLATFORMS
             ):
@@ -250,26 +239,13 @@ class ControlUnit:
         hm_entities = []
         for entity in self.central.hm_entities.values():
             if (
-                self._create_in_ha(usage=entity.usage)
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
                 and entity.unique_id not in active_unique_ids
                 and entity.platform == platform
             ):
                 hm_entities.append(entity)
 
         return hm_entities
-
-    def _create_in_ha(self, usage: HmEntityUsage) -> bool:
-        """Return, if entity should be enabled in HA."""
-        if usage == HmEntityUsage.ENTITY_NO_CREATE:
-            return False
-        if usage in (HmEntityUsage.CE_PRIMARY, HmEntityUsage.ENTITY):
-            return True
-        if self.enable_virtual_channels is True and usage in (
-            HmEntityUsage.CE_SECONDARY,
-            HmEntityUsage.CE_SENSOR,
-        ):
-            return True
-        return False
 
     @callback
     def async_get_hm_entities_by_platform(
@@ -278,7 +254,10 @@ class ControlUnit:
         """Return all hm-entities by platform."""
         hm_entities = []
         for entity in self.central.hm_entities.values():
-            if self._create_in_ha(usage=entity.usage) and entity.platform == platform:
+            if (
+                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                and entity.platform == platform
+            ):
                 hm_entities.append(entity)
 
         return hm_entities

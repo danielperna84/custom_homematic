@@ -14,8 +14,7 @@
           "callback_port": "Callback XML-RPC poort",
           "json_port": "JSON-RPC poort",
           "tls": "Gebruik TLS",
-          "verify_tls": "verifier TLS connection",
-          "enable_virtual_channels": "Virtuele kanalen inschakelen"
+          "verify_tls": "verifier TLS connection"
         }
       },
       "interface": {
@@ -54,8 +53,7 @@
           "callback_port": "Callback XML-RPC poort",
           "json_port": "JSON-RPC poort",
           "tls": "Gebruik TLS",
-          "verify_tls": "verifier TLS connection",
-          "enable_virtual_channels": "Virtuele kanalen inschakelen"
+          "verify_tls": "verifier TLS connection"
         }
       },
       "interface": {
