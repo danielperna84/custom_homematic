@@ -1,3 +1,7 @@
+Version 0.20.0 (2021-01-12)
+- Bump hahomematic to 0.20.0
+- Fix number entities so they can handle percentages
+
 Version 0.19.1 (2021-01-11)
 - Fix set_variable_value
 
