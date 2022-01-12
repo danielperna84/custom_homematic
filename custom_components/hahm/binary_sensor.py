@@ -82,7 +82,7 @@ class HaHomematicBinarySensor(
     """Representation of the Homematic binary sensor."""
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if sensor is active."""
         return self._hm_entity.value
 
@@ -102,6 +102,6 @@ class HaHomematicHubBinarySensor(
         self._attr_entity_registry_enabled_default = False
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return the native value of the entity."""
         return bool(self._hm_entity.value)
