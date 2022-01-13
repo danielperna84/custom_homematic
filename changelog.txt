@@ -1,4 +1,9 @@
-Version 0.20.0 (2021-01-13)
+Version 0.21.1 (2021-01-13)
+- Bump hahomematic to 0.21.1
+    - Fix event identification and generation
+- Remove Alarm Events (not needed)
+
+Version 0.21.0 (2021-01-13)
 - Bump hahomematic to 0.21.0
     - Don't exclude Servicemeldungen from sysvars
     - Use Servicemeldungen sysvar for hub state

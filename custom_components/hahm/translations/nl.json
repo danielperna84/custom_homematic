@@ -81,14 +81,6 @@
   },
   "device_automation": {
     "trigger_type": {
-      "acoustic_alarm_active": "akoestisch alarm actief",
-      "alarmstate": "alarm status",
-      "dew_point_alarm": "dauwpunt alarm",
-      "humidity_alarm": "vochtigheidsalarm",
-      "moisture_detected": "vocht gedetecteerd",
-      "optical_alarm_active": "optisch alarm actief",
-      "smoke_detector_alarm_status": "alarm",
-      "waterlevel_detected": "waterlevel gedetecteerd",
       "press": "Button \"{subtype}\" pressed",
       "press_short": "Button \"{subtype}\" pressed",
       "press_long": "Button \"{subtype}\" long pressed",

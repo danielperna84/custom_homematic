@@ -81,14 +81,6 @@
   },
   "device_automation": {
     "trigger_type": {
-      "acoustic_alarm_active": "Akustischer Alarm aktiv",
-      "alarmstate": "Alarmstatus",
-      "dew_point_alarm": "Taupunkt-Alarm ausgelöst",
-      "humidity_alarm": "Luftfeuchtigkeit-Alarm ausgelöst",
-      "moisture_detected": "Feuchtigkeit erkannt",
-      "optical_alarm_active": "Optischer Alarm aktiv",
-      "smoke_detector_alarm_status": "Rauschmelder-Alarm ausgelöst",
-      "waterlevel_detected": "Wasserstand erkannt",
       "press": "Taster \"{subtype}\" wurde gedrückt",
       "press_short": "Taster \"{subtype}\" wurde gedrückt",
       "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
