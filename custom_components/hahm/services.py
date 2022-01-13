@@ -20,7 +20,6 @@ from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.config_validation import comp_entity_ids
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.service import (
     async_register_admin_service,

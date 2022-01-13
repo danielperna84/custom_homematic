@@ -334,12 +334,6 @@ class ControlUnit:
                 hm_event_type.value,
                 event_data,
             )
-        elif hm_event_type == HmEventType.ALARM:
-            if event_data[ATTR_VALUE] is True:
-                self._hass.bus.fire(
-                    hm_event_type.value,
-                    event_data,
-                )
         elif hm_event_type == HmEventType.SPECIAL:
             device_address = event_data[ATTR_ADDRESS]
             name = self._async_get_device_name(device_address=device_address)
