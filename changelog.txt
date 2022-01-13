@@ -1,3 +1,8 @@
+Version 0.20.0 (2021-01-13)
+- Bump hahomematic to 0.21.0
+    - Don't exclude Servicemeldungen from sysvars
+    - Use Servicemeldungen sysvar for hub state
+
 Version 0.20.0 (2021-01-12)
 - Bump hahomematic to 0.20.0
 - Fix number entities so they can handle percentages
