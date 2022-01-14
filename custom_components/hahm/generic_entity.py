@@ -61,6 +61,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             model=info["model"],
             name=info["name"],
             sw_version=info["sw_version"],
+            suggested_area=info.get("suggested_area"),
             # Link to the homematic control unit.
             via_device=cast(Tuple[str, str], info.get("via_device")),
         )

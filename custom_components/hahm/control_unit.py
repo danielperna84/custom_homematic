@@ -7,7 +7,7 @@ import logging
 from typing import Any, Tuple, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
-from hahomematic.client import Client, ClientConfig
+from hahomematic.client import ClientConfig
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
@@ -86,11 +86,9 @@ class ControlUnit:
         )
         if self._central:
             await self.async_create_clients()
-            self._central.create_devices()
-            await self.async_init_clients()
+            await self._central.init_clients()
             self.async_add_virtual_remotes_to_device_registry()
             await self.async_init_hub()
-            self._central.start_connection_checker()
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
@@ -186,11 +184,6 @@ class ControlUnit:
     def hub(self) -> HaHub | None:
         """Return the Hub."""
         return self._hub
-
-    async def async_init_clients(self) -> None:
-        """Init clients related to control unit."""
-        for client in self.central.clients.values():
-            await client.proxy_init()
 
     @property
     def central(self) -> CentralUnit:
@@ -423,20 +416,25 @@ class ControlUnit:
         central.callback_ha_event = self._async_callback_ha_event
         return central
 
-    async def async_create_clients(self) -> set[Client]:
+    async def async_create_clients(self) -> None:
         """Create clients for the central unit."""
-        clients: set[Client] = set()
+        client_configs: set[ClientConfig] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
-            clients.add(
-                await ClientConfig(
+            client_configs.add(
+                ClientConfig(
                     central=self.central,
                     name=interface_name,
                     port=interface[ATTR_PORT],
                     path=interface.get(ATTR_PATH),
-                ).get_client()
+                )
             )
-        return clients
+        if self._central:
+            await self._central.create_clients(client_configs=client_configs)
+        else:
+            _LOGGER.exception(
+                "ControlUnit.async_create_clients: Unable to create clients. Central is not available"
+            )
 
     def _get_active_entities_by_device_address(
         self, device_address: str

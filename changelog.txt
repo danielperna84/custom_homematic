@@ -1,3 +1,10 @@
+Version 0.22.0 (2021-01-14)
+- Bump hahomematic to 0.22.0
+    - Add rooms to device
+- Add area to device_info.
+  This works, if a homematic device is assigned to a single room in CCU. Multiple channels can be assigned to the same room.
+  If the device is assigned to multiple rooms, or nothing is set, then the area in HA will stay empty
+
 Version 0.21.1 (2021-01-13)
 - Bump hahomematic to 0.21.1
     - Fix event identification and generation
