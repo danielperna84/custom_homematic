@@ -1,3 +1,6 @@
+Version 0.22.2 (2021-01-15)
+- Bump hahomematic to 0.22.2
+
 Version 0.22.1 (2021-01-15)
 - Bump hahomematic to 0.22.1
     - Add VALVE_STATE for hm climate
