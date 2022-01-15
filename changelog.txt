@@ -1,3 +1,9 @@
+Version 0.22.1 (2021-01-15)
+- Bump hahomematic to 0.22.1
+    - Add VALVE_STATE for hm climate
+    - Add entity_type to attributes
+    - Accept LOWBAT only on channel 0
+
 Version 0.22.0 (2021-01-14)
 - Bump hahomematic to 0.22.0
     - Add rooms to device

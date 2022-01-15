@@ -69,7 +69,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        return self._hm_entity.extra_state_attributes
+        return self._hm_entity.attributes
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
