@@ -518,7 +518,7 @@ class HaHub(Entity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes."""
-        return self._hm_hub.extra_state_attributes
+        return self._hm_hub.attributes
 
     async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
