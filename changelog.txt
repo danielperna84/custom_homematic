@@ -1,4 +1,11 @@
-Version 0.22.3 (2021-01-15)
+Version 0.23.0 (2021-01-16)
+- Bump hahomematic to 0.23.2
+    - Make ["DRY", "RAIN"] sensor a binary_sensor
+    - Add converter to sensor value
+        - HmIP-SCTH230 CONCENTRATION to int
+        - Fix RSSI (experimental)
+    - raise connection_checker interval to 60s
+    - Add sleep interval(120s) to wait with reconnect after successful connection check
 - Fix unit of RSSI params
 - Add device class to HM-Sen-RD-O
 
