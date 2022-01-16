@@ -33,7 +33,7 @@ from homeassistant.const import (
     PERCENTAGE,
     POWER_WATT,
     PRESSURE_HPA,
-    SIGNAL_STRENGTH_DECIBELS,
+    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     SPEED_KILOMETERS_PER_HOUR,
     TEMP_CELSIUS,
     TIME_MINUTES,
@@ -468,6 +468,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ("SWDO-PL", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
+    ),
+    ("HM-Sen-RD-O", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.MOISTURE,
     ),
 }
 
