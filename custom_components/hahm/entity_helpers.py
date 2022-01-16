@@ -297,14 +297,14 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     ),
     "RSSI_DEVICE": SensorEntityDescription(
         key="RSSI_DEVICE",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
     "RSSI_PEER": SensorEntityDescription(
         key="RSSI_PEER",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS,
+        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
