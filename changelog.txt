@@ -1,3 +1,7 @@
+Version 0.24.0 (2021-01-16)
+- Bump hahomematic to 0.24.0
+    - improve exception handling
+
 Version 0.23.0 (2021-01-16)
 - Bump hahomematic to 0.23.3
     - Make ["DRY", "RAIN"] sensor a binary_sensor

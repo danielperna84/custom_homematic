@@ -150,7 +150,6 @@ class ControlUnit:
         )
         if self._hub:
             self._hub.de_init()
-        self.central.stop_connection_checker()
         for client in self.central.clients.values():
             await client.proxy_de_init()
         await self.central.stop()
