@@ -1,10 +1,14 @@
-Version 0.24.2 (2021-01-17)
+Version 0.24.3 (2021-01-18)
+- Bump hahomematic to 0.24.4
+    - Improve logging
+    - Generic schema for entities is name(str):channel(int), everything else is custom.
+
+Version 0.24.2 (2021-01-18)
 - Bump hahomematic to 0.24.3
     - improve exception handling
     - fix unique_id for system variables
       This is a breaking change.
       Solution: Activate the old sysvars, restart HA and delete the old sysvars.
-
 
 Version 0.24.1 (2021-01-17)
 - Bump hahomematic to 0.24.2
