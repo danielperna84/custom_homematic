@@ -326,7 +326,7 @@ class ControlUnit:
                 hm_event_type.value,
                 event_data,
             )
-        elif hm_event_type == HmEventType.SPECIAL:
+        elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
             name = self._async_get_device_name(device_address=device_address)
             interface_id = event_data[ATTR_INTERFACE_ID]
