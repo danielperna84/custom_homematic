@@ -190,7 +190,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if interface_input is None:
-            _LOGGER.warning("ConfigFlow.step_interface, no user input")
+            _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
                 data_schema=get_interface_schema(self.data[ATTR_TLS]),
@@ -256,7 +256,7 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Handle the initial step."""
         if interface_input is None:
-            _LOGGER.warning("ConfigFlow.step_interface, no user input")
+            _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
                 data_schema=get_interface_schema(self.data[ATTR_TLS]),
