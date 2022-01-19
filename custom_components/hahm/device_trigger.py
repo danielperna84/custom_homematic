@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from hahomematic.const import CLICK_EVENTS
-from hahomematic.entity import SpecialEvent
+from hahomematic.entity import ClickEvent
 import voluptuous as vol
 
 from homeassistant.components.automation import (
@@ -66,7 +66,7 @@ async def async_get_triggers(
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
             for action_event in hm_device.action_events.values():
-                if isinstance(action_event, SpecialEvent):
+                if not isinstance(action_event, ClickEvent):
                     continue
 
                 trigger = {
