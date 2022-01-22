@@ -1,5 +1,6 @@
 Version 0.26.1 (2021-01-22)
 - Fix initial setup: Integration will completly setup after initial config flow.
+- Cleanup integration init
 
 Version 0.26.0 (2021-01-22)
 - Bump hahomematic to 0.26.0

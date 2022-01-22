@@ -75,7 +75,7 @@ class ControlUnit:
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
-        self._central = await self.async_create_central()
+        self._central = await self._async_create_central()
         self._async_add_central_to_device_registry()
 
     async def async_start(self) -> None:
@@ -87,8 +87,8 @@ class ControlUnit:
         if self._central:
             await self.async_create_clients()
             await self._central.init_clients()
-            self.async_add_virtual_remotes_to_device_registry()
-            await self.async_init_hub()
+            self._async_add_virtual_remotes_to_device_registry()
+            await self._async_init_hub()
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
@@ -110,7 +110,7 @@ class ControlUnit:
         )
 
     @callback
-    def async_add_virtual_remotes_to_device_registry(self) -> None:
+    def _async_add_virtual_remotes_to_device_registry(self) -> None:
         """Add the virtual remotes to device registry."""
         if not self._central:
             _LOGGER.error(
@@ -150,11 +150,9 @@ class ControlUnit:
         )
         if self._hub:
             self._hub.de_init()
-        for client in self.central.clients.values():
-            await client.proxy_de_init()
         await self.central.stop()
 
-    async def async_init_hub(self) -> None:
+    async def _async_init_hub(self) -> None:
         """Init the hub."""
         await self.central.init_hub()
         if not self.central.hub:
@@ -381,7 +379,7 @@ class ControlUnit:
         device_registry = dr.async_get(self._hass)
         return device_registry.async_get_device(identifiers=identifiers)
 
-    async def async_create_central(self) -> CentralUnit:
+    async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
             local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
