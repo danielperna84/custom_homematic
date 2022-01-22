@@ -37,8 +37,8 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_HMIP_RF_ENABLED = "hmip_rf_enabled"
 ATTR_HMIP_RF_PORT = "hmip_rf_port"
-ATTR_BICDOS_RF_ENABLED = "bidos_rf_enabled"
-ATTR_BICDOS_RF_PORT = "bidos_rf_port"
+ATTR_BIDCOS_RF_ENABLED = "bidcos_rf_enabled"
+ATTR_BIDCOS_RF_PORT = "bidcos_rf_port"
 ATTR_VIRTUAL_DEVICES_ENABLED = "virtual_devices_enabled"
 ATTR_VIRTUAL_DEVICES_PORT = "virtual_devices_port"
 ATTR_VIRTUAL_DEVICES_PATH = "virtual_devices_path"
@@ -56,8 +56,8 @@ IF_HS485D_NAME = "HS485D"
 IF_HS485D_PORT = 2000
 IF_HS485D_TLS_PORT = 42000
 IF_BIDCOS_RF_NAME = "BidCos-RF"
-IF_BICDOS_RF_PORT = 2001
-IF_BICDOS_RF_TLS_PORT = 42001
+IF_BIDCOS_RF_PORT = 2001
+IF_BIDCOS_RF_TLS_PORT = 42001
 
 
 def get_domain_schema(data: ConfigType) -> Schema:
@@ -105,10 +105,10 @@ def get_interface_schema(use_tls: bool) -> Schema:
                 ATTR_HMIP_RF_PORT,
                 default=IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT,
             ): int,
-            vol.Required(ATTR_BICDOS_RF_ENABLED, default=True): bool,
+            vol.Required(ATTR_BIDCOS_RF_ENABLED, default=True): bool,
             vol.Required(
-                ATTR_BICDOS_RF_PORT,
-                default=IF_BICDOS_RF_TLS_PORT if use_tls else IF_BICDOS_RF_PORT,
+                ATTR_BIDCOS_RF_PORT,
+                default=IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT,
             ): int,
             vol.Required(ATTR_VIRTUAL_DEVICES_ENABLED, default=True): bool,
             vol.Required(
@@ -190,7 +190,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if interface_input is None:
-            _LOGGER.warning("ConfigFlow.step_interface, no user input")
+            _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
                 data_schema=get_interface_schema(self.data[ATTR_TLS]),
@@ -256,7 +256,7 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Handle the initial step."""
         if interface_input is None:
-            _LOGGER.warning("ConfigFlow.step_interface, no user input")
+            _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
                 data_schema=get_interface_schema(self.data[ATTR_TLS]),
@@ -323,9 +323,9 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
             data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
                 ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
             }
-        if interface_input[ATTR_BICDOS_RF_ENABLED]:
+        if interface_input[ATTR_BIDCOS_RF_ENABLED]:
             data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
-                ATTR_PORT: interface_input[ATTR_BICDOS_RF_PORT],
+                ATTR_PORT: interface_input[ATTR_BIDCOS_RF_PORT],
             }
         if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
             data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {

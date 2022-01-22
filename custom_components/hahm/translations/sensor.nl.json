@@ -15,6 +15,23 @@
       "PRIMARY_ALARM": "Primair  Alarm",
       "INTRUSION_ALARM": "Inbraakalarm",
       "SECONDARY_ALARM": "Secundair Alarm"
+    },
+    "hahm__sec_error": {
+      "NO_ERROR": "no error",
+      "CLUTCH_FAILURE": "clutch failure",
+      "MOTOR_ABORTED": "motor aborted"
+    },
+    "hahm__sec_direction": {
+      "NONE": "none",
+      "UP": "upe",
+      "DOWN": "down",
+      "UNDEFINED": "undefined"
+    },
+    "hahm__sec_win_status": {
+      "TRICKLE_CHARGE": "trickle charge",
+      "CHARGE": "charge",
+      "DISCHARGE": "discharge",
+      "STATE_UNKNOWN": "state unknown"
     }
   }
 }

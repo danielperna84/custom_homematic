@@ -1,3 +1,11 @@
+Version 0.26.0 (2021-01-22)
+- Bump hahomematic to 0.26.0
+    - Add additional params for HM-SEC-Win and HM-SEC-Key
+    - Assign secondary channels for HM dimmers
+- Fix spelling bidos -> bidcos in ConfigFlow
+- Add translation for new params
+- Enable wildcard search for device_type in entity_helper
+
 Version 0.25.0 (2021-01-19)
 - Bump hahomematic to 0.25.0
     - Mark unreachable devices as unavailable on startup

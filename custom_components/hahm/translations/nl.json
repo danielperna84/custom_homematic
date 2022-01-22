@@ -22,8 +22,8 @@
         "data": {
           "hmip_rf_enabled": "Homematic IP inschakelen",
           "hmip_rf_port": "HmIP-RF poort",
-          "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
-          "bidos_rf_port": "HM-RF Port",
+          "bidcos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
+          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
           "virtual_devices_port": "Groepen poort",
           "virtual_devices_path": "Groepen Path",
@@ -61,8 +61,8 @@
         "data": {
           "hmip_rf_enabled": "Homematic IP inschakelen",
           "hmip_rf_port": "HmIP-RF poort",
-          "bidos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
-          "bidos_rf_port": "HM-RF Port",
+          "bidcos_rf_enabled": "Homematic (Bidcos-RF) inschakelen",
+          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
           "virtual_devices_port": "Groepen poort",
           "virtual_devices_path": "Groepen Path",

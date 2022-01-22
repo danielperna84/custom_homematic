@@ -22,8 +22,8 @@
         "data": {
           "hmip_rf_enabled": "enable Homematic IP",
           "hmip_rf_port": "HmIP-RF Port",
-          "bidos_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "bidos_rf_port": "HM-RF Port",
+          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "enable Groups (Heating-Group)",
           "virtual_devices_port": "Groups Port",
           "virtual_devices_path": "Groups Path",
@@ -61,8 +61,8 @@
         "data": {
           "hmip_rf_enabled": "enable Homematic IP",
           "hmip_rf_port": "HmIP-RF Port",
-          "bidos_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "bidos_rf_port": "HM-RF Port",
+          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "enable Groups (Heating-Group)",
           "virtual_devices_port": "Groups Port",
           "virtual_devices_path": "Groups Path",
