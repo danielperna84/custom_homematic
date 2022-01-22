@@ -365,8 +365,28 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
 
 _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[tuple[str, str], SensorEntityDescription] = {
     ("HmIP-SRH", "STATE"): SensorEntityDescription(
-        key="STATE",
+        key="SRH_STATE",
         device_class="hahm__srh",
+    ),
+    ("HM-Sec-Win", "STATUS"): SensorEntityDescription(
+        key="SEC-WIN_STATUS",
+        device_class="hahm__sec_win_status",
+    ),
+    ("HM-Sec-Win", "DIRECTION"): SensorEntityDescription(
+        key="SEC-WIN_DIRECTION",
+        device_class="hahm__sec_direction",
+    ),
+    ("HM-Sec-Win", "ERROR"): SensorEntityDescription(
+        key="SEC-WIN_ERROR",
+        device_class="hahm__sec_error",
+    ),
+    ("HM-Sec-Key", "DIRECTION"): SensorEntityDescription(
+        key="SEC-KEY_DIRECTION",
+        device_class="hahm__sec_direction",
+    ),
+    ("HM-Sec-Key", "ERROR"): SensorEntityDescription(
+        key="SEC-KEY_ERROR",
+        device_class="hahm__sec_error",
     ),
 }
 

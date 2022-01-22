@@ -15,6 +15,23 @@
       "PRIMARY_ALARM": "Primär-Alarm",
       "INTRUSION_ALARM": "Einbruch-Alarm",
       "SECONDARY_ALARM": "Sekundär-Alarm"
+    },
+    "hahm__sec_error": {
+      "NO_ERROR": "kein Fehler",
+      "CLUTCH_FAILURE": "Kupplungsschaden",
+      "MOTOR_ABORTED": "Motorfehler"
+    },
+    "hahm__sec_direction": {
+      "NONE": "nichts",
+      "UP": "audwärts",
+      "DOWN": "abwärts",
+      "UNDEFINED": "nicht definiert"
+    },
+    "hahm__sec_win_status": {
+      "TRICKLE_CHARGE": "Erhaltungsladung",
+      "CHARGE": "aufladen",
+      "DISCHARGE": "entladen",
+      "STATE_UNKNOWN": "Status unbekannt"
     }
   }
 }
