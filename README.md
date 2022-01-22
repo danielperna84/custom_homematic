@@ -10,8 +10,10 @@ Please report issues in [hahomamatic repo](https://github.com/danielperna84/haho
 
 # Homematic(IP) Local (WIP documentation)
 
-The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit.
+The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic Hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
+
+Please take the time to read the entire documentation before asking for help. It will answer the most common questions that come up while working with this integration.
 
 ## Device support
 
@@ -159,3 +161,152 @@ hs485d_port:
 ### callback_host and callback_port
 
 These two options are required for _special_ network environments. If for example Home Assistant is running within a Docker container and detects its own IP to be within the Docker network, the CCU won't be able to establish the connection to Home Assistant. In this case you have to specify which address and port the CCU should connect to. This may require forwarding connections on the Docker host machine to the relevant container.
+
+## Services
+
+The Homematic(IP) Local integration makes various custom services available.
+
+### `hahm.delete_device`
+
+Delete a device from Home Assistant.
+
+### `hahm.disable_away_mode`
+
+Disable the away mode for `climate` devices. This only works with Homematic IP devices.
+
+### `hahm.enable_away_mode_by_calendar`
+
+Enable the away mode immediately, and specify the end time by date. This only works with Homematic IP devices.
+
+### `hahm.enable_away_mode_by_duration`
+
+Enable the away mode immediately, and specify the end time by setting a duration. This only works with Homematic IP devices.
+
+### `hahm.export_device_definition`
+
+Export a device definition to 'Your home-assistant config directory'/hahm/export*. This data can be used by the developers to add customized entities for new devices.
+
+### `hahm.put_paramset`
+
+Call to `putParamset` in the XML-RPC interface.
+
+### `hahm.set_device_value`
+
+Set a device parameter via the XML-RPC interface.
+
+### `hahm.set_install_mode`
+
+Turn on the install mode on the provided Interface to pair new devices.
+
+### `hahm.set_variable_value`
+
+Set the value of a variable on your HomeMatic hub.
+
+## Additional information
+
+### Devices with buttons
+
+Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
+
+### Pressing buttons via automation
+
+It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `hahm.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
+
+```yaml
+service: hahm.set_device_value
+data:
+  device_id: abcdefg...
+  parameter: PRESS_SHORT
+  value: 'true'
+  value_type: boolean
+  channel: 3
+```
+
+### Events for Homematic IP devices
+
+To receive button-press events for some Homematic IP devices like WRC2 / WRC6 (wall switch) or SPDR (passage sensor) or the KRC4 (key ring remote control) you have to temporary create an empty program for each channel in the CCU:
+
+1. In the menu of your CCU's admin panel go to `Programs and connections` > `Programs & CCU connection`
+2. Go to `New` in the footer menu
+3. Click the plus icon below `Condition: If...` and press the button `Device selection`
+4. Select one of the device's channels you need (1-2 / 1-6 for WRC2 / WRC6 and 2-3 for SPDR)
+5. Select short or long key press
+6. Save the program with the `OK` button
+7. Trigger the program by pressing the button as configured in step 5. Your device might indicate success via a green LED or similar. When you select the device in `Status and control` > `Devices` on the CCU, the `Last Modified` field should no longer be empty
+8. When your channel is working now, you can edit it to select the other channels one by one
+9. At the end, you can delete this program from the CCU
+
+## Examples in YAML
+
+Set boolean variable to true:
+
+```yaml
+...
+action:
+  service: hahm.set_variable_value
+  data:
+    entity_id: hahm.ccu2
+    name: Variablename
+    value: '3'
+```
+
+Manually turn on a switch actor:
+
+```yaml
+...
+action:
+  service: hahm.set_device_value
+  data:
+    device_id: abcdefg...
+    channel: 1
+    parameter: STATE
+    value: 'true'
+    value_type: boolean
+```
+
+Manually set temperature on thermostat:
+
+```yaml
+...
+action:
+  service: hahm.set_device_value
+  data:
+    device_id: abcdefg...
+    channel: 4
+    parameter: SET_TEMPERATURE
+    value: '23.0'
+    value_type: double
+```
+
+Set the week program of a wall thermostat:
+
+```yaml
+...
+action:
+  service: hahm.put_paramset
+  data:
+    device_id: abcdefg...
+    paramset_key: MASTER
+    paramset:
+      WEEK_PROGRAM_POINTER: 1
+```
+
+Set the week program of a wall thermostat with explicit `rx_mode` (BidCos-RF only):
+
+```yaml
+...
+action:
+  service: hahm.put_paramset
+  data:
+    device_id: abcdefg...
+    paramset_key: MASTER
+    rx_mode: WAKEUP
+    paramset:
+      WEEK_PROGRAM_POINTER: 1
+```
+
+BidCos-RF devices have an optional parameter for put_paramset which defines the way the configuration data is sent to the device.
+
+`rx_mode` `BURST`, which is the default value, will wake up every device when submitting the configuration data and hence makes all devices use some battery. It is instant, i.e. the data is sent almost immediately.
+
+`rx_mode` `WAKEUP` will send the configuration data only after a device submitted updated values to CCU, which usually happens every 3 minutes. It will not wake up every device and thus saves devices battery.
