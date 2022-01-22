@@ -136,9 +136,12 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     ).async_get_control_unit()
     await control_unit.async_create_central()
     try:
+        is_connected: bool | None = False
         await control_unit.async_create_clients()
         if first_client := control_unit.central.get_client():
-            return await first_client.is_connected()
+            is_connected = await first_client.is_connected()
+        await control_unit.async_stop()
+        return is_connected
     except ConnectionError as cex:
         _LOGGER.exception(cex)
         raise CannotConnect from cex
