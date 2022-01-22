@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import logging
 from xmlrpc.client import ProtocolError
-
+from pprint import pformat
+from homeassistant.components import ssdp
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -58,6 +59,8 @@ IF_HS485D_TLS_PORT = 42000
 IF_BIDCOS_RF_NAME = "BidCos-RF"
 IF_BIDCOS_RF_PORT = 2001
 IF_BIDCOS_RF_TLS_PORT = 42001
+
+EQ3__MANUFACTURERURL = "http://www.homematic.com"
 
 
 def get_domain_schema(data: ConfigType) -> Schema:
@@ -226,6 +229,18 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
         """Get the options flow for this handler."""
         return HahmOptionsFlowHandler(config_entry)
+
+    async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
+        """Handle a discovered Homematic(IP) Local CCU."""
+        if (
+            discovery_info.upnp.get(ssdp.ATTR_UPNP_MANUFACTURER_URL)
+            != EQ3__MANUFACTURERURL
+        ):
+            return self.async_abort(reason="not_hahm_bridge")
+
+        _LOGGER.info("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
+
+        return self.async_abort(reason="test_only")
 
 
 class HahmOptionsFlowHandler(config_entries.OptionsFlow):
