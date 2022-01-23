@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import logging
-from xmlrpc.client import ProtocolError
 from pprint import pformat
-from homeassistant.components import ssdp
+from typing import cast
+from urllib.parse import urlparse
+from xmlrpc.client import ProtocolError
+
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
@@ -24,6 +26,7 @@ import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
 from homeassistant import config_entries
+from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
@@ -180,7 +183,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
-            await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
+            await self.async_set_unique_id(user_input[ATTR_HOST])
             self._abort_if_unique_id_configured()
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
@@ -238,9 +241,17 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         ):
             return self.async_abort(reason="not_hahm_bridge")
 
-        _LOGGER.info("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
+        _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
 
-        return self.async_abort(reason="test_only")
+        parsed_url = urlparse(discovery_info.ssdp_location)
+        hostname = cast(str, parsed_url.hostname)
+
+        await self.async_set_unique_id(hostname)
+        self._abort_if_unique_id_configured(updates={ATTR_HOST: hostname})
+        
+        self.data = {ATTR_HOST: hostname}
+        self.context["title_placeholders"] = {"host": hostname}
+        return await self.async_step_user()
 
 
 class HahmOptionsFlowHandler(config_entries.OptionsFlow):
