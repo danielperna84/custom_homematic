@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import logging
 from pprint import pformat
-from typing import cast
+import socket
+from typing import Any, cast
 from urllib.parse import urlparse
 from xmlrpc.client import ProtocolError
 
@@ -183,7 +184,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
-            await self.async_set_unique_id(user_input[ATTR_HOST])
+            ip_address = _get_ip_address(user_input[ATTR_HOST])
+            await self.async_set_unique_id(ip_address)
             self._abort_if_unique_id_configured()
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
@@ -227,12 +229,6 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
-        """Get the options flow for this handler."""
-        return HahmOptionsFlowHandler(config_entry)
-
     async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
         """Handle a discovered Homematic(IP) Local CCU."""
         if (
@@ -242,16 +238,25 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="not_hahm_bridge")
 
         _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
+        instance_name = _get_instance_name(
+            friendly_name=discovery_info.upnp.get("friendlyName")
+        )
 
-        parsed_url = urlparse(discovery_info.ssdp_location)
-        hostname = cast(str, parsed_url.hostname)
+        host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
+        ip_address = _get_ip_address(host)
+        await self.async_set_unique_id(ip_address)
 
-        await self.async_set_unique_id(hostname)
-        self._abort_if_unique_id_configured(updates={ATTR_HOST: hostname})
-        
-        self.data = {ATTR_HOST: hostname}
-        self.context["title_placeholders"] = {"host": hostname}
+        self._abort_if_unique_id_configured(updates={ATTR_HOST: host})
+
+        self.data = {ATTR_INSTANCE_NAME: instance_name, ATTR_HOST: host}
+        self.context["title_placeholders"] = {"host": host}
         return await self.async_step_user()
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
+        """Get the options flow for this handler."""
+        return HahmOptionsFlowHandler(config_entry)
 
 
 class HahmOptionsFlowHandler(config_entries.OptionsFlow):
@@ -364,3 +369,25 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
             data[ATTR_INTERFACE][IF_HS485D_NAME] = {
                 ATTR_PORT: interface_input[ATTR_HS485D_PORT],
             }
+
+
+def _get_instance_name(friendly_name: Any | None) -> str | None:
+    if not friendly_name:
+        return None
+    name = str(friendly_name)
+    if name.startswith("HomeMatic Central - "):
+        return name.replace("HomeMatic Central - ", "")
+    if name.startswith("HomeMatic Central "):
+        return name.replace("HomeMatic Central ", "")
+    return name
+
+
+# Do not add: pylint disable=no-member
+# This is only an issue on MacOS
+def _get_ip_address(host: str) -> str:
+    """Get IP by hostname"""
+    try:
+        return socket.gethostbyname(host)
+    except Exception as ex:
+        _LOGGER.warning("Can't resolve host for %s", host)
+        raise CannotConnect(ex) from ex
