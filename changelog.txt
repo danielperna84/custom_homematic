@@ -1,5 +1,8 @@
-Version 0.26.1 (2021-01-22)
-- Fix initial setup: Integration will completly setup after initial config flow.
+Version 0.26.1 (2021-01-23)
+- Add upnp discovery to config flow
+
+Version 0.26.1 (2021-01-23)
+- Fix initial setup: Integration will completely setup after initial config flow.
   A reload of the integration or a restart of HA is no longer necessary.
 - Cleanup integration init.
 

@@ -308,8 +308,9 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
+            ip_address = _get_ip_address(self.data[ATTR_HOST])
             self.hass.config_entries.async_update_entry(
-                entry=self.config_entry, data=self.data
+                entry=self.config_entry, unique_id=ip_address, data=self.data
             )
             return self.async_create_entry(title="", data={})
 
