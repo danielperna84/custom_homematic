@@ -87,7 +87,6 @@ class ControlUnit:
         if self._central:
             await self.async_create_clients()
             await self._central.init_clients()
-            self._async_add_virtual_remotes_to_device_registry()
             await self._async_init_hub()
         else:
             _LOGGER.exception(
@@ -285,6 +284,7 @@ class ControlUnit:
                         ),
                         hm_entities,  # Don't send device if None, it would override default value in listeners
                     )
+            self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
             return None
