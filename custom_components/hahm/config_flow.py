@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import logging
+from pprint import pformat
+import socket
+from typing import Any, cast
+from urllib.parse import urlparse
 from xmlrpc.client import ProtocolError
 
 from hahomematic.const import (
@@ -23,6 +27,7 @@ import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
 from homeassistant import config_entries
+from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
@@ -58,6 +63,8 @@ IF_HS485D_TLS_PORT = 42000
 IF_BIDCOS_RF_NAME = "BidCos-RF"
 IF_BIDCOS_RF_PORT = 2001
 IF_BIDCOS_RF_TLS_PORT = 42001
+
+EQ3__MANUFACTURERURL = "http://www.homematic.com"
 
 
 def get_domain_schema(data: ConfigType) -> Schema:
@@ -177,7 +184,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
-            await self.async_set_unique_id(user_input[ATTR_INSTANCE_NAME])
+            ip_address = _get_ip_address(user_input[ATTR_HOST])
+            await self.async_set_unique_id(ip_address)
             self._abort_if_unique_id_configured()
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
@@ -220,6 +228,29 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=get_domain_schema(data=self.data),
             errors=errors,
         )
+
+    async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
+        """Handle a discovered Homematic(IP) Local CCU."""
+        if (
+            discovery_info.upnp.get(ssdp.ATTR_UPNP_MANUFACTURER_URL)
+            != EQ3__MANUFACTURERURL
+        ):
+            return self.async_abort(reason="not_hahm_bridge")
+
+        _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
+        instance_name = _get_instance_name(
+            friendly_name=discovery_info.upnp.get("friendlyName")
+        )
+
+        host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
+        ip_address = _get_ip_address(host)
+        await self.async_set_unique_id(ip_address)
+
+        self._abort_if_unique_id_configured(updates={ATTR_HOST: host})
+
+        self.data = {ATTR_INSTANCE_NAME: instance_name, ATTR_HOST: host}
+        self.context["title_placeholders"] = {"host": host}
+        return await self.async_step_user()
 
     @staticmethod
     @callback
@@ -277,8 +308,9 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
+            ip_address = _get_ip_address(self.data[ATTR_HOST])
             self.hass.config_entries.async_update_entry(
-                entry=self.config_entry, data=self.data
+                entry=self.config_entry, unique_id=ip_address, data=self.data
             )
             return self.async_create_entry(title="", data={})
 
@@ -338,3 +370,25 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
             data[ATTR_INTERFACE][IF_HS485D_NAME] = {
                 ATTR_PORT: interface_input[ATTR_HS485D_PORT],
             }
+
+
+def _get_instance_name(friendly_name: Any | None) -> str | None:
+    if not friendly_name:
+        return None
+    name = str(friendly_name)
+    if name.startswith("HomeMatic Central - "):
+        return name.replace("HomeMatic Central - ", "")
+    if name.startswith("HomeMatic Central "):
+        return name.replace("HomeMatic Central ", "")
+    return name
+
+
+# Do not add: pylint disable=no-member
+# This is only an issue on MacOS
+def _get_ip_address(host: str) -> str:
+    """Get IP by hostname"""
+    try:
+        return socket.gethostbyname(host)
+    except Exception as ex:
+        _LOGGER.warning("Can't resolve host for %s", host)
+        raise CannotConnect(ex) from ex
