@@ -1,4 +1,4 @@
-Version 0.26.1 (2021-01-23)
+Version 0.26.2 (2021-01-23)
 - Add upnp discovery to config flow
 
 Version 0.26.1 (2021-01-23)
