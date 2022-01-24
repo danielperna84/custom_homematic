@@ -8,7 +8,8 @@
   "requirements1": ["git+https://github.com/SukramJ/hahomematic.git@dev1#hahomematic"],
   "ssdp": [
     {
-      "manufacturer": "EQ3"
+      "manufacturer": "EQ3",
+      "manufacturerURL": "http://www.homematic.com"
     }
   ],
   "zeroconf": [],
@@ -16,5 +17,5 @@
   "dependencies": [],
   "codeowners": ["@danielperna84", "@SukramJ"],
   "iot_class": "local_push",
-  "version": "0.26.2"
+  "version": "0.26.3"
 }
