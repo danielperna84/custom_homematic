@@ -1,3 +1,7 @@
+Version 0.27.0 (2021-01-25)
+- Bump hahomematic to 0.27.0
+    - Add hmcli.py as command line script
+
 Version 0.26.3 (2021-01-24)
 - Add name/host to discovered config flow
 
