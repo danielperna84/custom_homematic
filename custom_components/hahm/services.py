@@ -351,7 +351,7 @@ async def _async_service_put_paramset(
             await control_unit.central.put_paramset(
                 interface_id=interface_id,
                 channel_address=channel_address,
-                paramset=paramset_key,
+                paramset_key=paramset_key,
                 value=paramset,
                 rx_mode=rx_mode,
             )
