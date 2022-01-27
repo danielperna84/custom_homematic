@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic, Tuple, cast
+from typing import Any, Generic, cast
 
 from hahomematic.const import HmEntityUsage
 from hahomematic.entity import CallbackEntity
@@ -63,7 +63,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             sw_version=info["sw_version"],
             suggested_area=info.get("suggested_area"),
             # Link to the homematic control unit.
-            via_device=cast(Tuple[str, str], info.get("via_device")),
+            via_device=cast(tuple[str, str], info.get("via_device")),
         )
 
     @property
@@ -83,9 +83,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._cu.async_add_hm_entity(
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
-        # Init data of entity.
-        if hasattr(self._hm_entity, "init_entity_data"):
-            await self._hm_entity.init_entity_data()
+        # Init value of entity.
+        if hasattr(self._hm_entity, "init_entity_value"):
+            self._hm_entity.init_entity_value()
 
     def _get_entity_registry_enabled_default(self) -> bool | None:
         """Return, if entity should be enabled based on usage attribute."""

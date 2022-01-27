@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Tuple, cast
+from typing import Any, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import ClientConfig
@@ -86,7 +86,7 @@ class ControlUnit:
         )
         if self._central:
             await self.async_create_clients()
-            await self._central.init_clients()
+            self._central.start_connection_checker()
             await self._async_init_hub()
         else:
             _LOGGER.exception(
@@ -137,7 +137,7 @@ class ControlUnit:
                     sw_version=virtual_remote.device_info["sw_version"],
                     # Link to the homematic control unit.
                     via_device=cast(
-                        Tuple[str, str], virtual_remote.device_info.get("via_device")
+                        tuple[str, str], virtual_remote.device_info.get("via_device")
                     ),
                 )
 
@@ -271,10 +271,16 @@ class ControlUnit:
     def _async_callback_system_event(self, src: str, *args: Any) -> None:
         """Execute the callback for system based events."""
         if src == HH_EVENT_DEVICES_CREATED:
-            new_entity_unique_ids = args[1]
+            new_devices = args[0]
+
+            new_entities = []
+            for device in new_devices:
+                new_entities.extend(device.entities.values())
+                new_entities.extend(device.custom_entities.values())
+
             # Handle event of new device creation in HAHM.
             for (platform, hm_entities) in self.async_get_new_hm_entities(
-                new_entities=new_entity_unique_ids
+                new_entities=new_entities
             ).items():
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
@@ -428,6 +434,7 @@ class ControlUnit:
             )
         if self._central:
             await self._central.create_clients(client_configs=client_configs)
+            await self._central.init_clients()
         else:
             _LOGGER.exception(
                 "ControlUnit.async_create_clients: Unable to create clients. Central is not available"

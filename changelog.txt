@@ -1,3 +1,8 @@
+Version 0.28.0 (2021-01-27)
+- Bump hahomematic to 0.28.0
+    - Create client after init failure
+    - Reduce CCU calls
+
 Version 0.27.1 (2021-01-25)
 - Bump hahomematic to 0.27.2
     - optimize initial data load
