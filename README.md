@@ -47,8 +47,9 @@ To allow communication to your HomeMatic hub, a few ports on the hub have to be 
 
 ### Authentication
 
-This integration always passes credentials to the HomeMatic hub when connecting. These will be silently ignored if you have not enabled authentication on the hub. It is imporant to note though, that special characters within your credentials may break the possibility to authenticate.  
-The account used for communication is required to have admin privileges on your HomeMatic hub.
+This integration always passes credentials to the HomeMatic hub when connecting. These will be silently ignored if you have not enabled authentication on the hub. It is imporant to note though, that special characters (like `#`) within your credentials may break the possibility to authenticate.  
+The account used for communication is required to have admin privileges on your HomeMatic hub.  
+If you are using Homegear and have not set up authentication, please enter dummy-data to complete the configuration flow.
 
 # Configuration
 
@@ -64,7 +65,7 @@ Adding Homematic(IP) Local to you Home Assistant instance can be done via the us
 
 ## Auto-discovery
 
-The integration supports auto-discovery for the CCU and compatible hubs like RaspberryMatic. The Home Assistant User Interface will notify you about the integrationg being available for setup. It will pre-fill the instance-name and IP address of your HomeMatic hub. If you have alredy set up the integration manually, you can either click the _Ignore_ button or re-configure your existing instance to let Home Assistant know the existing instance is the one it has detected.
+The integration supports auto-discovery for the CCU and compatible hubs like RaspberryMatic. The Home Assistant User Interface will notify you about the integrationg being available for setup. It will pre-fill the instance-name and IP address of your HomeMatic hub. If you have already set up the integration manually, you can either click the _Ignore_ button or re-configure your existing instance to let Home Assistant know the existing instance is the one it has detected.
 
 ### Configuration Variables
 
@@ -164,7 +165,8 @@ hs485d_port:
 
 ### JSON-RPC Port
 
-The JSON-RPC Port is used to fetch names and room information from the CCU. The default value is `80`. But if you enable TLS the port `443` will be used. You only have to enter a custom value here if you have set up the JSON-RPC API to be available on a different port.
+The JSON-RPC Port is used to fetch names and room information from the CCU. The default value is `80`. But if you enable TLS the port `443` will be used. You only have to enter a custom value here if you have set up the JSON-RPC API to be available on a different port.  
+If you are using Homegear the names are fetched using metadata available via XML-RPC. Hence the JSON-RPC port is irrelevant for Homegear users.
 
 ### callback_host and callback_port
 
