@@ -7,7 +7,7 @@ import logging
 from typing import Any, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
-from hahomematic.client import ClientConfig
+from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
@@ -78,16 +78,14 @@ class ControlUnit:
         self._central = await self._async_create_central()
         self._async_add_central_to_device_registry()
 
-    async def async_start(self) -> None:
+    async def async_start(self, check_only: bool = False) -> None:
         """Start the control unit."""
         _LOGGER.debug(
             "Starting Homematic(IP) Local ControlUnit %s",
             self._data[ATTR_INSTANCE_NAME],
         )
         if self._central:
-            await self.async_create_clients()
-            self._central.start_connection_checker()
-            await self._async_init_hub()
+            await self._central.start(check_only=check_only)
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
@@ -153,7 +151,6 @@ class ControlUnit:
 
     async def _async_init_hub(self) -> None:
         """Init the hub."""
-        await self.central.init_hub()
         if not self.central.hub:
             return None
         self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
@@ -394,6 +391,16 @@ class ControlUnit:
 
         storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"
         client_session = aiohttp_client.async_get_clientsession(self._hass)
+        interface_configs: set[InterfaceConfig] = set()
+        for interface_name in self._data[ATTR_INTERFACE]:
+            interface = self._data[ATTR_INTERFACE][interface_name]
+            interface_configs.add(
+                InterfaceConfig(
+                    name=interface_name,
+                    port=interface[ATTR_PORT],
+                    path=interface.get(ATTR_PATH),
+                )
+            )
         central = await CentralConfig(
             domain=DOMAIN,
             name=self._data[ATTR_INSTANCE_NAME],
@@ -413,32 +420,12 @@ class ControlUnit:
             callback_port=self._data.get(ATTR_CALLBACK_PORT)
             if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
             else None,
+            interface_configs=interface_configs,
         ).get_central()
         # register callback
         central.callback_system_event = self._async_callback_system_event
         central.callback_ha_event = self._async_callback_ha_event
         return central
-
-    async def async_create_clients(self) -> None:
-        """Create clients for the central unit."""
-        client_configs: set[ClientConfig] = set()
-        for interface_name in self._data[ATTR_INTERFACE]:
-            interface = self._data[ATTR_INTERFACE][interface_name]
-            client_configs.add(
-                ClientConfig(
-                    central=self.central,
-                    name=interface_name,
-                    port=interface[ATTR_PORT],
-                    path=interface.get(ATTR_PATH),
-                )
-            )
-        if self._central:
-            await self._central.create_clients(client_configs=client_configs)
-            await self._central.init_clients()
-        else:
-            _LOGGER.exception(
-                "ControlUnit.async_create_clients: Unable to create clients. Central is not available"
-            )
 
     def _get_active_entities_by_device_address(
         self, device_address: str
@@ -462,11 +449,13 @@ class ControlConfig:
         hass: HomeAssistant,
         entry_id: str,
         data: Mapping[str, Any],
+        check_only: bool = False,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
+        self.check_only = check_only
 
     async def async_get_control_unit(self) -> ControlUnit:
         """Identify the used client."""

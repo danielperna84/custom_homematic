@@ -142,7 +142,7 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
     ).async_get_control_unit()
     try:
         is_connected: bool = False
-        await control_unit.async_create_clients()
+        await control_unit.async_start(check_only=True)
         if first_client := control_unit.central.get_client():
             is_connected = await first_client.is_connected()
         await control_unit.async_stop()

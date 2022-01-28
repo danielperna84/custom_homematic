@@ -33,7 +33,6 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
     control = hass.data[DOMAIN][config_entry.entry_id]
     await async_unload_services(hass)
     await control.async_stop()
-    await control.central.clear_all()
     if unload_ok := await hass.config_entries.async_unload_platforms(
         config_entry, HAHM_PLATFORMS
     ):
