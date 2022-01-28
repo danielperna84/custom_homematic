@@ -86,6 +86,7 @@ class ControlUnit:
         )
         if self._central:
             await self._central.start(check_only=check_only)
+            await self._async_init_hub()
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",

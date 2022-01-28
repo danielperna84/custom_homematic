@@ -1,3 +1,6 @@
+Version 0.28.2 (2021-01-28)
+- Fix hub init
+
 Version 0.28.1 (2021-01-28)
 - Bump hahomematic to 0.28.1
     - Cleanup central API
