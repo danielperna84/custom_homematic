@@ -1,3 +1,7 @@
+Version 0.28.3 (2021-01-29)
+- Bump hahomematic to 0.28.2
+    - Make names cache non-persistent. 
+
 Version 0.28.2 (2021-01-28)
 - Fix hub init
 
