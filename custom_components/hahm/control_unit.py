@@ -140,6 +140,13 @@ class ControlUnit:
                     ),
                 )
 
+    @callback
+    def stop(self, event) -> None:
+        """Wrap the call to async_stop.
+        Used as an argument to EventBus.async_listen_once.
+        """
+        self._hass.async_create_task(self.async_stop())
+
     async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug(

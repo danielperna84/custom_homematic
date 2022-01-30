@@ -1,4 +1,7 @@
 Version 0.28.6 (2021-01-30)
+- Listen on HA stop event to stop the central
+
+Version 0.28.6 (2021-01-30)
 - Bump hahomematic to 0.28.6
   - Switch value caching from getPramset to getValue
     That should fix loading of VirtualDevices and HmRF
