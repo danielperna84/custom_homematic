@@ -85,7 +85,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         )
         # Init value of entity.
         if hasattr(self._hm_entity, "init_entity_value"):
-            self._hm_entity.init_entity_value()
+            await self._hm_entity.init_entity_value()
 
     def _get_entity_registry_enabled_default(self) -> bool | None:
         """Return, if entity should be enabled based on usage attribute."""
