@@ -1,4 +1,8 @@
-Version 0.28.6 (2021-01-30)
+Version 0.28.8 (2021-01-31)
+- Bump hahomematic to 0.28.7
+  - Add additional check to reconnect
+
+Version 0.28.7 (2021-01-30)
 - Listen on HA stop event to stop the central
 
 Version 0.28.6 (2021-01-30)
