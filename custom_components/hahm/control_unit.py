@@ -327,9 +327,6 @@ class ControlUnit:
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
         """Execute the callback used for device related events."""
-        if device_id := self._async_get_device_id(event_data[ATTR_ADDRESS]):
-            event_data[CONF_DEVICE_ID] = device_id
-
         if hm_event_type == HmEventType.KEYPRESS:
             self._hass.bus.fire(
                 hm_event_type.value,
@@ -337,6 +334,8 @@ class ControlUnit:
             )
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
+            if device_id := self._async_get_device_id(device_address):
+                event_data[CONF_DEVICE_ID] = device_id
             name = self._async_get_device_name(device_address=device_address)
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
@@ -352,7 +351,19 @@ class ControlUnit:
                     self._async_dismiss_persistent_notification(
                         identifier=device_address
                     )
-
+        elif hm_event_type == HmEventType.INTERFACE:
+            interface_id = event_data[ATTR_INTERFACE_ID]
+            available = event_data[ATTR_VALUE]
+            title = f"{DOMAIN.upper()}-Interface not reachable"
+            message = f"No connection to interface {interface_id}"
+            if available:
+                self._async_dismiss_persistent_notification(
+                    identifier=interface_id
+                )
+            else:
+                self._async_create_persistent_notification(
+                    identifier=interface_id, title=title, message=message
+                )
     @callback
     def _async_create_persistent_notification(
         self, identifier: str, title: str, message: str

@@ -1,3 +1,9 @@
+Version 0.29.0 (2021-02-01)
+- Bump hahomematic to 0.29.0
+  - Make device availability dependent on the client
+  - Fire event about interface availability
+- Display persistent notification, if interface is not available
+
 Version 0.28.8 (2021-01-31)
 - Bump hahomematic to 0.28.7
   - Add additional check to reconnect
