@@ -1,3 +1,6 @@
+Version 0.29.1 (2021-02-01)
+- Enhance entity_helper with sets for entity_descriptions
+
 Version 0.29.0 (2021-02-01)
 - Bump hahomematic to 0.29.0
   - Make device availability dependent on the client

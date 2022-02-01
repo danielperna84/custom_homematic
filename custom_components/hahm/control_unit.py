@@ -141,7 +141,7 @@ class ControlUnit:
                 )
 
     @callback
-    def stop(self, event) -> None:
+    def stop(self, *args: Any) -> None:
         """Wrap the call to async_stop.
         Used as an argument to EventBus.async_listen_once.
         """
@@ -357,13 +357,12 @@ class ControlUnit:
             title = f"{DOMAIN.upper()}-Interface not reachable"
             message = f"No connection to interface {interface_id}"
             if available:
-                self._async_dismiss_persistent_notification(
-                    identifier=interface_id
-                )
+                self._async_dismiss_persistent_notification(identifier=interface_id)
             else:
                 self._async_create_persistent_notification(
                     identifier=interface_id, title=title, message=message
                 )
+
     @callback
     def _async_create_persistent_notification(
         self, identifier: str, title: str, message: str

@@ -4,8 +4,8 @@ from __future__ import annotations
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
+from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN, HAHM_PLATFORMS
 from .control_unit import ControlConfig
@@ -28,9 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     await async_setup_services(hass)
 
     # Register on HA stop event to gracefully shutdown Homematic(IP) Local connection
-    hass.bus.async_listen_once(
-        EVENT_HOMEASSISTANT_STOP, control.stop
-    )
+    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.stop)
     return True
 
 
