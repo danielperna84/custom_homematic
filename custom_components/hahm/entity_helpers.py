@@ -53,29 +53,14 @@ _BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {}
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {}
 
-_NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[tuple[str, str], NumberEntityDescription] = {
+_NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
+    tuple[str | frozenset[str], str], NumberEntityDescription
+] = {
     # HmIP-eTRV, HmIP-eTRV-2
-    ("TRV", "LEVEL"): NumberEntityDescription(
-        key="LEVEL",
-        icon="mdi:pipe-valve",
-    ),
-    # HmIP-eTRV-B
-    ("TRV-B", "LEVEL"): NumberEntityDescription(
-        key="LEVEL",
-        icon="mdi:pipe-valve",
-    ),
-    # HmIP-eTRV-C
-    ("TRV-C", "LEVEL"): NumberEntityDescription(
-        key="LEVEL",
-        icon="mdi:pipe-valve",
-    ),
-    # HmIP-FALMOT-C12
-    ("HMIP_FALMOT-C12", "LEVEL"): NumberEntityDescription(
-        key="LEVEL",
-        icon="mdi:pipe-valve",
-    ),
-    # HmIPW-FALMOT-C12
-    ("HMIPW_FALMOT-C12", "LEVEL"): NumberEntityDescription(
+    (
+        frozenset({"TRV", "TRV-B", "TRV-C", "HMIP_FALMOT-C12", "HMIPW_FALMOT-C12"}),
+        "LEVEL",
+    ): NumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
     ),
@@ -363,7 +348,9 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[tuple[str, str], SensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
+    tuple[str | frozenset[str], str], SensorEntityDescription
+] = {
     ("HmIP-SRH", "STATE"): SensorEntityDescription(
         key="SRH_STATE",
         icon="mdi:window-closed",
@@ -473,30 +460,17 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
 }
 
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
-    tuple[str, str], BinarySensorEntityDescription
+    tuple[str | frozenset[str], str], BinarySensorEntityDescription
 ] = {
     # HmIP-SCI
     ("SCI", "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    # HmIP-SWDO
-    ("SWD", "STATE"): BinarySensorEntityDescription(
-        key="STATE",
-        device_class=BinarySensorDeviceClass.WINDOW,
-    ),
-    # HmIP-SWDO-I
-    ("SWDO-I", "STATE"): BinarySensorEntityDescription(
-        key="STATE",
-        device_class=BinarySensorDeviceClass.WINDOW,
-    ),
-    # HmIP-SWDM, HmIP-SWDM-B2
-    ("SWDM", "STATE"): BinarySensorEntityDescription(
-        key="STATE",
-        device_class=BinarySensorDeviceClass.WINDOW,
-    ),
-    # HmIP-SWDO-PL
-    ("SWDO-PL", "STATE"): BinarySensorEntityDescription(
+    (
+        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL"}),
+        "STATE",
+    ): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
@@ -550,19 +524,10 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {
-    "PS": SwitchEntityDescription(
-        key="PS",
-        device_class=SwitchDeviceClass.OUTLET,
-    ),
-    "PSM": SwitchEntityDescription(
-        key="PSM",
-        device_class=SwitchDeviceClass.OUTLET,
-    ),
-}
+_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {}
 
 _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
-    tuple[str, str], SwitchEntityDescription
+    tuple[str | frozenset[str], str], SwitchEntityDescription
 ] = {}
 
 _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
@@ -577,7 +542,9 @@ _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[HmPlatform, dict[tuple[str, str], Any]] = {
+_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[
+    HmPlatform, dict[tuple[str | frozenset[str], str], Any]
+] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
@@ -660,20 +627,40 @@ def _get_entity_description_by_device_type_and_param(
     if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
         platform
     ):
-        entity_description = platform_device_param_descriptions.get(
-            (device_type, parameter)
-        )
-        if entity_description is None and do_wildcard_search:
-            for data, entity_desc in platform_device_param_descriptions.items():
-                if (
-                    device_type.lower().startswith(data[0].lower())
-                    and data[1] == parameter
-                ):
-                    entity_description = entity_desc
-                    break
+        entity_description: EntityDescription | None = None
+        for data, entity_desc in platform_device_param_descriptions.items():
+            if (
+                _device_in_list(
+                    device_list=data[0],
+                    device_type=device_type,
+                    do_wildcard_search=do_wildcard_search,
+                )
+                and data[1] == parameter
+            ):
+                entity_description = entity_desc
+                break
 
         return entity_description
     return None
+
+
+def _device_in_list(
+    device_list: str | frozenset[str], device_type: str, do_wildcard_search: bool
+) -> bool:
+    """Return if device is in list."""
+    if isinstance(device_list, str):
+        if do_wildcard_search:
+            return device_type.lower().startswith(device_list.lower())
+        return device_type.lower() == device_list.lower()
+    if isinstance(device_list, frozenset):
+        for device in device_list:
+            if do_wildcard_search:
+                if device_type.lower().startswith(device.lower()):
+                    return True
+            else:
+                if device_type.lower() == device.lower():
+                    return True
+    return False
 
 
 def _get_entity_description_by_device_type(
