@@ -1,3 +1,6 @@
+Version 0.29.3 (2021-02-02)
+- Add more HM-Devices to EntityDescription
+
 Version 0.29.2 (2021-02-02)
 - Add more HM-Devices to EntityDescription
 
