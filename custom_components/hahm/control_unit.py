@@ -19,8 +19,9 @@ from hahomematic.const import (
     ATTR_PASSWORD,
     ATTR_PORT,
     ATTR_TLS,
-    ATTR_USERNAME,HmInterfaceEventType,
-    ATTR_VALUE, ATTR_TYPE,
+    ATTR_TYPE,
+    ATTR_USERNAME,
+    ATTR_VALUE,
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
@@ -37,6 +38,7 @@ from hahomematic.const import (
     PORT_ANY,
     HmEntityUsage,
     HmEventType,
+    HmInterfaceEventType,
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity

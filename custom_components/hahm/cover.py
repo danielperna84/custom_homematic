@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.cover import CeBlind, CeIpBlind, CeCover, CeGarage
+from hahomematic.devices.cover import CeBlind, CeCover, CeGarage, CeIpBlind
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
