@@ -119,10 +119,12 @@ class HaHomematicBlind(HaHomematicGenericEntity[CeBlind], CoverEntity, ABC):
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
+        await self._hm_entity.open_cover_tilt()
         await self._hm_entity.open_cover()
 
     async def async_close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
+        await self._hm_entity.close_cover_tilt()
         await self._hm_entity.close_cover()
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
@@ -139,14 +141,17 @@ class HaHomematicBlind(HaHomematicGenericEntity[CeBlind], CoverEntity, ABC):
         if ATTR_TILT_POSITION in kwargs:
             position = float(kwargs[ATTR_TILT_POSITION])
             await self._hm_entity.set_cover_tilt_position(position)
+        await self._hm_entity.set_cover_position(self.current_cover_position)
 
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:
         """Open the tilt."""
         await self._hm_entity.open_cover_tilt()
+        await self._hm_entity.set_cover_position(self.current_cover_position)
 
     async def async_close_cover_tilt(self, **kwargs: Any) -> None:
         """Close the tilt."""
         await self._hm_entity.close_cover_tilt()
+        await self._hm_entity.set_cover_position(self.current_cover_position)
 
     async def async_stop_cover_tilt(self, **kwargs: Any) -> None:
         """Stop the device if in motion."""
