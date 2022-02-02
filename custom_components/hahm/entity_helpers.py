@@ -351,7 +351,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
 _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str | frozenset[str], str], SensorEntityDescription
 ] = {
-    ("HmIP-SRH", "STATE"): SensorEntityDescription(
+    (frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}), "STATE"): SensorEntityDescription(
         key="SRH_STATE",
         icon="mdi:window-closed",
         device_class="hahm__srh",
@@ -468,7 +468,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
     (
-        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL"}),
+        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL", "HM-Sec-SC", "ZEL STG RM FFK"}),
         "STATE",
     ): BinarySensorEntityDescription(
         key="STATE",
