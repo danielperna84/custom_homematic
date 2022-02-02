@@ -19,8 +19,8 @@ from hahomematic.const import (
     ATTR_PASSWORD,
     ATTR_PORT,
     ATTR_TLS,
-    ATTR_USERNAME,
-    ATTR_VALUE,
+    ATTR_USERNAME,HmInterfaceEventType,
+    ATTR_VALUE, ATTR_TYPE,
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
@@ -328,6 +328,9 @@ class ControlUnit:
     ) -> None:
         """Execute the callback used for device related events."""
         if hm_event_type == HmEventType.KEYPRESS:
+            device_address = event_data[ATTR_ADDRESS]
+            if device_id := self._async_get_device_id(device_address):
+                event_data[CONF_DEVICE_ID] = device_id
             self._hass.bus.fire(
                 hm_event_type.value,
                 event_data,
@@ -353,15 +356,17 @@ class ControlUnit:
                     )
         elif hm_event_type == HmEventType.INTERFACE:
             interface_id = event_data[ATTR_INTERFACE_ID]
+            interface_event_type = event_data[ATTR_TYPE]
             available = event_data[ATTR_VALUE]
-            title = f"{DOMAIN.upper()}-Interface not reachable"
-            message = f"No connection to interface {interface_id}"
-            if available:
-                self._async_dismiss_persistent_notification(identifier=interface_id)
-            else:
-                self._async_create_persistent_notification(
-                    identifier=interface_id, title=title, message=message
-                )
+            if interface_event_type == HmInterfaceEventType.PROXY:
+                title = f"{DOMAIN.upper()}-Interface not reachable"
+                message = f"No connection to interface {interface_id}"
+                if available:
+                    self._async_dismiss_persistent_notification(identifier=interface_id)
+                else:
+                    self._async_create_persistent_notification(
+                        identifier=interface_id, title=title, message=message
+                    )
 
     @callback
     def _async_create_persistent_notification(
