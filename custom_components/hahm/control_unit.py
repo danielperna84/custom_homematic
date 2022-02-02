@@ -328,6 +328,9 @@ class ControlUnit:
     ) -> None:
         """Execute the callback used for device related events."""
         if hm_event_type == HmEventType.KEYPRESS:
+            device_address = event_data[ATTR_ADDRESS]
+            if device_id := self._async_get_device_id(device_address):
+                event_data[CONF_DEVICE_ID] = device_id
             self._hass.bus.fire(
                 hm_event_type.value,
                 event_data,

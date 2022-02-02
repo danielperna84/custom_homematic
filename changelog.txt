@@ -1,5 +1,9 @@
-Version 0.29.1 (2021-02-01)
+Version 0.29.1 (2021-02-02)
+- Bump hahomematic to 0.29.1
+    - Check if interface callback is alive
+    - Add class for HomeamaticIP Blinds
 - Enhance entity_helper with sets for entity_descriptions
+- Fix missing device_id in keypress events
 
 Version 0.29.0 (2021-02-01)
 - Bump hahomematic to 0.29.0

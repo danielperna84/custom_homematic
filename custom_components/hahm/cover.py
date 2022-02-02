@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.cover import CeBlind, CeCover, CeGarage
+from hahomematic.devices.cover import CeBlind, CeIpBlind, CeCover, CeGarage
 
 from homeassistant.components.cover import (
     ATTR_POSITION,
@@ -39,7 +39,7 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args:
-            if isinstance(hm_entity, CeBlind):
+            if isinstance(hm_entity, (CeBlind, CeIpBlind)):
                 entities.append(HaHomematicBlind(control_unit, hm_entity))
             elif isinstance(hm_entity, CeCover):
                 entities.append(HaHomematicCover(control_unit, hm_entity))
