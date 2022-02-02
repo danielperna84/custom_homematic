@@ -3,7 +3,7 @@ Version 0.29.3 (2021-02-02)
   - Add HmIP-STH to climate custom entities
 - Add more HM-Devices to EntityDescription
 - Switch device_class of HmIP-SCI from safety to opening
-- Enhance entity_helper with sets for entity_descriptions by_param
+- Enhance entity_helper with sets for entity_descriptions by_param and by_device
 
 Version 0.29.2 (2021-02-02)
 - Add more HM-Devices to EntityDescription

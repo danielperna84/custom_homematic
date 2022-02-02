@@ -280,15 +280,8 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "RSSI_DEVICE": SensorEntityDescription(
-        key="RSSI_DEVICE",
-        native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-        state_class=SensorStateClass.MEASUREMENT,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
-    ),
-    "RSSI_PEER": SensorEntityDescription(
-        key="RSSI_PEER",
+    frozenset({"RSSI_DEVICE", "RSSI_PEER"}): SensorEntityDescription(
+        key="RSSI",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -406,7 +399,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
         key="DUTY_CYCLE",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
+        entity_registry_enabled_default=True,
     ),
     "HEATER_STATE": BinarySensorEntityDescription(
         key="HEATER_STATE",
@@ -456,8 +449,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str | frozenset[str], str], BinarySensorEntityDescription
 ] = {
-    # HmIP-SCI
-    ("SCI", "STATE"): BinarySensorEntityDescription(
+    (frozenset({"SCI", "FCI1", "FCI16"}), "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),
@@ -493,52 +485,34 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ),
 }
 
-_COVER_DESCRIPTIONS_BY_DEVICE: dict[str, CoverEntityDescription] = {
-    "HmIP-BBL": CoverEntityDescription(
-        key="BBL",
+_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], CoverEntityDescription] = {
+    frozenset(
+        {"HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"}
+    ): CoverEntityDescription(
+        key="BLIND",
         device_class=CoverDeviceClass.BLIND,
     ),
-    "HmIP-BROLL": CoverEntityDescription(
-        key="BROLL",
-        device_class=CoverDeviceClass.SHUTTER,
-    ),
-    "HmIP-DRBLI4": CoverEntityDescription(
-        key="DRBLI4",
-        device_class=CoverDeviceClass.BLIND,
-    ),
-    "HmIPW-DRBL4": CoverEntityDescription(
-        key="W-DRBL4",
-        device_class=CoverDeviceClass.BLIND,
-    ),
-    "HmIP-FBL": CoverEntityDescription(
-        key="FBL",
-        device_class=CoverDeviceClass.BLIND,
-    ),
-    "HmIP-FROLL": CoverEntityDescription(
-        key="FROLL",
+    frozenset({"HmIP-BROLL", "HmIP-FROLL"}): CoverEntityDescription(
+        key="SHUTTER",
         device_class=CoverDeviceClass.SHUTTER,
     ),
     "HmIP-HDM1": CoverEntityDescription(
         key="HDM1",
         device_class=CoverDeviceClass.SHADE,
     ),
-    "HmIP-MOD-HO": CoverEntityDescription(
-        key="MOD-HO",
-        device_class=CoverDeviceClass.GARAGE,
-    ),
-    "HmIP-MOD-TM": CoverEntityDescription(
-        key="MOD-TM",
+    frozenset({"HmIP-MOD-HO", "HmIP-MOD-TM"}): CoverEntityDescription(
+        key="GARAGE-HO",
         device_class=CoverDeviceClass.GARAGE,
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str, SwitchEntityDescription] = {}
+_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], SwitchEntityDescription] = {}
 
 _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str | frozenset[str], str], SwitchEntityDescription
 ] = {}
 
-_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
+_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
@@ -667,6 +641,25 @@ def _get_entity_description_by_param(
     return None
 
 
+def _get_entity_description_by_device_type(
+    platform: HmPlatform, device_type: str, do_wildcard_search: bool = True
+) -> EntityDescription | None:
+    """Get entity_description by device_type"""
+    if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(platform):
+        entity_description: EntityDescription | None = None
+        for devices, entity_desc in platform_device_descriptions.items():
+            if _device_in_list(
+                devices=devices,
+                device_type=device_type,
+                do_wildcard_search=do_wildcard_search,
+            ):
+                entity_description = entity_desc
+                break
+
+        return entity_description
+    return None
+
+
 def _device_in_list(
     devices: str | frozenset[str], device_type: str, do_wildcard_search: bool
 ) -> bool:
@@ -695,19 +688,3 @@ def _param_in_list(params: str | frozenset[str], parameter: str) -> bool:
             if parameter.lower() == device.lower():
                 return True
     return False
-
-
-def _get_entity_description_by_device_type(
-    platform: HmPlatform, device_type: str, do_wildcard_search: bool = True
-) -> EntityDescription | None:
-    """Get entity_description by device_type"""
-    if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(platform):
-        entity_description = platform_device_descriptions.get(device_type)
-        if entity_description is None and do_wildcard_search:
-            for data, entity_desc in platform_device_descriptions.items():
-                if device_type.lower().startswith(data.lower()):
-                    entity_description = entity_desc
-                    break
-
-        return entity_description
-    return None
