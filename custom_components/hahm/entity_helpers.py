@@ -470,7 +470,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     # HmIP-SCI
     ("SCI", "STATE"): BinarySensorEntityDescription(
         key="STATE",
-        device_class=BinarySensorDeviceClass.SAFETY,
+        device_class=BinarySensorDeviceClass.OPENING,
     ),
     ("HM-Sec-SD", "STATE"): BinarySensorEntityDescription(
         key="STATE",
