@@ -49,9 +49,9 @@ CONCENTRATION_CM3 = "1/cm\u00b3"
 PARTICLESIZE = "\u00b5m"
 
 
-_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str, ButtonEntityDescription] = {}
+_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescription] = {}
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str, NumberEntityDescription] = {}
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], NumberEntityDescription] = {}
 
 _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     tuple[str | frozenset[str], str], NumberEntityDescription
@@ -66,7 +66,7 @@ _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescription] = {
     "ACTUAL_TEMPERATURE": SensorEntityDescription(
         key="ACTUAL_TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
@@ -351,7 +351,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, SensorEntityDescription] = {
 _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     tuple[str | frozenset[str], str], SensorEntityDescription
 ] = {
-    (frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}), "STATE"): SensorEntityDescription(
+    (
+        frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
+        "STATE",
+    ): SensorEntityDescription(
         key="SRH_STATE",
         icon="mdi:window-closed",
         device_class="hahm__srh",
@@ -388,7 +391,9 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
+    str | frozenset[str], BinarySensorEntityDescription
+] = {
     "ALARMSTATE": BinarySensorEntityDescription(
         key="ALARMSTATE",
         device_class=BinarySensorDeviceClass.SAFETY,
@@ -397,13 +402,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    "DUTYCYCLE": BinarySensorEntityDescription(
-        key="DUTYCYCLE",
-        device_class=BinarySensorDeviceClass.PROBLEM,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=False,
-    ),
-    "DUTY_CYCLE": BinarySensorEntityDescription(
+    frozenset({"DUTYCYCLE", "DUTY_CYCLE"}): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -413,18 +412,8 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         key="HEATER_STATE",
         device_class=BinarySensorDeviceClass.HEAT,
     ),
-    "LOWBAT": BinarySensorEntityDescription(
-        key="LOWBAT",
-        device_class=BinarySensorDeviceClass.BATTERY,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    "LOW_BAT": BinarySensorEntityDescription(
+    frozenset({"LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"}): BinarySensorEntityDescription(
         key="LOW_BAT",
-        device_class=BinarySensorDeviceClass.BATTERY,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    "LOWBAT_SENSOR": BinarySensorEntityDescription(
-        key="LOWBAT_SENSOR",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -477,7 +466,17 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         device_class=BinarySensorDeviceClass.SMOKE,
     ),
     (
-        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL", "HM-Sec-SC", "HM-SCI-3-FM", "ZEL STG RM FFK"}),
+        frozenset(
+            {
+                "SWD",
+                "SWDO-I",
+                "SWDM",
+                "SWDO-PL",
+                "HM-Sec-SC",
+                "HM-SCI-3-FM",
+                "ZEL STG RM FFK",
+            }
+        ),
         "STATE",
     ): BinarySensorEntityDescription(
         key="STATE",
@@ -544,7 +543,7 @@ _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str, Any]] = {
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str, Any]] = {
+_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.BUTTON: _BUTTON_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
@@ -597,12 +596,11 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
                 entity_description = entity_desc
 
         if entity_description is None:
-            if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(
-                hm_entity.platform
+            if entity_desc := _get_entity_description_by_param(
+                platform=hm_entity.platform,
+                parameter=hm_entity.parameter,
             ):
-                entity_description = platform_param_descriptions.get(
-                    hm_entity.parameter
-                )
+                entity_description = entity_desc
 
     elif isinstance(hm_entity, CustomEntity):
         if entity_desc := _get_entity_description_by_device_type(
@@ -640,7 +638,7 @@ def _get_entity_description_by_device_type_and_param(
         for data, entity_desc in platform_device_param_descriptions.items():
             if (
                 _device_in_list(
-                    device_list=data[0],
+                    devices=data[0],
                     device_type=device_type,
                     do_wildcard_search=do_wildcard_search,
                 )
@@ -653,22 +651,49 @@ def _get_entity_description_by_device_type_and_param(
     return None
 
 
+def _get_entity_description_by_param(
+    platform: HmPlatform,
+    parameter: str,
+) -> EntityDescription | None:
+    """Get entity_description by device_type and parameter"""
+    if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(platform):
+        entity_description: EntityDescription | None = None
+        for params, entity_desc in platform_param_descriptions.items():
+            if _param_in_list(params=params, parameter=parameter):
+                entity_description = entity_desc
+                break
+
+        return entity_description
+    return None
+
+
 def _device_in_list(
-    device_list: str | frozenset[str], device_type: str, do_wildcard_search: bool
+    devices: str | frozenset[str], device_type: str, do_wildcard_search: bool
 ) -> bool:
-    """Return if device is in list."""
-    if isinstance(device_list, str):
+    """Return if device is in set."""
+    if isinstance(devices, str):
         if do_wildcard_search:
-            return device_type.lower().startswith(device_list.lower())
-        return device_type.lower() == device_list.lower()
-    if isinstance(device_list, frozenset):
-        for device in device_list:
+            return device_type.lower().startswith(devices.lower())
+        return device_type.lower() == devices.lower()
+    if isinstance(devices, frozenset):
+        for device in devices:
             if do_wildcard_search:
                 if device_type.lower().startswith(device.lower()):
                     return True
             else:
                 if device_type.lower() == device.lower():
                     return True
+    return False
+
+
+def _param_in_list(params: str | frozenset[str], parameter: str) -> bool:
+    """Return if parameter is in set."""
+    if isinstance(params, str):
+        return parameter.lower() == params.lower()
+    if isinstance(params, frozenset):
+        for device in params:
+            if parameter.lower() == device.lower():
+                return True
     return False
 
 
