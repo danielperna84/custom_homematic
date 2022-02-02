@@ -423,6 +423,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    "LOWBAT_SENSOR": BinarySensorEntityDescription(
+        key="LOWBAT_SENSOR",
+        device_class=BinarySensorDeviceClass.BATTERY,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     "MOISTURE_DETECTED": BinarySensorEntityDescription(
         key="MOISTURE_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
@@ -467,8 +472,12 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         key="STATE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
+    ("HM-Sec-SD", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.SMOKE,
+    ),
     (
-        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL", "HM-Sec-SC", "ZEL STG RM FFK"}),
+        frozenset({"SWD", "SWDO-I", "SWDM", "SWDO-PL", "HM-Sec-SC", "HM-SCI-3-FM", "ZEL STG RM FFK"}),
         "STATE",
     ): BinarySensorEntityDescription(
         key="STATE",
