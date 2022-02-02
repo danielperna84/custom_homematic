@@ -4,7 +4,7 @@
   "config_flow": true,
   "documentation": "https://github.com/danielperna84/hahomematic",
   "issue_tracker": "https://github.com/danielperna84/hahomematic/issues",
-  "requirements": ["hahomematic==0.29.1"],
+  "requirements": ["hahomematic==0.29.2"],
   "requirements1": ["git+https://github.com/SukramJ/hahomematic.git@dev1#hahomematic"],
   "ssdp": [
     {

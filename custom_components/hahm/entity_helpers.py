@@ -423,6 +423,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str, BinarySensorEntityDescription] =
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    "LOWBAT_SENSOR": BinarySensorEntityDescription(
+        key="LOWBAT_SENSOR",
+        device_class=BinarySensorDeviceClass.BATTERY,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     "MOISTURE_DETECTED": BinarySensorEntityDescription(
         key="MOISTURE_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
