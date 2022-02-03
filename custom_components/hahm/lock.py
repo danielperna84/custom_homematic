@@ -62,6 +62,11 @@ class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
         """Return true if lock is on."""
         return self._hm_entity.is_locked is True
 
+    @property
+    def is_jammed(self) -> bool:
+        """Return true if lock is jammed."""
+        return self._hm_entity.is_jammed is True
+
     async def async_lock(self, **kwargs: Any) -> None:
         """Lock the lock."""
         await self._hm_entity.lock()
