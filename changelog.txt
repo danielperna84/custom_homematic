@@ -1,3 +1,11 @@
+Version 0.30.3 (2021-02-03)
+- Bump hahomematic to 0.30.0
+    - Add CHANNEL_OPERATION_MODE for HmIP(W)-DRBL4
+    - Fix DLD lock_state
+- Re-disable RSSI by default
+React on channel_operation_mode for cover/blind on HmIP(W)-DRBL4
+
+
 Version 0.29.3 (2021-02-02)
 - Bump hahomematic to 0.29.2
   - Add HmIP-STH to climate custom entities

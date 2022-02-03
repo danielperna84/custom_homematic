@@ -39,7 +39,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args:
-            if isinstance(hm_entity, (CeBlind, CeIpBlind)):
+            if isinstance(hm_entity, CeIpBlind):
+                if hm_entity.channel_operation_mode and hm_entity.channel_operation_mode == "SHUTTER":
+                    entities.append(HaHomematicCover(control_unit, hm_entity))
+                else:
+                    entities.append(HaHomematicBlind(control_unit, hm_entity))
+            elif isinstance(hm_entity, CeBlind):
                 entities.append(HaHomematicBlind(control_unit, hm_entity))
             elif isinstance(hm_entity, CeCover):
                 entities.append(HaHomematicCover(control_unit, hm_entity))
