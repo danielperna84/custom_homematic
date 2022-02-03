@@ -1,4 +1,6 @@
-Version 0.29.3 (2021-02-03)
+Version 0.30.3 (2021-02-03)
+- Bump hahomematic to 0.30.0
+    - Add CHANNEL_OPERATION_MODE for HmIP(W)-DRBL4
 - Re-disable RSSI by default
 
 Version 0.29.3 (2021-02-02)
