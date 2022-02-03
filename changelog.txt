@@ -1,3 +1,6 @@
+Version 0.29.3 (2021-02-03)
+- Re-disable RSSI by default
+
 Version 0.29.3 (2021-02-02)
 - Bump hahomematic to 0.29.2
   - Add HmIP-STH to climate custom entities

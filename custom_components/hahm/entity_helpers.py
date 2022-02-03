@@ -399,7 +399,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
         key="DUTY_CYCLE",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
-        entity_registry_enabled_default=True,
+        entity_registry_enabled_default=False,
     ),
     "HEATER_STATE": BinarySensorEntityDescription(
         key="HEATER_STATE",
