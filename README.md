@@ -176,6 +176,10 @@ These two options are required for _special_ network environments. If for exampl
 
 The Homematic(IP) Local integration makes various custom services available.
 
+### `hahm.clear_cache`
+
+Clears the cache for a central unit from Home Assistant. Requires a restart.
+
 ### `hahm.delete_device`
 
 Delete a device from Home Assistant.

@@ -524,6 +524,11 @@ class HaHub(Entity):
         """Return if entity is available."""
         return self._hm_hub.available
 
+    @property
+    def control(self) -> ControlUnit:
+        """Return the control unit."""
+        return self._control
+
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
         await self._hm_hub.fetch_data()

@@ -42,6 +42,7 @@ ATTR_CHANNEL = "channel"
 ATTR_DEVICE_ID = "device_id"
 DEFAULT_CHANNEL = 1
 
+SERVICE_CLEAR_CACHE = "clear_cache"
 SERVICE_DELETE_DEVICE = "delete_device"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_PUT_PARAMSET = "put_paramset"
@@ -50,6 +51,7 @@ SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
 HAHM_SERVICES = [
+    SERVICE_CLEAR_CACHE,
     SERVICE_DELETE_DEVICE,
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_PUT_PARAMSET,
@@ -57,6 +59,12 @@ HAHM_SERVICES = [
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
 ]
+
+SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
+    {
+        vol.Required(ATTR_ENTITY_ID): cv.string,
+    }
+)
 
 SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
     {
@@ -119,7 +127,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         """Call correct HomematicIP Cloud service."""
         service_name = service.service
 
-        if service_name == SERVICE_DELETE_DEVICE:
+        if service_name == SERVICE_CLEAR_CACHE:
+            await _async_service_clear_cache(hass=hass, service=service)
+        elif service_name == SERVICE_DELETE_DEVICE:
             await _async_service_delete_device(hass=hass, service=service)
         elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
@@ -132,14 +142,24 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
 
-    hass.services.async_register(
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_CLEAR_CACHE,
+        service_func=async_call_hahm_service,
+        schema=SCHEMA_SERVICE_CLEAR_CACHE,
+    )
+
+    async_register_admin_service(
+        hass=hass,
         domain=DOMAIN,
         service=SERVICE_DELETE_DEVICE,
         service_func=async_call_hahm_service,
         schema=SCHEMA_SERVICE_DELETE_DEVICE,
     )
 
-    hass.services.async_register(
+    async_register_admin_service(
+        hass=hass,
         domain=DOMAIN,
         service=SERVICE_EXPORT_DEVICE_DEFINITION,
         service_func=async_call_hahm_service,
@@ -310,6 +330,16 @@ async def _async_service_set_install_mode(
         await control_unit.central.set_install_mode(
             interface_id, t=time, mode=mode, device_address=device_address
         )
+
+
+async def _async_service_clear_cache(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to clear the cache."""
+    entity_id = service.data[ATTR_ENTITY_ID]
+
+    if hub := _get_hub_by_entity_id(hass=hass, entity_id=entity_id):
+        await hub.control.central.clear_all()
 
 
 async def _async_service_put_paramset(

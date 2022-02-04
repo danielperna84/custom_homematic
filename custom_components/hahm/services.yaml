@@ -1,5 +1,17 @@
 # Describes the format for available component services
 
+clear_cache:
+  name: Clear the cache
+  description: Clear the cache. Requires a restart.
+  fields:
+    entity_id:
+      name: Entity
+      description: Name(s) of homematic central to clear the cache.
+      required: true
+      selector:
+        entity:
+          domain: hahm
+
 delete_device:
   name: Delete a device
   description: Delete a device from HA.
