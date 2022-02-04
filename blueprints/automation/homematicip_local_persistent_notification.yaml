@@ -1,0 +1,39 @@
+blueprint:
+  name: Homematic(IP) Local Persistent notification
+  description: Display persistent notification if device is not available.
+  domain: automation
+  source_url: https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homeamticip_local_persistemt_notification.yaml
+  input:
+    hub_entity:
+      name: Hub Entity
+      selector:
+        entity:
+          domain: hahm
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+- platform: event
+  event_type: homematic.device_availability
+  event_data: 
+    entity_id: !input hub_entity
+
+action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{trigger.event.data.available == true }}'
+      sequence:
+        - service: persistent_notification.create
+          data:
+            notification_id: "{{ trigger.event.data.identifier }}"
+            title:  "{{ trigger.event.data.title }}"
+            message: "{{ trigger.event.data.message }}"
+    - conditions:
+      - condition: template
+        value_template: '{{trigger.event.data.available == false }}'
+      sequence:
+        - service: persistent_notification.dismiss
+          data:
+            notification_id: "{{ trigger.event.data.identifier }}"
