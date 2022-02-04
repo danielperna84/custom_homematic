@@ -1,5 +1,6 @@
 Version 0.30.1 (2021-02-04)
 - Add service to clear the caches
+- Add event about device availability
 
 Version 0.30.0 (2021-02-03)
 - Bump hahomematic to 0.30.0
