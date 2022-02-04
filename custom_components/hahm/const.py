@@ -19,6 +19,12 @@ CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
 CONF_SUBTYPE = "subtype"
 
+EVENT_DEVICE_AVAILABILITY = "homematic.device_availability"
+EVENT_DATA_IDENTIFIER = "identifier"
+EVENT_DATA_TITLE = "title"
+EVENT_DATA_MESSAGE = "message"
+EVENT_DATA_AVAILABLE = "available"
+
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"

@@ -332,9 +332,7 @@ async def _async_service_set_install_mode(
         )
 
 
-async def _async_service_clear_cache(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to clear the cache."""
     entity_id = service.data[ATTR_ENTITY_ID]
 
