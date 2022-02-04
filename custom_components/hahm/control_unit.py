@@ -370,15 +370,6 @@ class ControlUnit:
                     event_type=EVENT_DEVICE_AVAILABILITY,
                     event_data=availability_event_data,
                 )
-
-                if value is True:
-                    self._async_create_persistent_notification(
-                        identifier=device_address, title=title, message=message
-                    )
-                else:
-                    self._async_dismiss_persistent_notification(
-                        identifier=device_address
-                    )
         elif hm_event_type == HmEventType.INTERFACE:
             interface_id = event_data[ATTR_INTERFACE_ID]
             interface_event_type = event_data[ATTR_TYPE]

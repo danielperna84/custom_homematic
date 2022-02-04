@@ -1,10 +1,11 @@
 blueprint:
-  name: Actions for 2-Button HAHM Device 
+  name: Actions for 2-Button Homematic(IP) device
   description: When a button is pressed, the defined actions will be executed. Please
     keep in mind, that long-press actions might be executed multiple times, according
     to your configured minimum duration for long press. This can be configured in
     your CCU.
   domain: automation
+  source_url: https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/hahm-actions-for-2-button.yaml
   input:
     remote:
       name: 2-Button Device
