@@ -45,7 +45,7 @@ from hahomematic.entity import BaseEntity
 from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-from homeassistant.const import CONF_DEVICE_ID
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
@@ -55,7 +55,18 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import slugify
 
-from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN, HAHM_PLATFORMS
+from .const import (
+    ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
+    ATTR_PATH,
+    DOMAIN,
+    EVENT_DATA_AVAILABLE,
+    EVENT_DATA_IDENTIFIER,
+    EVENT_DATA_MESSAGE,
+    EVENT_DATA_TITLE,
+    EVENT_DEVICE_AVAILABILITY,
+    HAHM_PLATFORMS,
+)
 from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -332,7 +343,7 @@ class ControlUnit:
         if hm_event_type == HmEventType.KEYPRESS:
             device_address = event_data[ATTR_ADDRESS]
             if device_id := self._async_get_device_id(device_address):
-                event_data[CONF_DEVICE_ID] = device_id
+                event_data[ATTR_DEVICE_ID] = device_id
             self._hass.bus.fire(
                 hm_event_type.value,
                 event_data,
@@ -340,15 +351,27 @@ class ControlUnit:
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
             if device_id := self._async_get_device_id(device_address):
-                event_data[CONF_DEVICE_ID] = device_id
+                event_data[ATTR_DEVICE_ID] = device_id
             name = self._async_get_device_name(device_address=device_address)
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
+                title = f"{DOMAIN.upper()}-Device not reachable"
+                message = f"{name} / {device_address} on interface {interface_id}"
+                availability_event_data = {
+                    ATTR_ENTITY_ID: self._hub.entity_id,
+                    EVENT_DATA_IDENTIFIER: device_address,
+                    EVENT_DATA_TITLE: title,
+                    EVENT_DATA_MESSAGE: message,
+                    EVENT_DATA_AVAILABLE: value is True,
+                }
+                self._hass.bus.fire(
+                    event_type=EVENT_DEVICE_AVAILABILITY,
+                    event_data=availability_event_data,
+                )
+
                 if value is True:
-                    title = f"{DOMAIN.upper()}-Device not reachable"
-                    message = f"{name} / {device_address} on interface {interface_id}"
                     self._async_create_persistent_notification(
                         identifier=device_address, title=title, message=message
                     )
