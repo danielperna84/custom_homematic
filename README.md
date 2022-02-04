@@ -324,3 +324,13 @@ BidCos-RF devices have an optional parameter for put_paramset which defines the 
 `rx_mode` `BURST`, which is the default value, will wake up every device when submitting the configuration data and hence makes all devices use some battery. It is instant, i.e. the data is sent almost immediately.
 
 `rx_mode` `WAKEUP` will send the configuration data only after a device submitted updated values to CCU, which usually happens every 3 minutes. It will not wake up every device and thus saves devices battery.
+
+## Available Blueprints
+
+The following blueprints can be used to simplify the usage of Homematic device:
+- [Support for 2-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-2-button.yaml)
+- [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml)
+- [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml)
+- [Support for persistent notifications for unaavailable devices](homematicip_local_persistent_notification.yaml)
+
+Just copy these files to "your ha-config_dir"/blueprints/automation
