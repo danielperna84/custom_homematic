@@ -1,3 +1,10 @@
+Version 0.30.3 (2021-02-06)
+- Bump hahomematic to 0.30.2
+  - Remove INHIBIT from ignore parameter list
+  - Add support for unignore file
+  - Add DIRECTION & ACTIVITY_STATE to cover (is_opening, is_closing)
+- Update translations, device_classes form Win-Matic/Key-Matic
+
 Version 0.30.2 (2021-02-04)
 - replace availability PN by blueprint
 

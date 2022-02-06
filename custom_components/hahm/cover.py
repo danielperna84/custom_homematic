@@ -92,6 +92,16 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
         """Return if the cover is closed."""
         return self._hm_entity.is_closed
 
+    @property
+    def is_opening(self) -> bool | None:
+        """Return if the cover is opening."""
+        return self._hm_entity.is_opening
+
+    @property
+    def is_closing(self) -> bool | None:
+        """Return if the cover is closing."""
+        return self._hm_entity.is_closing
+
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
         await self._hm_entity.open_cover()
@@ -124,6 +134,16 @@ class HaHomematicBlind(HaHomematicGenericEntity[CeBlind], CoverEntity, ABC):
     def is_closed(self) -> bool | None:
         """Return if the cover is closed."""
         return self._hm_entity.is_closed
+
+    @property
+    def is_opening(self) -> bool | None:
+        """Return if the cover is opening."""
+        return self._hm_entity.is_opening
+
+    @property
+    def is_closing(self) -> bool | None:
+        """Return if the cover is closing."""
+        return self._hm_entity.is_closing
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
