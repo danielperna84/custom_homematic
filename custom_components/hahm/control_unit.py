@@ -359,17 +359,18 @@ class ControlUnit:
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 title = f"{DOMAIN.upper()}-Device not reachable"
                 message = f"{name} / {device_address} on interface {interface_id}"
-                availability_event_data = {
-                    ATTR_ENTITY_ID: self._hub.entity_id,
-                    EVENT_DATA_IDENTIFIER: device_address,
-                    EVENT_DATA_TITLE: title,
-                    EVENT_DATA_MESSAGE: message,
-                    EVENT_DATA_AVAILABLE: value is True,
-                }
-                self._hass.bus.fire(
-                    event_type=EVENT_DEVICE_AVAILABILITY,
-                    event_data=availability_event_data,
-                )
+                if self._hub:
+                    availability_event_data = {
+                        ATTR_ENTITY_ID: self._hub.entity_id,
+                        EVENT_DATA_IDENTIFIER: device_address,
+                        EVENT_DATA_TITLE: title,
+                        EVENT_DATA_MESSAGE: message,
+                        EVENT_DATA_AVAILABLE: value is True,
+                    }
+                    self._hass.bus.fire(
+                        event_type=EVENT_DEVICE_AVAILABILITY,
+                        event_data=availability_event_data,
+                    )
         elif hm_event_type == HmEventType.INTERFACE:
             interface_id = event_data[ATTR_INTERFACE_ID]
             interface_event_type = event_data[ATTR_TYPE]
