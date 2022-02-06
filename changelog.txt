@@ -1,4 +1,8 @@
-Version 0.30.3 (2021-02-06)
+Version 0.31.0 (2021-02-06)
+- Bump hahomematic to 0.31
+- use  should_poll from hahomematic
+
+Version 0.30.3.beta (2021-02-06)
 - Bump hahomematic to 0.30.2
   - Remove INHIBIT from ignore parameter list
   - Add support for unignore file
