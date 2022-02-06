@@ -115,6 +115,12 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    frozenset({"DIRECTION", "ACTIVITY_STATE"}): SensorEntityDescription(
+        key="DIRECTION",
+        icon="mdi:arrow-up-down",
+        device_class="hahm__direction",
+        entity_registry_enabled_default=False,
+    ),
     "DUTY_CYCLE_LEVEL": SensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
@@ -367,7 +373,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ("HM-Sec-Win", "ERROR"): SensorEntityDescription(
         key="SEC-WIN_ERROR",
         icon="mdi:lock-alert",
-        device_class="hahm__sec_error",
+        device_class="hahm__sec_win_error",
         entity_registry_enabled_default=False,
     ),
     ("HM-Sec-Key", "DIRECTION"): SensorEntityDescription(
@@ -379,7 +385,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ("HM-Sec-Key", "ERROR"): SensorEntityDescription(
         key="SEC-KEY_ERROR",
         icon="mdi:lock-alert",
-        device_class="hahm__sec_error",
+        device_class="hahm__sec_key_error",
         entity_registry_enabled_default=False,
     ),
 }
@@ -425,6 +431,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
     "PRESENCE_DETECTION_STATE": BinarySensorEntityDescription(
         key="PRESENCE_DETECTION_STATE",
         device_class=BinarySensorDeviceClass.PRESENCE,
+    ),
+    frozenset({"PROCESS", "WORKING"}): BinarySensorEntityDescription(
+        key="PROCESS",
+        device_class=BinarySensorDeviceClass.RUNNING,
+        entity_registry_enabled_default=False,
     ),
     "RAINING": BinarySensorEntityDescription(
         key="RAINING",
@@ -504,6 +515,18 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], CoverEntityDescription
         key="GARAGE-HO",
         device_class=CoverDeviceClass.GARAGE,
     ),
+    "HM-Sec-Win": CoverEntityDescription(
+        key="HM-Sec-Win",
+        device_class=CoverDeviceClass.WINDOW,
+    ),
+}
+
+_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescription] = {
+    "INHIBIT": SwitchEntityDescription(
+        key="INHIBIT",
+        device_class=SwitchDeviceClass.SWITCH,
+        entity_registry_enabled_default=False,
+    ),
 }
 
 _SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], SwitchEntityDescription] = {}
@@ -522,6 +545,7 @@ _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.BUTTON: _BUTTON_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
 _ENTITY_DESCRIPTION_DEVICE_PARAM: dict[

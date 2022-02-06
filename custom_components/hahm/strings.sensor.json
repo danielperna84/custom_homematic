@@ -16,14 +16,20 @@
       "INTRUSION_ALARM": "Intrusion Alarm",
       "SECONDARY_ALARM": "Secondary Alarm"
     },
-    "hahm__sec_error": {
+    "hahm__sec_key_error": {
       "NO_ERROR": "no error",
       "CLUTCH_FAILURE": "clutch failure",
       "MOTOR_ABORTED": "motor aborted"
     },
+    "hahm__direction": {
+      "NONE": "",
+      "UP": "up",
+      "DOWN": "down",
+      "UNDEFINED": "undefined"
+    },
     "hahm__sec_direction": {
-      "NONE": "none",
-      "UP": "upe",
+      "NONE": "",
+      "UP": "up",
       "DOWN": "down",
       "UNDEFINED": "undefined"
     },
@@ -32,6 +38,11 @@
       "CHARGE": "charge",
       "DISCHARGE": "discharge",
       "STATE_UNKNOWN": "state unknown"
+    },
+    "hahm__sec_win_error": {
+      "NO_ERROR": "no error",
+      "MOTOR_TURN_ERROR": "motor turn error",
+      "MOTOR_TILT_ERROR": "motor tilt error"
     }
   }
 }
