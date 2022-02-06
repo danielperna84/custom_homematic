@@ -22,8 +22,6 @@ _LOGGER = logging.getLogger(__name__)
 class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     """Representation of the HomematicIP generic entity."""
 
-    _attr_should_poll = False
-
     def __init__(
         self,
         control_unit: ControlUnit,
@@ -32,6 +30,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmGenericEntity = hm_entity
+        self._attr_should_poll = self._hm_entity.should_poll
         if entity_description := get_entity_description(self._hm_entity):
             self.entity_description = entity_description
         if (
