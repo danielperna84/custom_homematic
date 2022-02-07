@@ -1,5 +1,10 @@
+Version 0.31.1 (2021-02-06)
+- Bump hahomematic to 0.31.1
+  - Add multiplier to entity
+- Aggregate entity_helper
+
 Version 0.31.0 (2021-02-06)
-- Bump hahomematic to 0.31
+- Bump hahomematic to 0.31.0
 - use  should_poll from hahomematic
 
 Version 0.30.3.beta (2021-02-06)

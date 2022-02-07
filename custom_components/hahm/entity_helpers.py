@@ -56,7 +56,6 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], NumberEntityDescriptio
 _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     tuple[str | frozenset[str], str], NumberEntityDescription
 ] = {
-    # HmIP-eTRV, HmIP-eTRV-2
     (
         frozenset({"TRV", "TRV-B", "TRV-C", "HMIP_FALMOT-C12", "HMIPW_FALMOT-C12"}),
         "LEVEL",
@@ -67,22 +66,10 @@ _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
 }
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescription] = {
-    "ACTUAL_TEMPERATURE": SensorEntityDescription(
-        key="ACTUAL_TEMPERATURE",
-        native_unit_of_measurement=TEMP_CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
     "AIR_PRESSURE": SensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=PRESSURE_HPA,
         device_class=SensorDeviceClass.PRESSURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "AVERAGE_ILLUMINATION": SensorEntityDescription(
-        key="AVERAGE_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "BRIGHTNESS": SensorEntityDescription(
@@ -109,13 +96,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "CURRENT_ILLUMINATION": SensorEntityDescription(
-        key="CURRENT_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    frozenset({"DIRECTION", "ACTIVITY_STATE"}): SensorEntityDescription(
+    frozenset({"ACTIVITY_STATE", "DIRECTION"}): SensorEntityDescription(
         key="DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__direction",
@@ -151,12 +132,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "HIGHEST_ILLUMINATION": SensorEntityDescription(
-        key="HIGHEST_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
     "HUMIDITY": SensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
@@ -175,7 +150,16 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "ILLUMINATION": SensorEntityDescription(
+    frozenset(
+        {
+            "ILLUMINATION",
+            "AVERAGE_ILLUMINATION",
+            "CURRENT_ILLUMINATION",
+            "HIGHEST_ILLUMINATION",
+            "LOWEST_ILLUMINATION",
+            "LUX",
+        }
+    ): SensorEntityDescription(
         key="ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
         device_class=SensorDeviceClass.ILLUMINANCE,
@@ -195,50 +179,26 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         icon="mdi:lock",
         device_class="hahm__lock_state",
     ),
-    "LOWEST_ILLUMINATION": SensorEntityDescription(
-        key="LOWEST_ILLUMINATION",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "LUX": SensorEntityDescription(
-        key="LUX",
-        native_unit_of_measurement=LIGHT_LUX,
-        device_class=SensorDeviceClass.ILLUMINANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "MASS_CONCENTRATION_PM_1": SensorEntityDescription(
+    frozenset(
+        {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}
+    ): SensorEntityDescription(
         key="MASS_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM1,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "MASS_CONCENTRATION_PM_1_24H_AVERAGE": SensorEntityDescription(
-        key="MASS_CONCENTRATION_PM_1_24H_AVERAGE",
-        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.PM1,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "MASS_CONCENTRATION_PM_10": SensorEntityDescription(
+    frozenset(
+        {"MASS_CONCENTRATION_PM_10", "MASS_CONCENTRATION_PM_10_24H_AVERAGE"}
+    ): SensorEntityDescription(
         key="MASS_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM10,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "MASS_CONCENTRATION_PM_10_24H_AVERAGE": SensorEntityDescription(
-        key="MASS_CONCENTRATION_PM_10_24H_AVERAGE",
-        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.PM10,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "MASS_CONCENTRATION_PM_2_5": SensorEntityDescription(
+    frozenset(
+        {"MASS_CONCENTRATION_PM_2_5", "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE"}
+    ): SensorEntityDescription(
         key="MASS_CONCENTRATION_PM_2_5",
-        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.PM25,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE": SensorEntityDescription(
-        key="MASS_CONCENTRATION_PM_2_5_24H_AVERAGE",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM25,
         state_class=SensorStateClass.MEASUREMENT,
@@ -293,7 +253,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    "TEMPERATURE": SensorEntityDescription(
+    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE"}): SensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -327,14 +287,8 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "WIND_DIR": SensorEntityDescription(
+    frozenset({"WIND_DIR", "WIND_DIR_RANGE"}): SensorEntityDescription(
         key="WIND_DIR",
-        native_unit_of_measurement=DEGREE,
-        icon="mdi:windsock",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    "WIND_DIR_RANGE": SensorEntityDescription(
-        key="WIND_DIR_RANGE",
         native_unit_of_measurement=DEGREE,
         icon="mdi:windsock",
         state_class=SensorStateClass.MEASUREMENT,
