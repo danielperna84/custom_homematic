@@ -89,7 +89,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     def value(self) -> float | None:
         """Return the current value."""
         if self._hm_entity.value is not None:
-            return self._hm_entity.value * self._multiplier
+            return float(self._hm_entity.value * self._multiplier)
         return None
 
     async def async_set_value(self, value: float) -> None:

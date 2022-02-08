@@ -41,7 +41,7 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
-from hahomematic.entity import BaseEntity
+from hahomematic.entity import BaseEntity, GenericEntity
 from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
@@ -421,6 +421,21 @@ class ControlUnit:
         identifiers: set[tuple[str, str]] = hm_device.device_info["identifiers"]
         device_registry = dr.async_get(self._hass)
         return device_registry.async_get_device(identifiers=identifiers)
+
+    @callback
+    def async_get_entity_stats(self) -> tuple[dict[str, int], list[str]]:
+        """Return statistics data about entities per platform."""
+        device_types: list[str] = []
+        platform_stats: dict[str, int] = {}
+        for entity in self._active_hm_entities.values():
+            platform = entity.platform.value
+            if platform not in platform_stats:
+                platform_stats[platform] = 0
+            counter = platform_stats[platform]
+            platform_stats[platform] = counter + 1
+            if isinstance(entity, GenericEntity):
+                device_types.append(entity.device_type)
+        return platform_stats, sorted(set(device_types))
 
     async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
