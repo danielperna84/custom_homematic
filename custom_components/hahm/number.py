@@ -79,7 +79,8 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
         self._attr_min_value = hm_entity.min * self._multiplier
         self._attr_max_value = hm_entity.max * self._multiplier
         self._attr_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
-        self._attr_unit_of_measurement = hm_entity.unit
+        if not hasattr(self, "entity_description") and hm_entity.unit:
+            self._attr_unit_of_measurement = hm_entity.unit
 
     @property
     def value(self) -> float | None:
