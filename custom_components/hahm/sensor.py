@@ -94,7 +94,8 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._multiplier: int = (
             self.entity_description.multiplier
-            if hasattr(self, "entity_description") and self.entity_description
+            if hasattr(self, "entity_description")
+            and self.entity_description
             and self.entity_description.multiplier is not None
             else hm_entity.multiplier
         )

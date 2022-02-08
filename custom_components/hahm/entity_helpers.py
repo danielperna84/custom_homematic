@@ -51,9 +51,7 @@ VAPOR_CONCENTRATION = "g/m³"
 
 _BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescription] = {}
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[
-    str | frozenset[str], HmNumberEntityDescription
-] = {
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
         unit_of_measurement=FREQUENCY_HERTZ,
@@ -145,7 +143,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(["HUMIDITY", 'ACTUAL_HUMIDITY']): HmSensorEntityDescription(
+    frozenset(["HUMIDITY", "ACTUAL_HUMIDITY"]): HmSensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.HUMIDITY,
@@ -182,7 +180,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         key="IP_ADDRESS",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    frozenset(["LEVEL", 'FILLING_LEVEL']): HmSensorEntityDescription(
+    frozenset(["LEVEL", "FILLING_LEVEL"]): HmSensorEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -266,7 +264,9 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"}): HmSensorEntityDescription(
+    frozenset(
+        {"ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"}
+    ): HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -306,7 +306,9 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"WIND_DIR", "WIND_DIR_RANGE", "WIND_DIRECTION", 'WIND_DIRECTION_RANGE'}): HmSensorEntityDescription(
+    frozenset(
+        {"WIND_DIR", "WIND_DIR_RANGE", "WIND_DIRECTION", "WIND_DIRECTION_RANGE"}
+    ): HmSensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
         icon="mdi:windsock",
@@ -363,7 +365,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str | frozenset[str], HmSensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, HmSensorEntityDescription] = {
     TEMP_CELSIUS: HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
@@ -602,9 +604,9 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
             ):
                 entity_description = entity_desc
 
-    if entity_description is None and hasattr(hm_entity, "platform"):
-        if hm_entity.platform == HmPlatform.SENSOR:
-            if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit, None):
+    if entity_description is None and isinstance(hm_entity, GenericEntity):
+        if hm_entity.platform == HmPlatform.SENSOR and hm_entity.unit is not None:
+            if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit):
                 entity_description = entity_desc
 
     if entity_description:
