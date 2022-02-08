@@ -1,11 +1,16 @@
-Version 0.31.2 (2021-02-06)
-- Bump hahomematic to 0.31.2
-    - Add HmIP-HDM2 to cover
-    - Fix unignore filename
+Version 0.31.3 (2021-02-08)
+- Add multiplier to sensor and number entities.
+  This fixes percentage related sensors
 
-Version 0.31.1 (2021-02-06)
+Version 0.31.2 (2021-02-07)
+- Bump hahomematic to 0.31.2
+  - Add HmIP-HDM2 to cover
+  - Fix unignore filename
+
+Version 0.31.1 (2021-02-07)
 - Bump hahomematic to 0.31.1
   - Add multiplier to entity
+  - Substitute device_type of HB devices for usage in custom_entities
 - Aggregate entity_helper
 
 Version 0.31.0 (2021-02-06)

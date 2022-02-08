@@ -13,12 +13,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
-from homeassistant.components.number import NumberEntityDescription
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntityDescription,
-    SensorStateClass,
-)
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
@@ -41,7 +36,11 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityCategory, EntityDescription
 
-from .helpers import HmGenericEntity
+from .helpers import (
+    HmGenericEntity,
+    HmNumberEntityDescription,
+    HmSensorEntityDescription,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,100 +50,104 @@ PARTICLESIZE = "\u00b5m"
 
 _BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescription] = {}
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], NumberEntityDescription] = {}
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[
+    str | frozenset[str], HmNumberEntityDescription
+] = {}
 
 _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
-    tuple[str | frozenset[str], str], NumberEntityDescription
+    tuple[str | frozenset[str], str], HmNumberEntityDescription
 ] = {
     (
-        frozenset({"TRV", "TRV-B", "TRV-C", "HMIP_FALMOT-C12", "HMIPW_FALMOT-C12"}),
+        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E"}),
         "LEVEL",
-    ): NumberEntityDescription(
+    ): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
+        unit_of_measurement=PERCENTAGE,
+        multiplier=100,
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescription] = {
-    "AIR_PRESSURE": SensorEntityDescription(
+_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescription] = {
+    "AIR_PRESSURE": HmSensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=PRESSURE_HPA,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "BRIGHTNESS": SensorEntityDescription(
+    "BRIGHTNESS": HmSensorEntityDescription(
         key="BRIGHTNESS",
         native_unit_of_measurement="#",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:invert-colors",
     ),
-    "CARRIER_SENSE_LEVEL": SensorEntityDescription(
+    "CARRIER_SENSE_LEVEL": HmSensorEntityDescription(
         key="CARRIER_SENSE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "CONCENTRATION": SensorEntityDescription(
+    "CONCENTRATION": HmSensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
         device_class=SensorDeviceClass.CO2,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "CURRENT": SensorEntityDescription(
+    "CURRENT": HmSensorEntityDescription(
         key="CURRENT",
         native_unit_of_measurement=ELECTRIC_CURRENT_MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"ACTIVITY_STATE", "DIRECTION"}): SensorEntityDescription(
+    frozenset({"ACTIVITY_STATE", "DIRECTION"}): HmSensorEntityDescription(
         key="DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__direction",
         entity_registry_enabled_default=False,
     ),
-    "DUTY_CYCLE_LEVEL": SensorEntityDescription(
+    "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "ENERGY_COUNTER": SensorEntityDescription(
+    "ENERGY_COUNTER": HmSensorEntityDescription(
         key="ENERGY_COUNTER",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "FREQUENCY": SensorEntityDescription(
+    "FREQUENCY": HmSensorEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "GAS_ENERGY_COUNTER": SensorEntityDescription(
+    "GAS_ENERGY_COUNTER": HmSensorEntityDescription(
         key="GAS_ENERGY_COUNTER",
         native_unit_of_measurement=VOLUME_CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "GAS_POWER": SensorEntityDescription(
+    "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
         native_unit_of_measurement=VOLUME_CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "HUMIDITY": SensorEntityDescription(
+    "HUMIDITY": HmSensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "IEC_ENERGY_COUNTER": SensorEntityDescription(
+    "IEC_ENERGY_COUNTER": HmSensorEntityDescription(
         key="IEC_ENERGY_COUNTER",
         native_unit_of_measurement=ENERGY_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "IEC_POWER": SensorEntityDescription(
+    "IEC_POWER": HmSensorEntityDescription(
         key="IEC_POWER",
         native_unit_of_measurement=POWER_WATT,
         device_class=SensorDeviceClass.POWER,
@@ -159,29 +162,29 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
             "LOWEST_ILLUMINATION",
             "LUX",
         }
-    ): SensorEntityDescription(
+    ): HmSensorEntityDescription(
         key="ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
         device_class=SensorDeviceClass.ILLUMINANCE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "IP_ADDRESS": SensorEntityDescription(
+    "IP_ADDRESS": HmSensorEntityDescription(
         key="IP_ADDRESS",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "LEVEL": SensorEntityDescription(
+    "LEVEL": HmSensorEntityDescription(
         key="LEVEL",
-        native_unit_of_measurement="#",
+        native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "LOCK_STATE": SensorEntityDescription(
+    "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
         icon="mdi:lock",
         device_class="hahm__lock_state",
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}
-    ): SensorEntityDescription(
+    ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM1,
@@ -189,7 +192,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_10", "MASS_CONCENTRATION_PM_10_24H_AVERAGE"}
-    ): SensorEntityDescription(
+    ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM10,
@@ -197,36 +200,36 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_2_5", "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE"}
-    ): SensorEntityDescription(
+    ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_2_5",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM25,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "NUMBER_CONCENTRATION_PM_1": SensorEntityDescription(
+    "NUMBER_CONCENTRATION_PM_1": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_CM3,
         device_class=SensorDeviceClass.PM1,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "NUMBER_CONCENTRATION_PM_10": SensorEntityDescription(
+    "NUMBER_CONCENTRATION_PM_10": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_CM3,
         device_class=SensorDeviceClass.PM10,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "NUMBER_CONCENTRATION_PM_2_5": SensorEntityDescription(
+    "NUMBER_CONCENTRATION_PM_2_5": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_2_5",
         native_unit_of_measurement=CONCENTRATION_CM3,
         device_class=SensorDeviceClass.PM25,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "TYPICAL_PARTICLE_SIZE": SensorEntityDescription(
+    "TYPICAL_PARTICLE_SIZE": HmSensorEntityDescription(
         key="TYPICAL_PARTICLE_SIZE",
         native_unit_of_measurement=PARTICLESIZE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "OPERATING_VOLTAGE": SensorEntityDescription(
+    "OPERATING_VOLTAGE": HmSensorEntityDescription(
         key="OPERATING_VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
@@ -234,66 +237,66 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    "POWER": SensorEntityDescription(
+    "POWER": HmSensorEntityDescription(
         key="POWER",
         native_unit_of_measurement=POWER_WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "RAIN_COUNTER": SensorEntityDescription(
+    "RAIN_COUNTER": HmSensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=LENGTH_MILLIMETERS,
         icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    frozenset({"RSSI_DEVICE", "RSSI_PEER"}): SensorEntityDescription(
+    frozenset({"RSSI_DEVICE", "RSSI_PEER"}): HmSensorEntityDescription(
         key="RSSI",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE"}): SensorEntityDescription(
+    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE"}): HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "SMOKE_DETECTOR_ALARM_STATUS": SensorEntityDescription(
+    "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
         icon="mdi:smoke-detector",
         device_class="hahm__smoke_detector_alarm_status",
     ),
-    "SUNSHINEDURATION": SensorEntityDescription(
+    "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
         native_unit_of_measurement=TIME_MINUTES,
         icon="mdi:weather-sunny",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    "VALUE": SensorEntityDescription(
+    "VALUE": HmSensorEntityDescription(
         key="VALUE",
         native_unit_of_measurement="#",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "VALVE_STATE": SensorEntityDescription(
+    "VALVE_STATE": HmSensorEntityDescription(
         key="VALVE_STATE",
         native_unit_of_measurement=PERCENTAGE,
         icon="mdi:pipe-valve",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "VOLTAGE": SensorEntityDescription(
+    "VOLTAGE": HmSensorEntityDescription(
         key="VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"WIND_DIR", "WIND_DIR_RANGE"}): SensorEntityDescription(
+    frozenset({"WIND_DIR", "WIND_DIR_RANGE"}): HmSensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
         icon="mdi:windsock",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "WIND_SPEED": SensorEntityDescription(
+    "WIND_SPEED": HmSensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
         icon="mdi:weather-windy",
@@ -302,41 +305,41 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SensorEntityDescriptio
 }
 
 _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
-    tuple[str | frozenset[str], str], SensorEntityDescription
+    tuple[str | frozenset[str], str], HmSensorEntityDescription
 ] = {
     (
         frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
         "STATE",
-    ): SensorEntityDescription(
+    ): HmSensorEntityDescription(
         key="SRH_STATE",
         icon="mdi:window-closed",
         device_class="hahm__srh",
     ),
-    ("HM-Sec-Win", "STATUS"): SensorEntityDescription(
+    ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         icon="mdi:battery-50",
         device_class="hahm__sec_win_status",
         entity_registry_enabled_default=False,
     ),
-    ("HM-Sec-Win", "DIRECTION"): SensorEntityDescription(
+    ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__sec_direction",
         entity_registry_enabled_default=False,
     ),
-    ("HM-Sec-Win", "ERROR"): SensorEntityDescription(
+    ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         icon="mdi:lock-alert",
         device_class="hahm__sec_win_error",
         entity_registry_enabled_default=False,
     ),
-    ("HM-Sec-Key", "DIRECTION"): SensorEntityDescription(
+    ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__sec_direction",
         entity_registry_enabled_default=False,
     ),
-    ("HM-Sec-Key", "ERROR"): SensorEntityDescription(
+    ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         icon="mdi:lock-alert",
         device_class="hahm__sec_key_error",
