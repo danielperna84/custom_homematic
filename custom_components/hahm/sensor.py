@@ -98,6 +98,8 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
             and self.entity_description.multiplier is not None
             else hm_entity.multiplier
         )
+        if not hasattr(self, "entity_description") and hm_entity.unit:
+            self._attr_native_unit_of_measurement = hm_entity.unit
 
     @property
     def native_value(self) -> Any:

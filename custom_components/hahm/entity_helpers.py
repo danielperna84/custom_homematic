@@ -46,13 +46,23 @@ _LOGGER = logging.getLogger(__name__)
 
 CONCENTRATION_CM3 = "1/cm\u00b3"
 PARTICLESIZE = "\u00b5m"
+VAPOR_CONCENTRATION = "g/m³"
 
 
 _BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescription] = {}
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[
     str | frozenset[str], HmNumberEntityDescription
-] = {}
+] = {
+    "FREQUENCY": HmNumberEntityDescription(
+        key="FREQUENCY",
+        unit_of_measurement=FREQUENCY_HERTZ,
+    ),
+    frozenset({"LEVEL", "LEVEL_SLATS"}): HmNumberEntityDescription(
+        key="LEVEL",
+        unit_of_measurement=PERCENTAGE,
+    ),
+}
 
 _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     tuple[str | frozenset[str], str], HmNumberEntityDescription
@@ -135,7 +145,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "HUMIDITY": HmSensorEntityDescription(
+    frozenset(["HUMIDITY", 'ACTUAL_HUMIDITY']): HmSensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.HUMIDITY,
@@ -172,7 +182,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         key="IP_ADDRESS",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "LEVEL": HmSensorEntityDescription(
+    frozenset(["LEVEL", 'FILLING_LEVEL']): HmSensorEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -256,7 +266,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE"}): HmSensorEntityDescription(
+    frozenset({"ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"}): HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -284,13 +294,19 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         icon="mdi:pipe-valve",
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "VAPOR_CONCENTRATION": HmSensorEntityDescription(
+        key="VAPOR_CONCENTRATION",
+        native_unit_of_measurement=VAPOR_CONCENTRATION,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "VOLTAGE": HmSensorEntityDescription(
         key="VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"WIND_DIR", "WIND_DIR_RANGE"}): HmSensorEntityDescription(
+    frozenset({"WIND_DIR", "WIND_DIR_RANGE", "WIND_DIRECTION", 'WIND_DIRECTION_RANGE'}): HmSensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
         icon="mdi:windsock",
@@ -344,6 +360,21 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         icon="mdi:lock-alert",
         device_class="hahm__sec_key_error",
         entity_registry_enabled_default=False,
+    ),
+}
+
+_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str | frozenset[str], HmSensorEntityDescription] = {
+    TEMP_CELSIUS: HmSensorEntityDescription(
+        key="TEMPERATURE",
+        native_unit_of_measurement=TEMP_CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    VAPOR_CONCENTRATION: HmSensorEntityDescription(
+        key="VAPOR_CONCENTRATION",
+        native_unit_of_measurement=VAPOR_CONCENTRATION,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
 }
 
@@ -569,6 +600,11 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
                 device_type=hm_entity.sub_type,
                 do_wildcard_search=False,
             ):
+                entity_description = entity_desc
+
+    if entity_description is None and hasattr(hm_entity, "platform"):
+        if hm_entity.platform == HmPlatform.SENSOR:
+            if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit, None):
                 entity_description = entity_desc
 
     if entity_description:
