@@ -1,11 +1,15 @@
 """Helper."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TypeVar, Union
 
 from hahomematic.const import IDENTIFIERS_SEPARATOR
 from hahomematic.entity import CustomEntity, GenericEntity
 from hahomematic.hub import BaseHubEntity
+
+from homeassistant.components.number import NumberEntityDescription
+from homeassistant.components.sensor import SensorEntityDescription
 
 # Union for entity types used as base class for entities
 HmBaseEntity = Union[BaseHubEntity, CustomEntity, GenericEntity]
@@ -33,3 +37,17 @@ def get_device_address_at_interface_from_identifiers(
         if IDENTIFIERS_SEPARATOR in identifier[1]:
             return identifier[1].split(IDENTIFIERS_SEPARATOR)
     return None
+
+
+@dataclass
+class HmNumberEntityDescription(NumberEntityDescription):
+    """Class describing Homematic(IP) Local number entities."""
+
+    multiplier: int | None = None
+
+
+@dataclass
+class HmSensorEntityDescription(SensorEntityDescription):
+    """Class describing Homematic(IP) Local sensor entities."""
+
+    multiplier: int | None = None

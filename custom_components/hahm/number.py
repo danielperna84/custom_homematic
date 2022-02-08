@@ -17,6 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
+from .helpers import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ async def async_setup_entry(
 class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     """Representation of the HomematicIP number entity."""
 
+    entity_description: HmNumberEntityDescription
     _attr_entity_category = EntityCategory.CONFIG
     _attr_mode = NumberMode.BOX
 
@@ -68,16 +70,24 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     ) -> None:
         """Initialize the number entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_min_value = hm_entity.min
-        self._attr_max_value = hm_entity.max
-        self._attr_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.01
+        self._multiplier: int = (
+            self.entity_description.multiplier
+            if hasattr(self, "entity_description") and self.entity_description
+            and self.entity_description.multiplier is not None
+            else hm_entity.multiplier
+        )
+        self._attr_min_value = hm_entity.min * self._multiplier
+        self._attr_max_value = hm_entity.max * self._multiplier
+        self._attr_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
         self._attr_unit_of_measurement = hm_entity.unit
 
     @property
     def value(self) -> float | None:
         """Return the current value."""
-        return self._hm_entity.value
+        if self._hm_entity.value is not None:
+            return self._hm_entity.value * self._multiplier
+        return None
 
     async def async_set_value(self, value: float) -> None:
         """Update the current value."""
-        await self._hm_entity.send_value(value)
+        await self._hm_entity.send_value(value / self._multiplier)

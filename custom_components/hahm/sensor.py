@@ -5,7 +5,7 @@ from datetime import timedelta
 import logging
 from typing import Any
 
-from hahomematic.const import HmPlatform
+from hahomematic.const import TYPE_FLOAT, TYPE_INTEGER, HmPlatform
 from hahomematic.hub import HmSystemVariable
 from hahomematic.platforms.sensor import HmSensor
 
@@ -18,6 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
+from .helpers import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,9 +83,31 @@ async def async_setup_entry(
 class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
     """Representation of the HomematicIP sensor entity."""
 
+    entity_description: HmSensorEntityDescription
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: HmSensor,
+    ) -> None:
+        """Initialize the sensor entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        self._multiplier: int = (
+            self.entity_description.multiplier
+            if hasattr(self, "entity_description") and self.entity_description
+            and self.entity_description.multiplier is not None
+            else hm_entity.multiplier
+        )
+
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
+        if (
+            self._hm_entity.value is not None
+            and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
+            and self._multiplier != 1
+        ):
+            return self._hm_entity.value * self._multiplier
         return self._hm_entity.value
 
 
