@@ -72,13 +72,16 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._multiplier: int = (
             self.entity_description.multiplier
-            if hasattr(self, "entity_description") and self.entity_description
+            if hasattr(self, "entity_description")
+            and self.entity_description
             and self.entity_description.multiplier is not None
             else hm_entity.multiplier
         )
         self._attr_min_value = hm_entity.min * self._multiplier
         self._attr_max_value = hm_entity.max * self._multiplier
-        self._attr_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
+        self._attr_step = (
+            1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
+        )
         if not hasattr(self, "entity_description") and hm_entity.unit:
             self._attr_unit_of_measurement = hm_entity.unit
 
