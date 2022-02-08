@@ -1,3 +1,6 @@
+Version 0.31.4 (2021-02-08)
+- Add diagnostics
+
 Version 0.31.3 (2021-02-08)
 - Add multiplier to sensor and number entities.
   This fixes percentage related sensors
