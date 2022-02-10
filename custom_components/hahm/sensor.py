@@ -1,7 +1,6 @@
 """sensor for Homematic(IP) Local."""
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
 from typing import Any
 
@@ -21,8 +20,6 @@ from .generic_entity import HaHomematicGenericEntity
 from .helpers import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
-
-SCAN_INTERVAL = timedelta(seconds=30)
 
 
 async def async_setup_entry(

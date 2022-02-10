@@ -1,6 +1,8 @@
 """Constants."""
 from __future__ import annotations
 
+from datetime import timedelta
+
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.const import Platform
@@ -30,6 +32,8 @@ SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_VIRTUAL_KEY = "virtual_key"
+
+SYSVAR_SCAN_INTERVAL = timedelta(seconds=30)
 
 
 def _get_hahm_platforms() -> list[str]:

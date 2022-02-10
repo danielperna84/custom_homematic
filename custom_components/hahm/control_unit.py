@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 from typing import Any, cast
 
@@ -66,11 +66,11 @@ from .const import (
     EVENT_DATA_TITLE,
     EVENT_DEVICE_AVAILABILITY,
     HAHM_PLATFORMS,
+    SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import HmBaseEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(seconds=30)
 
 
 class ControlUnit:
@@ -540,7 +540,7 @@ class HaHub(Entity):
     async def async_init(self) -> None:
         """Init fetch scheduler."""
         self.remove_listener = self.hass.helpers.event.async_track_time_interval(
-            self._async_fetch_data, SCAN_INTERVAL
+            self._async_fetch_data, SYSVAR_SCAN_INTERVAL
         )
         await self._async_fetch_data(now=datetime.now())
 

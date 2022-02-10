@@ -1,3 +1,6 @@
+Version 0.32.0 (2021-02-10)
+- Bump hahomematic to 0.32.0
+
 Version 0.31.4 (2021-02-08)
 - Add diagnostics
 

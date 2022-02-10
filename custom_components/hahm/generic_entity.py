@@ -1,11 +1,12 @@
 """Generic entity for the HomematicIP Cloud component."""
 from __future__ import annotations
 
+from datetime import timedelta
 import logging
 from typing import Any, Generic, cast
 
 from hahomematic.const import HmEntityUsage
-from hahomematic.entity import CallbackEntity
+from hahomematic.entity import CallbackEntity, CustomEntity, GenericEntity
 from hahomematic.hub import BaseHubEntity
 
 from homeassistant.core import callback
@@ -16,6 +17,7 @@ from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .helpers import HmGenericEntity
 
+SCAN_INTERVAL = timedelta(seconds=120)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -83,8 +85,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
         # Init value of entity.
-        if hasattr(self._hm_entity, "load_entity_value"):
-            await self._hm_entity.load_entity_value()
+        await self.async_update()
 
     def _get_entity_registry_enabled_default(self) -> bool | None:
         """Return, if entity should be enabled based on usage attribute."""
@@ -110,6 +111,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 "Device Changed Event for %s not fired. Entity is disabled",
                 self.name,
             )
+
+    async def async_update(self) -> None:
+        """Update entities from MASTER paramset."""
+        if isinstance(self._hm_entity, (GenericEntity, CustomEntity)):
+            await self._hm_entity.load_entity_value()
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
