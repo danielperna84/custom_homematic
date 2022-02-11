@@ -29,8 +29,8 @@
     },
     "hahm__sec_direction": {
       "NONE": "",
-      "UP": "up",
-      "DOWN": "down",
+      "UP": "closing",
+      "DOWN": "opening",
       "UNDEFINED": "undefined"
     },
     "hahm__sec_win_status": {
