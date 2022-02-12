@@ -186,11 +186,11 @@ class HaHomematicGarage(HaHomematicGenericEntity[CeGarage], CoverEntity):
 
     @property
     def current_cover_position(self) -> int | None:
-        """Return current position of cover."""
+        """Return current position of the garage door."""
         return self._hm_entity.current_cover_position
 
     async def async_set_cover_position(self, **kwargs: Any) -> None:
-        """Move the cover to a specific position."""
+        """Move the garage door to a specific position."""
         # Hm cover is closed:1 -> open:0
         if ATTR_POSITION in kwargs:
             position = float(kwargs[ATTR_POSITION])
@@ -198,8 +198,18 @@ class HaHomematicGarage(HaHomematicGenericEntity[CeGarage], CoverEntity):
 
     @property
     def is_closed(self) -> bool | None:
-        """Return if the cover is closed."""
+        """Return if the garage door is closed."""
         return self._hm_entity.is_closed
+
+    @property
+    def is_opening(self) -> bool | None:
+        """Return if the garage door is opening."""
+        return self._hm_entity.is_opening
+
+    @property
+    def is_closing(self) -> bool | None:
+        """Return if the garage door is closing."""
+        return self._hm_entity.is_closing
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""

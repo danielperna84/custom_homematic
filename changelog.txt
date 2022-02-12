@@ -1,3 +1,8 @@
+Version 0.32.1 (2021-02-12)
+- Bump hahomematic to 0.32.4
+  - add opening/closing to IPGarage
+- Add translation for DOOR_STATE
+
 Version 0.32.0 (2021-02-12)
 - Bump hahomematic to 0.32.3
   - Prioritize detection of device for custom entities

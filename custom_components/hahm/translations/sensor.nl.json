@@ -21,6 +21,12 @@
       "CLUTCH_FAILURE": "clutch failure",
       "MOTOR_ABORTED": "motor aborted"
     },
+    "hahm__door_state": {
+      "CLOSED": "closed",
+      "OPEN": "open",
+      "VENTILATION_POSITION": "ventilation position",
+      "POSITION_UNKNOWN": "position unknown"
+    },
     "hahm__direction": {
       "NONE": "",
       "UP": "up",
