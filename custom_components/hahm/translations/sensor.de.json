@@ -21,6 +21,12 @@
       "CLUTCH_FAILURE": "Einkuppeln fehlgeschlagen",
       "MOTOR_ABORTED": "Motorlauf abgebrochen"
     },
+    "hahm__door_state": {
+      "CLOSED": "geschlossen",
+      "OPEN": "offen",
+      "VENTILATION_POSITION": "Belüftung",
+      "POSITION_UNKNOWN": "Position unbekannt"
+    },
     "hahm__direction": {
       "NONE": "",
       "UP": "hoch",

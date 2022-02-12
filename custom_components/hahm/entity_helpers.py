@@ -111,7 +111,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         key="DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__direction",
-        entity_registry_enabled_default=False,
+    ),
+    "DOOR_STATE": HmSensorEntityDescription(
+        key="DOOR_STATE",
+        icon="mdi:arrow-up-down",
+        device_class="hahm__door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
@@ -337,31 +341,26 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
         key="SEC-WIN_STATUS",
         icon="mdi:battery-50",
         device_class="hahm__sec_win_status",
-        entity_registry_enabled_default=False,
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__sec_direction",
-        entity_registry_enabled_default=False,
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         icon="mdi:lock-alert",
         device_class="hahm__sec_win_error",
-        entity_registry_enabled_default=False,
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="hahm__sec_direction",
-        entity_registry_enabled_default=False,
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         icon="mdi:lock-alert",
         device_class="hahm__sec_key_error",
-        entity_registry_enabled_default=False,
     ),
 }
 
@@ -425,7 +424,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
     frozenset({"PROCESS", "WORKING"}): BinarySensorEntityDescription(
         key="PROCESS",
         device_class=BinarySensorDeviceClass.RUNNING,
-        entity_registry_enabled_default=False,
     ),
     "RAINING": BinarySensorEntityDescription(
         key="RAINING",
