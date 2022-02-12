@@ -1,9 +1,9 @@
 Version 0.32.0 (2021-02-12)
 - Bump hahomematic to 0.32.3
-    - Priotize detection of device for custom entities
-    - Add HmIPW-FIO6 as CE
-    - Fix HmIP-MOD-HO
-    - Add state(ch2) to HmIP-MOD-HO
+  - Prioritize detection of device for custom entities
+  - Add HmIPW-FIO6 as CE
+  - Fix HmIP-MOD-HO
+  - Add state(ch2) to HmIP-MOD-HO
 - Fix translations
 
 Version 0.31.4 (2021-02-08)
