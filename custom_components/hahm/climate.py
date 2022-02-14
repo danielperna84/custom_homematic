@@ -125,6 +125,11 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         return self._hm_entity.current_humidity
 
     @property
+    def hvac_action(self) -> str | None:
+        """Return the hvac action"""
+        return self._hm_entity.hvac_action
+
+    @property
     def hvac_mode(self) -> str:
         """Return hvac operation ie."""
         return self._hm_entity.hvac_mode
