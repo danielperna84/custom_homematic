@@ -216,6 +216,10 @@ Turn on the install mode on the provided Interface to pair new devices.
 
 Set the value of a variable on your HomeMatic hub.
 
+### `hahm.turn_on_siren`
+
+Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren).
+
 ## Additional information
 
 ### Devices with buttons
