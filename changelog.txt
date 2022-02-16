@@ -1,3 +1,7 @@
+Version 0.34.0 (2021-02-16)
+- Bump hahomematic to 0.34.1
+- Add own service to turn_on a siren (acoustically/optically)
+
 Version 0.34.0 (2021-02-15)
 - Bump hahomematic to 0.34.0
   - Add new platform siren

@@ -253,3 +253,28 @@ disable_away_mode:
     entity:
       integration: hahm
       domain: climate
+
+turn_on_siren:
+  description: Turn siren on.
+  target:
+    entity:
+      domain: siren
+  fields:
+    tone:
+      description: The tone to emit when turning the siren on.
+      example: FREQUENCY_RISING
+      required: false
+      selector:
+        text:
+    light:
+      description: The light to emit when turning the siren on.
+      example: BLINKING_ALTERNATELY_REPEATING
+      required: false
+      selector:
+        text:
+    duration:
+      description: The duration in seconds of the noise to emit when turning the siren on.
+      example: 60
+      required: false
+      selector:
+        text:
