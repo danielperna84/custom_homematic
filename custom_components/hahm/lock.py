@@ -63,6 +63,16 @@ class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
         return self._hm_entity.is_locked is True
 
     @property
+    def is_locking(self) -> bool | None:
+        """Return true if the lock is locking."""
+        return self._hm_entity.is_locking
+
+    @property
+    def is_unlocking(self) -> bool | None:
+        """Return true if the lock is unlocking."""
+        return self._hm_entity.is_unlocking
+
+    @property
     def is_jammed(self) -> bool:
         """Return true if lock is jammed."""
         return self._hm_entity.is_jammed is True
