@@ -6,10 +6,11 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.siren import (
-    DEFAULT_OPTICAL_ALARM_SELECTION,
     DISABLE_ACOUSTIC_SIGNAL,
+    DISABLE_OPTICAL_SIGNAL,
     BaseSiren,
 )
+import voluptuous as vol
 
 from homeassistant.components.siren import (
     ATTR_DURATION,
@@ -22,6 +23,8 @@ from homeassistant.components.siren import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_platform
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -30,6 +33,15 @@ from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
+
+ATTR_LIGHT = "light"
+SERVICE_TURN_ON_SIREN = "turn_on_siren"
+
+TURN_ON_SIREN_SCHEMA = {
+    vol.Optional(ATTR_TONE): cv.string,
+    vol.Optional(ATTR_LIGHT): cv.string,
+    vol.Optional(ATTR_DURATION): cv.positive_int,
+}
 
 
 async def async_setup_entry(
@@ -50,6 +62,13 @@ async def async_setup_entry(
 
         if entities:
             async_add_entities(entities)
+
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_TURN_ON_SIREN,
+        TURN_ON_SIREN_SCHEMA,
+        "async_turn_on",
+    )
 
     config_entry.async_on_unload(
         async_dispatcher_connect(
@@ -83,13 +102,30 @@ class HaHomematicSiren(HaHomematicGenericEntity[BaseSiren], SirenEntity):
         """Return a list of available tones."""
         return self._hm_entity.available_tones  # type: ignore[return-value]
 
+    @property
+    def available_lights(self) -> list[int | str] | dict[int, str] | None:
+        """Return a list of available lights."""
+        return self._hm_entity.available_lights  # type: ignore[return-value]
+
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
         acoustic_alarm = kwargs.get(ATTR_TONE, DISABLE_ACOUSTIC_SIGNAL)
+        if not self.available_tones or acoustic_alarm not in self.available_tones:
+            raise ValueError(
+                f"Invalid tone specified for entity {self.entity_id}: {acoustic_alarm}, "
+                "check the available_tones attribute for valid tones to pass in"
+            )
+        optical_alarm = kwargs.get(ATTR_LIGHT, DISABLE_OPTICAL_SIGNAL)
+        if not self.available_lights or optical_alarm not in self.available_lights:
+            raise ValueError(
+                f"Invalid light specified for entity {self.entity_id}: {optical_alarm}, "
+                "check the available_lights attribute for valid tones to pass in"
+            )
+
         duration = kwargs.get(ATTR_DURATION, 60)
         await self._hm_entity.turn_on(
             acoustic_alarm=acoustic_alarm,
-            optical_alarm=DEFAULT_OPTICAL_ALARM_SELECTION,
+            optical_alarm=optical_alarm,
             duration=duration,
         )
 
