@@ -1,3 +1,7 @@
+Version 0.35.0 (2021-02-19)
+- Bump hahomematic to 0.35.0
+- Fix CF tests
+
 Version 0.34.2 (2021-02-16)
 - Bump hahomematic to 0.34.2
 - Add is_locking/is_unlocking to lock

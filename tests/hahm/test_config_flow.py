@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 from homeassistant import config_entries
 from homeassistant.components.hahm.config_flow import (
-    ATTR_BICDOS_RF_ENABLED,
-    ATTR_BICDOS_RF_PORT,
+    ATTR_BIDCOS_RF_ENABLED,
+    ATTR_BIDCOS_RF_PORT,
     ATTR_HMIP_RF_ENABLED,
     ATTR_HOST,
     ATTR_HS485D_ENABLED,
@@ -47,7 +47,7 @@ async def test_form(hass: HomeAssistant) -> None:
 
 async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     """Test we get the form."""
-    interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BICDOS_RF_PORT: 5555}
+    interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
     interface = await async_check_form(hass, interface_data=interface_data)
 
     assert interface.get(IF_HMIP_RF_NAME) is None
@@ -62,7 +62,7 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
     """Test we get the form."""
     interface_data = {
         ATTR_HMIP_RF_ENABLED: False,
-        ATTR_BICDOS_RF_ENABLED: False,
+        ATTR_BIDCOS_RF_ENABLED: False,
         ATTR_VIRTUAL_DEVICES_ENABLED: False,
         ATTR_HS485D_ENABLED: True,
     }
@@ -130,7 +130,7 @@ async def async_check_form(
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == "pytest"
+        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -184,7 +184,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == "pytest"
+        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -231,7 +231,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == "pytest"
+        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
