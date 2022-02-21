@@ -1,3 +1,7 @@
+Version 0.35.1 (2021-02-21)
+- Bump hahomematic to 0.35.1
+  - Fix IpBlind
+
 Version 0.35.0 (2021-02-19)
 - Bump hahomematic to 0.35.0
 - Fix CF tests
