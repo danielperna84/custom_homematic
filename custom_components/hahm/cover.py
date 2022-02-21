@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import ABC
 import logging
-from typing import Any
+from typing import Any, Union
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.cover import CeBlind, CeCover, CeGarage, CeIpBlind
@@ -115,7 +115,7 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
         await self._hm_entity.stop_cover()
 
 
-class HaHomematicBlind(HaHomematicGenericEntity[CeBlind], CoverEntity, ABC):
+class HaHomematicBlind(HaHomematicGenericEntity[Union[CeBlind, CeIpBlind]], CoverEntity, ABC):
     """Representation of the HomematicIP blind entity."""
 
     @property
