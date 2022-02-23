@@ -1,3 +1,7 @@
+Version 0.35.3 (2021-02-23)
+- Bump hahomematic to 0.35.3
+    - Move xmlrpc credentials to header
+
 Version 0.35.2 (2021-02-22)
 - Bump hahomematic to 0.35.2
   - Remove password from Exceptions
