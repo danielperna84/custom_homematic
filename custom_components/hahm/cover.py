@@ -115,7 +115,9 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
         await self._hm_entity.stop_cover()
 
 
-class HaHomematicBlind(HaHomematicGenericEntity[Union[CeBlind, CeIpBlind]], CoverEntity, ABC):
+class HaHomematicBlind(
+    HaHomematicGenericEntity[Union[CeBlind, CeIpBlind]], CoverEntity, ABC
+):
     """Representation of the HomematicIP blind entity."""
 
     @property

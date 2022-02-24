@@ -11,6 +11,12 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_HS_COLOR,
     ATTR_TRANSITION,
+    COLOR_MODE_BRIGHTNESS,
+    COLOR_MODE_HS,
+    COLOR_MODE_ONOFF,
+    SUPPORT_BRIGHTNESS,
+    SUPPORT_COLOR,
+    SUPPORT_TRANSITION,
     LightEntity,
 )
 from homeassistant.config_entries import ConfigEntry
@@ -62,16 +68,31 @@ async def async_setup_entry(
 class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
 
-    def __init__(
-        self,
-        control_unit: ControlUnit,
-        hm_entity: BaseHmLight,
-    ) -> None:
-        """Initialize the light entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_color_mode = hm_entity.color_mode
-        self._attr_supported_color_modes = hm_entity.supported_color_modes
-        self._attr_supported_features = hm_entity.supported_features
+    @property
+    def color_mode(self) -> str:
+        """Return the color mode of the light."""
+        if self._hm_entity.supports_hs_color:
+            return COLOR_MODE_HS
+        if self._hm_entity.supports_brightness:
+            return COLOR_MODE_BRIGHTNESS
+        return COLOR_MODE_ONOFF
+
+    @property
+    def supported_color_modes(self) -> set[str]:
+        """Flag supported color modes."""
+        return {self.color_mode}
+
+    @property
+    def supported_features(self) -> int:
+        """Return the list of supported features."""
+        supported_features = 0
+        if self._hm_entity.supports_brightness:
+            supported_features += SUPPORT_BRIGHTNESS
+        if self._hm_entity.supports_hs_color:
+            supported_features += SUPPORT_COLOR
+        if self._hm_entity.supports_transition:
+            supported_features += SUPPORT_TRANSITION
+        return supported_features
 
     @property
     def is_on(self) -> bool:
