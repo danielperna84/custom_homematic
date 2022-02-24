@@ -1,3 +1,9 @@
+Version 0.36.0 (2021-02-24)
+- Bump hahomematic to 0.36.0
+  - Remove HA constants
+  - Use enums own constants
+- Use more HA constants based on hahomematic enums
+
 Version 0.35.3 (2021-02-23)
 - Bump hahomematic to 0.35.3
     - Move xmlrpc credentials to header

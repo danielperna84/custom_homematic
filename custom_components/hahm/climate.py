@@ -6,11 +6,32 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.climate import BaseClimateEntity
+from hahomematic.devices.climate import (
+    HM_PRESET_MODE_PREFIX,
+    BaseClimateEntity,
+    HmHvacMode,
+    HmPresetMode,
+)
 import voluptuous as vol
 
-from homeassistant.components.climate import ClimateEntity
+from homeassistant.components.climate import (
+    ATTR_TEMPERATURE,
+    SUPPORT_PRESET_MODE,
+    SUPPORT_TARGET_TEMPERATURE,
+    ClimateEntity,
+)
+from homeassistant.components.climate.const import (
+    CURRENT_HVAC_ACTIONS,
+    HVAC_MODE_OFF,
+    HVAC_MODES,
+    PRESET_AWAY,
+    PRESET_BOOST,
+    PRESET_COMFORT,
+    PRESET_ECO,
+    PRESET_NONE,
+)
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import TEMP_CELSIUS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -29,6 +50,14 @@ SERVICE_DISABLE_AWAY_MODE = "disable_away_mode"
 ATTR_AWAY_END = "end"
 ATTR_AWAY_HOURS = "hours"
 ATTR_AWAY_TEMPERATURE = "away_temperature"
+
+SUPPORTED_HA_PRESET_MODES = [
+    PRESET_AWAY,
+    PRESET_BOOST,
+    PRESET_COMFORT,
+    PRESET_ECO,
+    PRESET_NONE,
+]
 
 
 async def async_setup_entry(
@@ -103,8 +132,7 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     ) -> None:
         """Initialize the climate entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_temperature_unit = hm_entity.temperature_unit
-        self._attr_supported_features = hm_entity.supported_features
+        self._attr_temperature_unit = TEMP_CELSIUS
         self._attr_target_temperature_step = hm_entity.target_temperature_step
         self._attr_min_temp = float(hm_entity.min_temp)
         self._attr_max_temp = float(hm_entity.max_temp)
@@ -127,39 +155,78 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     @property
     def hvac_action(self) -> str | None:
         """Return the hvac action"""
-        return self._hm_entity.hvac_action
+        if self._hm_entity.hvac_action in CURRENT_HVAC_ACTIONS:
+            return str(self._hm_entity.hvac_action.value)
+        return None
 
     @property
     def hvac_mode(self) -> str:
         """Return hvac operation ie."""
-        return self._hm_entity.hvac_mode
+        if self._hm_entity.hvac_mode in HVAC_MODES:
+            return str(self._hm_entity.hvac_mode.value)
+        return HVAC_MODE_OFF
 
     @property
     def hvac_modes(self) -> list[str]:
         """Return the list of available hvac operation modes."""
-        return self._hm_entity.hvac_modes
+        hvac_modes = []
+        for hm_hvav_mode in self._hm_entity.hvac_modes:
+            if hm_hvav_mode.value in HVAC_MODES:
+                hvac_modes.append(hm_hvav_mode.value)
+        return hvac_modes
 
     @property
-    def preset_mode(self) -> str:
+    def preset_mode(self) -> str | None:
         """Return the current preset mode."""
-        return self._hm_entity.preset_mode
+        if self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES or str(
+            self._hm_entity.preset_mode.value
+        ).startswith(HM_PRESET_MODE_PREFIX):
+            return self._hm_entity.preset_mode
+        return None
 
     @property
     def preset_modes(self) -> list[str]:
         """Return a list of available preset modes incl. hmip profiles."""
-        return self._hm_entity.preset_modes
+        preset_modes = []
+        for hm_preset_mode in self._hm_entity.preset_modes:
+            if hm_preset_mode.value in SUPPORTED_HA_PRESET_MODES:
+                preset_modes.append(hm_preset_mode.value)
+            if str(hm_preset_mode.value).startswith(HM_PRESET_MODE_PREFIX):
+                preset_modes.append(hm_preset_mode.value)
+        return preset_modes
+
+    @property
+    def supported_features(self) -> int:
+        """Return the list of supported features."""
+        supported_features = SUPPORT_TARGET_TEMPERATURE
+        if self._hm_entity.supports_preset:
+            supported_features += SUPPORT_PRESET_MODE
+        return supported_features
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
-        await self._hm_entity.set_temperature(**kwargs)
+        temperature = kwargs.get(ATTR_TEMPERATURE)
+        if temperature is None:
+            return None
+        await self._hm_entity.set_temperature(temperature=temperature)
 
     async def async_set_hvac_mode(self, hvac_mode: str) -> None:
         """Set new target hvac mode."""
-        await self._hm_entity.set_hvac_mode(hvac_mode)
+        if hvac_mode not in [enum.value for enum in HmHvacMode]:
+            _LOGGER.warning("Hvac mode %s is not supported by integration", hvac_mode)
+            return None
+        await self._hm_entity.set_hvac_mode(HmHvacMode(hvac_mode))
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
-        await self._hm_entity.set_preset_mode(preset_mode)
+        if preset_mode not in [
+            enum.value for enum in HmPresetMode
+        ] or not preset_mode.startswith(HM_PRESET_MODE_PREFIX):
+            _LOGGER.warning(
+                "Preset mode %s is not supported by integration", preset_mode
+            )
+            return None
+        await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
         self, end: datetime, away_temperature: float
