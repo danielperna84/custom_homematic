@@ -221,7 +221,7 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         """Set new preset mode."""
         if preset_mode not in [
             enum.value for enum in HmPresetMode
-        ] or not preset_mode.startswith(HM_PRESET_MODE_PREFIX):
+        ]:
             _LOGGER.warning(
                 "Preset mode %s is not supported by integration", preset_mode
             )

@@ -1,3 +1,6 @@
+Version 0.36.1 (2021-02-26)
+- Fix climate presets
+
 Version 0.36.0 (2021-02-24)
 - Bump hahomematic to 0.36.0
   - Remove HA constants
