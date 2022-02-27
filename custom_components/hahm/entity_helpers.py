@@ -66,7 +66,7 @@ _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     tuple[str | frozenset[str], str], HmNumberEntityDescription
 ] = {
     (
-        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E"}),
+        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E", "HmIP-HEATING"}),
         "LEVEL",
     ): HmNumberEntityDescription(
         key="LEVEL",
