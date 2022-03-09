@@ -1,3 +1,7 @@
+Version 0.36.3 (2021-03-09)
+- Bump hahomematic to 0.36.3
+- Use callback when hub is created
+
 Version 0.36.3 (2021-03-06)
 - Bump hahomematic to 0.36.2
   - Make more devices custom_entities
