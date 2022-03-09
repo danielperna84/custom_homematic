@@ -21,6 +21,7 @@ from homeassistant.const import (
     DEGREE,
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
+    ENERGY_KILO_WATT_HOUR,
     ENERGY_WATT_HOUR,
     FREQUENCY_HERTZ,
     LENGTH_MILLIMETERS,
@@ -155,7 +156,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     ),
     "IEC_ENERGY_COUNTER": HmSensorEntityDescription(
         key="IEC_ENERGY_COUNTER",
-        native_unit_of_measurement=ENERGY_WATT_HOUR,
+        native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),

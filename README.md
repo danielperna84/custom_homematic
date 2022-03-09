@@ -198,7 +198,12 @@ Enable the away mode immediately, and specify the end time by setting a duration
 
 ### `hahm.export_device_definition`
 
-Export a device definition to 'Your home-assistant config directory'/hahm/export*. This data can be used by the developers to add customized entities for new devices.
+Exports a device definition (2 files) to 
+- 'Your home-assistant config directory'/hahm/export_device_descriptions/{device_type}.json
+- 'Your home-assistant config directory'/hahm/export_paramset_descriptions/{device_type}.json
+
+Please create a pull request with both files at [pydevccu](https://github.com/danielperna84/pydevccu), if the device not exists, to support future development of this component.
+This data can be used by the developers to add customized entities for new devices.
 
 ### `hahm.put_paramset`
 

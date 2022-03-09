@@ -219,9 +219,7 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
-        if preset_mode not in [
-            enum.value for enum in HmPresetMode
-        ]:
+        if preset_mode not in [enum.value for enum in HmPresetMode]:
             _LOGGER.warning(
                 "Preset mode %s is not supported by integration", preset_mode
             )

@@ -1,4 +1,7 @@
-Version 0.36.3 (2021-03-09)
+Version 0.36.5 (2021-03-10)
+- Update unit for IEC sensor
+
+Version 0.36.4 (2021-03-09)
 - Bump hahomematic to 0.36.3
 - Use callback when hub is created
 
