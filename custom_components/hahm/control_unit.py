@@ -30,7 +30,7 @@ from hahomematic.const import (
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
     HH_EVENT_LIST_DEVICES,
-    HH_EVENT_NEW_DEVICES,
+    HH_EVENT_NEW_DEVICES, HH_EVENT_HUB_CREATED,
     HH_EVENT_RE_ADDED_DEVICE,
     HH_EVENT_REPLACE_DEVICE,
     HH_EVENT_UPDATE_DEVICE,
@@ -99,7 +99,6 @@ class ControlUnit:
         )
         if self._central:
             await self._central.start(check_only=check_only)
-            await self._async_init_hub()
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
@@ -309,6 +308,9 @@ class ControlUnit:
                         hm_entities,  # Don't send device if None, it would override default value in listeners
                     )
             self._async_add_virtual_remotes_to_device_registry()
+        elif src == HH_EVENT_HUB_CREATED:
+            self._hass.async_create_task(self._async_init_hub())
+            return None
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
             return None
