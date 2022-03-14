@@ -1,4 +1,10 @@
-Version 0.36.5 (2021-03-10)
+Version 0.37.0b1 (2021-03-14)
+- Bump hahomematic to 0.37.0b6
+    - Avoid unnecessary prefetches
+    - Fix JsonRPC Session handling
+    - Rename NamesCache to DeviceDetailsCache
+    - Move hm value converter to helpers
+    - Use JSON RPC for get_value, get_paramset, get_paramset_description
 - Update unit for IEC sensor
 
 Version 0.36.4 (2021-03-09)
