@@ -1,3 +1,7 @@
+Version 0.37.0b3 (2021-03-16)
+- Bump hahomematic to 0.37.0b8
+  - use jsonrpc.getvalue
+
 Version 0.37.0b2 (2021-03-16)
 - Bump hahomematic to 0.37.0b7
   - cleanup json usage
