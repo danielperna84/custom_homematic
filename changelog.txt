@@ -1,18 +1,13 @@
-Version 0.37.0b3 (2021-03-16)
-- Bump hahomematic to 0.37.0b8
-  - use jsonrpc.getvalue
-
-Version 0.37.0b2 (2021-03-16)
-- Bump hahomematic to 0.37.0b7
-  - cleanup json usage
-
-Version 0.37.0b1 (2021-03-14)
-- Bump hahomematic to 0.37.0b6
+Version 0.37.0 (2021-03-16)
+- Bump hahomematic to 0.37.1
   - Avoid unnecessary prefetches
   - Fix JsonRPC Session handling
   - Rename NamesCache to DeviceDetailsCache
+  - Move RoomCache to DeviceDetailsCache
   - Move hm value converter to helpers
   - Use JSON RPC for get_value, get_paramset, get_paramset_description
+  - Use default for binary_sensor
+  - Add semaphore(1) to improve cache usage (less api calls)
 - Update unit for IEC sensor
 
 Version 0.36.4 (2021-03-09)
