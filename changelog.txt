@@ -1,3 +1,8 @@
+Version 0.37.1 (2021-03-17)
+- Bump hahomematic to 0.37.3
+  - Cleanup caching code
+  - Use homematic script to fetch initial data for CCU/HM
+
 Version 0.37.0 (2021-03-16)
 - Bump hahomematic to 0.37.1
   - Avoid unnecessary prefetches
