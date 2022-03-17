@@ -1,3 +1,8 @@
+Version 0.37.2 (2021-03-17)
+- Bump hahomematic to 0.37.4
+  - Fix reload paramset
+  - Fix value converter
+
 Version 0.37.1 (2021-03-17)
 - Bump hahomematic to 0.37.3
   - Cleanup caching code
