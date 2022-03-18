@@ -115,7 +115,7 @@ def get_interface_schema(use_tls: bool) -> Schema:
                 ATTR_BIDCOS_RF_PORT,
                 default=IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT,
             ): int,
-            vol.Required(ATTR_VIRTUAL_DEVICES_ENABLED, default=True): bool,
+            vol.Required(ATTR_VIRTUAL_DEVICES_ENABLED, default=False): bool,
             vol.Required(
                 ATTR_VIRTUAL_DEVICES_PORT,
                 default=IF_VIRTUAL_DEVICES_TLS_PORT

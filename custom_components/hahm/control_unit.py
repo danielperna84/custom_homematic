@@ -13,6 +13,7 @@ from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
     ATTR_HOST,
+    ATTR_INTERFACE,
     ATTR_INTERFACE_ID,
     ATTR_JSON_PORT,
     ATTR_PARAMETER,
@@ -375,17 +376,17 @@ class ControlUnit:
                         event_data=availability_event_data,
                     )
         elif hm_event_type == HmEventType.INTERFACE:
-            interface_id = event_data[ATTR_INTERFACE_ID]
+            interface = event_data[ATTR_INTERFACE]
             interface_event_type = event_data[ATTR_TYPE]
             available = event_data[ATTR_VALUE]
             if interface_event_type == HmInterfaceEventType.PROXY:
                 title = f"{DOMAIN.upper()}-Interface not reachable"
-                message = f"No connection to interface {interface_id}"
+                message = f"No connection to interface {interface}"
                 if available:
-                    self._async_dismiss_persistent_notification(identifier=interface_id)
+                    self._async_dismiss_persistent_notification(identifier=interface)
                 else:
                     self._async_create_persistent_notification(
-                        identifier=interface_id, title=title, message=message
+                        identifier=interface, title=title, message=message
                     )
 
     @callback
@@ -454,7 +455,7 @@ class ControlUnit:
             interface = self._data[ATTR_INTERFACE][interface_name]
             interface_configs.add(
                 InterfaceConfig(
-                    name=interface_name,
+                    interface=interface_name,
                     port=interface[ATTR_PORT],
                     path=interface.get(ATTR_PATH),
                 )
