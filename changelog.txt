@@ -1,3 +1,7 @@
+Version 0.37.4 (2021-03-19)
+- Bump hahomematic to 0.37.6
+  - Add JsonRPC.Session.logout before central stop to avoid warn logs at CCU.
+
 Version 0.37.3 (2021-03-18)
 - Bump hahomematic to 0.37.5
   - Send event if interface is not available
