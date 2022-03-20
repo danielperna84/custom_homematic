@@ -1,3 +1,8 @@
+Version 0.38.0 (2021-03-20)
+- Bump hahomematic to 0.38.0
+  - Add central validation
+- Improve validation in config flow
+
 Version 0.37.5 (2021-03-18)
 - Bump hahomematic to 0.37.7
   - Add additional system_listMethods to avoid errors on CCU

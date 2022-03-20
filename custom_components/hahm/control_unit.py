@@ -171,6 +171,11 @@ class ControlUnit:
             self._hub.de_init()
         await self.central.stop()
 
+    async def validate_config(self) -> bool:
+        """Validate the control configuration."""
+        central = await self._async_create_central()
+        return await central.validate_config()
+
     async def _async_init_hub(self) -> None:
         """Init the hub."""
         if not self.central.hub:
@@ -597,3 +602,8 @@ class HaHub(Entity):
     def _async_update_hub(self, *args: Any) -> None:
         """Update the HA hub."""
         self.async_schedule_update_ha_state(True)
+
+
+async def validate_config(control_config: ControlConfig) -> bool:
+    """Validate the control configuration."""
+    return await ControlUnit(control_config=control_config).validate_config()
