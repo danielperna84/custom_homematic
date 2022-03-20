@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from datetime import datetime
 import logging
 from typing import Any, cast
@@ -93,14 +94,14 @@ class ControlUnit:
         self._central = await self._async_create_central()
         self._async_add_central_to_device_registry()
 
-    async def async_start(self, check_only: bool = False) -> None:
+    async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug(
             "Starting Homematic(IP) Local ControlUnit %s",
             self._data[ATTR_INSTANCE_NAME],
         )
         if self._central:
-            await self._central.start(check_only=check_only)
+            await self._central.start()
         else:
             _LOGGER.exception(
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
@@ -169,12 +170,15 @@ class ControlUnit:
         )
         if self._hub:
             self._hub.de_init()
-        await self.central.stop()
+        if self._central is not None:
+            await self._central.stop()
 
     async def validate_config(self) -> bool:
         """Validate the control configuration."""
         central = await self._async_create_central()
-        return await central.validate_config()
+        result = await central.validate_config()
+        await central.stop()
+        return result
 
     async def _async_init_hub(self) -> None:
         """Init the hub."""
@@ -513,19 +517,26 @@ class ControlConfig:
         hass: HomeAssistant,
         entry_id: str,
         data: Mapping[str, Any],
-        check_only: bool = False,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
-        self.check_only = check_only
 
     async def async_get_control_unit(self) -> ControlUnit:
         """Identify the used client."""
         control_unit = ControlUnit(self)
         await control_unit.async_init_central()
         return control_unit
+
+    @property
+    def validation_config(self) -> ControlConfig:
+        """Return a config for validation."""
+        validation_data: dict[str, Any] = deepcopy(dict(self.data))
+        validation_data[ATTR_INSTANCE_NAME] = "validation_instance"
+        return ControlConfig(
+            hass=self.hass, entry_id="hahm_validation", data=validation_data
+        )
 
 
 class HaHub(Entity):
@@ -606,4 +617,6 @@ class HaHub(Entity):
 
 async def validate_config(control_config: ControlConfig) -> bool:
     """Validate the control configuration."""
-    return await ControlUnit(control_config=control_config).validate_config()
+    validation_config = control_config.validation_config
+    control_unit = ControlUnit(control_config=validation_config)
+    return await control_unit.validate_config()

@@ -1,3 +1,7 @@
+Version 0.38.1 (2021-03-20)
+- Bump hahomematic to 0.38.1
+  - Fix initial config
+
 Version 0.38.0 (2021-03-20)
 - Bump hahomematic to 0.38.0
   - Add central validation
