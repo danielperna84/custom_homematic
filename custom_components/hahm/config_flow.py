@@ -6,7 +6,6 @@ from pprint import pformat
 import socket
 from typing import Any, cast
 from urllib.parse import urlparse
-from xmlrpc.client import ProtocolError
 
 from hahomematic.const import (
     ATTR_CALLBACK_HOST,
@@ -35,7 +34,7 @@ from hahomematic.const import (
     IP_ANY_V4,
     PORT_ANY,
 )
-from hahomematic.xml_rpc_proxy import NoConnection
+from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
@@ -50,7 +49,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN
-from .control_unit import ControlConfig, ControlUnit
+from .control_unit import ControlConfig, ControlUnit, validate_config
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,33 +133,20 @@ def get_interface_schema(use_tls: bool) -> Schema:
     )
 
 
-async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> bool:
+async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> None:
     """Validate the user input allows us to connect."""
-    control_unit = await ControlConfig(
-        hass=hass, entry_id="validate", data=data
-    ).async_get_control_unit()
+    control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     try:
-        is_connected: bool = False
-        await control_unit.async_start(check_only=True)
-        if first_client := control_unit.central.get_client():
-            is_connected = await first_client.is_connected()
-        await control_unit.async_stop()
-        return is_connected
-    except ConnectionError as cex:
-        _LOGGER.exception(cex)
-        raise CannotConnect from cex
+        await validate_config(control_config=control_config)
+    except AuthFailure as auf:
+        _LOGGER.warning(auf)
+        raise InvalidAuth from auf
     except NoConnection as noc:
-        _LOGGER.exception(noc)
+        _LOGGER.warning(noc)
         raise CannotConnect from noc
-    except OSError as oer:
-        _LOGGER.exception(oer)
-        raise CannotConnect from oer
-    except ProtocolError as cex:
-        _LOGGER.exception(cex)
-        raise InvalidAuth from cex
-    except Exception as cex:  # pylint: disable=broad-except
-        _LOGGER.exception(cex)
-    return False
+    except NoClients as nocl:
+        _LOGGER.warning(nocl)
+        raise CannotConnect from nocl
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -213,9 +199,6 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = "cannot_connect"
         except InvalidAuth:
             errors["base"] = "invalid_auth"
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.exception("Unexpected exception")
-            errors["base"] = "unknown"
         else:
             return self.async_create_entry(
                 title=self.data[ATTR_INSTANCE_NAME], data=self.data
