@@ -60,8 +60,8 @@ ATTR_BIDCOS_RF_PORT = "bidcos_rf_port"
 ATTR_VIRTUAL_DEVICES_ENABLED = "virtual_devices_enabled"
 ATTR_VIRTUAL_DEVICES_PORT = "virtual_devices_port"
 ATTR_VIRTUAL_DEVICES_PATH = "virtual_devices_path"
-ATTR_BIDCOS_WIRED_ENABLED = "BIDCOS_WIRED_enabled"
-ATTR_BIDCOS_WIRED_PORT = "BIDCOS_WIRED_port"
+ATTR_BIDCOS_WIRED_ENABLED = "bidcos_wired_enabled"
+ATTR_BIDCOS_WIRED_PORT = "bidcos_wired_port"
 
 
 def get_domain_schema(data: ConfigType) -> Schema:
