@@ -21,12 +21,12 @@ from hahomematic.const import (
     IF_BIDCOS_RF_NAME,
     IF_BIDCOS_RF_PORT,
     IF_BIDCOS_RF_TLS_PORT,
+    IF_BIDCOS_WIRED_NAME,
+    IF_BIDCOS_WIRED_PORT,
+    IF_BIDCOS_WIRED_TLS_PORT,
     IF_HMIP_RF_NAME,
     IF_HMIP_RF_PORT,
     IF_HMIP_RF_TLS_PORT,
-    IF_HS485D_NAME,
-    IF_HS485D_PORT,
-    IF_HS485D_TLS_PORT,
     IF_VIRTUAL_DEVICES_NAME,
     IF_VIRTUAL_DEVICES_PATH,
     IF_VIRTUAL_DEVICES_PORT,
@@ -60,8 +60,8 @@ ATTR_BIDCOS_RF_PORT = "bidcos_rf_port"
 ATTR_VIRTUAL_DEVICES_ENABLED = "virtual_devices_enabled"
 ATTR_VIRTUAL_DEVICES_PORT = "virtual_devices_port"
 ATTR_VIRTUAL_DEVICES_PATH = "virtual_devices_path"
-ATTR_HS485D_ENABLED = "hs485d_enabled"
-ATTR_HS485D_PORT = "hs485d_port"
+ATTR_BIDCOS_WIRED_ENABLED = "BIDCOS_WIRED_enabled"
+ATTR_BIDCOS_WIRED_PORT = "BIDCOS_WIRED_port"
 
 
 def get_domain_schema(data: ConfigType) -> Schema:
@@ -124,10 +124,10 @@ def get_interface_schema(use_tls: bool) -> Schema:
             vol.Required(
                 ATTR_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH
             ): str,
-            vol.Required(ATTR_HS485D_ENABLED, default=False): bool,
+            vol.Required(ATTR_BIDCOS_WIRED_ENABLED, default=False): bool,
             vol.Required(
-                ATTR_HS485D_PORT,
-                default=IF_HS485D_TLS_PORT if use_tls else IF_HS485D_PORT,
+                ATTR_BIDCOS_WIRED_PORT,
+                default=IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT,
             ): int,
         }
     )
@@ -341,9 +341,9 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
                 ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
                 ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
             }
-        if interface_input[ATTR_HS485D_ENABLED]:
-            data[ATTR_INTERFACE][IF_HS485D_NAME] = {
-                ATTR_PORT: interface_input[ATTR_HS485D_PORT],
+        if interface_input[ATTR_BIDCOS_WIRED_ENABLED]:
+            data[ATTR_INTERFACE][IF_BIDCOS_WIRED_NAME] = {
+                ATTR_PORT: interface_input[ATTR_BIDCOS_WIRED_PORT],
             }
 
 
