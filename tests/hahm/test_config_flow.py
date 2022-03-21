@@ -8,7 +8,7 @@ from homeassistant.components.hahm.config_flow import (
     ATTR_BIDCOS_RF_PORT,
     ATTR_HMIP_RF_ENABLED,
     ATTR_HOST,
-    ATTR_HS485D_ENABLED,
+    ATTR_BIDCOS_WIRED_ENABLED,
     ATTR_INSTANCE_NAME,
     ATTR_PASSWORD,
     ATTR_PORT,
@@ -17,7 +17,7 @@ from homeassistant.components.hahm.config_flow import (
     ATTR_VIRTUAL_DEVICES_ENABLED,
     IF_BIDCOS_RF_NAME,
     IF_HMIP_RF_NAME,
-    IF_HS485D_NAME,
+    IF_BIDCOS_WIRED_NAME,
     IF_VIRTUAL_DEVICES_NAME,
     CannotConnect,
     InvalidAuth,
@@ -42,7 +42,7 @@ async def test_form(hass: HomeAssistant) -> None:
     assert if_bidcos_rf[ATTR_PORT] == 2001
     if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
     assert if_virtual_devices[ATTR_PORT] == 9292
-    assert interface.get(IF_HS485D_NAME) is None
+    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
 async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
@@ -55,7 +55,7 @@ async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     assert if_bidcos_rf[ATTR_PORT] == 5555
     if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
     assert if_virtual_devices[ATTR_PORT] == 9292
-    assert interface.get(IF_HS485D_NAME) is None
+    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
 async def test_form_only_hs485(hass: HomeAssistant) -> None:
@@ -64,7 +64,7 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
         ATTR_HMIP_RF_ENABLED: False,
         ATTR_BIDCOS_RF_ENABLED: False,
         ATTR_VIRTUAL_DEVICES_ENABLED: False,
-        ATTR_HS485D_ENABLED: True,
+        ATTR_BIDCOS_WIRED_ENABLED: True,
     }
     interface = await async_check_form(hass, interface_data=interface_data)
 
@@ -72,8 +72,8 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
     assert interface.get(IF_BIDCOS_RF_NAME) is None
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
 
-    if_hs485d = interface[IF_HS485D_NAME]
-    assert if_hs485d[ATTR_PORT] == 2000
+    if_BIDCOS_WIRED = interface[IF_BIDCOS_WIRED_NAME]
+    assert if_BIDCOS_WIRED[ATTR_PORT] == 2000
 
 
 async def test_form_tls(hass: HomeAssistant) -> None:
@@ -86,7 +86,7 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     assert if_bidcos_rf[ATTR_PORT] == 42001
     if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
     assert if_virtual_devices[ATTR_PORT] == 49292
-    assert interface.get(IF_HS485D_NAME) is None
+    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
 async def async_check_form(

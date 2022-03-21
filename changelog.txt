@@ -1,3 +1,7 @@
+Version 0.38.4 (2021-03-22)
+- Bump hahomematic to 0.38.4
+  - Fix interface name for BidCos-Wired
+
 Version 0.38.3 (2021-03-21)
 - Bump hahomematic to 0.38.3
   - Add check for available API method to identify BidCos Wired

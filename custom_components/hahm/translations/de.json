@@ -28,8 +28,8 @@
           "virtual_devices_enabled": "aktiviere Heizgruppen",
           "virtual_devices_port": "Gruppen Port",
           "virtual_devices_path": "Gruppen Path",
-          "hs485d_enabled": "aktiviere HS485D (HM-Wired)",
-          "hs485d_port": "HS485D Port"
+          "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
+          "bidcos_wired_port": "BidCos-Wired Port"
         }
       }
     },
@@ -67,8 +67,8 @@
           "virtual_devices_enabled": "aktiviere Heizgruppen",
           "virtual_devices_port": "Gruppen Port",
           "virtual_devices_path": "Gruppen Path",
-          "hs485d_enabled": "aktiviere HS485D (HM-Wired)",
-          "hs485d_port": "HS485D Port"
+          "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
+          "bidcos_wired_port": "BidCos-Wired Port"
         }
       }
     },

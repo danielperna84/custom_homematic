@@ -28,8 +28,8 @@
           "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
           "virtual_devices_port": "Groepen poort",
           "virtual_devices_path": "Groepen Path",
-          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
-          "hs485d_port": "HS485D poort"
+          "bidcos_wired_enabled": "BidCos-Wired (HM-Wired) inschakelen",
+          "bidcos_wired_port": "BidCos-Wired poort"
         }
       }
     },
@@ -67,8 +67,8 @@
           "virtual_devices_enabled": "groepen (Heating-Group) inschakelen",
           "virtual_devices_port": "Groepen poort",
           "virtual_devices_path": "Groepen Path",
-          "hs485d_enabled": "HS485D (HM-Wired) inschakelen",
-          "hs485d_port": "HS485D poort"
+          "bidcos_wired_enabled": "BidCos-Wired (HM-Wired) inschakelen",
+          "bidcos_wired_port": "BidCos-Wired poort"
         }
       }
     },
