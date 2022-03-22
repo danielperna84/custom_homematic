@@ -1,6 +1,6 @@
 Version 0.38.5 (2021-03-22)
 - Bump hahomematic to 0.38.5
-  - Use interface_id for interface events
+  - Add support for color temp dimmer
 
 Version 0.38.4 (2021-03-21)
 - Bump hahomematic to 0.38.4
