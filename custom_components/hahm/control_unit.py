@@ -385,17 +385,17 @@ class ControlUnit:
                         event_data=availability_event_data,
                     )
         elif hm_event_type == HmEventType.INTERFACE:
-            interface = event_data[ATTR_INTERFACE]
+            interface_id = event_data[ATTR_INTERFACE_ID]
             interface_event_type = event_data[ATTR_TYPE]
             available = event_data[ATTR_VALUE]
             if interface_event_type == HmInterfaceEventType.PROXY:
                 title = f"{DOMAIN.upper()}-Interface not reachable"
-                message = f"No connection to interface {interface}"
+                message = f"No connection to interface {interface_id}"
                 if available:
-                    self._async_dismiss_persistent_notification(identifier=interface)
+                    self._async_dismiss_persistent_notification(identifier=interface_id)
                 else:
                     self._async_create_persistent_notification(
-                        identifier=interface, title=title, message=message
+                        identifier=interface_id, title=title, message=message
                     )
 
     @callback

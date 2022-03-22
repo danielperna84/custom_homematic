@@ -5,17 +5,25 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.light import BaseHmLight
+from hahomematic.devices.light import (
+    ATTR_HM_COLOR_TEMP,
+    ATTR_HM_HS_COLOR,
+    ATTR_HM_RAMP_TIME,
+    BaseHmLight,
+)
 
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
+    ATTR_COLOR_TEMP,
     ATTR_HS_COLOR,
     ATTR_TRANSITION,
     COLOR_MODE_BRIGHTNESS,
+    COLOR_MODE_COLOR_TEMP,
     COLOR_MODE_HS,
     COLOR_MODE_ONOFF,
     SUPPORT_BRIGHTNESS,
     SUPPORT_COLOR,
+    SUPPORT_COLOR_TEMP,
     SUPPORT_TRANSITION,
     LightEntity,
 )
@@ -73,6 +81,8 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         """Return the color mode of the light."""
         if self._hm_entity.supports_hs_color:
             return COLOR_MODE_HS
+        if self._hm_entity.supports_color_temperature:
+            return COLOR_MODE_COLOR_TEMP
         if self._hm_entity.supports_brightness:
             return COLOR_MODE_BRIGHTNESS
         return COLOR_MODE_ONOFF
@@ -88,6 +98,8 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         supported_features = 0
         if self._hm_entity.supports_brightness:
             supported_features += SUPPORT_BRIGHTNESS
+        if self._hm_entity.supports_color_temperature:
+            supported_features += SUPPORT_COLOR_TEMP
         if self._hm_entity.supports_hs_color:
             supported_features += SUPPORT_COLOR
         if self._hm_entity.supports_transition:
@@ -100,9 +112,14 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         return self._hm_entity.is_on is True
 
     @property
-    def brightness(self) -> int:
+    def brightness(self) -> int | None:
         """Return the brightness of this light between 0..255."""
         return self._hm_entity.brightness
+
+    @property
+    def color_temp(self) -> int | None:
+        """Return the color temperature of this light between 0..255."""
+        return self._hm_entity.color_temp
 
     @property
     def hs_color(self) -> tuple[float, float] | None:
@@ -111,19 +128,20 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
+        hm_kwargs: dict[str, Any] = {}
         # Use hs_color from kwargs, if not applicable use current hs_color.
-        hs_color: tuple[float, float] = kwargs.get(ATTR_HS_COLOR, self.hs_color)
+        if color_temp := kwargs.get(ATTR_COLOR_TEMP, self.color_temp):
+            hm_kwargs[ATTR_HM_COLOR_TEMP] = color_temp
+        if hs_color := kwargs.get(ATTR_HS_COLOR, self.hs_color):
+            hm_kwargs[ATTR_HM_HS_COLOR] = hs_color
         # Use brightness from kwargs, if not applicable use current brightness.
-        brightness: int = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        if brightness := kwargs.get(ATTR_BRIGHTNESS, self.brightness) or 255:
+            hm_kwargs[ATTR_BRIGHTNESS] = brightness
         # Use transition from kwargs, if not applicable use 0.
-        ramp_time: int = kwargs.get(ATTR_TRANSITION, 0)
-        # If no kwargs, use default value.
-        if not kwargs:
-            brightness = 255
+        if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
+            hm_kwargs[ATTR_HM_RAMP_TIME] = ramp_time
 
-        await self._hm_entity.turn_on(
-            hs_color=hs_color, brightness=brightness, ramp_time=ramp_time
-        )
+        await self._hm_entity.turn_on(**hm_kwargs)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
