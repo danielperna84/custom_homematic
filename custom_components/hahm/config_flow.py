@@ -100,35 +100,35 @@ def get_options_schema(data: ConfigType) -> Schema:
     return options_schema
 
 
-def get_interface_schema(use_tls: bool) -> Schema:
+def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
+    interfaces = data.get(ATTR_INTERFACE, {})
+    hmip_rf_enabled = interfaces.get(IF_HMIP_RF_NAME, True)
+    hmip_port = IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT
+    bidcos_rf_enabled = interfaces.get(IF_BIDCOS_RF_NAME, True)
+    bidcos_rf_port = IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT
+    virtual_devices_enabled = interfaces.get(IF_VIRTUAL_DEVICES_NAME, False)
+    virtual_devices_port = (
+        IF_VIRTUAL_DEVICES_TLS_PORT if use_tls else IF_VIRTUAL_DEVICES_PORT
+    )
+    bidcos_wired_enabled = interfaces.get(IF_BIDCOS_WIRED_NAME, False)
+    bidcos_wired_port = IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT
+
     return vol.Schema(
         {
-            vol.Required(ATTR_HMIP_RF_ENABLED, default=True): bool,
+            vol.Required(ATTR_HMIP_RF_ENABLED, default=hmip_rf_enabled): bool,
+            vol.Required(ATTR_HMIP_RF_PORT, default=hmip_port): int,
+            vol.Required(ATTR_BIDCOS_RF_ENABLED, default=bidcos_rf_enabled): bool,
+            vol.Required(ATTR_BIDCOS_RF_PORT, default=bidcos_rf_port): int,
             vol.Required(
-                ATTR_HMIP_RF_PORT,
-                default=IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT,
-            ): int,
-            vol.Required(ATTR_BIDCOS_RF_ENABLED, default=True): bool,
-            vol.Required(
-                ATTR_BIDCOS_RF_PORT,
-                default=IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT,
-            ): int,
-            vol.Required(ATTR_VIRTUAL_DEVICES_ENABLED, default=False): bool,
-            vol.Required(
-                ATTR_VIRTUAL_DEVICES_PORT,
-                default=IF_VIRTUAL_DEVICES_TLS_PORT
-                if use_tls
-                else IF_VIRTUAL_DEVICES_PORT,
-            ): int,
+                ATTR_VIRTUAL_DEVICES_ENABLED, default=virtual_devices_enabled
+            ): bool,
+            vol.Required(ATTR_VIRTUAL_DEVICES_PORT, default=virtual_devices_port): int,
             vol.Required(
                 ATTR_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH
             ): str,
-            vol.Required(ATTR_BIDCOS_WIRED_ENABLED, default=False): bool,
-            vol.Required(
-                ATTR_BIDCOS_WIRED_PORT,
-                default=IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT,
-            ): int,
+            vol.Required(ATTR_BIDCOS_WIRED_ENABLED, default=bidcos_wired_enabled): bool,
+            vol.Required(ATTR_BIDCOS_WIRED_PORT, default=bidcos_wired_port): int,
         }
     )
 
@@ -187,7 +187,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
-                data_schema=get_interface_schema(self.data[ATTR_TLS]),
+                data_schema=get_interface_schema(self.data[ATTR_TLS], self.data),
             )
 
         _update_interface_input(data=self.data, interface_input=interface_input)
@@ -251,7 +251,9 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the Homematic(IP) Local devices options."""
         if user_input is not None:
+            old_interfaces = self.data[ATTR_INTERFACE]
             self.data = _get_ccu_data(self.data, user_input=user_input)
+            self.data[ATTR_INTERFACE] = old_interfaces
             return await self.async_step_interface()
 
         return self.async_show_form(
@@ -267,7 +269,10 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
-                data_schema=get_interface_schema(self.data[ATTR_TLS]),
+                data_schema=get_interface_schema(
+                    use_tls=self.data[ATTR_TLS],
+                    data=self.data,
+                ),
             )
 
         _update_interface_input(data=self.data, interface_input=interface_input)
