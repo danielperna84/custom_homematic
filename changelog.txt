@@ -1,52 +1,56 @@
-Version 0.38.5 (2021-03-22)
+Version 0.39-0 (2022-03-25)
+- Bump hahomematic to 0.39.0
+  - Cleanup json code
+
+Version 0.38.5 (2022-03-22)
 - Bump hahomematic to 0.38.5
   - Add support for color temp dimmer
 
-Version 0.38.4 (2021-03-21)
+Version 0.38.4 (2022-03-21)
 - Bump hahomematic to 0.38.4
   - Fix interface name for BidCos-Wired
 
-Version 0.38.3 (2021-03-21)
+Version 0.38.3 (2022-03-21)
 - Bump hahomematic to 0.38.3
   - Add check for available API method to identify BidCos Wired
 
-Version 0.38.2 (2021-03-20)
+Version 0.38.2 (2022-03-20)
 - Bump hahomematic to 0.38.2
     - Catch SysVar parsing exceptions
 
-Version 0.38.1 (2021-03-20)
+Version 0.38.1 (2022-03-20)
 - Bump hahomematic to 0.38.1
   - Fix initial config
 
-Version 0.38.0 (2021-03-20)
+Version 0.38.0 (2022-03-20)
 - Bump hahomematic to 0.38.0
   - Add central validation
 - Improve validation in config flow
 
-Version 0.37.5 (2021-03-18)
+Version 0.37.5 (2022-03-18)
 - Bump hahomematic to 0.37.7
   - Add additional system_listMethods to avoid errors on CCU
 
-Version 0.37.4 (2021-03-18)
+Version 0.37.4 (2022-03-18)
 - Bump hahomematic to 0.37.6
   - Add JsonRPC.Session.logout before central stop to avoid warn logs at CCU.
 
-Version 0.37.3 (2021-03-18)
+Version 0.37.3 (2022-03-18)
 - Bump hahomematic to 0.37.5
   - Send event if interface is not available
   - Dont't block available interfaces, if another interface is no available
 
-Version 0.37.2 (2021-03-17)
+Version 0.37.2 (2022-03-17)
 - Bump hahomematic to 0.37.4
   - Fix reload paramset
   - Fix value converter
 
-Version 0.37.1 (2021-03-17)
+Version 0.37.1 (2022-03-17)
 - Bump hahomematic to 0.37.3
   - Cleanup caching code
   - Use homematic script to fetch initial data for CCU/HM
 
-Version 0.37.0 (2021-03-16)
+Version 0.37.0 (2022-03-16)
 - Bump hahomematic to 0.37.1
   - Avoid unnecessary prefetches
   - Fix JsonRPC Session handling
@@ -58,63 +62,63 @@ Version 0.37.0 (2021-03-16)
   - Add semaphore(1) to improve cache usage (less api calls)
 - Update unit for IEC sensor
 
-Version 0.36.4 (2021-03-09)
+Version 0.36.4 (2022-03-09)
 - Bump hahomematic to 0.36.3
 - Use callback when hub is created
 
-Version 0.36.3 (2021-03-06)
+Version 0.36.3 (2022-03-06)
 - Bump hahomematic to 0.36.2
   - Make more devices custom_entities
 
-Version 0.36.2 (2021-02-27)
+Version 0.36.2 (2022-02-27)
 - Fix LEVEL display
 
-Version 0.36.0 (2021-02-24)
+Version 0.36.0 (2022-02-24)
 - Bump hahomematic to 0.36.0
   - Remove HA constants
   - Use enums own constants
 - Use more HA constants based on hahomematic enums
 
-Version 0.35.3 (2021-02-23)
+Version 0.35.3 (2022-02-23)
 - Bump hahomematic to 0.35.3
     - Move xmlrpc credentials to header
 
-Version 0.35.2 (2021-02-22)
+Version 0.35.2 (2022-02-22)
 - Bump hahomematic to 0.35.2
   - Remove password from Exceptions
 
-Version 0.35.1 (2021-02-21)
+Version 0.35.1 (2022-02-21)
 - Bump hahomematic to 0.35.1
   - Fix IpBlind
 
-Version 0.35.0 (2021-02-19)
+Version 0.35.0 (2022-02-19)
 - Bump hahomematic to 0.35.0
 - Fix CF tests
 
-Version 0.34.2 (2021-02-16)
+Version 0.34.2 (2022-02-16)
 - Bump hahomematic to 0.34.2
 - Add is_locking/is_unlocking to lock
 
-Version 0.34.1 (2021-02-16)
+Version 0.34.1 (2022-02-16)
 - Bump hahomematic to 0.34.1
 - Add own service to turn_on a siren (acoustically/optically)
 
-Version 0.34.0 (2021-02-15)
+Version 0.34.0 (2022-02-15)
 - Bump hahomematic to 0.34.0
   - Add new platform siren
 
-Version 0.33.0 (2021-02-14)
+Version 0.33.0 (2022-02-14)
 - Bump hahomematic to 0.33.0
   - Add hvac_action to IP Thermostats
   - Add hvac_action to some HM Thermostats
 - Add hvac_action to climate
 
-Version 0.32.1 (2021-02-12)
+Version 0.32.1 (2022-02-12)
 - Bump hahomematic to 0.32.4
   - add opening/closing to IPGarage
 - Add translation for DOOR_STATE
 
-Version 0.32.0 (2021-02-12)
+Version 0.32.0 (2022-02-12)
 - Bump hahomematic to 0.32.3
   - Prioritize detection of device for custom entities
   - Add HmIPW-FIO6 as CE
@@ -122,46 +126,46 @@ Version 0.32.0 (2021-02-12)
   - Add state(ch2) to HmIP-MOD-HO
 - Fix translations
 
-Version 0.31.4 (2021-02-08)
+Version 0.31.4 (2022-02-08)
 - Add diagnostics
 
-Version 0.31.3 (2021-02-08)
+Version 0.31.3 (2022-02-08)
 - Add multiplier to sensor and number entities.
   This fixes percentage related sensors
 - Add more EntityDefinitions (device_class, state_class, ...)
 
-Version 0.31.2 (2021-02-07)
+Version 0.31.2 (2022-02-07)
 - Bump hahomematic to 0.31.2
   - Add HmIP-HDM2 to cover
   - Fix unignore filename
 
-Version 0.31.1 (2021-02-07)
+Version 0.31.1 (2022-02-07)
 - Bump hahomematic to 0.31.1
   - Add multiplier to entity
   - Substitute device_type of HB devices for usage in custom_entities
 - Aggregate entity_helper
 
-Version 0.31.0 (2021-02-06)
+Version 0.31.0 (2022-02-06)
 - Bump hahomematic to 0.31.0
 - use  should_poll from hahomematic
 
-Version 0.30.3.beta (2021-02-06)
+Version 0.30.3.beta (2022-02-06)
 - Bump hahomematic to 0.30.2
   - Remove INHIBIT from ignore parameter list
   - Add support for unignore file
   - Add DIRECTION & ACTIVITY_STATE to cover (is_opening, is_closing)
 - Update translations, device_classes form Win-Matic/Key-Matic
 
-Version 0.30.2 (2021-02-04)
+Version 0.30.2 (2022-02-04)
 - replace availability PN by blueprint
 
-Version 0.30.1 (2021-02-04)
+Version 0.30.1 (2022-02-04)
 - Bump hahomematic to 0.30.1
   - Start hub earlier
 - Add service to clear the caches
 - Add event about device availability
 
-Version 0.30.0 (2021-02-03)
+Version 0.30.0 (2022-02-03)
 - Bump hahomematic to 0.30.0
     - Add CHANNEL_OPERATION_MODE for HmIP(W)-DRBL4
     - Fix DLD lock_state
@@ -169,83 +173,83 @@ Version 0.30.0 (2021-02-03)
 - Re-disable RSSI by default
 - React on channel_operation_mode for cover/blind on HmIP(W)-DRBL4
 
-Version 0.29.3 (2021-02-02)
+Version 0.29.3 (2022-02-02)
 - Bump hahomematic to 0.29.2
   - Add HmIP-STH to climate custom entities
 - Add more HM-Devices to EntityDescription
 - Switch device_class of HmIP-SCI from safety to opening
 - Enhance entity_helper with sets for entity_descriptions by_param and by_device
 
-Version 0.29.2 (2021-02-02)
+Version 0.29.2 (2022-02-02)
 - Add more HM-Devices to EntityDescription
 
-Version 0.29.1 (2021-02-02)
+Version 0.29.1 (2022-02-02)
 - Bump hahomematic to 0.29.1
     - Check if interface callback is alive
     - Add class for HomeamaticIP Blinds
 - Enhance entity_helper with sets for entity_descriptions
 - Fix missing device_id in keypress events
 
-Version 0.29.0 (2021-02-01)
+Version 0.29.0 (2022-02-01)
 - Bump hahomematic to 0.29.0
   - Make device availability dependent on the client
   - Fire event about interface availability
 - Display persistent notification, if interface is not available
 
-Version 0.28.8 (2021-01-31)
+Version 0.28.8 (2022-01-31)
 - Bump hahomematic to 0.28.7
   - Add additional check to reconnect
 
-Version 0.28.7 (2021-01-30)
+Version 0.28.7 (2022-01-30)
 - Listen on HA stop event to stop the central
 
-Version 0.28.6 (2021-01-30)
+Version 0.28.6 (2022-01-30)
 - Bump hahomematic to 0.28.6
-  - Switch value caching from getPramset to getValue
+  - Switch value caching from getParamset to getValue
     That should fix loading of VirtualDevices and HmRF
 
-Version 0.28.4 (2021-01-30)
+Version 0.28.4 (2022-01-30)
 - Bump hahomematic to 0.28.4
  - Limit read proxy workers to 1
 
-Version 0.28.3 (2021-01-29)
+Version 0.28.3 (2022-01-29)
 - Bump hahomematic to 0.28.2
     - Make names cache non-persistent. 
 
-Version 0.28.2 (2021-01-28)
+Version 0.28.2 (2022-01-28)
 - Fix hub init
 
-Version 0.28.1 (2021-01-28)
+Version 0.28.1 (2022-01-28)
 - Bump hahomematic to 0.28.1
     - Cleanup central API
     - Use dedicated proxy for mass read operations, to avoid blocking of connection checker
 - Fix MyPy
 
-Version 0.28.0 (2021-01-27)
+Version 0.28.0 (2022-01-27)
 - Bump hahomematic to 0.28.0
     - Create client after init failure
     - Reduce CCU calls
 
-Version 0.27.1 (2021-01-25)
+Version 0.27.1 (2022-01-25)
 - Bump hahomematic to 0.27.2
     - optimize initial data load
 
-Version 0.27.0 (2021-01-25)
+Version 0.27.0 (2022-01-25)
 - Bump hahomematic to 0.27.0
     - Add hmcli.py as command line script
 
-Version 0.26.3 (2021-01-24)
+Version 0.26.3 (2022-01-24)
 - Add name/host to discovered config flow
 
-Version 0.26.2 (2021-01-23)
+Version 0.26.2 (2022-01-23)
 - Add upnp discovery to config flow
 
-Version 0.26.1 (2021-01-23)
+Version 0.26.1 (2022-01-23)
 - Fix initial setup: Integration will completely setup after initial config flow.
   A reload of the integration or a restart of HA is no longer necessary.
 - Cleanup integration init.
 
-Version 0.26.0 (2021-01-22)
+Version 0.26.0 (2022-01-22)
 - Bump hahomematic to 0.26.0
     - Add additional params for HM-SEC-Win and HM-SEC-Key
     - Assign secondary channels for HM dimmers
@@ -253,31 +257,31 @@ Version 0.26.0 (2021-01-22)
 - Add translation for new params
 - Enable wildcard search for device_type in entity_helper
 
-Version 0.25.0 (2021-01-19)
+Version 0.25.0 (2022-01-19)
 - Bump hahomematic to 0.25.0
     - Mark unreachable devices as unavailable on startup
 
-Version 0.24.3 (2021-01-18)
+Version 0.24.3 (2022-01-18)
 - Bump hahomematic to 0.24.4
     - Improve logging
     - Generic schema for entities is name(str):channel(int), everything else is custom.
 
-Version 0.24.2 (2021-01-18)
+Version 0.24.2 (2022-01-18)
 - Bump hahomematic to 0.24.3
     - improve exception handling
     - fix unique_id for system variables
       This is a breaking change.
       Solution: Activate the old sysvars, restart HA and delete the old sysvars.
 
-Version 0.24.1 (2021-01-17)
+Version 0.24.1 (2022-01-17)
 - Bump hahomematic to 0.24.2
     - improve exception handling
 
-Version 0.24.0 (2021-01-17)
+Version 0.24.0 (2022-01-17)
 - Bump hahomematic to 0.24.0
     - improve exception handling
 
-Version 0.23.0 (2021-01-16)
+Version 0.23.0 (2022-01-16)
 - Bump hahomematic to 0.23.3
     - Make ["DRY", "RAIN"] sensor a binary_sensor
     - Add converter to sensor value
@@ -288,49 +292,49 @@ Version 0.23.0 (2021-01-16)
 - Fix unit of RSSI params
 - Add device class to HM-Sen-RD-O
 
-Version 0.22.2 (2021-01-15)
+Version 0.22.2 (2022-01-15)
 - Bump hahomematic to 0.22.2
 
-Version 0.22.1 (2021-01-15)
+Version 0.22.1 (2022-01-15)
 - Bump hahomematic to 0.22.1
     - Add VALVE_STATE for hm climate
     - Add entity_type to attributes
     - Accept LOWBAT only on channel 0
 
-Version 0.22.0 (2021-01-14)
+Version 0.22.0 (2022-01-14)
 - Bump hahomematic to 0.22.0
     - Add rooms to device
 - Add area to device_info.
   This works, if a homematic device is assigned to a single room in CCU. Multiple channels can be assigned to the same room.
   If the device is assigned to multiple rooms, or nothing is set, then the area in HA will stay empty
 
-Version 0.21.1 (2021-01-13)
+Version 0.21.1 (2022-01-13)
 - Bump hahomematic to 0.21.1
     - Fix event identification and generation
 - Remove Alarm Events (not needed)
 
-Version 0.21.0 (2021-01-13)
+Version 0.21.0 (2022-01-13)
 - Bump hahomematic to 0.21.0
     - Don't exclude Servicemeldungen from sysvars
     - Use Servicemeldungen sysvar for hub state
 
-Version 0.20.0 (2021-01-12)
+Version 0.20.0 (2022-01-12)
 - Bump hahomematic to 0.20.0
 - Fix number entities so they can handle percentages
 
-Version 0.19.1 (2021-01-11)
+Version 0.19.1 (2022-01-11)
 - Fix set_variable_value
 
-Version 0.19.0 (2021-01-11)
+Version 0.19.0 (2022-01-11)
 - Bump hahomematic to 0.19.0
     - Mark secondary channels name with a V --> Vch
 - Remove option to enable virtual channels. Virtual channels are now created but disabled by default.
 
-Version 0.18.1 (2021-01-11)
+Version 0.18.1 (2022-01-11)
 - Bump hahomematic to 0.18.1
     - Fix callback to notify un_reach
 
-Version 0.18.0 (2021-01-10)
+Version 0.18.0 (2022-01-10)
 - Bump hahomematic to 0.18.0
 - Set entity enabled default by entity usage enum
 - Remove enable_sensors_for_system_variables from config flow
@@ -338,26 +342,26 @@ Version 0.18.0 (2021-01-10)
 - All Sysvars are now disabled by default
 - Add instance name to system variable name
 
-Version 0.17.1 (2021-01-09)
+Version 0.17.1 (2022-01-09)
 - Bump hahomematic to 0.17.1
     - Fix naming for multi channel custom entities
 
-Version 0.17.0 (2021-01-09)
+Version 0.17.0 (2022-01-09)
 - Bump hahomematic to 0.17.0
 - Adopt change changes from hahomematic
 
-Version 0.16.1 (2021-01-08)
+Version 0.16.1 (2022-01-08)
 - Bump hahomematic to 0.16.1
     - Add logging to show usage of unique_id in name
     - Add HmIPW-WRC6 to custom entities
     - Add HmIP-SCTH230 to custom entities
 
-Version 0.16.0 (2021-01-08)
+Version 0.16.0 (2022-01-08)
 - Bump hahomematic to 0.16.0
     - Return unique_id if name is not in cache
     - Remove no longer needed press_virtual_remote_key
 
-Version 0.15.1 (2021-01-07)
+Version 0.15.1 (2022-01-07)
 - Bump hahomematic to 0.15.2
     - Identify virtual remote by device type
     - Fix Device Exporter / format output
@@ -368,7 +372,7 @@ Version 0.15.1 (2021-01-07)
 - Cleanup DeviceTrigger/Action
 - Add more EntityDescriptions
 
-Version 0.15.0 (2021-01-07)
+Version 0.15.0 (2022-01-07)
 - Bump hahomematic to 0.15.0
     - Remove Virtual Remotes from buttons (BREAKING CHANGE)
       Solution: obsolete entities (buttons) can be deleted in entities overview.
@@ -376,27 +380,27 @@ Version 0.15.0 (2021-01-07)
 - Add device actions to call actions on virtual remotes
 - Add device(service) for virtual remote
 
-Version 0.14.0 (2021-01-06)
+Version 0.14.0 (2022-01-06)
 - Bump hahomematic to 0.14.0
     - Switch some HM-LC-Bl1 to cover
     - Don't exclude DutyCycle, needed for old rf-modules
     - Don't exclude Watchdog from SV sensor
 
-Version 0.13.2 (2021-01-05)
+Version 0.13.2 (2022-01-05)
 - Bump hahomematic to 0.13.3
     - HM cover fix: check level for None
     - Fix: max_temp issue for hm thermostats
     - Fix: hm const are str instead of int
 - Fix: duplicate remove exception after delete_device
 
-Version 0.13.1 (2021-01-04)
+Version 0.13.1 (2022-01-04)
 - Bump hahomematic to 0.13.2
     - Fix cover state
     - Add method to delete a single device to central
 - Add a service to delete a homematic device from HM (No delete in CCU!)
 - Fix read of previous device options
 
-Version 0.13.0 (2021-01-04)
+Version 0.13.0 (2022-01-04)
 - Bump hahomematic to 0.13.1
     - Fix unique_id for heating_groups (Breaking Change)
       Solution: remove greyed-put climate entity, rename entity_id of new entity afterwards.
@@ -407,18 +411,18 @@ Version 0.13.0 (2021-01-04)
     - Username and Password are mandatory
     - OptionsFlow allows Reconfiguration of Setup (requires restart)
 
-Version 0.12.0 (2021-01-03)
+Version 0.12.0 (2022-01-03)
 - Bump hahomematic to 0.12.0
     - Split number to integer and float
 - Adopt changes from hahomematic
 - Rename integration
 
-Version 0.11.1 (2021-01-02)
+Version 0.11.1 (2022-01-02)
 - Bump hahomematic to 0.11.2
     - Precise entity definitions
     - Improve detection of multi channel devices
 
-Version 0.11.0 (2021-01-02)
+Version 0.11.0 (2022-01-02)
 - Bump hahomematic to 0.11.0
     - Add transition to dimmer
     - Remove channel no, if channel is the only_primary_channel
