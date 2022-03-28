@@ -9,10 +9,10 @@ blueprint:
   input:
     remote:
       name: 8-Button Device
-      description: Please select a 8-Button device of your HAHM integration.
+      description: Please select a 8-Button device of your Homematic(IP) Local integration.
       selector:
         device:
-          integration: hahm
+          integration: homematicip_local
     action_1_short:
       name: Action
       description: Button 1, Short Press

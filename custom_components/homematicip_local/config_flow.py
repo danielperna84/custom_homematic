@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import logging
 from pprint import pformat
-import socket
 from typing import Any, cast
 from urllib.parse import urlparse
 
@@ -49,7 +48,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN
-from .control_unit import ControlConfig, ControlUnit, validate_config
+from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_serial
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,15 +102,34 @@ def get_options_schema(data: ConfigType) -> Schema:
 def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
     interfaces = data.get(ATTR_INTERFACE, {})
-    hmip_rf_enabled = interfaces.get(IF_HMIP_RF_NAME, True)
+    # HmIP-RF
+    if IF_HMIP_RF_NAME in interfaces:
+        hmip_rf_enabled = interfaces.get(IF_HMIP_RF_NAME) is not None
+    else:
+        hmip_rf_enabled = True
     hmip_port = IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT
-    bidcos_rf_enabled = interfaces.get(IF_BIDCOS_RF_NAME, True)
+
+    # BidCos-RF
+    if IF_BIDCOS_RF_NAME in interfaces:
+        bidcos_rf_enabled = interfaces.get(IF_BIDCOS_RF_NAME) is not None
+    else:
+        bidcos_rf_enabled = True
     bidcos_rf_port = IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT
-    virtual_devices_enabled = interfaces.get(IF_VIRTUAL_DEVICES_NAME, False)
+
+    # Virtual devices
+    if IF_VIRTUAL_DEVICES_NAME in interfaces:
+        virtual_devices_enabled = interfaces.get(IF_VIRTUAL_DEVICES_NAME) is not None
+    else:
+        virtual_devices_enabled = False
     virtual_devices_port = (
         IF_VIRTUAL_DEVICES_TLS_PORT if use_tls else IF_VIRTUAL_DEVICES_PORT
     )
-    bidcos_wired_enabled = interfaces.get(IF_BIDCOS_WIRED_NAME, False)
+
+    # BidCos-Wired
+    if IF_BIDCOS_WIRED_NAME in interfaces:
+        bidcos_wired_enabled = interfaces.get(IF_BIDCOS_WIRED_NAME) is not None
+    else:
+        bidcos_wired_enabled = False
     bidcos_wired_port = IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT
 
     return vol.Schema(
@@ -133,11 +151,11 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     )
 
 
-async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> None:
+async def _async_validate_config_and_get_serial(hass: HomeAssistant, data: ConfigType) -> str:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     try:
-        await validate_config(control_config=control_config)
+        return await validate_config_and_get_serial(control_config=control_config)
     except AuthFailure as auf:
         _LOGGER.warning(auf)
         raise InvalidAuth from auf
@@ -150,7 +168,7 @@ async def _async_validate_input(hass: HomeAssistant, data: ConfigType) -> None:
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle the instance flow for hahomematic."""
+    """Handle the instance flow for Homematic(IP) Local."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
@@ -158,6 +176,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Init the ConfigFlow."""
         self.data: ConfigType = {}
+        self.serial: str | None = None
 
     async def async_step_user(self, user_input: ConfigType | None = None) -> FlowResult:
         """Handle the initial step."""
@@ -168,9 +187,6 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
-            ip_address = _get_ip_address(user_input[ATTR_HOST])
-            await self.async_set_unique_id(ip_address)
-            self._abort_if_unique_id_configured()
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
 
@@ -194,7 +210,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            await _async_validate_input(self.hass, self.data)
+            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
+            await self.async_set_unique_id(serial)
+            self._abort_if_unique_id_configured()
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -216,10 +234,12 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         instance_name = _get_instance_name(
             friendly_name=discovery_info.upnp.get("friendlyName")
         )
+        serial = _get_serial(
+            model_description=discovery_info.upnp.get("modelDescription")
+        )
 
         host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
-        ip_address = _get_ip_address(host)
-        await self.async_set_unique_id(ip_address)
+        await self.async_set_unique_id(serial)
 
         self._abort_if_unique_id_configured(updates={CONF_HOST: host})
 
@@ -231,10 +251,10 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
         """Get the options flow for this handler."""
-        return HahmOptionsFlowHandler(config_entry)
+        return HomematicIPLocalOptionsFlowHandler(config_entry)
 
 
-class HahmOptionsFlowHandler(config_entries.OptionsFlow):
+class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Homematic(IP) Local options."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:
@@ -279,7 +299,7 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
 
         try:
-            await _async_validate_input(self.hass, self.data)
+            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -288,9 +308,8 @@ class HahmOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
-            ip_address = _get_ip_address(self.data[ATTR_HOST])
             self.hass.config_entries.async_update_entry(
-                entry=self.config_entry, unique_id=ip_address, data=self.data
+                entry=self.config_entry, unique_id=serial, data=self.data
             )
             return self.async_create_entry(title="", data={})
 
@@ -363,12 +382,10 @@ def _get_instance_name(friendly_name: Any | None) -> str | None:
     return name
 
 
-# Do not add: pylint disable=no-member
-# This is only an issue on MacOS
-def _get_ip_address(host: str) -> str:
-    """Get IP by hostname"""
-    try:
-        return socket.gethostbyname(host)
-    except Exception as ex:
-        _LOGGER.warning("Can't resolve host for %s", host)
-        raise CannotConnect(ex) from ex
+def _get_serial(model_description: Any | None) -> str | None:
+    if not model_description:
+        return None
+    md = str(model_description)
+    if len(md) > 10:
+        return md[-10]
+    return None

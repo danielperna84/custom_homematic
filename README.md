@@ -53,13 +53,13 @@ If you are using Homegear and have not set up authentication, please enter dummy
 
 # Configuration
 
-Adding Homematic(IP) Local to you Home Assistant instance can be done via the user interface, by using this My button: [ADD INTEGRATION](https://my.home-assistant.io/redirect/config_flow_start?domain=hahm)
+Adding Homematic(IP) Local to you Home Assistant instance can be done via the user interface, by using this My button: [ADD INTEGRATION](https://my.home-assistant.io/redirect/config_flow_start?domain=homematicip_local)
 
 ## Manual configuration steps
 - Browse to your Home Assistant instance.
 - In the sidebar click on [Configuration](https://my.home-assistant.io/redirect/config)
 - From the configuration menu select: [Integrations](https://my.home-assistant.io/redirect/integrations)
-- In the bottom right, click on the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=hahm) button.
+- In the bottom right, click on the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=homematicip_local) button.
 - From the list, search and select "Homematic(IP) Local".
 - Follow the instruction on screen to complete the set up.
 
@@ -176,52 +176,52 @@ These two options are required for _special_ network environments. If for exampl
 
 The Homematic(IP) Local integration makes various custom services available.
 
-### `hahm.clear_cache`
+### `homematicip_local.clear_cache`
 
 Clears the cache for a central unit from Home Assistant. Requires a restart.
 
-### `hahm.delete_device`
+### `homematicip_local.delete_device`
 
 Delete a device from Home Assistant.
 
-### `hahm.disable_away_mode`
+### `homematicip_local.disable_away_mode`
 
 Disable the away mode for `climate` devices. This only works with Homematic IP devices.
 
-### `hahm.enable_away_mode_by_calendar`
+### `homematicip_local.enable_away_mode_by_calendar`
 
 Enable the away mode immediately, and specify the end time by date. This only works with Homematic IP devices.
 
-### `hahm.enable_away_mode_by_duration`
+### `homematicip_local.enable_away_mode_by_duration`
 
 Enable the away mode immediately, and specify the end time by setting a duration. This only works with Homematic IP devices.
 
-### `hahm.export_device_definition`
+### `homematicip_local.export_device_definition`
 
 Exports a device definition (2 files) to 
-- 'Your home-assistant config directory'/hahm/export_device_descriptions/{device_type}.json
-- 'Your home-assistant config directory'/hahm/export_paramset_descriptions/{device_type}.json
+- 'Your home-assistant config directory'/homematicip_local/export_device_descriptions/{device_type}.json
+- 'Your home-assistant config directory'/homematicip_local/export_paramset_descriptions/{device_type}.json
 
 Please create a pull request with both files at [pydevccu](https://github.com/danielperna84/pydevccu), if the device not exists, to support future development of this component.
 This data can be used by the developers to add customized entities for new devices.
 
-### `hahm.put_paramset`
+### `homematicip_local.put_paramset`
 
 Call to `putParamset` in the XML-RPC interface.
 
-### `hahm.set_device_value`
+### `homematicip_local.set_device_value`
 
 Set a device parameter via the XML-RPC interface.
 
-### `hahm.set_install_mode`
+### `homematicip_local.set_install_mode`
 
 Turn on the install mode on the provided Interface to pair new devices.
 
-### `hahm.set_variable_value`
+### `homematicip_local.set_variable_value`
 
 Set the value of a variable on your HomeMatic hub.
 
-### `hahm.turn_on_siren`
+### `homematicip_local.turn_on_siren`
 
 Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren).
 
@@ -233,10 +233,10 @@ Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not b
 
 ### Pressing buttons via automation
 
-It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `hahm.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
+It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `homematicip_local.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
 
 ```yaml
-service: hahm.set_device_value
+service: homematicip_local.set_device_value
 data:
   device_id: abcdefg...
   parameter: PRESS_SHORT
@@ -266,9 +266,9 @@ Set boolean variable to true:
 ```yaml
 ...
 action:
-  service: hahm.set_variable_value
+  service: homematicip_local.set_variable_value
   data:
-    entity_id: hahm.ccu2
+    entity_id: homematicip_local.ccu2
     name: Variablename
     value: '3'
 ```
@@ -278,7 +278,7 @@ Manually turn on a switch actor:
 ```yaml
 ...
 action:
-  service: hahm.set_device_value
+  service: homematicip_local.set_device_value
   data:
     device_id: abcdefg...
     channel: 1
@@ -292,7 +292,7 @@ Manually set temperature on thermostat:
 ```yaml
 ...
 action:
-  service: hahm.set_device_value
+  service: homematicip_local.set_device_value
   data:
     device_id: abcdefg...
     channel: 4
@@ -306,7 +306,7 @@ Set the week program of a wall thermostat:
 ```yaml
 ...
 action:
-  service: hahm.put_paramset
+  service: homematicip_local.put_paramset
   data:
     device_id: abcdefg...
     paramset_key: MASTER
@@ -319,7 +319,7 @@ Set the week program of a wall thermostat with explicit `rx_mode` (BidCos-RF onl
 ```yaml
 ...
 action:
-  service: hahm.put_paramset
+  service: homematicip_local.put_paramset
   data:
     device_id: abcdefg...
     paramset_key: MASTER

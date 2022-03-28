@@ -44,7 +44,7 @@
   "options": {
     "step": {
       "central": {
-        "description": "Configureer zichtbaarheid van hahm apparaattypes",
+        "description": "Configureer zichtbaarheid van Homematic(IP) Local apparaattypes",
         "title": "Configureer de CCU opnieuw",
         "data": {
           "host": "CCU Hostname/IP-adres",

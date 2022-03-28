@@ -50,7 +50,7 @@ SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
-HAHM_SERVICES = [
+HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
     SERVICE_DELETE_DEVICE,
     SERVICE_EXPORT_DEVICE_DEFINITION,
@@ -123,8 +123,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     """Create the hahomematic services."""
 
     @verify_domain_control(hass, DOMAIN)
-    async def async_call_hahm_service(service: ServiceCall) -> None:
-        """Call correct HomematicIP Cloud service."""
+    async def async_call_hmip_local_service(service: ServiceCall) -> None:
+        """Call correct Homematic(IP) Local service."""
         service_name = service.service
 
         if service_name == SERVICE_CLEAR_CACHE:
@@ -146,7 +146,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         hass=hass,
         domain=DOMAIN,
         service=SERVICE_CLEAR_CACHE,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_CLEAR_CACHE,
     )
 
@@ -154,7 +154,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         hass=hass,
         domain=DOMAIN,
         service=SERVICE_DELETE_DEVICE,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_DELETE_DEVICE,
     )
 
@@ -162,21 +162,21 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         hass=hass,
         domain=DOMAIN,
         service=SERVICE_EXPORT_DEVICE_DEFINITION,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION,
     )
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_VARIABLE_VALUE,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_SET_VARIABLE_VALUE,
     )
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_DEVICE_VALUE,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
     )
 
@@ -184,14 +184,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         hass=hass,
         domain=DOMAIN,
         service=SERVICE_SET_INSTALL_MODE,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_SET_INSTALL_MODE,
     )
 
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_PUT_PARAMSET,
-        service_func=async_call_hahm_service,
+        service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_PUT_PARAMSET,
     )
 
@@ -201,8 +201,8 @@ async def async_unload_services(hass: HomeAssistant) -> None:
     if hass.data[DOMAIN]:
         return
 
-    for hahm_service in HAHM_SERVICES:
-        hass.services.async_remove(domain=DOMAIN, service=hahm_service)
+    for hmip_local_service in HMIP_LOCAL_SERVICES:
+        hass.services.async_remove(domain=DOMAIN, service=hmip_local_service)
 
 
 async def _async_service_delete_device(

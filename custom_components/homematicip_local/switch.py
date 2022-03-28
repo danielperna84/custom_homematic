@@ -31,7 +31,7 @@ async def async_setup_entry(
 
     @callback
     def async_add_switch(args: Any) -> None:
-        """Add switch from HAHM."""
+        """Add switch from Homematic(IP) Local."""
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args:

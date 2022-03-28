@@ -2,7 +2,7 @@
 import pytest
 
 from homeassistant.components import automation
-from homeassistant.components.hahm import DOMAIN
+from homeassistant.components.homematicip_local import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.setup import async_setup_component
@@ -47,13 +47,13 @@ async def test_get_actions(
             "domain": DOMAIN,
             "type": "turn_on",
             "device_id": device_entry.id,
-            "entity_id": "hahm.test_5678",
+            "entity_id": "homematicip_local.test_5678",
         },
         {
             "domain": DOMAIN,
             "type": "turn_off",
             "device_id": device_entry.id,
-            "entity_id": "hahm.test_5678",
+            "entity_id": "homematicip_local.test_5678",
         },
     ]
     actions = await async_get_device_automations(hass, "action", device_entry.id)
@@ -75,7 +75,7 @@ async def test_action(hass: HomeAssistant) -> None:
                     "action": {
                         "domain": DOMAIN,
                         "device_id": "abcdefgh",
-                        "entity_id": "hahm.entity",
+                        "entity_id": "homematicip_local.entity",
                         "type": "turn_off",
                     },
                 },
@@ -87,7 +87,7 @@ async def test_action(hass: HomeAssistant) -> None:
                     "action": {
                         "domain": DOMAIN,
                         "device_id": "abcdefgh",
-                        "entity_id": "hahm.entity",
+                        "entity_id": "homematicip_local.entity",
                         "type": "turn_on",
                     },
                 },
@@ -95,8 +95,8 @@ async def test_action(hass: HomeAssistant) -> None:
         },
     )
 
-    turn_off_calls = async_mock_service(hass, "hahm", "turn_off")
-    turn_on_calls = async_mock_service(hass, "hahm", "turn_on")
+    turn_off_calls = async_mock_service(hass, "homematicip_local", "turn_off")
+    turn_on_calls = async_mock_service(hass, "homematicip_local", "turn_on")
 
     hass.bus.async_fire("test_event_turn_off")
     await hass.async_block_till_done()

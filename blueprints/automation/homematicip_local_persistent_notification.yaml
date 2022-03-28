@@ -8,7 +8,7 @@ blueprint:
       name: Hub Entity
       selector:
         entity:
-          domain: hahm
+          domain: homematicip_local
 
 mode: restart
 max_exceeded: silent

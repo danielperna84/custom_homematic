@@ -7,7 +7,7 @@ from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.const import Platform
 
-DOMAIN = "hahm"
+DOMAIN = "homematicip_local"
 
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
@@ -36,16 +36,16 @@ SERVICE_VIRTUAL_KEY = "virtual_key"
 SYSVAR_SCAN_INTERVAL = timedelta(seconds=30)
 
 
-def _get_hahm_platforms() -> list[str]:
+def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = [entry.value for entry in Platform]
     hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
-    hahm_platforms: list[str] = []
+    hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:
         if hm_platform in platforms:
-            hahm_platforms.append(hm_platform)
+            hmip_local_platforms.append(hm_platform)
 
-    return hahm_platforms
+    return hmip_local_platforms
 
 
-HAHM_PLATFORMS: list[str] = _get_hahm_platforms()
+HMIP_LOCAL_PLATFORMS: list[str] = _get_hmip_local_platforms()

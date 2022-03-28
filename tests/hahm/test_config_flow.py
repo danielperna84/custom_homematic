@@ -3,7 +3,7 @@ from typing import Any
 from unittest.mock import patch
 
 from homeassistant import config_entries
-from homeassistant.components.hahm.config_flow import (
+from homeassistant.components.homematicip_local.config_flow import (
     ATTR_BIDCOS_RF_ENABLED,
     ATTR_BIDCOS_RF_PORT,
     ATTR_HMIP_RF_ENABLED,
@@ -22,7 +22,7 @@ from homeassistant.components.hahm.config_flow import (
     CannotConnect,
     InvalidAuth,
 )
-from homeassistant.components.hahm.const import DOMAIN
+from homeassistant.components.homematicip_local.const import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import RESULT_TYPE_CREATE_ENTRY, RESULT_TYPE_FORM
 
@@ -103,10 +103,10 @@ async def async_check_form(
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
         return_value=True,
     ), patch(
-        "homeassistant.components.hahm.async_setup_entry",
+        "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,
     ):
         result2 = await hass.config_entries.flow.async_configure(
@@ -158,10 +158,10 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
         side_effect=InvalidAuth,
     ), patch(
-        "homeassistant.components.hahm.async_setup_entry",
+        "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,
     ):
         result2 = await hass.config_entries.flow.async_configure(
@@ -205,10 +205,10 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.hahm.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
         side_effect=CannotConnect,
     ), patch(
-        "homeassistant.components.hahm.async_setup_entry",
+        "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,
     ):
         result2 = await hass.config_entries.flow.async_configure(

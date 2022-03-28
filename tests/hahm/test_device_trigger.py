@@ -2,7 +2,7 @@
 import pytest
 
 from homeassistant.components import automation
-from homeassistant.components.hahm import DOMAIN
+from homeassistant.components.homematicip_local import DOMAIN
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.helpers import device_registry
 from homeassistant.setup import async_setup_component
@@ -36,7 +36,7 @@ def calls(hass):
 
 
 async def test_get_triggers(hass, device_reg, entity_reg):
-    """Test we get the expected triggers from a hahm."""
+    """Test we get the expected triggers from a Homematic(IP) Local."""
     config_entry = MockConfigEntry(domain="test", data={})
     config_entry.add_to_hass(hass)
     device_entry = device_reg.async_get_or_create(
@@ -66,7 +66,7 @@ async def test_get_triggers(hass, device_reg, entity_reg):
 
 async def test_if_fires_on_state_change(hass, calls):
     """Test for turn_on and turn_off triggers firing."""
-    hass.states.async_set("hahm.entity", STATE_OFF)
+    hass.states.async_set("homematicip_local.entity", STATE_OFF)
 
     assert await async_setup_component(
         hass,
@@ -78,7 +78,7 @@ async def test_if_fires_on_state_change(hass, calls):
                         "platform": "device",
                         "domain": DOMAIN,
                         "device_id": "",
-                        "entity_id": "hahm.entity",
+                        "entity_id": "homematicip_local.entity",
                         "type": "turned_on",
                     },
                     "action": {
@@ -98,7 +98,7 @@ async def test_if_fires_on_state_change(hass, calls):
                         "platform": "device",
                         "domain": DOMAIN,
                         "device_id": "",
-                        "entity_id": "hahm.entity",
+                        "entity_id": "homematicip_local.entity",
                         "type": "turned_off",
                     },
                     "action": {
@@ -118,17 +118,17 @@ async def test_if_fires_on_state_change(hass, calls):
     )
 
     # Fake that the entity is turning on.
-    hass.states.async_set("hahm.entity", STATE_ON)
+    hass.states.async_set("homematicip_local.entity", STATE_ON)
     await hass.async_block_till_done()
     assert len(calls) == 1
     assert calls[0].data[
         "some"
-    ] == "turn_on - device - {} - off - on - None - 0".format("hahm.entity")
+    ] == "turn_on - device - {} - off - on - None - 0".format("homematicip_local.entity")
 
     # Fake that the entity is turning off.
-    hass.states.async_set("hahm.entity", STATE_OFF)
+    hass.states.async_set("homematicip_local.entity", STATE_OFF)
     await hass.async_block_till_done()
     assert len(calls) == 2
     assert calls[1].data[
         "some"
-    ] == "turn_off - device - {} - on - off - None - 0".format("hahm.entity")
+    ] == "turn_off - device - {} - on - off - None - 0".format("homematicip_local.entity")
