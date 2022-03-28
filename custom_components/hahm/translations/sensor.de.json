@@ -1,51 +1,51 @@
 {
   "state": {
-    "hahm__srh": {
+    "hmip_local__srh": {
       "CLOSED": "Geschlossen",
       "TILTED": "Gekippt",
       "OPEN": "Offen"
     },
-    "hahm__lock_state": {
+    "hmip_local__lock_state": {
       "UNKNOWN": "Unbekannt",
       "LOCKED": "Verriegelt",
       "UNLOCKED": "Unverriegelt"
     },
-    "hahm__smoke_detector_alarm_status": {
+    "hmip_local__smoke_detector_alarm_status": {
       "IDLE_OFF": "untätig",
       "PRIMARY_ALARM": "Primär-Alarm",
       "INTRUSION_ALARM": "Einbruch-Alarm",
       "SECONDARY_ALARM": "Sekundär-Alarm"
     },
-    "hahm__sec_key_error": {
+    "hmip_local__sec_key_error": {
       "NO_ERROR": "kein Fehler",
       "CLUTCH_FAILURE": "Einkuppeln fehlgeschlagen",
       "MOTOR_ABORTED": "Motorlauf abgebrochen"
     },
-    "hahm__door_state": {
+    "hmip_local__door_state": {
       "CLOSED": "geschlossen",
       "OPEN": "offen",
       "VENTILATION_POSITION": "Belüftung",
       "POSITION_UNKNOWN": "Position unbekannt"
     },
-    "hahm__direction": {
+    "hmip_local__direction": {
       "NONE": "",
       "UP": "hoch",
       "DOWN": "runter",
       "UNDEFINED": "nicht definiert"
     },
-    "hahm__sec_direction": {
+    "hmip_local__sec_direction": {
       "NONE": "",
       "UP": "schließend",
       "DOWN": "öffnend",
       "UNDEFINED": "nicht definiert"
     },
-    "hahm__sec_win_status": {
+    "hmip_local__sec_win_status": {
       "TRICKLE_CHARGE": "Erhaltungsladung",
       "CHARGE": "Ladend",
       "DISCHARGE": "Versorgung durch Akku",
       "STATE_UNKNOWN": "Zustand unbekannt"
     },
-    "hahm__sec_win_error": {
+    "hmip_local__sec_win_error": {
       "NO_ERROR": "kein Fehler",
       "MOTOR_TURN_ERROR": "Fehler Drehantrieb",
       "MOTOR_TILT_ERROR": "Fehler Kippantrieb"

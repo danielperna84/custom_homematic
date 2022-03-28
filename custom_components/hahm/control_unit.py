@@ -68,7 +68,7 @@ from .const import (
     EVENT_DATA_MESSAGE,
     EVENT_DATA_TITLE,
     EVENT_DEVICE_AVAILABILITY,
-    HAHM_PLATFORMS,
+    HMIP_LOCAL_PLATFORMS,
     SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import HmBaseEntity, HmCallbackEntity
@@ -173,12 +173,12 @@ class ControlUnit:
         if self._central is not None:
             await self._central.stop()
 
-    async def validate_config(self) -> bool:
+    async def validate_config_and_get_serial(self) -> str:
         """Validate the control configuration."""
         central = await self._async_create_central()
-        result = await central.validate_config()
+        serial = await central.validate_config_and_get_serial()
         await central.stop()
-        return result
+        return serial
 
     async def _async_init_hub(self) -> None:
         """Init the hub."""
@@ -238,7 +238,7 @@ class ControlUnit:
             if (
                 entity.usage != HmEntityUsage.ENTITY_NO_CREATE
                 and entity.unique_id not in active_unique_ids
-                and entity.platform.value in HAHM_PLATFORMS
+                and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
 
@@ -293,7 +293,7 @@ class ControlUnit:
     @callback
     def async_signal_new_hm_entity(self, entry_id: str, platform: HmPlatform) -> str:
         """Gateway specific event to signal new device."""
-        return f"hahm-new-entity-{entry_id}-{platform.value}"
+        return f"{DOMAIN}-new-entity-{entry_id}-{platform.value}"
 
     @callback
     def _async_callback_system_event(self, src: str, *args: Any) -> None:
@@ -306,7 +306,7 @@ class ControlUnit:
                 new_entities.extend(device.entities.values())
                 new_entities.extend(device.custom_entities.values())
 
-            # Handle event of new device creation in HAHM.
+            # Handle event of new device creation in Homematic(IP) Local.
             for (platform, hm_entities) in self.async_get_new_hm_entities(
                 new_entities=new_entities
             ).items():
@@ -326,7 +326,7 @@ class ControlUnit:
             # ignore
             return None
         elif src == HH_EVENT_DELETE_DEVICES:
-            # Handle event of device removed in HAHM.
+            # Handle event of device removed in Homematic(IP) Local.
             for address in args[1]:
                 # HA only needs channel_addresses
                 if ":" in address:
@@ -535,7 +535,7 @@ class ControlConfig:
         validation_data: dict[str, Any] = deepcopy(dict(self.data))
         validation_data[ATTR_INSTANCE_NAME] = "validation_instance"
         return ControlConfig(
-            hass=self.hass, entry_id="hahm_validation", data=validation_data
+            hass=self.hass, entry_id="hmip_local_validation", data=validation_data
         )
 
 
@@ -615,8 +615,8 @@ class HaHub(Entity):
         self.async_schedule_update_ha_state(True)
 
 
-async def validate_config(control_config: ControlConfig) -> bool:
+async def validate_config_and_get_serial(control_config: ControlConfig) -> str:
     """Validate the control configuration."""
     validation_config = control_config.validation_config
     control_unit = ControlUnit(control_config=validation_config)
-    return await control_unit.validate_config()
+    return await control_unit.validate_config_and_get_serial()

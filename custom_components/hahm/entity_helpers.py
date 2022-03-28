@@ -111,12 +111,12 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     frozenset({"ACTIVITY_STATE", "DIRECTION"}): HmSensorEntityDescription(
         key="DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="hahm__direction",
+        device_class="hmip_local__direction",
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
         icon="mdi:arrow-up-down",
-        device_class="hahm__door_state",
+        device_class="hmip_local__door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
@@ -193,7 +193,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
         icon="mdi:lock",
-        device_class="hahm__lock_state",
+        device_class="hmip_local__lock_state",
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}
@@ -280,7 +280,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
         icon="mdi:smoke-detector",
-        device_class="hahm__smoke_detector_alarm_status",
+        device_class="hmip_local__smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
@@ -336,32 +336,32 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
     ): HmSensorEntityDescription(
         key="SRH_STATE",
         icon="mdi:window-closed",
-        device_class="hahm__srh",
+        device_class="hmip_local__srh",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         icon="mdi:battery-50",
-        device_class="hahm__sec_win_status",
+        device_class="hmip_local__sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="hahm__sec_direction",
+        device_class="hmip_local__sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         icon="mdi:lock-alert",
-        device_class="hahm__sec_win_error",
+        device_class="hmip_local__sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="hahm__sec_direction",
+        device_class="hmip_local__sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         icon="mdi:lock-alert",
-        device_class="hahm__sec_key_error",
+        device_class="hmip_local__sec_key_error",
     ),
 }
 

@@ -1,51 +1,51 @@
 {
   "state": {
-    "hahm__srh": {
+    "hmip_local__srh": {
       "CLOSED": "Closed",
       "TILTED": "Tilted",
       "OPEN": "Open"
     },
-    "hahm__lock_state": {
+    "hmip_local__lock_state": {
       "UNKNOWN": "Unknown",
       "LOCKED": "Locked",
       "UNLOCKED": "Unlocked"
     },
-    "hahm__smoke_detector_alarm_status": {
+    "hmip_local__smoke_detector_alarm_status": {
       "IDLE_OFF": "idle off",
       "PRIMARY_ALARM": "Primary Alarm",
       "INTRUSION_ALARM": "Intrusion Alarm",
       "SECONDARY_ALARM": "Secondary Alarm"
     },
-    "hahm__sec_key_error": {
+    "hmip_local__sec_key_error": {
       "NO_ERROR": "no error",
       "CLUTCH_FAILURE": "clutch failure",
       "MOTOR_ABORTED": "motor aborted"
     },
-    "hahm__door_state": {
+    "hmip_local__door_state": {
       "CLOSED": "closed",
       "OPEN": "open",
       "VENTILATION_POSITION": "ventilation position",
       "POSITION_UNKNOWN": "position unknown"
     },
-    "hahm__direction": {
+    "hmip_local__direction": {
       "NONE": "",
       "UP": "up",
       "DOWN": "down",
       "UNDEFINED": "undefined"
     },
-    "hahm__sec_direction": {
+    "hmip_local__sec_direction": {
       "NONE": "",
       "UP": "closing",
       "DOWN": "opening",
       "UNDEFINED": "undefined"
     },
-    "hahm__sec_win_status": {
+    "hmip_local__sec_win_status": {
       "TRICKLE_CHARGE": "trickle charge",
       "CHARGE": "charge",
       "DISCHARGE": "discharge",
       "STATE_UNKNOWN": "state unknown"
     },
-    "hahm__sec_win_error": {
+    "hmip_local__sec_win_error": {
       "NO_ERROR": "no error",
       "MOTOR_TURN_ERROR": "motor turn error",
       "MOTOR_TILT_ERROR": "motor tilt error"
