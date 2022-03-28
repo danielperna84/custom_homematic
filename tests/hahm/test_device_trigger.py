@@ -2,7 +2,7 @@
 import pytest
 
 from homeassistant.components import automation
-from homeassistant.components.hahm import DOMAIN
+from homeassistant.components.homematicip_local import DOMAIN
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.helpers import device_registry
 from homeassistant.setup import async_setup_component
