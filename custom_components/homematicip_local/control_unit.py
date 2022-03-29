@@ -173,7 +173,7 @@ class ControlUnit:
         if self._central is not None:
             await self._central.stop()
 
-    async def validate_config_and_get_serial(self) -> str:
+    async def validate_config_and_get_serial(self) -> str | None:
         """Validate the control configuration."""
         central = await self._async_create_central()
         serial = await central.validate_config_and_get_serial()
@@ -618,7 +618,7 @@ class HaHub(Entity):
         self.async_schedule_update_ha_state(True)
 
 
-async def validate_config_and_get_serial(control_config: ControlConfig) -> str:
+async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
     """Validate the control configuration."""
     validation_config = control_config.validation_config
     control_unit = ControlUnit(control_config=validation_config)

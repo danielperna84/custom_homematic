@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from pprint import pformat
+import socket
 from typing import Any, cast
 from urllib.parse import urlparse
 
@@ -151,7 +152,7 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     )
 
 
-async def _async_validate_config_and_get_serial(hass: HomeAssistant, data: ConfigType) -> str:
+async def _async_validate_config_and_get_serial(hass: HomeAssistant, data: ConfigType) -> str | None:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     try:
@@ -187,6 +188,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
+            ip_address = _get_ip_address(user_input[ATTR_HOST])
+            await self.async_set_unique_id(ip_address)
+            self._abort_if_unique_id_configured()
             self.data = _get_ccu_data(self.data, user_input=user_input)
             return await self.async_step_interface()
 
@@ -210,9 +214,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
-            await self.async_set_unique_id(serial)
-            self._abort_if_unique_id_configured()
+            await _async_validate_config_and_get_serial(self.hass, self.data)
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -234,12 +236,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         instance_name = _get_instance_name(
             friendly_name=discovery_info.upnp.get("friendlyName")
         )
-        serial = _get_serial(
-            model_description=discovery_info.upnp.get("modelDescription")
-        )
-
         host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
-        await self.async_set_unique_id(serial)
+        ip_address = _get_ip_address(host)
+        await self.async_set_unique_id(ip_address)
 
         self._abort_if_unique_id_configured(updates={CONF_HOST: host})
 
@@ -299,7 +298,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
 
         try:
-            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
+            await _async_validate_config_and_get_serial(self.hass, self.data)
         except CannotConnect:
             errors["base"] = "cannot_connect"
         except InvalidAuth:
@@ -308,8 +307,9 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
+            ip_address = _get_ip_address(self.data[ATTR_HOST])
             self.hass.config_entries.async_update_entry(
-                entry=self.config_entry, unique_id=serial, data=self.data
+                entry=self.config_entry, unique_id=ip_address, data=self.data
             )
             return self.async_create_entry(title="", data={})
 
@@ -382,10 +382,13 @@ def _get_instance_name(friendly_name: Any | None) -> str | None:
     return name
 
 
-def _get_serial(model_description: Any | None) -> str | None:
-    if not model_description:
-        return None
-    md = str(model_description)
-    if len(md) > 10:
-        return md[-10:]
-    return None
+# Do not add: pylint disable=no-member
+# This is only an issue on MacOS
+def _get_ip_address(host: str) -> str:
+    """Get IP by hostname"""
+    try:
+        return socket.gethostbyname(host)
+    except Exception as ex:
+        _LOGGER.warning("Can't resolve host for %s", host)
+        raise CannotConnect(ex) from ex
+
