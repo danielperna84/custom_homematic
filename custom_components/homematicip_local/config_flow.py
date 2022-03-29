@@ -387,5 +387,5 @@ def _get_serial(model_description: Any | None) -> str | None:
         return None
     md = str(model_description)
     if len(md) > 10:
-        return md[-10]
+        return md[-10:]
     return None
