@@ -469,6 +469,8 @@ class ControlUnit:
                     path=interface.get(ATTR_PATH),
                 )
             )
+        # use last 10 chars of entry_id for central_id uniqueness
+        central_id = self._entry_id[-10:]
         central = await CentralConfig(
             domain=DOMAIN,
             name=self._data[ATTR_INSTANCE_NAME],
@@ -478,6 +480,7 @@ class ControlUnit:
             host=self._data[ATTR_HOST],
             username=self._data[ATTR_USERNAME],
             password=self._data[ATTR_PASSWORD],
+            central_id=central_id,
             tls=self._data[ATTR_TLS],
             verify_tls=self._data[ATTR_VERIFY_TLS],
             client_session=client_session,

@@ -1,5 +1,5 @@
-Version 1.0.0 (2022-03-28)
-- Bump hahomematic to 1.0.0
+Version 1.0.0 (2022-03-29)
+- Bump hahomematic to 1.0.1
   - Cleanup json code
 - Use previously configured interfaces by default in config flow
 - Rename hahm to homematicip_local
