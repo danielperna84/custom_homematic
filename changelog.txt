@@ -1,3 +1,7 @@
+Version 1.0.1 (2022-03-30)
+- Bump hahomematic to 1.0.3
+  - Revert to XmlRPC getVersion for CCU
+
 Version 1.0.0 (2022-03-29)
 - Bump hahomematic to 1.0.2
   - Cleanup json code
