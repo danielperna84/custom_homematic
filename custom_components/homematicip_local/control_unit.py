@@ -540,6 +540,11 @@ class ControlUnitTemp(BaseControlUnit):
                 self._data[ATTR_INSTANCE_NAME],
             )
 
+    async def async_stop(self) -> None:
+        """Stop the control unit."""
+        await self.central.clear_all()
+        await super().async_stop()
+
     async def async_validate_config_and_get_serial(self) -> str | None:
         """Validate the control configuration."""
         central = await self._async_create_central()
