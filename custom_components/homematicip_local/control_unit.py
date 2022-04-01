@@ -1,4 +1,4 @@
-"""HaHomematic is a Python 3 module for Home Assistant and Homemaatic(IP) devices."""
+"""HaHomematic is a Python 3 module for Home Assistant and Homematic(IP) devices."""
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
@@ -76,8 +76,8 @@ from .helpers import HmBaseEntity, HmCallbackEntity
 _LOGGER = logging.getLogger(__name__)
 
 
-class ControlUnit:
-    """Central point to control a Homematic CCU."""
+class BaseControlUnit:
+    """Base central point to control a Homematic CCU."""
 
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
@@ -85,14 +85,10 @@ class ControlUnit:
         self._entry_id = control_config.entry_id
         self._data = control_config.data
         self._central: CentralUnit | None = None
-        # {entity_id, entity}
-        self._active_hm_entities: dict[str, HmBaseEntity] = {}
-        self._hub: HaHub | None = None
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
         self._central = await self._async_create_central()
-        self._async_add_central_to_device_registry()
 
     async def async_start(self) -> None:
         """Start the control unit."""
@@ -107,6 +103,130 @@ class ControlUnit:
                 "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
                 self._data[ATTR_INSTANCE_NAME],
             )
+
+    @callback
+    def stop(self, *args: Any) -> None:
+        """Wrap the call to async_stop.
+        Used as an argument to EventBus.async_listen_once.
+        """
+        self._hass.async_create_task(self.async_stop())
+
+    async def async_stop(self) -> None:
+        """Stop the control unit."""
+        _LOGGER.debug(
+            "Stopping Homematic(IP) Local ControlUnit %s",
+            self._data[ATTR_INSTANCE_NAME],
+        )
+        if self._central is not None:
+            await self._central.stop()
+
+    @property
+    def central(self) -> CentralUnit:
+        """Return the Homematic(IP) Local central_unit instance."""
+        if self._central is not None:
+            return self._central
+        raise HomeAssistantError("homematicip_local.central not initialized")
+
+    async def _async_create_central(self) -> CentralUnit:
+        """Create the central unit for ccu callbacks."""
+        xml_rpc_server = register_xml_rpc_server(
+            local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
+            local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
+        )
+
+        storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"
+        client_session = aiohttp_client.async_get_clientsession(self._hass)
+        interface_configs: set[InterfaceConfig] = set()
+        for interface_name in self._data[ATTR_INTERFACE]:
+            interface = self._data[ATTR_INTERFACE][interface_name]
+            interface_configs.add(
+                InterfaceConfig(
+                    interface=interface_name,
+                    port=interface[ATTR_PORT],
+                    path=interface.get(ATTR_PATH),
+                )
+            )
+        # use last 10 chars of entry_id for central_id uniqueness
+        central_id = self._entry_id[-10:]
+        return await CentralConfig(
+            domain=DOMAIN,
+            name=self._data[ATTR_INSTANCE_NAME],
+            loop=self._hass.loop,
+            xml_rpc_server=xml_rpc_server,
+            storage_folder=storage_folder,
+            host=self._data[ATTR_HOST],
+            username=self._data[ATTR_USERNAME],
+            password=self._data[ATTR_PASSWORD],
+            central_id=central_id,
+            tls=self._data[ATTR_TLS],
+            verify_tls=self._data[ATTR_VERIFY_TLS],
+            client_session=client_session,
+            json_port=self._data[ATTR_JSON_PORT],
+            callback_host=self._data.get(ATTR_CALLBACK_HOST)
+            if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
+            else None,
+            callback_port=self._data.get(ATTR_CALLBACK_PORT)
+            if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
+            else None,
+            interface_configs=interface_configs,
+        ).get_central()
+
+
+class ControlUnit(BaseControlUnit):
+    """Central unit to control a Homematic CCU."""
+
+    def __init__(self, control_config: ControlConfig) -> None:
+        """Init the control unit."""
+        super().__init__(control_config=control_config)
+        # {entity_id, entity}
+        self._active_hm_entities: dict[str, HmBaseEntity] = {}
+        self._hub: HaHub | None = None
+
+    async def async_init_central(self) -> None:
+        """Start the control unit."""
+        await super().async_init_central()
+        # register callback
+        if self._central:
+            self._central.callback_system_event = self._async_callback_system_event
+            self._central.callback_ha_event = self._async_callback_ha_event
+
+        self._async_add_central_to_device_registry()
+
+    async def _async_init_hub(self) -> None:
+        """Init the hub."""
+        if not self.central.hub:
+            return None
+        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
+        await self._hub.async_init()
+        if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
+            sensors = hub_entities_by_platform.get(HmPlatform.HUB_SENSOR)
+            async_dispatcher_send(
+                self._hass,
+                self.async_signal_new_hm_entity(
+                    entry_id=self._entry_id, platform=HmPlatform.HUB_SENSOR
+                ),
+                sensors,
+            )
+            binary_sensors = hub_entities_by_platform.get(HmPlatform.HUB_BINARY_SENSOR)
+            async_dispatcher_send(
+                self._hass,
+                self.async_signal_new_hm_entity(
+                    entry_id=self._entry_id, platform=HmPlatform.HUB_BINARY_SENSOR
+                ),
+                binary_sensors,
+            )
+
+    async def async_stop(self) -> None:
+        """Stop the control unit."""
+        if self._hub:
+            self._hub.de_init()
+
+        await super().async_stop()
+
+    @property
+    def hub(self) -> HaHub | None:
+        """Return the Hub."""
+        return self._hub
 
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
@@ -154,67 +274,6 @@ class ControlUnit:
                         tuple[str, str], virtual_remote.device_info.get("via_device")
                     ),
                 )
-
-    @callback
-    def stop(self, *args: Any) -> None:
-        """Wrap the call to async_stop.
-        Used as an argument to EventBus.async_listen_once.
-        """
-        self._hass.async_create_task(self.async_stop())
-
-    async def async_stop(self) -> None:
-        """Stop the control unit."""
-        _LOGGER.debug(
-            "Stopping Homematic(IP) Local ControlUnit %s",
-            self._data[ATTR_INSTANCE_NAME],
-        )
-        if self._hub:
-            self._hub.de_init()
-        if self._central is not None:
-            await self._central.stop()
-
-    async def validate_config_and_get_serial(self) -> str | None:
-        """Validate the control configuration."""
-        central = await self._async_create_central()
-        serial = await central.validate_config_and_get_serial()
-        await central.stop()
-        return serial
-
-    async def _async_init_hub(self) -> None:
-        """Init the hub."""
-        if not self.central.hub:
-            return None
-        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
-        await self._hub.async_init()
-        if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
-            sensors = hub_entities_by_platform.get(HmPlatform.HUB_SENSOR)
-            async_dispatcher_send(
-                self._hass,
-                self.async_signal_new_hm_entity(
-                    entry_id=self._entry_id, platform=HmPlatform.HUB_SENSOR
-                ),
-                sensors,
-            )
-            binary_sensors = hub_entities_by_platform.get(HmPlatform.HUB_BINARY_SENSOR)
-            async_dispatcher_send(
-                self._hass,
-                self.async_signal_new_hm_entity(
-                    entry_id=self._entry_id, platform=HmPlatform.HUB_BINARY_SENSOR
-                ),
-                binary_sensors,
-            )
-
-    @property
-    def hub(self) -> HaHub | None:
-        """Return the Hub."""
-        return self._hub
-
-    @property
-    def central(self) -> CentralUnit:
-        """Return the Homematic(IP) Local central_unit instance."""
-        if self._central is not None:
-            return self._central
-        raise HomeAssistantError("homematicip_local.central not initialized")
 
     @callback
     def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
@@ -450,54 +509,6 @@ class ControlUnit:
                 device_types.append(entity.device_type)
         return platform_stats, sorted(set(device_types))
 
-    async def _async_create_central(self) -> CentralUnit:
-        """Create the central unit for ccu callbacks."""
-        xml_rpc_server = register_xml_rpc_server(
-            local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
-            local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
-        )
-
-        storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"
-        client_session = aiohttp_client.async_get_clientsession(self._hass)
-        interface_configs: set[InterfaceConfig] = set()
-        for interface_name in self._data[ATTR_INTERFACE]:
-            interface = self._data[ATTR_INTERFACE][interface_name]
-            interface_configs.add(
-                InterfaceConfig(
-                    interface=interface_name,
-                    port=interface[ATTR_PORT],
-                    path=interface.get(ATTR_PATH),
-                )
-            )
-        # use last 10 chars of entry_id for central_id uniqueness
-        central_id = self._entry_id[-10:]
-        central = await CentralConfig(
-            domain=DOMAIN,
-            name=self._data[ATTR_INSTANCE_NAME],
-            loop=self._hass.loop,
-            xml_rpc_server=xml_rpc_server,
-            storage_folder=storage_folder,
-            host=self._data[ATTR_HOST],
-            username=self._data[ATTR_USERNAME],
-            password=self._data[ATTR_PASSWORD],
-            central_id=central_id,
-            tls=self._data[ATTR_TLS],
-            verify_tls=self._data[ATTR_VERIFY_TLS],
-            client_session=client_session,
-            json_port=self._data[ATTR_JSON_PORT],
-            callback_host=self._data.get(ATTR_CALLBACK_HOST)
-            if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
-            else None,
-            callback_port=self._data.get(ATTR_CALLBACK_PORT)
-            if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
-            else None,
-            interface_configs=interface_configs,
-        ).get_central()
-        # register callback
-        central.callback_system_event = self._async_callback_system_event
-        central.callback_ha_event = self._async_callback_ha_event
-        return central
-
     def _get_active_entities_by_device_address(
         self, device_address: str
     ) -> list[HmBaseEntity]:
@@ -510,6 +521,31 @@ class ControlUnit:
             ):
                 entities.append(entity)
         return entities
+
+
+class ControlUnitTemp(BaseControlUnit):
+    """Central unit to control a Homematic CCU for temporary usage."""
+
+    async def async_start_direct(self) -> None:
+        """Start the temporary control unit."""
+        _LOGGER.debug(
+            "Starting Homematic(IP) Local ControlUnit %s",
+            self._data[ATTR_INSTANCE_NAME],
+        )
+        if self._central:
+            await self._central.start_direct()
+        else:
+            _LOGGER.exception(
+                "Starting Homematic(IP) temporary local ControlUnit %s not possible, CentralUnit is not available",
+                self._data[ATTR_INSTANCE_NAME],
+            )
+
+    async def async_validate_config_and_get_serial(self) -> str | None:
+        """Validate the control configuration."""
+        central = await self._async_create_central()
+        serial = await central.validate_config_and_get_serial()
+        await central.stop()
+        return serial
 
 
 class ControlConfig:
@@ -532,13 +568,19 @@ class ControlConfig:
         await control_unit.async_init_central()
         return control_unit
 
+    async def async_get_control_unit_temp(self) -> ControlUnitTemp:
+        """Identify the used client."""
+        control_unit = ControlUnitTemp(self._temporary_config)
+        await control_unit.async_init_central()
+        return control_unit
+
     @property
-    def validation_config(self) -> ControlConfig:
+    def _temporary_config(self) -> ControlConfig:
         """Return a config for validation."""
-        validation_data: dict[str, Any] = deepcopy(dict(self.data))
-        validation_data[ATTR_INSTANCE_NAME] = "validation_instance"
+        temporary_data: dict[str, Any] = deepcopy(dict(self.data))
+        temporary_data[ATTR_INSTANCE_NAME] = "temporary_instance"
         return ControlConfig(
-            hass=self.hass, entry_id="hmip_local_validation", data=validation_data
+            hass=self.hass, entry_id="hmip_local_temporary", data=temporary_data
         )
 
 
@@ -620,6 +662,5 @@ class HaHub(Entity):
 
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
     """Validate the control configuration."""
-    validation_config = control_config.validation_config
-    control_unit = ControlUnit(control_config=validation_config)
-    return await control_unit.validate_config_and_get_serial()
+    control_unit = await control_config.async_get_control_unit_temp()
+    return await control_unit.async_validate_config_and_get_serial()

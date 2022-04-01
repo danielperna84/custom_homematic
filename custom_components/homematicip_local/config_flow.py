@@ -152,7 +152,9 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     )
 
 
-async def _async_validate_config_and_get_serial(hass: HomeAssistant, data: ConfigType) -> str | None:
+async def _async_validate_config_and_get_serial(
+    hass: HomeAssistant, data: ConfigType
+) -> str | None:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     try:
@@ -391,4 +393,3 @@ def _get_ip_address(host: str) -> str:
     except Exception as ex:
         _LOGGER.warning("Can't resolve host for %s", host)
         raise CannotConnect(ex) from ex
-
