@@ -1,0 +1,106 @@
+blueprint:
+  name: Actions for 4-Button Homematic(IP) device
+  description: When a button is pressed, the defined actions will be executed. Please
+    keep in mind, that long-press actions might be executed multiple times, according
+    to your configured minimum duration for long press. This can be configured in
+    your CCU.
+  domain: automation
+  source_url: https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-4-button.yaml
+  input:
+    remote:
+      name: 4-Button Device (e.g. HmIP-KRCA)
+      description: Please select a 4-Button device of your Homematic(IP) Local integration.
+      selector:
+        device:
+          integration: homematicip_local
+    action_1_short:
+      name: Action
+      description: Button 1, Short Press
+      default: []
+      selector:
+        action: {}
+    action_1_long:
+      name: Action
+      description: Button 1, Long Press
+      default: []
+      selector:
+        action: {}
+    action_2_short:
+      name: Action
+      description: Button 2, Short Press
+      default: []
+      selector:
+        action: {}
+    action_2_long:
+      name: Action
+      description: Button 2, Long Press
+      default: []
+      selector:
+        action: {}
+    action_3_short:
+      name: Action
+      description: Button 3, Short Press
+      default: []
+      selector:
+        action: {}
+    action_3_long:
+      name: Action
+      description: Button 3, Long Press
+      default: []
+      selector:
+        action: {}
+    action_4_short:
+      name: Action
+      description: Button 4, Short Press
+      default: []
+      selector:
+        action: {}
+    action_4_long:
+      name: Action
+      description: Button 4, Long Press
+      default: []
+      selector:
+        action: {}
+
+trigger:
+- platform: event
+  event_type: homematic.keypress
+  event_data:
+    device_id: !input 'remote'
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 2 }}'
+    sequence: !input 'action_1_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 2 }}'
+    sequence: !input 'action_1_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 1 }}'
+    sequence: !input 'action_2_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 1 }}'
+    sequence: !input 'action_2_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 4 }}'
+    sequence: !input 'action_3_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 4 }}'
+    sequence: !input 'action_3_long'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  == 3 }}'
+    sequence: !input 'action_4_short'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  == 3 }}'
+    sequence: !input 'action_4_long'
+mode: parallel
+max: 10
