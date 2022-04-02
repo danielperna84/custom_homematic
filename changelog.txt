@@ -1,3 +1,6 @@
+Version 1.0.3 (2022-04-02)
+- Fix device_type list in diagnostics overview
+
 Version 1.0.2 (2022-03-30)
 - Bump hahomematic to 1.0.4
   - Use max version of interfaces for backend version
