@@ -44,7 +44,7 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
-from hahomematic.entity import BaseEntity, GenericEntity
+from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmDummyHub, HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
@@ -505,7 +505,7 @@ class ControlUnit(BaseControlUnit):
                 platform_stats[platform] = 0
             counter = platform_stats[platform]
             platform_stats[platform] = counter + 1
-            if isinstance(entity, GenericEntity):
+            if isinstance(entity, (CustomEntity, GenericEntity)):
                 device_types.append(entity.device_type)
         return platform_stats, sorted(set(device_types))
 
