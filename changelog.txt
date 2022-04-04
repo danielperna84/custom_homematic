@@ -1,3 +1,6 @@
+Version 1.0.4 (2022-04-04)
+- Remove deprecated light const
+
 Version 1.0.3 (2022-04-02)
 - Fix device_type list in diagnostics overview
 - Add blueprint for 4-button device (e.g. HmIP-KRCA)
