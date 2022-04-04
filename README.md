@@ -47,8 +47,12 @@ To allow communication to your HomeMatic hub, a few ports on the hub have to be 
 
 ### Authentication
 
-This integration always passes credentials to the HomeMatic hub when connecting. These will be silently ignored if you have not enabled authentication on the hub. It is imporant to note though, that special characters (like `#`) within your credentials may break the possibility to authenticate.  
-The account used for communication is required to have admin privileges on your HomeMatic hub.  
+This integration always passes credentials to the HomeMatic hub when connecting. 
+For CCU and decendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
+ 
+The account used for communication is required to have admin privileges on your HomeMatic hub.
+It is imporant to note though, that special characters (like `#`) within your credentials may break the possibility to authenticate. 
+
 If you are using Homegear and have not set up authentication, please enter dummy-data to complete the configuration flow.
 
 # Configuration
