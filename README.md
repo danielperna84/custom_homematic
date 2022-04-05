@@ -92,6 +92,16 @@ password:
   required: true
   description: Password of the admin-user on your hub.
   type: string
+tls:
+  required: true
+  description: Enable TLS encryption. This wil change the default for json_port from 80 to 443.
+  type: boolean
+  default: false
+verify_tls:
+  required: true
+  description: Enable TLS verification.
+  type: boolean
+  default: false
 callback_host:
   required: false
   description: Hostname or IP address for callback-connection (only required in special network conditions).
@@ -100,28 +110,17 @@ callback_port:
   required: false
   description: Port for callback-connection (only required in special network conditions).
   type: integer
-tls:
-  required: false
-  description: Enable TLS encryption. This wil change the default for json_port from 80 to 443.
-  type: boolean
-  default: false
-verify_tls:
-  required: false
-  description: Enable TLS verification.
-  type: boolean
-  default: false
 json_port:
   required: false
   description: Port used the access the JSON-RPC API.
   type: integer
-  default: 80
 ```
 
 #### Interface
 
 ```yaml
 hmip_rf_enabled:
-  required: false
+  required: true
   description: Enable Homematic IP (wiredless and wired).
   type: boolean
   default: true
@@ -131,7 +130,7 @@ hmip_rf_port:
   type: integer
   default: 2010
 bidos_rf_enabled:
-  required: false
+  required: true
   description: Enable Homematic (wireless).
   type: boolean
   default: true
@@ -141,7 +140,7 @@ bidos_rf_port:
   type: integer
   default: 2001
 virtual_devices_enabled:
-  required: false
+  required: true
   description: Enable heating groups.
   type: boolean
   default: true
@@ -156,7 +155,7 @@ virtual_devices_path:
   type: string
   default: /groups
 hs485d_enabled:
-  required: false
+  required: true
   description: Enable Homematic (wired).
   type: boolean
   default: false
@@ -171,10 +170,12 @@ hs485d_port:
 
 The JSON-RPC Port is used to fetch names and room information from the CCU. The default value is `80`. But if you enable TLS the port `443` will be used. You only have to enter a custom value here if you have set up the JSON-RPC API to be available on a different port.  
 If you are using Homegear the names are fetched using metadata available via XML-RPC. Hence the JSON-RPC port is irrelevant for Homegear users.
+**This value is always empty when the integration gets reconfigured.**
 
 ### callback_host and callback_port
 
 These two options are required for _special_ network environments. If for example Home Assistant is running within a Docker container and detects its own IP to be within the Docker network, the CCU won't be able to establish the connection to Home Assistant. In this case you have to specify which address and port the CCU should connect to. This may require forwarding connections on the Docker host machine to the relevant container.
+**These values are always empty when the integration is reconfigured.**
 
 ## Services
 
