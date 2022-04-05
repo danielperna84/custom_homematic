@@ -21,9 +21,6 @@ from homeassistant.components.light import (
     COLOR_MODE_COLOR_TEMP,
     COLOR_MODE_HS,
     COLOR_MODE_ONOFF,
-    SUPPORT_BRIGHTNESS,
-    SUPPORT_COLOR,
-    SUPPORT_COLOR_TEMP,
     SUPPORT_TRANSITION,
     LightEntity,
 )
@@ -96,12 +93,6 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     def supported_features(self) -> int:
         """Return the list of supported features."""
         supported_features = 0
-        if self._hm_entity.supports_brightness:
-            supported_features += SUPPORT_BRIGHTNESS
-        if self._hm_entity.supports_color_temperature:
-            supported_features += SUPPORT_COLOR_TEMP
-        if self._hm_entity.supports_hs_color:
-            supported_features += SUPPORT_COLOR
         if self._hm_entity.supports_transition:
             supported_features += SUPPORT_TRANSITION
         return supported_features

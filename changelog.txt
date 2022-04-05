@@ -1,3 +1,9 @@
+Version 1.0.4 (2022-04-04)
+- Bump hahomematic to 1.0.5
+  - Limit hub_state to ccu only
+- Remove deprecated light const
+- Remove defaults in OptionsFlow for not optional values (callback_ip, callback_port, json_port)
+
 Version 1.0.3 (2022-04-02)
 - Fix device_type list in diagnostics overview
 - Add blueprint for 4-button device (e.g. HmIP-KRCA)

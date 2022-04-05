@@ -130,8 +130,8 @@ class BaseControlUnit:
     async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
-            local_ip=self._data.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
-            local_port=self._data.get(ATTR_CALLBACK_PORT, PORT_ANY),
+            local_ip=self._data.get(ATTR_CALLBACK_HOST) or IP_ANY_V4,
+            local_port=self._data.get(ATTR_CALLBACK_PORT) or PORT_ANY,
         )
 
         storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"

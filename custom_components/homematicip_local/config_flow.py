@@ -31,8 +31,6 @@ from hahomematic.const import (
     IF_VIRTUAL_DEVICES_PATH,
     IF_VIRTUAL_DEVICES_PORT,
     IF_VIRTUAL_DEVICES_TLS_PORT,
-    IP_ANY_V4,
-    PORT_ANY,
 )
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 import voluptuous as vol
@@ -74,21 +72,15 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(ATTR_HOST, default=data.get(ATTR_HOST)): cv.string,
             vol.Required(ATTR_USERNAME, default=data.get(ATTR_USERNAME)): cv.string,
             vol.Required(ATTR_PASSWORD, default=data.get(ATTR_PASSWORD)): cv.string,
-            vol.Optional(
-                ATTR_CALLBACK_HOST, default=data.get(ATTR_CALLBACK_HOST) or UNDEFINED
-            ): cv.string,
-            vol.Optional(
-                ATTR_CALLBACK_PORT, default=data.get(ATTR_CALLBACK_PORT) or UNDEFINED
-            ): cv.port,
-            vol.Optional(
+            vol.Required(
                 ATTR_TLS, default=data.get(ATTR_TLS) or DEFAULT_TLS
             ): cv.boolean,
-            vol.Optional(
+            vol.Required(
                 ATTR_VERIFY_TLS, default=data.get(ATTR_VERIFY_TLS) or False
             ): cv.boolean,
-            vol.Optional(
-                ATTR_JSON_PORT, default=data.get(ATTR_JSON_PORT) or UNDEFINED
-            ): cv.port,
+            vol.Optional(ATTR_CALLBACK_HOST): cv.string,
+            vol.Optional(ATTR_CALLBACK_PORT): cv.port,
+            vol.Optional(ATTR_JSON_PORT): cv.port,
         }
     )
 
@@ -278,7 +270,8 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             return await self.async_step_interface()
 
         return self.async_show_form(
-            step_id="central", data_schema=get_options_schema(data=self.data)
+            step_id="central",
+            data_schema=get_options_schema(data=self.data),
         )
 
     async def async_step_interface(
@@ -341,13 +334,13 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
             ATTR_INSTANCE_NAME, data.get(ATTR_INSTANCE_NAME)
         ),
         ATTR_HOST: user_input[ATTR_HOST],
-        ATTR_USERNAME: user_input.get(ATTR_USERNAME),
-        ATTR_PASSWORD: user_input.get(ATTR_PASSWORD),
-        ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST, IP_ANY_V4),
-        ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT, PORT_ANY),
+        ATTR_USERNAME: user_input[ATTR_USERNAME],
+        ATTR_PASSWORD: user_input[ATTR_PASSWORD],
+        ATTR_TLS: user_input[ATTR_TLS],
+        ATTR_VERIFY_TLS: user_input[ATTR_VERIFY_TLS],
+        ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST),
+        ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
         ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
-        ATTR_TLS: user_input.get(ATTR_TLS),
-        ATTR_VERIFY_TLS: user_input.get(ATTR_VERIFY_TLS),
         ATTR_INTERFACE: {},
     }
 
