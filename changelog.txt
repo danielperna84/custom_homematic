@@ -1,6 +1,6 @@
 Version 1.0.6 (2022-04-08)
 - Bump hahomematic to 1.0.7
-  -
+  - Add BATTERY_STATE to DEFAULT_ENTITIES
 - Add Entity_Description to BATTERY_STATE
 
 Version 1.0.5 (2022-04-07)
