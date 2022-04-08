@@ -230,16 +230,21 @@ class ControlUnit(BaseControlUnit):
 
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
-        info = self.central.device_info
+        info = self.central.device_information
         device_registry = dr.async_get(self._hass)
         device_registry.async_get_or_create(
             config_entry_id=self._entry_id,
-            identifiers=info["identifiers"],
-            manufacturer=info["manufacturer"],
+            identifiers={
+                (
+                    DOMAIN,
+                    info.identifier,
+                )
+            },
+            manufacturer=info.manufacturer,
             model="CU",
-            name=info["name"],
+            name=info.name,
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=info["device_url"],
+            configuration_url=info.central_url,
         )
 
     @callback
@@ -262,17 +267,21 @@ class ControlUnit(BaseControlUnit):
         device_registry = dr.async_get(self._hass)
         for client in self._central.clients.values():
             if virtual_remote := client.get_virtual_remote():
+                info = virtual_remote.device_information
                 device_registry.async_get_or_create(
                     config_entry_id=self._entry_id,
-                    identifiers=virtual_remote.device_info["identifiers"],
-                    manufacturer=virtual_remote.device_info["manufacturer"],
-                    name=virtual_remote.device_info["name"],
-                    model=virtual_remote.device_info["model"],
-                    sw_version=virtual_remote.device_info["sw_version"],
+                    identifiers={
+                        (
+                            DOMAIN,
+                            info.identifier,
+                        )
+                    },
+                    manufacturer=info.manufacturer,
+                    name=info.name,
+                    model=info.model,
+                    sw_version=info.version,
                     # Link to the homematic control unit.
-                    via_device=cast(
-                        tuple[str, str], virtual_remote.device_info.get("via_device")
-                    ),
+                    via_device=cast(tuple[str, str], info.central),
                 )
 
     @callback
@@ -490,9 +499,15 @@ class ControlUnit(BaseControlUnit):
         """Return the device of the ha device."""
         if (hm_device := self.central.hm_devices.get(device_address)) is None:
             return None
-        identifiers: set[tuple[str, str]] = hm_device.device_info["identifiers"]
         device_registry = dr.async_get(self._hass)
-        return device_registry.async_get_device(identifiers=identifiers)
+        return device_registry.async_get_device(
+            identifiers={
+                (
+                    DOMAIN,
+                    hm_device.device_information.identifier,
+                )
+            }
+        )
 
     @callback
     def async_get_entity_stats(self) -> tuple[dict[str, int], list[str]]:

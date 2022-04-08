@@ -242,9 +242,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
         native_unit_of_measurement=PARTICLESIZE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(
-        {"BATTERY_STATE", "OPERATING_VOLTAGE"}
-    ): HmSensorEntityDescription(
+    frozenset({"BATTERY_STATE", "OPERATING_VOLTAGE"}): HmSensorEntityDescription(
         key="OPERATING_VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
