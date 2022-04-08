@@ -13,6 +13,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
+from .const import DOMAIN
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .helpers import HmGenericEntity
@@ -55,16 +56,21 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        info = self._hm_entity.device_info
+        info = self._hm_entity.device_information
         return DeviceInfo(
-            identifiers=info["identifiers"],
-            manufacturer=info["manufacturer"],
-            model=info["model"],
-            name=info["name"],
-            sw_version=info["sw_version"],
-            suggested_area=info.get("suggested_area"),
+            identifiers={
+                (
+                    DOMAIN,
+                    info.identifier,
+                )
+            },
+            manufacturer=info.manufacturer,
+            model=info.model,
+            name=info.name,
+            sw_version=info.version,
+            suggested_area=info.room,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], info.get("via_device")),
+            via_device=cast(tuple[str, str], info.central),
         )
 
     @property
