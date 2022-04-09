@@ -134,7 +134,7 @@ class BaseControlUnit:
             local_port=self._data.get(ATTR_CALLBACK_PORT) or PORT_ANY,
         )
 
-        storage_folder = f"{self._hass.config.config_dir}/{DOMAIN}"
+        storage_folder = get_storage_folder(self._hass)
         client_session = aiohttp_client.async_get_clientsession(self._hass)
         interface_configs: set[InterfaceConfig] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
@@ -684,3 +684,8 @@ async def validate_config_and_get_serial(control_config: ControlConfig) -> str |
     """Validate the control configuration."""
     control_unit = await control_config.async_get_control_unit_temp()
     return await control_unit.async_validate_config_and_get_serial()
+
+
+def get_storage_folder(hass: HomeAssistant) -> str:
+    """Return the base path where to store files for this integration."""
+    return f"{hass.config.config_dir}/{DOMAIN}"

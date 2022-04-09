@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import logging
 
+from hahomematic.central_unit import cleanup_cache_dirs
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN, HMIP_LOCAL_PLATFORMS
-from .control_unit import ControlConfig
+from .control_unit import ControlConfig, get_storage_folder
 from .services import async_setup_services, async_unload_services
 
 _LOGGER = logging.getLogger(__name__)
@@ -43,3 +45,11 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
         hass.data[DOMAIN].pop(config_entry.entry_id)
 
     return unload_ok
+
+
+async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    """Handle removal of an entry."""
+    storage_folder = get_storage_folder(hass=hass)
+    cleanup_cache_dirs(
+        instance_name=config_entry.data["instance_name"], storage_folder=storage_folder
+    )

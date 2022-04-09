@@ -1,9 +1,11 @@
-Version 1.0.6 (2022-04-08)
-- Bump hahomematic to 1.0.7
+Version 1.1.0 (2022-04-09)
+- Bump hahomematic to 1.1.0
   - Add BATTERY_STATE to DEFAULT_ENTITIES
   - Migrate device_info to dataclass
+  - Add rega script (provided by @baxxy13) to get serial from CCU
 - Add Entity_Description to BATTERY_STATE
 - Make device_info more independant from backend
+- Clean up cache dirs on instance removal
 
 Version 1.0.5 (2022-04-07)
 - Bump hahomematic to 1.0.6
