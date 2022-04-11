@@ -671,7 +671,13 @@ class HaHub(Entity):
         if old_value is None:
             old_value = self.extra_state_attributes.get(name)
 
-        value = cv.boolean(value) if isinstance(old_value, bool) else float(value)
+        if isinstance(old_value, bool):
+            value = cv.boolean(value)
+        elif isinstance(old_value, str):
+            value = str(value)
+        else:
+            value = float(value)
+
         await self._hm_hub.set_system_variable(name=name, value=value)
 
     @callback

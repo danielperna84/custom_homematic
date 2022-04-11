@@ -1,3 +1,7 @@
+Version 1.1.2 (2022-04-11)
+- Bump hahomematic to 1.1.2
+  - Add set_system_variable with string value
+
 Version 1.1.1 (2022-04-11)
 - Bump hahomematic to 1.1.1
   - Read version and serial in get_client
