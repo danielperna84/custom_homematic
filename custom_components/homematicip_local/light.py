@@ -7,6 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.devices.light import (
     ATTR_HM_COLOR_TEMP,
+    ATTR_HM_EFFECT,
     ATTR_HM_HS_COLOR,
     ATTR_HM_RAMP_TIME,
     BaseHmLight,
@@ -15,12 +16,14 @@ from hahomematic.devices.light import (
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_COLOR_TEMP,
+    ATTR_EFFECT,
     ATTR_HS_COLOR,
     ATTR_TRANSITION,
     COLOR_MODE_BRIGHTNESS,
     COLOR_MODE_COLOR_TEMP,
     COLOR_MODE_HS,
     COLOR_MODE_ONOFF,
+    SUPPORT_EFFECT,
     SUPPORT_TRANSITION,
     LightEntity,
 )
@@ -95,6 +98,8 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         supported_features = 0
         if self._hm_entity.supports_transition:
             supported_features += SUPPORT_TRANSITION
+        if self._hm_entity.supports_effects:
+            supported_features += SUPPORT_EFFECT
         return supported_features
 
     @property
@@ -111,6 +116,16 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     def color_temp(self) -> int | None:
         """Return the color temperature of this light between 0..255."""
         return self._hm_entity.color_temp
+
+    @property
+    def effect(self) -> str | None:
+        """Return the current effect."""
+        return self._hm_entity.effect
+
+    @property
+    def effect_list(self) -> list[str] | None:
+        """Return the list of supported effects."""
+        return self._hm_entity.effect_list
 
     @property
     def hs_color(self) -> tuple[float, float] | None:
@@ -131,6 +146,9 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
             hm_kwargs[ATTR_HM_RAMP_TIME] = ramp_time
+        # Use effect from kwargs
+        if effect := kwargs.get(ATTR_EFFECT):
+            hm_kwargs[ATTR_HM_EFFECT] = effect
 
         await self._hm_entity.turn_on(**hm_kwargs)
 
