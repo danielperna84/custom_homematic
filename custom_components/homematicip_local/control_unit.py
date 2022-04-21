@@ -199,22 +199,24 @@ class ControlUnit(BaseControlUnit):
         self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
         await self._hub.async_init()
         if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
-            sensors = hub_entities_by_platform.get(HmPlatform.HUB_SENSOR)
-            async_dispatcher_send(
-                self._hass,
-                self.async_signal_new_hm_entity(
-                    entry_id=self._entry_id, platform=HmPlatform.HUB_SENSOR
-                ),
-                sensors,
-            )
-            binary_sensors = hub_entities_by_platform.get(HmPlatform.HUB_BINARY_SENSOR)
-            async_dispatcher_send(
-                self._hass,
-                self.async_signal_new_hm_entity(
-                    entry_id=self._entry_id, platform=HmPlatform.HUB_BINARY_SENSOR
-                ),
-                binary_sensors,
-            )
+            if sensors := hub_entities_by_platform.get(HmPlatform.HUB_SENSOR):
+                async_dispatcher_send(
+                    self._hass,
+                    self.async_signal_new_hm_entity(
+                        entry_id=self._entry_id, platform=HmPlatform.HUB_SENSOR
+                    ),
+                    sensors,
+                )
+            if binary_sensors := hub_entities_by_platform.get(
+                HmPlatform.HUB_BINARY_SENSOR
+            ):
+                async_dispatcher_send(
+                    self._hass,
+                    self.async_signal_new_hm_entity(
+                        entry_id=self._entry_id, platform=HmPlatform.HUB_BINARY_SENSOR
+                    ),
+                    binary_sensors,
+                )
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
