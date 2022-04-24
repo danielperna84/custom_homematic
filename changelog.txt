@@ -1,3 +1,7 @@
+Version 1.1.5 (2022-04-24)
+- Bump hahomematic to 1.1.5
+  - Reorg light attributes 
+
 Version 1.1.4 (2022-04-21)
 - Bump hahomematic to 1.1.4
   - Use min as default if default is unset for parameter_data

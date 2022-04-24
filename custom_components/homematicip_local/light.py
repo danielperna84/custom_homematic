@@ -6,10 +6,10 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.light import (
-    ATTR_HM_COLOR_TEMP,
-    ATTR_HM_EFFECT,
-    ATTR_HM_HS_COLOR,
-    ATTR_HM_RAMP_TIME,
+    HM_ARG_COLOR_TEMP,
+    HM_ARG_EFFECT,
+    HM_ARG_HS_COLOR,
+    HM_ARG_RAMP_TIME,
     BaseHmLight,
 )
 
@@ -137,18 +137,18 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         hm_kwargs: dict[str, Any] = {}
         # Use hs_color from kwargs, if not applicable use current hs_color.
         if color_temp := kwargs.get(ATTR_COLOR_TEMP, self.color_temp):
-            hm_kwargs[ATTR_HM_COLOR_TEMP] = color_temp
+            hm_kwargs[HM_ARG_COLOR_TEMP] = color_temp
         if hs_color := kwargs.get(ATTR_HS_COLOR, self.hs_color):
-            hm_kwargs[ATTR_HM_HS_COLOR] = hs_color
+            hm_kwargs[HM_ARG_HS_COLOR] = hs_color
         # Use brightness from kwargs, if not applicable use current brightness.
         if brightness := kwargs.get(ATTR_BRIGHTNESS, self.brightness) or 255:
             hm_kwargs[ATTR_BRIGHTNESS] = brightness
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
-            hm_kwargs[ATTR_HM_RAMP_TIME] = ramp_time
+            hm_kwargs[HM_ARG_RAMP_TIME] = ramp_time
         # Use effect from kwargs
         if effect := kwargs.get(ATTR_EFFECT):
-            hm_kwargs[ATTR_HM_EFFECT] = effect
+            hm_kwargs[HM_ARG_EFFECT] = effect
 
         await self._hm_entity.turn_on(**hm_kwargs)
 
