@@ -278,3 +278,39 @@ turn_on_siren:
       required: false
       selector:
         text:
+light_set_on_time:
+  name: light on time
+  description: Set on time for a light entity. Must be followed by a light.turn_on.
+  target:
+    entity:
+      integration: homematicip_local
+      domain: light
+  fields:
+    on_time:
+      name: On Time
+      description: On time for a light in seconds. Use 0 to reset the on time.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 8580000
+          unit_of_measurement: seconds
+          mode: box
+switch_set_on_time:
+  name: switch on time
+  description: Set on time for a switch entity. Must be followed by a switch.turn_on.
+  target:
+    entity:
+      integration: homematicip_local
+      domain: switch
+  fields:
+    on_time:
+      name: On Time
+      description: On time for a switch in seconds. Use 0 to reset the on time.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 8580000
+          unit_of_measurement: seconds
+          mode: box

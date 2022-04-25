@@ -12,6 +12,7 @@ from hahomematic.devices.light import (
     HM_ARG_RAMP_TIME,
     BaseHmLight,
 )
+import voluptuous as vol
 
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -29,6 +30,8 @@ from homeassistant.components.light import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_platform
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -37,6 +40,8 @@ from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
+ATTR_ON_TIME = "on_time"
+SERVICE_LIGHT_SET_ON_TIME = "light_set_on_time"
 
 
 async def async_setup_entry(
@@ -70,6 +75,15 @@ async def async_setup_entry(
 
     async_add_light(
         control_unit.async_get_new_hm_entities_by_platform(HmPlatform.LIGHT)
+    )
+
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_LIGHT_SET_ON_TIME,
+        {
+            vol.Required(ATTR_ON_TIME): vol.All(vol.Coerce(int), vol.Range(min=0, max=8580000)),
+        },
+        "async_set_on_time",
     )
 
 
@@ -155,3 +169,7 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
         await self._hm_entity.turn_off()
+
+    async def async_set_on_time(self, on_time: float) -> None:
+        """Set the on time of the light."""
+        await self._hm_entity.set_on_time_value(on_time=on_time)
