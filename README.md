@@ -233,6 +233,16 @@ Set the value of a variable on your HomeMatic hub.
 
 Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren).
 
+### `homematicip_local.light_set_on_time`
+
+Set on time for a light entity. Must be followed by a `light.turn_on`.
+Use 0 to reset the on time.
+
+### `homematicip_local.switch_set_on_time`
+
+Set on time for a switch entity. Must be followed by a `switch.turn_on`.
+Use 0 to reset the on time.
+
 ## Additional information
 
 ### Devices with buttons

@@ -7,10 +7,13 @@ from typing import Any, Union
 from hahomematic.const import HmPlatform
 from hahomematic.devices.switch import CeSwitch
 from hahomematic.platforms.switch import HmSwitch
+import voluptuous as vol
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_platform
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -19,6 +22,8 @@ from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
+ATTR_ON_TIME = "on_time"
+SERVICE_SWITCH_SET_ON_TIME = "switch_set_on_time"
 
 
 async def async_setup_entry(
@@ -54,6 +59,15 @@ async def async_setup_entry(
         control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SWITCH)
     )
 
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_SWITCH_SET_ON_TIME,
+        {
+            vol.Required(ATTR_ON_TIME): vol.All(vol.Coerce(int), vol.Range(min=0, max=8580000)),
+        },
+        "async_set_on_time",
+    )
+
 
 class HaHomematicSwitch(
     HaHomematicGenericEntity[Union[CeSwitch, HmSwitch]], SwitchEntity
@@ -72,3 +86,7 @@ class HaHomematicSwitch(
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
         await self._hm_entity.turn_off()
+
+    async def async_set_on_time(self, on_time: float) -> None:
+        """Set the on time of the light."""
+        await self._hm_entity.set_on_time_value(on_time=on_time)
