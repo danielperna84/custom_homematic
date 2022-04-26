@@ -1,9 +1,10 @@
-Version 1.1.5 (2022-04-24)
-- Bump hahomematic to 1.1.5
+Version 1.2.0 (2022-04-26)
+- Bump hahomematic to 1.2.0
   - Reorg light attributes
   - Add on_time to light and switch
 - Add service `homematicip_local.light_set_on_time`
 - Add service `homematicip_local.switch_set_on_time`
+- Reload integration on configuration change
 
 Version 1.1.4 (2022-04-21)
 - Bump hahomematic to 1.1.4
