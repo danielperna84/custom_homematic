@@ -31,6 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     # Register on HA stop event to gracefully shutdown Homematic(IP) Local connection
     hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.stop)
+    config_entry.async_on_unload(config_entry.add_update_listener(update_listener))
     return True
 
 
@@ -53,3 +54,8 @@ async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
     cleanup_cache_dirs(
         instance_name=config_entry.data["instance_name"], storage_folder=storage_folder
     )
+
+
+async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(config_entry.entry_id)

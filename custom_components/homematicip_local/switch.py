@@ -13,7 +13,6 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -63,7 +62,9 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_SWITCH_SET_ON_TIME,
         {
-            vol.Required(ATTR_ON_TIME): vol.All(vol.Coerce(int), vol.Range(min=0, max=8580000)),
+            vol.Required(ATTR_ON_TIME): vol.All(
+                vol.Coerce(int), vol.Range(min=0, max=8580000)
+            ),
         },
         "async_set_on_time",
     )
