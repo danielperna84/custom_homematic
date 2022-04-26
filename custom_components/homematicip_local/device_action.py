@@ -93,6 +93,8 @@ async def async_call_action_from_config(
     interface_id = data[1]
 
     for entry_id in device.config_entries:
+        if entry_id not in hass.data[DOMAIN]:
+            continue
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
         if control_unit.central.clients.get(interface_id) is None:
             continue
