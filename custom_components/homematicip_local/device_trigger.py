@@ -61,6 +61,8 @@ async def async_get_triggers(
 
     triggers = []
     for entry_id in device.config_entries:
+        if entry_id not in hass.data[DOMAIN]:
+            continue
         control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
         if control_unit.central.clients.get(interface_id) is None:
             continue

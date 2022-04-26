@@ -5,6 +5,7 @@ Version 1.2.0 (2022-04-26)
 - Add service `homematicip_local.light_set_on_time`
 - Add service `homematicip_local.switch_set_on_time`
 - Reload integration on configuration change
+- Fix triggers, if device has multiple config_entries from different domains
 
 Version 1.1.4 (2022-04-21)
 - Bump hahomematic to 1.1.4
