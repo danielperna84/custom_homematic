@@ -1,3 +1,8 @@
+Version 1.2.1 (2022-04-26)
+- Bump hahomematic to 1.2.1
+  - Fix callback alive check
+- Add persistent notification for missing callback events
+
 Version 1.2.0 (2022-04-26)
 - Bump hahomematic to 1.2.0
   - Reorg light attributes
