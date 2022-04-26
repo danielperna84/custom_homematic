@@ -9,6 +9,7 @@ from typing import Any, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
+from hahomematic.config import CALLBACK_CHECKER_INTERVAL
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
@@ -462,10 +463,25 @@ class ControlUnit(BaseControlUnit):
                 title = f"{DOMAIN.upper()}-Interface not reachable"
                 message = f"No connection to interface {interface_id}"
                 if available:
-                    self._async_dismiss_persistent_notification(identifier=interface_id)
+                    self._async_dismiss_persistent_notification(
+                        identifier=f"proxy-{interface_id}"
+                    )
                 else:
                     self._async_create_persistent_notification(
-                        identifier=interface_id, title=title, message=message
+                        identifier=f"proxy-{interface_id}", title=title, message=message
+                    )
+            if interface_event_type == HmInterfaceEventType.CALLBACK:
+                title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
+                message = f"No callback events received for interface {interface_id} {CALLBACK_CHECKER_INTERVAL}s."
+                if available:
+                    self._async_dismiss_persistent_notification(
+                        identifier=f"callback-{interface_id}"
+                    )
+                else:
+                    self._async_create_persistent_notification(
+                        identifier=f"callback-{interface_id}",
+                        title=title,
+                        message=message,
                     )
 
     @callback
