@@ -2,6 +2,7 @@ Version 1.2.1 (2022-04-26)
 - Bump hahomematic to 1.2.1
   - Fix callback alive check
 - Add persistent notification for missing callback events
+- Add recorder platform to avoid writing static attributes 
 
 Version 1.2.0 (2022-04-26)
 - Bump hahomematic to 1.2.0
