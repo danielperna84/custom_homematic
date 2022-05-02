@@ -1,3 +1,7 @@
+Version 1.2.2 (2022-05-02)
+- Bump hahomematic to 1.2.2
+  - Fix light channel for multi dimmer
+
 Version 1.2.1 (2022-04-26)
 - Bump hahomematic to 1.2.1
   - Fix callback alive check
