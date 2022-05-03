@@ -1,54 +1,54 @@
 {
   "state": {
-    "hmip_local__srh": {
-      "CLOSED": "Gesloten",
-      "TILTED": "Gekanteld",
-      "OPEN": "Geopend"
+    "homematicip_local__srh": {
+      "closed": "Gesloten",
+      "tilted": "Gekanteld",
+      "open": "Geopend"
     },
-    "hmip_local__lock_state": {
-      "UNKNOWN": "Unknown",
-      "LOCKED": "Locked",
-      "UNLOCKED": "Unlocked"
+    "homematicip_local__lock_state": {
+      "unknown": "Unknown",
+      "locked": "Locked",
+      "unlocked": "Unlocked"
     },
-    "hmip_local__smoke_detector_alarm_status": {
-      "IDLE_OFF": "Ruststand uit",
-      "PRIMARY_ALARM": "Primair  Alarm",
-      "INTRUSION_ALARM": "Inbraakalarm",
-      "SECONDARY_ALARM": "Secundair Alarm"
+    "homematicip_local__smoke_detector_alarm_status": {
+      "idle_off": "Ruststand uit",
+      "primary_alarm": "Primair  Alarm",
+      "intrusion_alarm": "Inbraakalarm",
+      "secondary_alarm": "Secundair Alarm"
     },
-    "hmip_local__sec_key_error": {
-      "NO_ERROR": "no error",
-      "CLUTCH_FAILURE": "clutch failure",
-      "MOTOR_ABORTED": "motor aborted"
+    "homematicip_local__sec_key_error": {
+      "no_error": "no error",
+      "clutch_failure": "clutch failure",
+      "motor_aborted": "motor aborted"
     },
-    "hmip_local__door_state": {
-      "CLOSED": "closed",
-      "OPEN": "open",
-      "VENTILATION_POSITION": "ventilation position",
-      "POSITION_UNKNOWN": "position unknown"
+    "homematicip_local__door_state": {
+      "closed": "closed",
+      "open": "open",
+      "ventilation_position": "ventilation position",
+      "position_unknown": "position unknown"
     },
-    "hmip_local__direction": {
-      "NONE": "",
-      "UP": "up",
-      "DOWN": "down",
-      "UNDEFINED": "undefined"
+    "homematicip_local__direction": {
+      "none": "",
+      "up": "up",
+      "down": "down",
+      "undefined": "undefined"
     },
-    "hmip_local__sec_direction": {
-      "NONE": "",
-      "UP": "closing",
-      "DOWN": "opening",
-      "UNDEFINED": "undefined"
+    "homematicip_local__sec_direction": {
+      "none": "",
+      "up": "closing",
+      "down": "opening",
+      "undefined": "undefined"
     },
-    "hmip_local__sec_win_status": {
-      "TRICKLE_CHARGE": "trickle charge",
-      "CHARGE": "charge",
-      "DISCHARGE": "discharge",
-      "STATE_UNKNOWN": "state unknown"
+    "homematicip_local__sec_win_status": {
+      "trickle_charge": "trickle charge",
+      "charge": "charge",
+      "discharge": "discharge",
+      "state_unknown": "state unknown"
     },
-    "hmip_local__sec_win_error": {
-      "NO_ERROR": "no error",
-      "MOTOR_TURN_ERROR": "motor turn error",
-      "MOTOR_TILT_ERROR": "motor tilt error"
+    "homematicip_local__sec_win_error": {
+      "no_error": "no error",
+      "motor_turn_error": "motor turn error",
+      "motor_tilt_error": "motor tilt error"
     }
   }
 }

@@ -1,54 +1,54 @@
 {
   "state": {
-    "hmip_local__srh": {
-      "CLOSED": "Geschlossen",
-      "TILTED": "Gekippt",
-      "OPEN": "Offen"
+    "homematicip_local__srh": {
+      "closed": "Geschlossen",
+      "tilted": "Gekippt",
+      "open": "Offen"
     },
-    "hmip_local__lock_state": {
-      "UNKNOWN": "Unbekannt",
-      "LOCKED": "Verriegelt",
-      "UNLOCKED": "Unverriegelt"
+    "homematicip_local__lock_state": {
+      "unknown": "Unbekannt",
+      "locked": "Verriegelt",
+      "unlocked": "Unverriegelt"
     },
-    "hmip_local__smoke_detector_alarm_status": {
-      "IDLE_OFF": "untätig",
-      "PRIMARY_ALARM": "Primär-Alarm",
-      "INTRUSION_ALARM": "Einbruch-Alarm",
-      "SECONDARY_ALARM": "Sekundär-Alarm"
+    "homematicip_local__smoke_detector_alarm_status": {
+      "idle_off": "untätig",
+      "primary_alarm": "Primär-Alarm",
+      "intrusion_alarm": "Einbruch-Alarm",
+      "secondary_alarm": "Sekundär-Alarm"
     },
-    "hmip_local__sec_key_error": {
-      "NO_ERROR": "kein Fehler",
-      "CLUTCH_FAILURE": "Einkuppeln fehlgeschlagen",
-      "MOTOR_ABORTED": "Motorlauf abgebrochen"
+    "homematicip_local__sec_key_error": {
+      "no_error": "kein Fehler",
+      "clutch_failure": "Einkuppeln fehlgeschlagen",
+      "motor_aborted": "Motorlauf abgebrochen"
     },
-    "hmip_local__door_state": {
-      "CLOSED": "geschlossen",
-      "OPEN": "offen",
-      "VENTILATION_POSITION": "Belüftung",
-      "POSITION_UNKNOWN": "Position unbekannt"
+    "homematicip_local__door_state": {
+      "closed": "geschlossen",
+      "open": "offen",
+      "ventilation_position": "Belüftung",
+      "position_unknown": "Position unbekannt"
     },
-    "hmip_local__direction": {
-      "NONE": "",
-      "UP": "hoch",
-      "DOWN": "runter",
-      "UNDEFINED": "nicht definiert"
+    "homematicip_local__direction": {
+      "none": "",
+      "up": "hoch",
+      "down": "runter",
+      "undefined": "nicht definiert"
     },
-    "hmip_local__sec_direction": {
-      "NONE": "",
-      "UP": "schließend",
-      "DOWN": "öffnend",
-      "UNDEFINED": "nicht definiert"
+    "homematicip_local__sec_direction": {
+      "none": "",
+      "up": "schließend",
+      "down": "öffnend",
+      "undefined": "nicht definiert"
     },
-    "hmip_local__sec_win_status": {
-      "TRICKLE_CHARGE": "Erhaltungsladung",
-      "CHARGE": "Ladend",
-      "DISCHARGE": "Versorgung durch Akku",
-      "STATE_UNKNOWN": "Zustand unbekannt"
+    "homematicip_local__sec_win_status": {
+      "trickle_charge": "Erhaltungsladung",
+      "charge": "Ladend",
+      "discharge": "Versorgung durch Akku",
+      "state_unknown": "Zustand unbekannt"
     },
-    "hmip_local__sec_win_error": {
-      "NO_ERROR": "kein Fehler",
-      "MOTOR_TURN_ERROR": "Fehler Drehantrieb",
-      "MOTOR_TILT_ERROR": "Fehler Kippantrieb"
+    "homematicip_local__sec_win_error": {
+      "no_error": "kein Fehler",
+      "motor_turn_error": "Fehler Drehantrieb",
+      "motor_tilt_error": "Fehler Kippantrieb"
     }
   }
 }
