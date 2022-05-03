@@ -9,6 +9,7 @@ from hahomematic.const import HmPlatform
 from hahomematic.devices.climate import (
     HM_PRESET_MODE_PREFIX,
     BaseClimateEntity,
+    HmHvacAction,
     HmHvacMode,
     HmPresetMode,
 )
@@ -16,19 +17,17 @@ import voluptuous as vol
 
 from homeassistant.components.climate import (
     ATTR_TEMPERATURE,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
     ClimateEntity,
+    ClimateEntityFeature,
+    HVACAction,
 )
 from homeassistant.components.climate.const import (
-    CURRENT_HVAC_ACTIONS,
-    HVAC_MODE_OFF,
-    HVAC_MODES,
     PRESET_AWAY,
     PRESET_BOOST,
     PRESET_COMFORT,
     PRESET_ECO,
     PRESET_NONE,
+    HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import TEMP_CELSIUS
@@ -44,12 +43,15 @@ from .generic_entity import HaHomematicGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
+SERVICE_DISABLE_AWAY_MODE = "disable_away_mode"
 SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR = "enable_away_mode_by_calendar"
 SERVICE_ENABLE_AWAY_MODE_BY_DURATION = "enable_away_mode_by_duration"
-SERVICE_DISABLE_AWAY_MODE = "disable_away_mode"
+
 ATTR_AWAY_END = "end"
 ATTR_AWAY_HOURS = "hours"
 ATTR_AWAY_TEMPERATURE = "away_temperature"
+
+HM_HVAC_MODES = [cls.value for cls in HmHvacMode]
 
 SUPPORTED_HA_PRESET_MODES = [
     PRESET_AWAY,
@@ -58,6 +60,23 @@ SUPPORTED_HA_PRESET_MODES = [
     PRESET_ECO,
     PRESET_NONE,
 ]
+
+HM_TO_HA_HVAC_MODE: dict[HmHvacMode, HVACMode] = {
+    HmHvacMode.AUTO: HVACMode.AUTO,
+    HmHvacMode.COOL: HVACMode.COOL,
+    HmHvacMode.HEAT: HVACMode.HEAT,
+    HmHvacMode.OFF: HVACMode.OFF,
+}
+
+HA_TO_HM_HVAC_MODE: dict[HVACMode, HmHvacMode] = {
+    v: k for k, v in HM_TO_HA_HVAC_MODE.items()
+}
+
+HM_TO_HA_ACTION: dict[HmHvacAction, HVACAction] = {
+    HmHvacAction.COOL: HVACAction.COOLING,
+    HmHvacAction.HEAT: HVACAction.HEATING,
+    HmHvacAction.OFF: HVACAction.OFF,
+}
 
 
 async def async_setup_entry(
@@ -153,33 +172,33 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         return self._hm_entity.current_humidity
 
     @property
-    def hvac_action(self) -> str | None:
+    def hvac_action(self) -> HVACAction | None:
         """Return the hvac action"""
-        if self._hm_entity.hvac_action in CURRENT_HVAC_ACTIONS:
-            return str(self._hm_entity.hvac_action.value)
+        if self._hm_entity.hvac_action in HM_TO_HA_ACTION:
+            return HM_TO_HA_ACTION[self._hm_entity.hvac_action]
         return None
 
     @property
-    def hvac_mode(self) -> str:
+    def hvac_mode(self) -> HVACMode:
         """Return hvac operation ie."""
-        if self._hm_entity.hvac_mode in HVAC_MODES:
-            return str(self._hm_entity.hvac_mode.value)
-        return HVAC_MODE_OFF
+        if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
+            return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
+        return HVACMode.OFF
 
     @property
-    def hvac_modes(self) -> list[str]:
+    def hvac_modes(self) -> list[HVACMode]:
         """Return the list of available hvac operation modes."""
         hvac_modes = []
-        for hm_hvav_mode in self._hm_entity.hvac_modes:
-            if hm_hvav_mode.value in HVAC_MODES:
-                hvac_modes.append(hm_hvav_mode.value)
+        for hm_hvac_mode in self._hm_entity.hvac_modes:
+            if hm_hvac_mode in HM_TO_HA_HVAC_MODE:
+                hvac_modes.append(HM_TO_HA_HVAC_MODE[hm_hvac_mode])
         return hvac_modes
 
     @property
     def preset_mode(self) -> str | None:
         """Return the current preset mode."""
         if self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES or str(
-            self._hm_entity.preset_mode.value
+            self._hm_entity.preset_mode
         ).startswith(HM_PRESET_MODE_PREFIX):
             return self._hm_entity.preset_mode
         return None
@@ -189,18 +208,18 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         """Return a list of available preset modes incl. hmip profiles."""
         preset_modes = []
         for hm_preset_mode in self._hm_entity.preset_modes:
-            if hm_preset_mode.value in SUPPORTED_HA_PRESET_MODES:
+            if hm_preset_mode in SUPPORTED_HA_PRESET_MODES:
                 preset_modes.append(hm_preset_mode.value)
-            if str(hm_preset_mode.value).startswith(HM_PRESET_MODE_PREFIX):
+            if str(hm_preset_mode).startswith(HM_PRESET_MODE_PREFIX):
                 preset_modes.append(hm_preset_mode.value)
         return preset_modes
 
     @property
     def supported_features(self) -> int:
         """Return the list of supported features."""
-        supported_features = SUPPORT_TARGET_TEMPERATURE
+        supported_features: int = ClimateEntityFeature.TARGET_TEMPERATURE
         if self._hm_entity.supports_preset:
-            supported_features += SUPPORT_PRESET_MODE
+            supported_features += ClimateEntityFeature.PRESET_MODE
         return supported_features
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
@@ -210,16 +229,16 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
             return None
         await self._hm_entity.set_temperature(temperature=temperature)
 
-    async def async_set_hvac_mode(self, hvac_mode: str) -> None:
+    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
-        if hvac_mode not in [enum.value for enum in HmHvacMode]:
+        if hvac_mode in HA_TO_HM_HVAC_MODE:
+            await self._hm_entity.set_hvac_mode(HA_TO_HM_HVAC_MODE[hvac_mode])
+        else:
             _LOGGER.warning("Hvac mode %s is not supported by integration", hvac_mode)
-            return None
-        await self._hm_entity.set_hvac_mode(HmHvacMode(hvac_mode))
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
-        if preset_mode not in [enum.value for enum in HmPresetMode]:
+        if preset_mode not in HM_HVAC_MODES:
             _LOGGER.warning(
                 "Preset mode %s is not supported by integration", preset_mode
             )

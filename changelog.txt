@@ -1,4 +1,5 @@
-Version 1.3.0 (2022-05-02)
+Version 1.3.0 (2022-05-04)
+- Use enums provided by 2022.5
 - Add hassfest job for custom components
 - Fixes after adding hassfest action
 
@@ -10,7 +11,7 @@ Version 1.2.1 (2022-04-26)
 - Bump hahomematic to 1.2.1
   - Fix callback alive check
 - Add persistent notification for missing callback events
-- Add recorder platform to avoid writing static attributes 
+- Add recorder platform to avoid writing static attributes
 
 Version 1.2.0 (2022-04-26)
 - Bump hahomematic to 1.2.0

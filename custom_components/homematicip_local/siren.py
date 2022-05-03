@@ -15,11 +15,8 @@ import voluptuous as vol
 from homeassistant.components.siren import (
     ATTR_DURATION,
     ATTR_TONE,
-    SUPPORT_DURATION,
-    SUPPORT_TONES,
-    SUPPORT_TURN_OFF,
-    SUPPORT_TURN_ON,
     SirenEntity,
+    SirenEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -89,7 +86,10 @@ class HaHomematicSiren(HaHomematicGenericEntity[BaseSiren], SirenEntity):
     """Representation of the HomematicIP siren entity."""
 
     _attr_supported_features = (
-        SUPPORT_TONES | SUPPORT_DURATION | SUPPORT_TURN_OFF | SUPPORT_TURN_ON
+        SirenEntityFeature.TONES
+        | SirenEntityFeature.DURATION
+        | SirenEntityFeature.TURN_OFF
+        | SirenEntityFeature.TURN_ON
     )
 
     @property
