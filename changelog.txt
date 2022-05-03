@@ -1,3 +1,7 @@
+Version 1.3.0 (2022-05-02)
+- Add hassfest job for custom components
+- Fixes after adding hassfest action
+
 Version 1.2.2 (2022-05-02)
 - Bump hahomematic to 1.2.2
   - Fix light channel for multi dimmer

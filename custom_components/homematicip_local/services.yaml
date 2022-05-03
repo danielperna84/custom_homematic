@@ -10,7 +10,7 @@ clear_cache:
       required: true
       selector:
         entity:
-          domain: homematicip_local
+          integration: homematicip_local
 
 delete_device:
   name: Delete a device
@@ -22,7 +22,7 @@ delete_device:
       required: true
       selector:
         device:
-          domain: homematicip_local
+          integration: homematicip_local
 
 export_device_definition:
   name: Export device definition
@@ -34,7 +34,7 @@ export_device_definition:
       required: true
       selector:
         device:
-          domain: homematicip_local
+          integration: homematicip_local
 
 set_variable_value:
   name: Set variable value
@@ -72,7 +72,7 @@ set_device_value:
       required: true
       selector:
         device:
-          domain: homematicip_local
+          integration: homematicip_local
     channel:
       name: Channel
       description: Channel for calling a parameter.
@@ -158,7 +158,7 @@ put_paramset:
       required: true
       selector:
         device:
-          domain: homematicip_local
+          integration: homematicip_local
     channel:
       name: Channel
       description: Channel for calling a paramset.
@@ -258,6 +258,7 @@ turn_on_siren:
   description: Turn siren on.
   target:
     entity:
+      integration: homematicip_local
       domain: siren
   fields:
     tone:

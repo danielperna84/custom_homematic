@@ -1,10 +1,8 @@
 {
-  "title": "Homematic(IP) Local",
   "config": {
     "flow_title": "{name}/{host}",
     "step": {
       "central": {
-        "title": "Homematic(IP) Local",
         "description": "Gelieve de vereiste velden in te vullen.",
         "data": {
           "instance_name": "Integration instance naam",
@@ -45,7 +43,6 @@
     "step": {
       "central": {
         "description": "Configureer zichtbaarheid van Homematic(IP) Local apparaattypes",
-        "title": "Configureer de CCU opnieuw",
         "data": {
           "host": "CCU Hostname/IP-adres",
           "username": "CCU Gebruikersnaam",

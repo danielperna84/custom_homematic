@@ -1,10 +1,8 @@
 {
-  "title": "Homematic(IP) Local",
   "config": {
     "flow_title": "{name}/{host}",
     "step": {
       "central": {
-        "title": "Homematic(IP) Local",
         "description": "Please fill the required fields.",
         "data": {
           "instance_name": "Integration instance name",
@@ -44,7 +42,6 @@
   "options": {
     "step": {
       "central": {
-        "title": "Homematic(IP) Local",
         "description": "Re-Configure the CCU",
         "data": {
           "host": "CCU Hostname/IP-Address",
