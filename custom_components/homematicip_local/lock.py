@@ -7,7 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.devices.lock import BaseLock
 
-from homeassistant.components.lock import SUPPORT_OPEN, LockEntity
+from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -55,7 +55,7 @@ async def async_setup_entry(
 class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
     """Representation of the HomematicIP lock entity."""
 
-    _attr_supported_features = SUPPORT_OPEN
+    _attr_supported_features = LockEntityFeature.OPEN
 
     @property
     def is_locked(self) -> bool:

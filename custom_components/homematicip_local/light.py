@@ -20,13 +20,9 @@ from homeassistant.components.light import (
     ATTR_EFFECT,
     ATTR_HS_COLOR,
     ATTR_TRANSITION,
-    COLOR_MODE_BRIGHTNESS,
-    COLOR_MODE_COLOR_TEMP,
-    COLOR_MODE_HS,
-    COLOR_MODE_ONOFF,
-    SUPPORT_EFFECT,
-    SUPPORT_TRANSITION,
+    ColorMode,
     LightEntity,
+    LightEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -92,18 +88,18 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
 
     @property
-    def color_mode(self) -> str:
+    def color_mode(self) -> ColorMode:
         """Return the color mode of the light."""
         if self._hm_entity.supports_hs_color:
-            return COLOR_MODE_HS
+            return ColorMode.HS
         if self._hm_entity.supports_color_temperature:
-            return COLOR_MODE_COLOR_TEMP
+            return ColorMode.COLOR_TEMP
         if self._hm_entity.supports_brightness:
-            return COLOR_MODE_BRIGHTNESS
-        return COLOR_MODE_ONOFF
+            return ColorMode.BRIGHTNESS
+        return ColorMode.ONOFF
 
     @property
-    def supported_color_modes(self) -> set[str]:
+    def supported_color_modes(self) -> set[ColorMode]:
         """Flag supported color modes."""
         return {self.color_mode}
 
@@ -112,9 +108,9 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         """Return the list of supported features."""
         supported_features = 0
         if self._hm_entity.supports_transition:
-            supported_features += SUPPORT_TRANSITION
+            supported_features += LightEntityFeature.TRANSITION
         if self._hm_entity.supports_effects:
-            supported_features += SUPPORT_EFFECT
+            supported_features += LightEntityFeature.EFFECT
         return supported_features
 
     @property
