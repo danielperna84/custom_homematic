@@ -46,7 +46,7 @@ from hahomematic.const import (
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
-from hahomematic.hub import HmDummyHub, HmHub
+from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
@@ -629,12 +629,12 @@ class HaHub(Entity):
     _attr_icon = "mdi:gradient-vertical"
 
     def __init__(
-        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub | HmDummyHub
+        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
     ) -> None:
         """Initialize HomeMatic hub."""
         self.hass = hass
         self._control: ControlUnit = control_unit
-        self._hm_hub: HmHub | HmDummyHub = hm_hub
+        self._hm_hub: HmHub = hm_hub
         self._attr_name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
