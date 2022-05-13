@@ -1,3 +1,7 @@
+Version 1.3.2 (2022-05-13)
+- Bump hahomematic to 1.3.1
+  - Increase connection timeout(30s->60s) and reconnect interval(90s->120s) to better support slower hardware
+
 Version 1.3.1 (2022-05-06)
 - Bump hahomematic to 1.3.0
   - Use unit for vars, if available
