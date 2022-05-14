@@ -121,6 +121,8 @@ json_port:
 
 #### Interface
 
+This page always displays the default values, also when reconfiguring the integration.
+
 ```yaml
 hmip_rf_enabled:
   required: true
