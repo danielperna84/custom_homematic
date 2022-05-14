@@ -10,7 +10,7 @@ clear_cache:
       required: true
       selector:
         entity:
-          integration: homematicip_local
+          domain: homematicip_local
 
 delete_device:
   name: Delete a device
