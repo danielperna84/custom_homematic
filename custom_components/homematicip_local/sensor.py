@@ -4,7 +4,13 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import TYPE_FLOAT, TYPE_INTEGER, HmPlatform
+from hahomematic.const import (
+    TYPE_ENUM,
+    TYPE_FLOAT,
+    TYPE_INTEGER,
+    TYPE_STRING,
+    HmPlatform,
+)
 from hahomematic.hub import HmSystemVariable
 from hahomematic.platforms.sensor import HmSensor
 
@@ -108,6 +114,14 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
             and self._multiplier != 1
         ):
             return self._hm_entity.value * self._multiplier
+        # Strings and enums with custom device class must be lowercase to be translatable.
+        if (
+            self._hm_entity.value is not None
+            and self.device_class is not None
+            and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
+            and self.device_class.startswith(DOMAIN.lower())
+        ):
+            return self._hm_entity.value.lower()
         return self._hm_entity.value
 
 
