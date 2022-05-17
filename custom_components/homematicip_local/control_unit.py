@@ -49,7 +49,7 @@ from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, ATTR_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
@@ -426,17 +426,19 @@ class ControlUnit(BaseControlUnit):
         """Execute the callback used for device related events."""
         if hm_event_type == HmEventType.KEYPRESS:
             device_address = event_data[ATTR_ADDRESS]
-            if device_id := self._async_get_device_id(device_address):
-                event_data[ATTR_DEVICE_ID] = device_id
+            if device_entry := self._async_get_device(device_address=device_address):
+                event_data[ATTR_DEVICE_ID] = device_entry.id
+                event_data[ATTR_NAME] = device_entry.name_by_user or device_entry.name
             self._hass.bus.fire(
                 hm_event_type.value,
                 event_data,
             )
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
-            if device_id := self._async_get_device_id(device_address):
-                event_data[ATTR_DEVICE_ID] = device_id
-            name = self._async_get_device_name(device_address=device_address)
+            name: str | None = None
+            if device_entry := self._async_get_device(device_address=device_address):
+                event_data[ATTR_DEVICE_ID] = device_entry.id
+                name = device_entry.name_by_user or device_entry.name
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
             value = event_data[ATTR_VALUE]
@@ -497,20 +499,6 @@ class ControlUnit(BaseControlUnit):
     def _async_dismiss_persistent_notification(self, identifier: str) -> None:
         """Dismiss a message for user on UI."""
         self._hass.components.persistent_notification.async_dismiss(identifier)
-
-    @callback
-    def _async_get_device_name(self, device_address: str) -> str | None:
-        """Return the device name of the ha device."""
-        if device := self._async_get_device(device_address=device_address):
-            return device.name_by_user if device.name_by_user else device.name
-        return None
-
-    @callback
-    def _async_get_device_id(self, device_address: str) -> str | None:
-        """Return the device id of the ha device."""
-        if device := self._async_get_device(device_address=device_address):
-            return device.id
-        return None
 
     @callback
     def _async_get_device(self, device_address: str) -> DeviceEntry | None:
