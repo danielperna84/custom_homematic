@@ -1,3 +1,6 @@
+Version 1.4.1 (2022-05-17)
+- Add name to HA event
+
 Version 1.4.0 (2022-05-16)
 - Bump hahomematic to 1.4.0
   - Block parameters by device_type that should not create entities in HA
