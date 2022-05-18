@@ -75,6 +75,7 @@ Autodiscovery uses the last 10-digits of your rf-module's serial to uniquely ide
 Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 
 ### Configuration Variables
+The configuration variables are spread over two pages: Central and Interfaces. Press the "submit" button on first page to move forward to the second page. 
 
 #### Central
 
@@ -246,6 +247,9 @@ Set on time for a switch entity. Must be followed by a `switch.turn_on`.
 Use 0 to reset the on time.
 
 ## Additional information
+
+### Device id
+For events (buttons) or services you do need to enter the `device_id` (instead of the `address` in old integration). You find it in integration - devices, select the device and the id shows up in the url after `device`
 
 ### Devices with buttons
 
