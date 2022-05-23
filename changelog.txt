@@ -1,4 +1,6 @@
-Version 1.4.1 (2022-05-17)
+Version 1.5.0 (2022-05-23)
+- Bump hahomematic to 1.5.0
+    - Limit sysvar length to 255 chars due to HA limitations
 - Add name to HA event
 
 Version 1.4.0 (2022-05-16)

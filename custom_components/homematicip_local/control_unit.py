@@ -666,23 +666,10 @@ class HaHub(Entity):
 
     async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
-        sensor = self._hm_hub.hub_entities.get(name)
-        if not sensor or name in self.extra_state_attributes:
+        sysvar_entity = self._hm_hub.hub_entities.get(name)
+        if not sysvar_entity or name in self.extra_state_attributes:
             _LOGGER.error("Variable %s not found on %s", name, self.name)
             return
-
-        old_value = None
-        if sensor:
-            old_value = sensor.value
-        if old_value is None:
-            old_value = self.extra_state_attributes.get(name)
-
-        if isinstance(old_value, bool):
-            value = cv.boolean(value)
-        elif isinstance(old_value, str):
-            value = str(value)
-        else:
-            value = float(value)
 
         await self._hm_hub.set_system_variable(name=name, value=value)
 
