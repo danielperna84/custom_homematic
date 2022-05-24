@@ -4,9 +4,9 @@ from __future__ import annotations
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_ENTITY_TYPE,
+    ATTR_FUNCTION,
     ATTR_INTERFACE_ID,
     ATTR_PARAMETER,
-    ATTR_SUBSECTION,
 )
 
 from homeassistant.core import HomeAssistant, callback
@@ -18,7 +18,7 @@ def exclude_attributes(hass: HomeAssistant) -> set[str]:
     return {
         ATTR_ADDRESS,
         ATTR_ENTITY_TYPE,
+        ATTR_FUNCTION,
         ATTR_INTERFACE_ID,
         ATTR_PARAMETER,
-        ATTR_SUBSECTION,
     }
