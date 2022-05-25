@@ -1,3 +1,7 @@
+Version 1.5.4 (2022-05-25)
+- Bump hahomematic to 1.5.4
+  - Add function attribute only if set
+
 Version 1.5.3 (2022-05-24)
 - Bump hahomematic to 1.5.3
   - Rename subsection to function
