@@ -1,4 +1,6 @@
-Version 1.5.5 (2022-05-27)
+Version 1.6.0 (2022-05-28)
+- Bump hahomematic to 1.6.0
+  - Add impulse event
 - Adjust typing to match updated HA defaults
 
 Version 1.5.4 (2022-05-25)
