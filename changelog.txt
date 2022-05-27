@@ -1,3 +1,6 @@
+Version 1.5.5 (2022-05-27)
+- Adjust typing to match updated HA defaults
+
 Version 1.5.4 (2022-05-25)
 - Bump hahomematic to 1.5.4
   - Add function attribute only if set

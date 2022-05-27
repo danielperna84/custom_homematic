@@ -1,8 +1,6 @@
 """Provides device triggers for Home Assistant Homematic(IP)."""
 from __future__ import annotations
 
-from typing import Any
-
 from hahomematic.const import CLICK_EVENTS
 from hahomematic.entity import ClickEvent
 import voluptuous as vol
@@ -44,17 +42,17 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
 
 async def async_get_triggers(
     hass: HomeAssistant, device_id: str
-) -> list[dict[str, Any]] | None:
+) -> list[dict[str, str]]:
     """List device triggers for Home Assistant Homematic(IP) devices."""
     device_registry = dr.async_get(hass)
     if (device := device_registry.async_get(device_id)) is None:
-        return None
+        return []
     if (
         data := get_device_address_at_interface_from_identifiers(
             identifiers=device.identifiers
         )
     ) is None:
-        return None
+        return []
 
     device_address = data[0]
     interface_id = data[1]
