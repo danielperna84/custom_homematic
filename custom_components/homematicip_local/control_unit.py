@@ -429,8 +429,13 @@ class ControlUnit(BaseControlUnit):
                 event_data[ATTR_DEVICE_ID] = device_entry.id
                 event_data[ATTR_NAME] = device_entry.name_by_user or device_entry.name
             self._hass.bus.fire(
-                hm_event_type.value,
-                event_data,
+                event_type=hm_event_type.value,
+                event_data=event_data,
+            )
+        elif hm_event_type == HmEventType.IMPULSE:
+            self._hass.bus.fire(
+                event_type=hm_event_type.value,
+                event_data=event_data,
             )
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
