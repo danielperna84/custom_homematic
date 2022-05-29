@@ -347,20 +347,21 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
 
 def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> None:
     if interface_input is not None:
-        if interface_input[ATTR_HMIP_RF_ENABLED]:
+        data[ATTR_INTERFACE] = {}
+        if interface_input[ATTR_HMIP_RF_ENABLED] is True:
             data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
                 ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
             }
-        if interface_input[ATTR_BIDCOS_RF_ENABLED]:
+        if interface_input[ATTR_BIDCOS_RF_ENABLED] is True:
             data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
                 ATTR_PORT: interface_input[ATTR_BIDCOS_RF_PORT],
             }
-        if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED]:
+        if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED] is True:
             data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
                 ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
                 ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
             }
-        if interface_input[ATTR_BIDCOS_WIRED_ENABLED]:
+        if interface_input[ATTR_BIDCOS_WIRED_ENABLED] is True:
             data[ATTR_INTERFACE][IF_BIDCOS_WIRED_NAME] = {
                 ATTR_PORT: interface_input[ATTR_BIDCOS_WIRED_PORT],
             }

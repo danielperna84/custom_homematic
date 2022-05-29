@@ -1,3 +1,8 @@
+Version 1.6.1 (2022-05-29)
+- Bump hahomematic to 1.6.1
+  - Fix entity definition for HMIP-HEATING
+- Fix config flow: select/deselect interfaces
+
 Version 1.6.0 (2022-05-29)
 - Bump hahomematic to 1.6.0
   - Add impulse event
