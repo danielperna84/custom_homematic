@@ -1,7 +1,10 @@
-Version 1.6.0 (2022-05-28)
+Version 1.6.0 (2022-05-29)
 - Bump hahomematic to 1.6.0
   - Add impulse event
+  - Add LEVEL and STATE to HmIP-Heating group to display hvac_action
+  - Add device_type as model to attributes
 - Adjust typing to match updated HA defaults
+- Exclude model from recorder
 
 Version 1.5.4 (2022-05-25)
 - Bump hahomematic to 1.5.4
