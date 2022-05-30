@@ -1,3 +1,8 @@
+Version 1.7.0 (2022-05-31)
+- Bump hahomematic to 1.7.0
+  - Refactor system variables
+- Align integration to match sysvar refactoring
+
 Version 1.6.1 (2022-05-30)
 - Bump hahomematic to 1.6.2
   - Add more options for boolean conversions

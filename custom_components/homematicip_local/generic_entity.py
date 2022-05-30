@@ -7,7 +7,6 @@ from typing import Any, Generic, cast
 
 from hahomematic.const import HmEntityUsage
 from hahomematic.entity import CallbackEntity, CustomEntity, GenericEntity
-from hahomematic.hub import BaseHubEntity
 
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
@@ -80,7 +79,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
-        if isinstance(self._hm_entity, (BaseHubEntity, CallbackEntity)):
+        if isinstance(self._hm_entity, CallbackEntity):
             self._hm_entity.register_update_callback(
                 update_callback=self._async_device_changed
             )
