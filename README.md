@@ -231,6 +231,12 @@ Turn on the install mode on the provided Interface to pair new devices.
 
 Set the value of a variable on your HomeMatic hub.
 
+Value lists accept the 0-based list position or the value as input.
+
+For booleans the following values can be used:
+- 'true', 'on', '1', 1 -> True
+- 'false', 'off', '0', 0 -> False
+
 ### `homematicip_local.turn_on_siren`
 
 Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren).

@@ -1,3 +1,8 @@
+Version 1.6.1 (2022-05-30)
+- Bump hahomematic to 1.6.2
+  - Add more options for boolean conversions
+- Update readme. See new options for homematicip_local.set_variable_value.
+
 Version 1.6.1 (2022-05-29)
 - Bump hahomematic to 1.6.1
   - Fix entity definition for HMIP-HEATING
