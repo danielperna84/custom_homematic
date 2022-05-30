@@ -5,8 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.hub import HmSystemVariable
-from hahomematic.platforms.binary_sensor import HmBinarySensor
+from hahomematic.platforms.binary_sensor import HmBinarySensor, HmSysvarBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -88,14 +87,14 @@ class HaHomematicBinarySensor(
 
 
 class HaHomematicHubBinarySensor(
-    HaHomematicGenericEntity[HmSystemVariable], BinarySensorEntity
+    HaHomematicGenericEntity[HmSysvarBinarySensor], BinarySensorEntity
 ):
     """Representation of the HomematicIP hub binary_sensor entity."""
 
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HmSystemVariable,
+        hm_entity: HmSysvarBinarySensor,
     ) -> None:
         """Initialize the binary_sensor entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)

@@ -5,14 +5,14 @@ from dataclasses import dataclass
 from typing import TypeVar, Union
 
 from hahomematic.const import IDENTIFIERS_SEPARATOR
-from hahomematic.entity import CustomEntity, GenericEntity
-from hahomematic.hub import BaseHubEntity
+from hahomematic.entity import CustomEntity, GenericEntity, GenericSystemVariable
+from hahomematic.hub import HmHub
 
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 
 # Union for entity types used as base class for entities
-HmBaseEntity = Union[BaseHubEntity, CustomEntity, GenericEntity]
+HmBaseEntity = Union[HmHub, GenericSystemVariable, CustomEntity, GenericEntity]
 # Entities that support callbacks from backend
 HmCallbackEntity = (CustomEntity, GenericEntity)
 # Generic base type used for entities in Homematic(IP) Local

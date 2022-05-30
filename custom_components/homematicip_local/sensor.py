@@ -11,8 +11,7 @@ from hahomematic.const import (
     TYPE_STRING,
     HmPlatform,
 )
-from hahomematic.hub import HmSystemVariable
-from hahomematic.platforms.sensor import HmSensor
+from hahomematic.platforms.sensor import HmSensor, HmSysvarSensor
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -125,13 +124,13 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
         return self._hm_entity.value
 
 
-class HaHomematicHubSensor(HaHomematicGenericEntity[HmSystemVariable], SensorEntity):
+class HaHomematicHubSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEntity):
     """Representation of the HomematicIP hub sensor entity."""
 
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HmSystemVariable,
+        hm_entity: HmSysvarSensor,
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
