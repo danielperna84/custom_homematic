@@ -1,3 +1,8 @@
+Version 1.7.1 (2022-05-31)
+- Bump hahomematic to 1.7.1
+  - Rename parameter channel_address to address for put/get_paramset
+- Make channel optional for homematicip_local.put_paramset
+
 Version 1.7.0 (2022-05-31)
 - Bump hahomematic to 1.7.0
   - Refactor system variables

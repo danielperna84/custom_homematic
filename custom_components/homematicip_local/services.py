@@ -111,7 +111,7 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.Schema(
 SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
     {
         vol.Required(ATTR_DEVICE_ID): cv.string,
-        vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+        vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
         vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
         vol.Required(ATTR_PARAMSET): dict,
         vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
@@ -345,7 +345,7 @@ async def _async_service_put_paramset(
 ) -> None:
     """Service to call the putParamset method on a HomeMatic connection."""
     device_id = service.data[ATTR_DEVICE_ID]
-    channel = service.data[ATTR_CHANNEL]
+    channel = service.data.get(ATTR_CHANNEL)
     paramset_key = service.data[ATTR_PARAMSET_KEY]
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
@@ -361,24 +361,24 @@ async def _async_service_put_paramset(
         return None
 
     interface_id: str = address_data[0]
-    channel_address: str = address_data[1]
+    address: str = address_data[1]
 
     _LOGGER.debug(
         "Calling putParamset: %s, %s, %s, %s, %s",
         interface_id,
-        channel_address,
+        address,
         paramset_key,
         paramset,
         rx_mode,
     )
 
-    if interface_id and channel_address:
+    if interface_id and address:
         if control_unit := _get_cu_by_interface_id(
             hass=hass, interface_id=interface_id
         ):
             await control_unit.central.put_paramset(
                 interface_id=interface_id,
-                channel_address=channel_address,
+                address=address,
                 paramset_key=paramset_key,
                 value=paramset,
                 rx_mode=rx_mode,
