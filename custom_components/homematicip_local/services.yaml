@@ -162,7 +162,7 @@ put_paramset:
     channel:
       name: Channel
       description: Channel for calling a paramset.
-      required: true
+      required: false
       selector:
         number:
           min: 1
