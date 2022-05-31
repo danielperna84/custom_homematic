@@ -46,7 +46,7 @@ async def async_setup_entry(
         entities = []
 
         for hm_entity in args:
-            entities.append(HaHomematicHubBinarySensor(control_unit, hm_entity))
+            entities.append(HaHomematicSysvarBinarySensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -86,19 +86,12 @@ class HaHomematicBinarySensor(
         return self._hm_entity.value
 
 
-class HaHomematicHubBinarySensor(
+class HaHomematicSysvarBinarySensor(
     HaHomematicGenericEntity[HmSysvarBinarySensor], BinarySensorEntity
 ):
     """Representation of the HomematicIP hub binary_sensor entity."""
 
-    def __init__(
-        self,
-        control_unit: ControlUnit,
-        hm_entity: HmSysvarBinarySensor,
-    ) -> None:
-        """Initialize the binary_sensor entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_entity_registry_enabled_default = False
+    _attr_entity_registry_enabled_default = False
 
     @property
     def is_on(self) -> bool | None:

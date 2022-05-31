@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.number import BaseNumber
+from hahomematic.platforms.number import BaseNumber, HmSysvarNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
@@ -41,6 +41,18 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
+    @callback
+    def async_add_hub_number(args: Any) -> None:
+        """Add hub number from Homematic(IP) Local."""
+
+        entities = []
+
+        for hm_entity in args:
+            entities.append(HaHomematicSysvarNumber(control_unit, hm_entity))
+
+        if entities:
+            async_add_entities(entities)
+
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
@@ -48,6 +60,16 @@ async def async_setup_entry(
                 config_entry.entry_id, HmPlatform.NUMBER
             ),
             async_add_number,
+        )
+    )
+
+    config_entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.HUB_NUMBER
+            ),
+            async_add_hub_number,
         )
     )
 
@@ -95,3 +117,35 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     async def async_set_value(self, value: float) -> None:
         """Update the current value."""
         await self._hm_entity.send_value(value / self._multiplier)
+
+
+class HaHomematicSysvarNumber(HaHomematicGenericEntity[HmSysvarNumber], NumberEntity):
+    """Representation of the HomematicIP hub number entity."""
+
+    _attr_mode = NumberMode.BOX
+    _attr_entity_registry_enabled_default = False
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: HmSysvarNumber,
+    ) -> None:
+        """Initialize the number entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        if hm_entity.min:
+            self._attr_min_value = float(hm_entity.min)
+        if hm_entity.max:
+            self._attr_max_value = float(hm_entity.max)
+        if hm_entity.unit:
+            self._attr_unit_of_measurement = hm_entity.unit
+
+    @property
+    def value(self) -> float | None:
+        """Return the current value."""
+        if self._hm_entity.value:
+            return float(self._hm_entity.value)
+        return None
+
+    async def async_set_value(self, value: float) -> None:
+        """Update the current value."""
+        await self._hm_entity.send_variable(value)

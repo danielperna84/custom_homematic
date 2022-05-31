@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.select import HmSelect
+from hahomematic.platforms.select import HmSelect, HmSysvarSelect
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
@@ -40,6 +40,18 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
+    @callback
+    def async_add_hub_select(args: Any) -> None:
+        """Add hub select from Homematic(IP) Local."""
+
+        entities = []
+
+        for hm_entity in args:
+            entities.append(HaHomematicSysvarSelect(control_unit, hm_entity))
+
+        if entities:
+            async_add_entities(entities)
+
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
@@ -47,6 +59,16 @@ async def async_setup_entry(
                 config_entry.entry_id, HmPlatform.SELECT
             ),
             async_add_select,
+        )
+    )
+
+    config_entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.HUB_SELECT
+            ),
+            async_add_hub_select,
         )
     )
 
@@ -75,3 +97,25 @@ class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     async def async_select_option(self, option: str) -> None:
         """Select an option."""
         await self._hm_entity.send_value(option)
+
+
+class HaHomematicSysvarSelect(HaHomematicGenericEntity[HmSysvarSelect], SelectEntity):
+    """Representation of the HomematicIP hub select entity."""
+
+    _attr_entity_registry_enabled_default = False
+
+    @property
+    def options(self) -> list[str]:
+        """Return the options."""
+        if options := self._hm_entity.value_list:
+            return options
+        return []
+
+    @property
+    def current_option(self) -> str | None:
+        """Return the currently selected option."""
+        return self._hm_entity.value
+
+    async def async_select_option(self, option: str) -> None:
+        """Select an option."""
+        await self._hm_entity.send_variable(option)

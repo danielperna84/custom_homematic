@@ -53,7 +53,7 @@ async def async_setup_entry(
         entities = []
 
         for hm_entity in args:
-            entities.append(HaHomematicHubSensor(control_unit, hm_entity))
+            entities.append(HaHomematicSysvarSensor(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -124,8 +124,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
         return self._hm_entity.value
 
 
-class HaHomematicHubSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEntity):
+class HaHomematicSysvarSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEntity):
     """Representation of the HomematicIP hub sensor entity."""
+
+    _attr_entity_registry_enabled_default = False
 
     def __init__(
         self,
@@ -135,7 +137,6 @@ class HaHomematicHubSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEntit
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_native_unit_of_measurement = hm_entity.unit
-        self._attr_entity_registry_enabled_default = False
 
     @property
     def native_value(self) -> Any:
