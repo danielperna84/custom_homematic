@@ -6,7 +6,7 @@ from typing import Any, Union
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.switch import CeSwitch
-from hahomematic.platforms.switch import HmSwitch
+from hahomematic.platforms.switch import HmSwitch, HmSysvarSwitch
 import voluptuous as vol
 
 from homeassistant.components.switch import SwitchEntity
@@ -44,6 +44,18 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
+    @callback
+    def async_add_hub_switch(args: Any) -> None:
+        """Add hub switch from Homematic(IP) Local."""
+
+        entities = []
+
+        for hm_entity in args:
+            entities.append(HaHomematicSysvarSwitch(control_unit, hm_entity))
+
+        if entities:
+            async_add_entities(entities)
+
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
@@ -51,6 +63,15 @@ async def async_setup_entry(
                 config_entry.entry_id, HmPlatform.SWITCH
             ),
             async_add_switch,
+        )
+    )
+    config_entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.HUB_SWITCH
+            ),
+            async_add_hub_switch,
         )
     )
 
@@ -91,3 +112,22 @@ class HaHomematicSwitch(
     async def async_set_on_time(self, on_time: float) -> None:
         """Set the on time of the light."""
         await self._hm_entity.set_on_time_value(on_time=on_time)
+
+
+class HaHomematicSysvarSwitch(HaHomematicGenericEntity[HmSysvarSwitch], SwitchEntity):
+    """Representation of the HomematicIP hub switch entity."""
+
+    _attr_entity_registry_enabled_default = False
+
+    @property
+    def is_on(self) -> bool:
+        """Return true if switch is on."""
+        return self._hm_entity.value is True
+
+    async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn the switch on."""
+        await self._hm_entity.send_variable(True)
+
+    async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn the switch off."""
+        await self._hm_entity.send_variable(False)
