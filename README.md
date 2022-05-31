@@ -182,6 +182,11 @@ If you are using Homegear the names are fetched using metadata available via XML
 These two options are required for _special_ network environments. If for example Home Assistant is running within a Docker container and detects its own IP to be within the Docker network, the CCU won't be able to establish the connection to Home Assistant. In this case you have to specify which address and port the CCU should connect to. This may require forwarding connections on the Docker host machine to the relevant container.
 **These values are always empty when the integration is reconfigured.**
 
+## System variables
+
+System variables are fetched every 30 seconds from Backend.
+The system variables are then created as a sensor(character string, value list, number) or as a binary_sensor (logic value, alarm).
+
 ## Services
 
 The Homematic(IP) Local integration makes various custom services available.
