@@ -84,24 +84,29 @@ class BaseControlUnit:
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
+        self._instance_name = self._data[ATTR_INSTANCE_NAME]
         self._central: CentralUnit | None = None
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
+        _LOGGER.debug(
+            "Init ControlUnit %s",
+            self._instance_name,
+        )
         self._central = await self._async_create_central()
 
     async def async_start(self) -> None:
         """Start the control unit."""
         _LOGGER.debug(
-            "Starting Homematic(IP) Local ControlUnit %s",
-            self._data[ATTR_INSTANCE_NAME],
+            "Starting ControlUnit %s",
+            self._instance_name,
         )
         if self._central:
             await self._central.start()
         else:
             _LOGGER.exception(
-                "Starting Homematic(IP) Local ControlUnit %s not possible, CentralUnit is not available",
-                self._data[ATTR_INSTANCE_NAME],
+                "Starting ControlUnit %s not possible, CentralUnit is not available",
+                self._instance_name,
             )
 
     @callback
@@ -114,8 +119,8 @@ class BaseControlUnit:
     async def async_stop(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug(
-            "Stopping Homematic(IP) Local ControlUnit %s",
-            self._data[ATTR_INSTANCE_NAME],
+            "Stopping ControlUnit %s",
+            self._instance_name,
         )
         if self._central is not None:
             await self._central.stop()
@@ -150,7 +155,7 @@ class BaseControlUnit:
         central_id = self._entry_id[-10:]
         return await CentralConfig(
             domain=DOMAIN,
-            name=self._data[ATTR_INSTANCE_NAME],
+            name=self._instance_name,
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
             storage_folder=storage_folder,
@@ -195,11 +200,22 @@ class ControlUnit(BaseControlUnit):
     async def _async_init_hub(self) -> None:
         """Init the hub."""
         if not self.central.hub:
+            _LOGGER.warning(
+                "Init failed Hub not ready for %s",
+                self._instance_name,
+            )
             return None
         self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
         await self._hub.async_init()
+        _LOGGER.debug(
+            "Hub initialized for %s",
+            self._instance_name,
+        )
         if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
             for platform, entities in hub_entities_by_platform.items():
+                _LOGGER.debug(
+                    "Init sysvar platform %s with %i entities", platform, len(entities)
+                )
                 async_dispatcher_send(
                     self._hass,
                     self.async_signal_new_hm_entity(
@@ -244,15 +260,15 @@ class ControlUnit(BaseControlUnit):
         """Add the virtual remotes to device registry."""
         if not self._central:
             _LOGGER.error(
-                "Cannot create Homematic(IP) Local ControlUnit %s virtual remote devices. No central",
-                self._data[ATTR_INSTANCE_NAME],
+                "Cannot create ControlUnit %s virtual remote devices. No central",
+                self._instance_name,
             )
             return
 
         if not self._central.clients:
             _LOGGER.error(
-                "Cannot create Homematic(IP) Local ControlUnit %s virtual remote devices. No clients",
-                self._data[ATTR_INSTANCE_NAME],
+                "Cannot create ControlUnit %s virtual remote devices. No clients",
+                self._instance_name,
             )
             return
 
@@ -358,6 +374,12 @@ class ControlUnit(BaseControlUnit):
     @callback
     def _async_callback_system_event(self, src: str, *args: Any) -> None:
         """Execute the callback for system based events."""
+        _LOGGER.debug(
+            "callback_system_event: Received system event %s for event for %s",
+            src,
+            self._instance_name,
+        )
+
         if src == HH_EVENT_DEVICES_CREATED:
             new_devices = args[0]
 
@@ -544,15 +566,15 @@ class ControlUnitTemp(BaseControlUnit):
     async def async_start_direct(self) -> None:
         """Start the temporary control unit."""
         _LOGGER.debug(
-            "Starting Homematic(IP) Local ControlUnit %s",
-            self._data[ATTR_INSTANCE_NAME],
+            "Starting temporary ControlUnit %s",
+            self._instance_name,
         )
         if self._central:
             await self._central.start_direct()
         else:
             _LOGGER.exception(
-                "Starting Homematic(IP) temporary local ControlUnit %s not possible, CentralUnit is not available",
-                self._data[ATTR_INSTANCE_NAME],
+                "Starting temporary ControlUnit %s not possible, CentralUnit is not available",
+                self._instance_name,
             )
 
     async def async_stop(self) -> None:
@@ -646,6 +668,10 @@ class HaHub(Entity):
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
+        _LOGGER.debug(
+            "Fetching sysvars for %s",
+            self.name,
+        )
         await self._hm_hub.fetch_data()
 
     @property

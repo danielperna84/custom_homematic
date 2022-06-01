@@ -45,7 +45,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         self._attr_name = hm_entity.name
         self._attr_unique_id = hm_entity.unique_id
-        _LOGGER.debug("Setting up %s", self.name)
+        _LOGGER.debug("init: Setting up %s", self.name)
 
     @property
     def available(self) -> bool:
