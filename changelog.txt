@@ -1,3 +1,8 @@
+Version 1.7.2 (2022-06-01)
+- Bump hahomematic to 1.7.2
+  - Better differentiate between float and int for sysvars
+  - Switch from # as unit placeholder for sysvars to ' '
+
 Version 1.7.1 (2022-05-31)
 - Bump hahomematic to 1.7.1
   - Rename parameter channel_address to address for put/get_paramset
