@@ -195,8 +195,8 @@ The types of system variables in the CCU are:
 - logic value (Logikwert)
 - alert (Alarm)
 
-
-System variables can be marked as **internal** in the CCU. This marker is used to control the entity creation.
+System variables can be marked as **internal** in the RaspberryMatic UI. This cannot be done in die Original CCU UI.
+This **internal** marker is used to control the entity creation in HA.
 When using Homegear system variables are handled like **marked** as **internal**.
 
 ### This is how entities are created from system variables:
