@@ -184,8 +184,37 @@ These two options are required for _special_ network environments. If for exampl
 
 ## System variables
 
-System variables are fetched every 30 seconds from Backend.
-The system variables are then created as a sensor(character string, value list, number) or as a binary_sensor (logic value, alarm).
+This relevant for component versions > 1.8.0.
+
+System variables are fetched every 30 seconds from backend (CCU/Homegear), and are by default created as **deactived** entity.
+
+The types of system variables in the CCU are:
+- character string (Zeichenkette)
+- list of values (Werteliste)
+- number (Zahl)
+- logic value (Logikwert)
+- alert (Alarm)
+
+
+System variables can be marked as **internal** in the CCU. This marker is used to control the entity creation.
+When using Homegear system variables are handled like **marked** as **internal**.
+
+### This is how entities are created from system variables:
+
+- all **character strings** are created as `sensor` entity
+- system variables **marked** as **internal**:
+  - value list, number --> `sensor` entity
+  - alert, logic value --> `binary_sensor` entity
+- system variables **not marked** as **internal**:
+  - value lists --> `select` entity
+  - number --> `number` entity
+  - alarm, logic value —> `switch` entity
+
+Using `select`, `number` and `switch` results in the following advantages:
+- System variables can be changed directly in the UI without additional logic.
+- The general services for `select`, `number` and `switch` can be used.
+- The service `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
+- Use of device based automations (actions) is possile.
 
 ## Services
 
