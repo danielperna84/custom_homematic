@@ -1,3 +1,7 @@
+Version 1.8.0 (2022-06-03)
+- Bump hahomematic to 1.8.1
+  - Use Marker in sysvar description for extended sysvars
+
 Version 1.8.0 (2022-06-02)
 - Bump hahomematic to 1.8.0
   - Enable additional sysvar entity types
