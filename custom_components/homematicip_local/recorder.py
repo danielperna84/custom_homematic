@@ -7,6 +7,7 @@ from hahomematic.const import (
     ATTR_FUNCTION,
     ATTR_INTERFACE_ID,
     ATTR_MODEL,
+    ATTR_NAME,
     ATTR_PARAMETER,
 )
 
@@ -22,5 +23,6 @@ def exclude_attributes(hass: HomeAssistant) -> set[str]:
         ATTR_FUNCTION,
         ATTR_INTERFACE_ID,
         ATTR_MODEL,
+        ATTR_NAME,
         ATTR_PARAMETER,
     }
