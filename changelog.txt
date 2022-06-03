@@ -1,4 +1,8 @@
-Version 1.8.0 (2022-06-03)
+Version 1.8.2 (2022-06-03)
+- Bump hahomematic to 1.8.2
+  - Fix build
+
+Version 1.8.1 (2022-06-03)
 - Bump hahomematic to 1.8.1
   - Use Marker in sysvar description for extended sysvars
 
