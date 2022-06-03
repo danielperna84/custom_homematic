@@ -1,3 +1,8 @@
+Version 1.8.3 (2022-06-04)
+- Bump hahomematic to 1.8.3
+    - Refactor sysvar creation eventing
+- Adopt sysvar creation eventing
+
 Version 1.8.2 (2022-06-03)
 - Bump hahomematic to 1.8.2
   - Fix build

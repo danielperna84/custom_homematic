@@ -27,16 +27,17 @@ from hahomematic.const import (
     ATTR_VALUE,
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_PLATFORMS,
+    AVAILABLE_HM_SYSVAR_PLATFORMS,
     EVENT_STICKY_UN_REACH,
     EVENT_UN_REACH,
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
-    HH_EVENT_HUB_CREATED,
     HH_EVENT_LIST_DEVICES,
     HH_EVENT_NEW_DEVICES,
     HH_EVENT_RE_ADDED_DEVICE,
     HH_EVENT_REPLACE_DEVICE,
+    HH_EVENT_SYSVARS_CREATED,
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PORT_ANY,
@@ -45,7 +46,12 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
-from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
+from hahomematic.entity import (
+    BaseEntity,
+    CustomEntity,
+    GenericEntity,
+    GenericSystemVariable,
+)
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
@@ -197,33 +203,6 @@ class ControlUnit(BaseControlUnit):
 
         self._async_add_central_to_device_registry()
 
-    async def _async_init_hub(self) -> None:
-        """Init the hub."""
-        if not self.central.hub:
-            _LOGGER.warning(
-                "Init failed Hub not ready for %s",
-                self._instance_name,
-            )
-            return None
-        self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
-        await self._hub.async_init()
-        _LOGGER.debug(
-            "Hub initialized for %s",
-            self._instance_name,
-        )
-        if hub_entities_by_platform := self.central.hub.hub_entities_by_platform:
-            for platform, entities in hub_entities_by_platform.items():
-                _LOGGER.debug(
-                    "Init sysvar platform %s with %i entities", platform, len(entities)
-                )
-                async_dispatcher_send(
-                    self._hass,
-                    self.async_signal_new_hm_entity(
-                        entry_id=self._entry_id, platform=platform
-                    ),
-                    entities,
-                )
-
     async def async_stop(self) -> None:
         """Stop the control unit."""
         if self._hub:
@@ -301,7 +280,7 @@ class ControlUnit(BaseControlUnit):
     def async_get_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
-        """Return all hm-entities by requested unique_ids."""
+        """Return all hm-entities."""
         active_unique_ids = [
             entity.unique_id for entity in self._active_hm_entities.values()
         ]
@@ -319,6 +298,25 @@ class ControlUnit(BaseControlUnit):
                 hm_entities[entity.platform].append(entity)
 
         return hm_entities
+
+    @callback
+    def async_get_new_hm_sysvar_entities(
+        self, new_sysvars: list[GenericSystemVariable]
+    ) -> dict[HmPlatform, list[GenericSystemVariable]]:
+        """Return all hm-sysvar-entities."""
+        active_unique_ids = [
+            entity.unique_id for entity in self._active_hm_entities.values()
+        ]
+        # init dict
+        hm_sysvar_entities: dict[HmPlatform, list[GenericSystemVariable]] = {}
+        for hm_sysvar_platform in AVAILABLE_HM_SYSVAR_PLATFORMS:
+            hm_sysvar_entities[hm_sysvar_platform] = []
+
+        for sysvar in new_sysvars:
+            if sysvar.unique_id not in active_unique_ids:
+                hm_sysvar_entities[sysvar.platform].append(sysvar)
+
+        return hm_sysvar_entities
 
     @callback
     def async_get_new_hm_entities_by_platform(
@@ -382,7 +380,6 @@ class ControlUnit(BaseControlUnit):
 
         if src == HH_EVENT_DEVICES_CREATED:
             new_devices = args[0]
-
             new_entities = []
             for device in new_devices:
                 new_entities.extend(device.entities.values())
@@ -401,8 +398,22 @@ class ControlUnit(BaseControlUnit):
                         hm_entities,  # Don't send device if None, it would override default value in listeners
                     )
             self._async_add_virtual_remotes_to_device_registry()
-        elif src == HH_EVENT_HUB_CREATED:
-            self._hass.async_create_task(self._async_init_hub())
+        elif src == HH_EVENT_SYSVARS_CREATED:
+            if not self._hub:
+                self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
+            new_sysvars = args[0]
+            # Handle event of new sysvar creation in Homematic(IP) Local.
+            for (platform, hm_sysvars) in self.async_get_new_hm_sysvar_entities(
+                new_sysvars=new_sysvars
+            ).items():
+                if hm_sysvars and len(hm_sysvars) > 0:
+                    async_dispatcher_send(
+                        self._hass,
+                        self.async_signal_new_hm_entity(
+                            entry_id=self._entry_id, platform=platform
+                        ),
+                        hm_sysvars,  # Don't send device if None, it would override default value in listeners
+                    )
             return None
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
@@ -642,14 +653,11 @@ class HaHub(Entity):
         self._attr_name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
-        self.remove_listener: Callable | None = None
-
-    async def async_init(self) -> None:
-        """Init fetch scheduler."""
-        self.remove_listener = self.hass.helpers.event.async_track_time_interval(
-            self._async_fetch_data, SYSVAR_SCAN_INTERVAL
+        self.remove_listener: Callable = (
+            self.hass.helpers.event.async_track_time_interval(
+                self._async_fetch_data, SYSVAR_SCAN_INTERVAL
+            )
         )
-        await self._async_fetch_data(now=datetime.now())
 
     def de_init(self) -> None:
         """De_init the hub."""
@@ -686,7 +694,7 @@ class HaHub(Entity):
 
     async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
-        sysvar_entity = self._hm_hub.hub_entities.get(name)
+        sysvar_entity = self._hm_hub.syvar_entities.get(name)
         if not sysvar_entity or name in self.extra_state_attributes:
             _LOGGER.error("Variable %s not found on %s", name, self.name)
             return
