@@ -186,7 +186,7 @@ These two options are required for _special_ network environments. If for exampl
 
 This relevant for component versions > 1.8.0.
 
-System variables are fetched every 30 seconds from backend (CCU/Homegear), and are by default created as **deactived** entity.
+System variables are fetched every 30 seconds from backend (CCU/Homegear), and are created initially as **deactived** entity.
 
 The types of system variables in the CCU are:
 - character string (Zeichenkette)
@@ -195,17 +195,18 @@ The types of system variables in the CCU are:
 - logic value (Logikwert)
 - alert (Alarm)
 
-System variables can be marked as **internal** in the RaspberryMatic UI. This cannot be done in die Original CCU UI.
-This **internal** marker is used to control the entity creation in HA.
-When using Homegear system variables are handled like **marked** as **internal**.
+System variables have a description that can be added in the CCU's UI.
+If you add the marker `hahm` to the description exteded features for this system variable can be used in HA.
+This `hahm` marker is used to control the entity creation in HA.
+When using Homegear system variables are handled like the DEFAULT.
 
 ### This is how entities are created from system variables:
 
 - all **character strings** are created as `sensor` entity
-- system variables **marked** as **internal**:
+- DEFAULT: system variables that do **not** have the  **marker** `hahm` in description:
   - value list, number --> `sensor` entity
   - alert, logic value --> `binary_sensor` entity
-- system variables **not marked** as **internal**:
+- EXTENDED: system variables that do have the  **marker** `hahm` in description:
   - value lists --> `select` entity
   - number --> `number` entity
   - alarm, logic value —> `switch` entity
