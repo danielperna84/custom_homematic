@@ -1,10 +1,17 @@
+Version 1.8.5 (2022-06-05)
+- Bump hahomematic to 1.8.5
+  - Remove sysvars if deleted from CCU
+  - Add check for sysvar type in sensor
+  - Remove unused sysvar attributes
+- Cleanup HA when deleting sysvars
+
 Version 1.8.4 (2022-06-04)
 - Bump hahomematic to 1.8.4
-    - Refactor all sysvar script
+  - Refactor all sysvar script
 
 Version 1.8.3 (2022-06-03)
 - Bump hahomematic to 1.8.3
-    - Refactor sysvar creation eventing
+  - Refactor sysvar creation eventing
 - Adopt sysvar creation eventing
 
 Version 1.8.2 (2022-06-03)

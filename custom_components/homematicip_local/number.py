@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
@@ -119,7 +119,9 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
         await self._hm_entity.send_value(value / self._multiplier)
 
 
-class HaHomematicSysvarNumber(HaHomematicGenericEntity[HmSysvarNumber], NumberEntity):
+class HaHomematicSysvarNumber(
+    HaHomematicGenericSysvarEntity[HmSysvarNumber], NumberEntity
+):
     """Representation of the HomematicIP hub number entity."""
 
     _attr_mode = NumberMode.BOX
@@ -128,24 +130,24 @@ class HaHomematicSysvarNumber(HaHomematicGenericEntity[HmSysvarNumber], NumberEn
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HmSysvarNumber,
+        hm_sysvar_entity: HmSysvarNumber,
     ) -> None:
         """Initialize the number entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        if hm_entity.min:
-            self._attr_min_value = float(hm_entity.min)
-        if hm_entity.max:
-            self._attr_max_value = float(hm_entity.max)
-        if hm_entity.unit:
-            self._attr_unit_of_measurement = hm_entity.unit
+        super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
+        if hm_sysvar_entity.min:
+            self._attr_min_value = float(hm_sysvar_entity.min)
+        if hm_sysvar_entity.max:
+            self._attr_max_value = float(hm_sysvar_entity.max)
+        if hm_sysvar_entity.unit:
+            self._attr_unit_of_measurement = hm_sysvar_entity.unit
 
     @property
     def value(self) -> float | None:
         """Return the current value."""
-        if self._hm_entity.value:
-            return float(self._hm_entity.value)
+        if self._hm_sysvar_entity.value:
+            return float(self._hm_sysvar_entity.value)
         return None
 
     async def async_set_value(self, value: float) -> None:
         """Update the current value."""
-        await self._hm_entity.send_variable(value)
+        await self._hm_sysvar_entity.send_variable(value)

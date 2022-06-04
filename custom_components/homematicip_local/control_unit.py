@@ -77,7 +77,7 @@ from .const import (
     HMIP_LOCAL_PLATFORMS,
     SYSVAR_SCAN_INTERVAL,
 )
-from .helpers import HmBaseEntity, HmCallbackEntity
+from .helpers import HmBaseEntity, HmBaseSysvarEntity, HmCallbackEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -191,6 +191,8 @@ class ControlUnit(BaseControlUnit):
         super().__init__(control_config=control_config)
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
+        # {entity_id, sysvar_entity}
+        self._active_hm_sysvar_entities: dict[str, HmBaseSysvarEntity] = {}
         self._hub: HaHub | None = None
 
     async def async_init_central(self) -> None:
@@ -305,7 +307,7 @@ class ControlUnit(BaseControlUnit):
     ) -> dict[HmPlatform, list[GenericSystemVariable]]:
         """Return all hm-sysvar-entities."""
         active_unique_ids = [
-            entity.unique_id for entity in self._active_hm_entities.values()
+            entity.unique_id for entity in self._active_hm_sysvar_entities.values()
         ]
         # init dict
         hm_sysvar_entities: dict[HmPlatform, list[GenericSystemVariable]] = {}
@@ -359,9 +361,21 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_entities[entity_id] = hm_entity
 
     @callback
+    def async_add_hm_sysvar_entity(
+        self, entity_id: str, hm_sysvar_entity: HmBaseSysvarEntity
+    ) -> None:
+        """Add entity to active sysvar entities."""
+        self._active_hm_sysvar_entities[entity_id] = hm_sysvar_entity
+
+    @callback
     def async_remove_hm_entity(self, entity_id: str) -> None:
         """Remove entity from active entities."""
         del self._active_hm_entities[entity_id]
+
+    @callback
+    def async_remove_hm_sysvar_entity(self, entity_id: str) -> None:
+        """Remove entity from active sysvar entities."""
+        del self._active_hm_sysvar_entities[entity_id]
 
     # pylint: disable=no-self-use
     @callback
@@ -399,8 +413,10 @@ class ControlUnit(BaseControlUnit):
                     )
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_SYSVARS_CREATED:
-            if not self._hub:
-                self._hub = HaHub(self._hass, control_unit=self, hm_hub=self.central.hub)
+            if not self._hub and self.central.hub:
+                self._hub = HaHub(
+                    self._hass, control_unit=self, hm_hub=self.central.hub
+                )
             new_sysvars = args[0]
             # Handle event of new sysvar creation in Homematic(IP) Local.
             for (platform, hm_sysvars) in self.async_get_new_hm_sysvar_entities(

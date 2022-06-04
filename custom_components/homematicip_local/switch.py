@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_ON_TIME = "on_time"
@@ -114,7 +114,9 @@ class HaHomematicSwitch(
         await self._hm_entity.set_on_time_value(on_time=on_time)
 
 
-class HaHomematicSysvarSwitch(HaHomematicGenericEntity[HmSysvarSwitch], SwitchEntity):
+class HaHomematicSysvarSwitch(
+    HaHomematicGenericSysvarEntity[HmSysvarSwitch], SwitchEntity
+):
     """Representation of the HomematicIP hub switch entity."""
 
     _attr_entity_registry_enabled_default = False
@@ -122,12 +124,12 @@ class HaHomematicSysvarSwitch(HaHomematicGenericEntity[HmSysvarSwitch], SwitchEn
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        return self._hm_entity.value is True
+        return self._hm_sysvar_entity.value is True
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
-        await self._hm_entity.send_variable(True)
+        await self._hm_sysvar_entity.send_variable(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
-        await self._hm_entity.send_variable(False)
+        await self._hm_sysvar_entity.send_variable(False)

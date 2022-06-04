@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -99,7 +99,9 @@ class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
         await self._hm_entity.send_value(option)
 
 
-class HaHomematicSysvarSelect(HaHomematicGenericEntity[HmSysvarSelect], SelectEntity):
+class HaHomematicSysvarSelect(
+    HaHomematicGenericSysvarEntity[HmSysvarSelect], SelectEntity
+):
     """Representation of the HomematicIP hub select entity."""
 
     _attr_entity_registry_enabled_default = False
@@ -107,15 +109,15 @@ class HaHomematicSysvarSelect(HaHomematicGenericEntity[HmSysvarSelect], SelectEn
     @property
     def options(self) -> list[str]:
         """Return the options."""
-        if options := self._hm_entity.value_list:
+        if options := self._hm_sysvar_entity.value_list:
             return options
         return []
 
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
-        return self._hm_entity.value
+        return self._hm_sysvar_entity.value
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""
-        await self._hm_entity.send_variable(option)
+        await self._hm_sysvar_entity.send_variable(option)
