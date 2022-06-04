@@ -12,11 +12,15 @@ from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 
 # Union for entity types used as base class for entities
-HmBaseEntity = Union[HmHub, GenericSystemVariable, CustomEntity, GenericEntity]
+HmBaseEntity = Union[CustomEntity, GenericEntity]
+# Union for entity types used as base class for sysvar entities
+HmBaseSysvarEntity = Union[HmHub, GenericSystemVariable]
 # Entities that support callbacks from backend
 HmCallbackEntity = (CustomEntity, GenericEntity)
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
+# Generic base type used for sysvar entities in Homematic(IP) Local
+HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=HmBaseSysvarEntity)
 
 
 def get_device_address_from_identifiers(

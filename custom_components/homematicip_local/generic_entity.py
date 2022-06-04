@@ -6,7 +6,12 @@ import logging
 from typing import Any, Generic, cast
 
 from hahomematic.const import HmEntityUsage
-from hahomematic.entity import CallbackEntity, CustomEntity, GenericEntity
+from hahomematic.entity import (
+    CallbackEntity,
+    CustomEntity,
+    GenericEntity,
+    GenericSystemVariable,
+)
 
 from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
@@ -15,7 +20,7 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from .const import DOMAIN
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
-from .helpers import HmGenericEntity
+from .helpers import HmGenericEntity, HmGenericSysvarEntity
 
 SCAN_INTERVAL = timedelta(seconds=120)
 _LOGGER = logging.getLogger(__name__)
@@ -169,4 +174,112 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Handle hm device removal."""
         # Set marker showing that the Hm device hase been removed.
         self._hm_device_removed = True
+        self.hass.async_create_task(self.async_remove(force_remove=True))
+
+
+class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
+    """Representation of the HomematicIP generic sysvar entity."""
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_sysvar_entity: GenericSystemVariable,
+    ) -> None:
+        """Initialize the generic entity."""
+        self._cu: ControlUnit = control_unit
+        self._hm_sysvar_entity: GenericSystemVariable = hm_sysvar_entity
+        self._attr_should_poll = self._hm_sysvar_entity.should_poll
+        self._attr_name = hm_sysvar_entity.name
+        self._attr_unique_id = hm_sysvar_entity.unique_id
+        _LOGGER.debug("init: Setting up %s", self.name)
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._hm_sysvar_entity.available
+
+    @property
+    def device_info(self) -> DeviceInfo | None:
+        """Return device specific attributes."""
+        info = self._hm_sysvar_entity.device_information
+        return DeviceInfo(
+            identifiers={
+                (
+                    DOMAIN,
+                    info.identifier,
+                )
+            },
+            manufacturer=info.manufacturer,
+            model=info.model,
+            name=info.name,
+            sw_version=info.version,
+            suggested_area=info.room,
+            # Link to the homematic control unit.
+            via_device=cast(tuple[str, str], info.central),
+        )
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        return self._hm_sysvar_entity.attributes
+
+    async def async_added_to_hass(self) -> None:
+        """Register callbacks and load initial data."""
+        if isinstance(self._hm_sysvar_entity, CallbackEntity):
+            self._hm_sysvar_entity.register_update_callback(
+                update_callback=self._async_sysvar_changed
+            )
+            self._hm_sysvar_entity.register_remove_callback(
+                remove_callback=self._async_sysvar_removed
+            )
+        self._cu.async_add_hm_sysvar_entity(
+            entity_id=self.entity_id, hm_sysvar_entity=self._hm_sysvar_entity
+        )
+
+    @callback
+    def _async_sysvar_changed(self, *args: Any, **kwargs: Any) -> None:
+        """Handle sysvar entity state changes."""
+        # Don't update disabled entities
+        if self.enabled:
+            _LOGGER.debug("Event %s", self.name)
+            self.async_write_ha_state()
+        else:
+            _LOGGER.debug(
+                "Sysvar Changed Event for %s not fired. Sysvar entity is disabled",
+                self.name,
+            )
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when hmip sysvar entity will be removed from hass."""
+        try:
+            self._cu.async_remove_hm_sysvar_entity(self.entity_id)
+            self._async_remove_from_registries()
+        except KeyError as err:
+            _LOGGER.debug("Error removing HM sysvar entity from registry: %s", err)
+
+    @callback
+    def _async_remove_from_registries(self) -> None:
+        """Remove entity/device from registry."""
+
+        # Remove callback from device.
+        self._hm_sysvar_entity.unregister_update_callback(
+            update_callback=self._async_sysvar_changed
+        )
+        self._hm_sysvar_entity.unregister_remove_callback(
+            remove_callback=self._async_sysvar_removed
+        )
+
+        if not self.registry_entry:
+            return
+
+        # Remove from entity registry.
+        # Only relevant for entities that do not belong to a device.
+        if entity_id := self.registry_entry.entity_id:
+            entity_registry = er.async_get(self.hass)
+            if entity_id in entity_registry.entities:
+                entity_registry.async_remove(entity_id)
+
+    @callback
+    def _async_sysvar_removed(self, *args: Any, **kwargs: Any) -> None:
+        """Handle hm sysvar entity removal."""
         self.hass.async_create_task(self.async_remove(force_remove=True))

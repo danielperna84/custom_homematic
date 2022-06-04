@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class HaHomematicBinarySensor(
 
 
 class HaHomematicSysvarBinarySensor(
-    HaHomematicGenericEntity[HmSysvarBinarySensor], BinarySensorEntity
+    HaHomematicGenericSysvarEntity[HmSysvarBinarySensor], BinarySensorEntity
 ):
     """Representation of the HomematicIP hub binary_sensor entity."""
 
@@ -96,4 +96,4 @@ class HaHomematicSysvarBinarySensor(
     @property
     def is_on(self) -> bool | None:
         """Return the native value of the entity."""
-        return bool(self._hm_entity.value)
+        return bool(self._hm_sysvar_entity.value)

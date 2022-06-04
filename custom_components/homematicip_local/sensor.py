@@ -21,7 +21,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
@@ -124,7 +124,9 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
         return self._hm_entity.value
 
 
-class HaHomematicSysvarSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEntity):
+class HaHomematicSysvarSensor(
+    HaHomematicGenericSysvarEntity[HmSysvarSensor], SensorEntity
+):
     """Representation of the HomematicIP hub sensor entity."""
 
     _attr_entity_registry_enabled_default = False
@@ -132,13 +134,13 @@ class HaHomematicSysvarSensor(HaHomematicGenericEntity[HmSysvarSensor], SensorEn
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_entity: HmSysvarSensor,
+        hm_sysvar_entity: HmSysvarSensor,
     ) -> None:
         """Initialize the sensor entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_native_unit_of_measurement = hm_entity.unit
+        super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
+        self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
 
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
-        return self._hm_entity.value
+        return self._hm_sysvar_entity.value
