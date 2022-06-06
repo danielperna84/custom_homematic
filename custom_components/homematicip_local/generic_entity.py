@@ -101,7 +101,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return, if entity should be enabled based on usage attribute."""
         if self._hm_entity.usage in {
             HmEntityUsage.CE_SECONDARY,
-            HmEntityUsage.CE_SENSOR,
+            HmEntityUsage.CE_VISIBLE,
             HmEntityUsage.ENTITY_NO_CREATE,
         }:
             return False
