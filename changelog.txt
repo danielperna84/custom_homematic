@@ -1,4 +1,6 @@
 Version 1.8.6 (2022-06-07)
+- Bump hahomematic to 1.8.6
+  - Code cleanup
 - Fix sysvar creation for delayed plattform setups on some environments
 
 Version 1.8.5 (2022-06-05)
