@@ -69,7 +69,7 @@ async def async_setup_entry(
     )
 
     async_add_light(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.LIGHT)
+        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.LIGHT)
     )
 
     platform = entity_platform.async_get_current_platform()

@@ -40,8 +40,8 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_binary_sensors(args: Any) -> None:
-        """Add hub binary sensor from Homematic(IP) Local."""
+    def async_add_hub_binary_sensor(args: Any) -> None:
+        """Add sysvar binary sensor from Homematic(IP) Local."""
 
         entities = []
 
@@ -66,12 +66,20 @@ async def async_setup_entry(
             control_unit.async_signal_new_hm_entity(
                 config_entry.entry_id, HmPlatform.HUB_BINARY_SENSOR
             ),
-            async_add_hub_binary_sensors,
+            async_add_hub_binary_sensor,
         )
     )
 
     async_add_binary_sensor(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.BINARY_SENSOR)
+        control_unit.async_get_new_hm_entities_by_platform(
+            platform=HmPlatform.BINARY_SENSOR
+        )
+    )
+
+    async_add_hub_binary_sensor(
+        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+            platform=HmPlatform.HUB_BINARY_SENSOR
+        )
     )
 
 

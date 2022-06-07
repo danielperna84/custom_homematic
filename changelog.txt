@@ -1,3 +1,6 @@
+Version 1.8.6 (2022-06-07)
+- Fix sysvar creation for delayed plattform setups on some environments
+
 Version 1.8.5 (2022-06-05)
 - Bump hahomematic to 1.8.5
   - Remove sysvars if deleted from CCU
