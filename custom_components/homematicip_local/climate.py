@@ -109,7 +109,7 @@ async def async_setup_entry(
     )
 
     async_add_climate(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.CLIMATE)
+        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.CLIMATE)
     )
 
     platform = entity_platform.async_get_current_platform()

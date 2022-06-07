@@ -47,8 +47,8 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_sensors(args: Any) -> None:
-        """Add hub sensor from Homematic(IP) Local."""
+    def async_add_hub_sensor(args: Any) -> None:
+        """Add sysvar sensor from Homematic(IP) Local."""
 
         entities = []
 
@@ -73,12 +73,18 @@ async def async_setup_entry(
             control_unit.async_signal_new_hm_entity(
                 config_entry.entry_id, HmPlatform.HUB_SENSOR
             ),
-            async_add_hub_sensors,
+            async_add_hub_sensor,
         )
     )
 
     async_add_sensor(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SENSOR)
+        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.SENSOR)
+    )
+
+    async_add_hub_sensor(
+        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+            platform=HmPlatform.HUB_SENSOR
+        )
     )
 
 

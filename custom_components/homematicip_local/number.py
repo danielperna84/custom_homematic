@@ -43,7 +43,7 @@ async def async_setup_entry(
 
     @callback
     def async_add_hub_number(args: Any) -> None:
-        """Add hub number from Homematic(IP) Local."""
+        """Add sysvar number from Homematic(IP) Local."""
 
         entities = []
 
@@ -74,7 +74,13 @@ async def async_setup_entry(
     )
 
     async_add_number(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.NUMBER)
+        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.NUMBER)
+    )
+
+    async_add_hub_number(
+        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+            platform=HmPlatform.HUB_NUMBER
+        )
     )
 
 

@@ -46,7 +46,7 @@ async def async_setup_entry(
 
     @callback
     def async_add_hub_switch(args: Any) -> None:
-        """Add hub switch from Homematic(IP) Local."""
+        """Add sysvar switch from Homematic(IP) Local."""
 
         entities = []
 
@@ -76,7 +76,13 @@ async def async_setup_entry(
     )
 
     async_add_switch(
-        control_unit.async_get_new_hm_entities_by_platform(HmPlatform.SWITCH)
+        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH)
+    )
+
+    async_add_hub_switch(
+        control_unit.async_get_new_hm_entities_by_platform(
+            platform=HmPlatform.HUB_SWITCH
+        )
     )
 
     platform = entity_platform.async_get_current_platform()

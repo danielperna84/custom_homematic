@@ -321,6 +321,31 @@ class ControlUnit(BaseControlUnit):
         return hm_sysvar_entities
 
     @callback
+    def async_get_new_hm_sysvar_entities_by_platform(
+        self, platform: HmPlatform
+    ) -> list[GenericSystemVariable]:
+        """Return all new hm-sysvar-entities by platform."""
+        active_unique_ids = [
+            entity.unique_id for entity in self._active_hm_sysvar_entities.values()
+        ]
+
+        hm_sysvar_entities: list[GenericSystemVariable] = []
+        if not self.central.hub:
+            _LOGGER.debug(
+                "async_get_new_hm_sysvar_entities_by_platform: central.hub is not ready for %s",
+                self.central.instance_name,
+            )
+            return []
+        for entity in self.central.hub.syvar_entities.values():
+            if (
+                entity.unique_id not in active_unique_ids
+                and entity.platform == platform
+            ):
+                hm_sysvar_entities.append(entity)
+
+        return hm_sysvar_entities
+
+    @callback
     def async_get_new_hm_entities_by_platform(
         self, platform: HmPlatform
     ) -> list[BaseEntity]:
@@ -329,7 +354,7 @@ class ControlUnit(BaseControlUnit):
             entity.unique_id for entity in self._active_hm_entities.values()
         ]
 
-        hm_entities = []
+        hm_entities: list[BaseEntity] = []
         for entity in self.central.hm_entities.values():
             if (
                 entity.usage != HmEntityUsage.ENTITY_NO_CREATE
@@ -428,7 +453,7 @@ class ControlUnit(BaseControlUnit):
                         self.async_signal_new_hm_entity(
                             entry_id=self._entry_id, platform=platform
                         ),
-                        hm_sysvars,  # Don't send device if None, it would override default value in listeners
+                        hm_sysvars,
                     )
             return None
         elif src == HH_EVENT_NEW_DEVICES:
