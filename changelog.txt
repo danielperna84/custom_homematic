@@ -1,6 +1,7 @@
 Version 1.9.0 (2022-06-09)
 - Bump hahomematic to 1.9.0
   - Refactor entity name creation
+- Remove dummies for unit_of_measurement
 
 Version 1.8.6 (2022-06-07)
 - Bump hahomematic to 1.8.6

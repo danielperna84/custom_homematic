@@ -86,7 +86,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     ),
     "BRIGHTNESS": HmSensorEntityDescription(
         key="BRIGHTNESS",
-        native_unit_of_measurement="#",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:invert-colors",
     ),
@@ -290,7 +289,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     ),
     "VALUE": HmSensorEntityDescription(
         key="VALUE",
-        native_unit_of_measurement="#",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "VALVE_STATE": HmSensorEntityDescription(
