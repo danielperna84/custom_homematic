@@ -115,6 +115,7 @@ Version 1.9.0 (2022-06-29)
   - Add button to virtual remote
   - Remove HmIPW-FIO6 from custom device handling
 - Remove dummies for unit_of_measurement
+- Add service set_device_value_raw
 
 Version 1.8.6 (2022-06-07)
 - Bump hahomematic to 1.8.6
