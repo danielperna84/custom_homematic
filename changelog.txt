@@ -1,6 +1,6 @@
-Version 1.9.0 (2022-06-09)
+Version 1.9.0 (2022-06-11)
 - Bump hahomematic to 1.9.0
-  - Refactor entity name creation
+  - Add button to virtual remote
 - Remove dummies for unit_of_measurement
 
 Version 1.8.6 (2022-06-07)
