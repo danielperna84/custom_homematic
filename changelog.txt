@@ -1,4 +1,10 @@
-Version 1.9.0 (2022-06-11)
+Version 1.9.2 (2022-07-01)
+- Bump hahomematic to 1.9.2
+    - Use CHANNEL_OPERATION_MODE for devices with MULTI_MODE_INPUT_TRANSMITTER, KEY_TRANSCEIVER channels
+    - Readd HmIPW-FIO6 to custom device handling
+- Disable device trigger based on event usage
+
+Version 1.9.0 (2022-06-29)
 - Bump hahomematic to 1.9.1
   - Add button to virtual remote
   - Remove HmIPW-FIO6 from custom device handling

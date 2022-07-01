@@ -402,7 +402,6 @@ class ControlUnit(BaseControlUnit):
         """Remove entity from active sysvar entities."""
         del self._active_hm_sysvar_entities[entity_id]
 
-    # pylint: disable=no-self-use
     @callback
     def async_signal_new_hm_entity(self, entry_id: str, platform: HmPlatform) -> str:
         """Gateway specific event to signal new device."""

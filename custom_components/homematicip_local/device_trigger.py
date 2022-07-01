@@ -1,7 +1,7 @@
 """Provides device triggers for Home Assistant Homematic(IP)."""
 from __future__ import annotations
 
-from hahomematic.const import CLICK_EVENTS
+from hahomematic.const import CLICK_EVENTS, HmEntityUsage
 from hahomematic.entity import ClickEvent
 import voluptuous as vol
 
@@ -67,6 +67,9 @@ async def async_get_triggers(
         if hm_device := control_unit.central.hm_devices.get(device_address):
             for action_event in hm_device.action_events.values():
                 if not isinstance(action_event, ClickEvent):
+                    continue
+
+                if action_event.usage == HmEntityUsage.ENTITY_NO_CREATE:
                     continue
 
                 trigger = {
