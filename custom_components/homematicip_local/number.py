@@ -105,8 +105,8 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
             and self.entity_description.multiplier is not None
             else hm_entity.multiplier
         )
-        self._attr_min_value = hm_entity.min * self._multiplier
-        self._attr_max_value = hm_entity.max * self._multiplier
+        self._attr_native_min_value = hm_entity.min * self._multiplier
+        self._attr_native_max_value = hm_entity.max * self._multiplier
         self._attr_step = (
             1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
         )
@@ -114,13 +114,13 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
             self._attr_unit_of_measurement = hm_entity.unit
 
     @property
-    def value(self) -> float | None:
+    def native_value(self) -> float | None:
         """Return the current value."""
         if self._hm_entity.value is not None:
             return float(self._hm_entity.value * self._multiplier)
         return None
 
-    async def async_set_value(self, value: float) -> None:
+    async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         await self._hm_entity.send_value(value / self._multiplier)
 
@@ -141,19 +141,19 @@ class HaHomematicSysvarNumber(
         """Initialize the number entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
         if hm_sysvar_entity.min:
-            self._attr_min_value = float(hm_sysvar_entity.min)
+            self._attr_native_min_value = float(hm_sysvar_entity.min)
         if hm_sysvar_entity.max:
-            self._attr_max_value = float(hm_sysvar_entity.max)
+            self._attr_native_max_value = float(hm_sysvar_entity.max)
         if hm_sysvar_entity.unit:
             self._attr_unit_of_measurement = hm_sysvar_entity.unit
 
     @property
-    def value(self) -> float | None:
+    def native_value(self) -> float | None:
         """Return the current value."""
         if self._hm_sysvar_entity.value:
             return float(self._hm_sysvar_entity.value)
         return None
 
-    async def async_set_value(self, value: float) -> None:
+    async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         await self._hm_sysvar_entity.send_variable(value)
