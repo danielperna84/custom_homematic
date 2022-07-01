@@ -107,11 +107,11 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
         )
         self._attr_native_min_value = hm_entity.min * self._multiplier
         self._attr_native_max_value = hm_entity.max * self._multiplier
-        self._attr_step = (
+        self._attr_native_step = (
             1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
         )
         if not hasattr(self, "entity_description") and hm_entity.unit:
-            self._attr_unit_of_measurement = hm_entity.unit
+            self._attr_native_unit_of_measurement = hm_entity.unit
 
     @property
     def native_value(self) -> float | None:
@@ -145,7 +145,7 @@ class HaHomematicSysvarNumber(
         if hm_sysvar_entity.max:
             self._attr_native_max_value = float(hm_sysvar_entity.max)
         if hm_sysvar_entity.unit:
-            self._attr_unit_of_measurement = hm_sysvar_entity.unit
+            self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
 
     @property
     def native_value(self) -> float | None:
