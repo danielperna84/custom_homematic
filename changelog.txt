@@ -1,3 +1,7 @@
+Version 1.9.3 (2022-07-02)
+- Bump hahomematic to 1.9.3
+    - Fix export of device definitions
+
 Version 1.9.2 (2022-07-01)
 - Bump hahomematic to 1.9.2
     - Use CHANNEL_OPERATION_MODE for devices with MULTI_MODE_INPUT_TRANSMITTER, KEY_TRANSCEIVER channels
