@@ -1,4 +1,6 @@
 Version 1.9.4 (2022-07-03)
+- Bump hahomematic to 1.9.4
+    - Load MASTER data on initial load
 - Make OPENING the default device_class for binary_sensor STATE
 
 Version 1.9.3 (2022-07-02)
