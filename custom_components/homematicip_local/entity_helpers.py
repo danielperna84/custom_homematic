@@ -434,6 +434,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
+    "STATE": BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.OPENING,
+    ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
