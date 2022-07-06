@@ -428,6 +428,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
         key="RAINING",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
+    "STATE": BinarySensorEntityDescription(
+        key="STATE",
+        device_class="",
+    ),
     "SABOTAGE": BinarySensorEntityDescription(
         key="SABOTAGE",
         device_class=BinarySensorDeviceClass.SAFETY,
