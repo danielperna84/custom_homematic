@@ -191,6 +191,7 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
         self._attr_should_poll = self._hm_sysvar_entity.should_poll
         self._attr_name = hm_sysvar_entity.name
         self._attr_unique_id = hm_sysvar_entity.unique_id
+        self._attr_entity_registry_enabled_default = False
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
