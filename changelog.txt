@@ -1,3 +1,6 @@
+Version 1.9.5 (2022-07-06)
+- Revert: Make OPENING the default device_class for binary_sensor STATE (#249)
+
 Version 1.9.4 (2022-07-03)
 - Bump hahomematic to 1.9.4
     - Load MASTER data on initial load
