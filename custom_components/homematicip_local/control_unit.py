@@ -744,7 +744,7 @@ class HaHub(Entity):
     @callback
     def _async_update_hub(self, *args: Any) -> None:
         """Update the HA hub."""
-        self.async_schedule_update_ha_state(True)
+        self.async_write_ha_state()
 
 
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
