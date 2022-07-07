@@ -1,4 +1,5 @@
 Version 1.10.0 (2022-07-07)
+- Bump hahomematic to 2022.7.0
 - Fix/Cleanup Device/Entity/Sysvar removal
 
 Version 1.9.5 (2022-07-06)
