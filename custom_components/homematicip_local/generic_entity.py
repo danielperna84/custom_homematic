@@ -45,9 +45,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         ) is not None:
             self._attr_entity_registry_enabled_default = entity_registry_enabled_default
 
-        # Marker showing that the Hm device hase been removed.
-        self._hm_device_removed = False
-
         self._attr_name = hm_entity.name
         self._attr_unique_id = hm_entity.unique_id
         _LOGGER.debug("init: Setting up %s", self.name)
@@ -129,20 +126,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
-
-        # Only go further if the device/entity should be removed from registries
-        # due to a removal of the HM device.
-
-        if self._hm_device_removed:
-            try:
-                self._cu.async_remove_hm_entity(self.entity_id)
-                self._async_remove_from_registries()
-            except KeyError as err:
-                _LOGGER.debug("Error removing HM device from registry: %s", err)
-
-    @callback
-    def _async_remove_from_registries(self) -> None:
-        """Remove entity/device from registry."""
+        self._cu.async_remove_hm_entity(self.entity_id)
 
         # Remove callback from device.
         self._hm_entity.unregister_update_callback(
@@ -151,6 +135,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._hm_entity.unregister_remove_callback(
             remove_callback=self._async_device_removed
         )
+
+    @callback
+    def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
+        """Handle hm device removal."""
+        self.hass.async_create_task(self.async_remove(force_remove=True))
 
         if not self.registry_entry:
             return
@@ -161,20 +150,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             if device_id in device_registry.devices:
                 # This will also remove associated entities from entity registry.
                 device_registry.async_remove_device(device_id)
-        else:
-            # Remove from entity registry.
-            # Only relevant for entities that do not belong to a device.
-            if entity_id := self.registry_entry.entity_id:
-                entity_registry = er.async_get(self.hass)
-                if entity_id in entity_registry.entities:
-                    entity_registry.async_remove(entity_id)
-
-    @callback
-    def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
-        """Handle hm device removal."""
-        # Set marker showing that the Hm device hase been removed.
-        self._hm_device_removed = True
-        self.hass.async_create_task(self.async_remove(force_remove=True))
 
 
 class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
@@ -242,7 +217,7 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:
-            _LOGGER.debug("Event %s", self.name)
+            _LOGGER.debug("Sysvar changed event %s", self.name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
@@ -252,17 +227,9 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip sysvar entity will be removed from hass."""
-        try:
-            self._cu.async_remove_hm_sysvar_entity(self.entity_id)
-            self._async_remove_from_registries()
-        except KeyError as err:
-            _LOGGER.debug("Error removing HM sysvar entity from registry: %s", err)
+        self._cu.async_remove_hm_sysvar_entity(self.entity_id)
 
-    @callback
-    def _async_remove_from_registries(self) -> None:
-        """Remove entity/device from registry."""
-
-        # Remove callback from device.
+        # Remove callbacks.
         self._hm_sysvar_entity.unregister_update_callback(
             update_callback=self._async_sysvar_changed
         )
@@ -270,17 +237,15 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
             remove_callback=self._async_sysvar_removed
         )
 
-        if not self.registry_entry:
-            return
-
-        # Remove from entity registry.
-        # Only relevant for entities that do not belong to a device.
-        if entity_id := self.registry_entry.entity_id:
-            entity_registry = er.async_get(self.hass)
-            if entity_id in entity_registry.entities:
-                entity_registry.async_remove(entity_id)
-
     @callback
     def _async_sysvar_removed(self, *args: Any, **kwargs: Any) -> None:
         """Handle hm sysvar entity removal."""
         self.hass.async_create_task(self.async_remove(force_remove=True))
+
+        if not self.registry_entry:
+            return
+
+        if entity_id := self.registry_entry.entity_id:
+            entity_registry = er.async_get(self.hass)
+            if entity_id in entity_registry.entities:
+                entity_registry.async_remove(entity_id)
