@@ -1,6 +1,7 @@
 Version 1.10.0 (2022-07-07)
 - Bump hahomematic to 2022.7.0
 - Fix/Cleanup Device/Entity/Sysvar removal
+- Use new attributes for number entities
 
 Version 1.9.5 (2022-07-06)
 - Revert: Make OPENING the default device_class for binary_sensor STATE (#249)

@@ -55,11 +55,11 @@ _BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescriptio
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
-        unit_of_measurement=FREQUENCY_HERTZ,
+        native_unit_of_measurement=FREQUENCY_HERTZ,
     ),
     frozenset({"LEVEL", "LEVEL_SLATS"}): HmNumberEntityDescription(
         key="LEVEL",
-        unit_of_measurement=PERCENTAGE,
+        native_unit_of_measurement=PERCENTAGE,
     ),
 }
 
@@ -72,7 +72,7 @@ _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
     ): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
-        unit_of_measurement=PERCENTAGE,
+        native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
     ),
 }
