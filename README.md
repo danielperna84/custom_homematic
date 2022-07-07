@@ -404,4 +404,7 @@ The following blueprints can be used to simplify the usage of Homematic device:
 - [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml)
 - [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml)
 
+I (SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
+Feel free to copy, improve, enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
+
 Just copy these files to "your ha-config_dir"/blueprints/automation
