@@ -1,3 +1,7 @@
+Version 1.10.1 (2022-07-08)
+- Bump hahomematic to 2022.7.1
+  - Better distinguish between NO_CACHE_ENTRY and None
+
 Version 1.10.0 (2022-07-07)
 - Bump hahomematic to 2022.7.0
 - Fix/Cleanup Device/Entity/Sysvar removal
