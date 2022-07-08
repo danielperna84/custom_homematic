@@ -103,8 +103,10 @@ class HaHomematicSwitch(
     """Representation of the HomematicIP switch entity."""
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if switch is on."""
+        if not self._hm_entity.is_valid:
+            return None
         return self._hm_entity.value is True
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -128,7 +130,7 @@ class HaHomematicSysvarSwitch(
     _attr_entity_registry_enabled_default = False
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if switch is on."""
         return self._hm_sysvar_entity.value is True
 

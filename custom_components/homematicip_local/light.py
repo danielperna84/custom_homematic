@@ -114,8 +114,10 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
         return supported_features
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return true if dimmer is on."""
+        if not self._hm_entity.is_valid:
+            return None
         return self._hm_entity.is_on is True
 
     @property

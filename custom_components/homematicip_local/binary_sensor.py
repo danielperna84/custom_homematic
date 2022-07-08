@@ -91,6 +91,8 @@ class HaHomematicBinarySensor(
     @property
     def is_on(self) -> bool | None:
         """Return true if sensor is active."""
+        if not self._hm_entity.is_valid:
+            return None
         return self._hm_entity.value
 
 

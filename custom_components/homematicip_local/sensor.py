@@ -113,6 +113,8 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
+        if not self._hm_entity.is_valid:
+            return None
         if (
             self._hm_entity.value is not None
             and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
