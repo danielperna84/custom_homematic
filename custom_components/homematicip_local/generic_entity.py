@@ -44,10 +44,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             entity_registry_enabled_default := self._get_entity_registry_enabled_default()
         ) is not None:
             self._attr_entity_registry_enabled_default = entity_registry_enabled_default
-
+        self._attr_has_entity_name = True
         self._attr_name = hm_entity.name
         self._attr_unique_id = hm_entity.unique_id
-        _LOGGER.debug("init: Setting up %s", self.name)
+        _LOGGER.debug("init: Setting up %s", hm_entity.entity_name_data.full_name)
 
     @property
     def available(self) -> bool:
@@ -93,6 +93,14 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         )
         # Init value of entity.
         await self.async_update()
+        if (
+            isinstance(self._hm_entity, (GenericEntity, CustomEntity))
+            and not self._hm_entity.is_valid
+        ):
+            _LOGGER.info(
+                "CCU did not provide initial value for %s. See README for more information",
+                self._hm_entity.entity_name_data.full_name,
+            )
 
     def _get_entity_registry_enabled_default(self) -> bool | None:
         """Return, if entity should be enabled based on usage attribute."""
@@ -164,6 +172,7 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
         self._cu: ControlUnit = control_unit
         self._hm_sysvar_entity: GenericSystemVariable = hm_sysvar_entity
         self._attr_should_poll = self._hm_sysvar_entity.should_poll
+        self._attr_has_entity_name = True
         self._attr_name = hm_sysvar_entity.name
         self._attr_unique_id = hm_sysvar_entity.unique_id
         self._attr_entity_registry_enabled_default = False
