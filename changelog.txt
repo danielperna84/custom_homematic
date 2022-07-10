@@ -1,4 +1,4 @@
-Version 1.10.2 (2022-07-10)
+Version 1.11.0 (2022-07-10)
 - Bump hahomematic to 2022.7.2
     - Ignore further parameters by device (CURRENT_ILLUMINATION for HmIP-SMI, HmIP-SMO, HmIP-SPI)
     - Allign enity naming to HA entity name
