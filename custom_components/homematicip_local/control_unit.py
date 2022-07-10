@@ -441,6 +441,7 @@ class ControlUnit(BaseControlUnit):
                 self._hub = HaHub(
                     self._hass, control_unit=self, hm_hub=self.central.hub
                 )
+                self._hub.async_write_ha_state()
             new_sysvars = args[0]
             # Handle event of new sysvar creation in Homematic(IP) Local.
             for (platform, hm_sysvars) in self.async_get_new_hm_sysvar_entities(
