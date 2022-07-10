@@ -97,8 +97,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             isinstance(self._hm_entity, (GenericEntity, CustomEntity))
             and not self._hm_entity.is_valid
         ):
-            _LOGGER.warning(
-                "CCU did not provide initial value for %s. See xyz for more information",
+            _LOGGER.info(
+                "CCU did not provide initial value for %s. See README for more information",
                 self._hm_entity.entity_name_data.full_name,
             )
 
