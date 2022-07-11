@@ -180,14 +180,16 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
 
     @property
     def hvac_mode(self) -> HVACMode:
-        """Return hvac operation ie."""
+        """Return hvac mode."""
+        if not self._hm_entity.is_valid:
+            return None
         if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
             return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
         return HVACMode.OFF
 
     @property
     def hvac_modes(self) -> list[HVACMode]:
-        """Return the list of available hvac operation modes."""
+        """Return the list of available hvac modes."""
         hvac_modes = []
         for hm_hvac_mode in self._hm_entity.hvac_modes:
             if hm_hvac_mode in HM_TO_HA_HVAC_MODE:

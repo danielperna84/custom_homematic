@@ -60,9 +60,11 @@ class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
     _attr_supported_features = LockEntityFeature.OPEN
 
     @property
-    def is_locked(self) -> bool:
+    def is_locked(self) -> bool | None:
         """Return true if lock is on."""
-        return self._hm_entity.is_locked is True
+        if not self._hm_entity.is_valid:
+            return None
+        return self._hm_entity.is_locked
 
     @property
     def is_locking(self) -> bool | None:

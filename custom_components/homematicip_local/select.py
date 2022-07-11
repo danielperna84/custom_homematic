@@ -98,6 +98,8 @@ class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
+        if not self._hm_entity.is_valid:
+            return None
         return self._hm_entity.value
 
     async def async_select_option(self, option: str) -> None:

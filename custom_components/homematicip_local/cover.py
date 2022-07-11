@@ -90,6 +90,8 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
     @property
     def is_closed(self) -> bool | None:
         """Return if the cover is closed."""
+        if not self._hm_entity.is_valid:
+            return None
         return self._hm_entity.is_closed
 
     @property

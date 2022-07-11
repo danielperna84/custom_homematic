@@ -116,6 +116,8 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return the current value."""
+        if not self._hm_entity.is_valid:
+            return None
         if self._hm_entity.value is not None:
             return float(self._hm_entity.value * self._multiplier)
         return None
