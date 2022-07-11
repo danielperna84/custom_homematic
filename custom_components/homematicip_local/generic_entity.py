@@ -94,8 +94,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         # Init value of entity.
         await self.async_update()
         if (
-            isinstance(self._hm_entity, (GenericEntity, CustomEntity))
+            isinstance(self._hm_entity, GenericEntity)
             and not self._hm_entity.is_valid
+            and self._hm_entity.is_readable
+        ) or (
+            isinstance(self._hm_entity, CustomEntity) and not self._hm_entity.is_valid
         ):
             _LOGGER.info(
                 "CCU did not provide initial value for %s. See README for more information",
