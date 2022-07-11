@@ -179,7 +179,7 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
         return None
 
     @property
-    def hvac_mode(self) -> HVACMode:
+    def hvac_mode(self) -> HVACMode | None:
         """Return hvac mode."""
         if not self._hm_entity.is_valid:
             return None
