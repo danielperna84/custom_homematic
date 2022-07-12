@@ -288,6 +288,27 @@ Use 0 to reset the on time.
 
 ## Additional information
 
+### Noteworthy about entity states
+
+The integration fetches the states of all devices on initially startup and on reconnect from the backend (CCU/Homegear).
+Afterwards, the state updates will be sent by the CCU as events to HA. We don't fetch states, except for system variables, after initial startup.
+
+After a restart of the backend (esp. CCU), the Backend has initially no state information about its devices. Some devices are actively polled for updates, but many devices, esp. battery driven devices, cannot be polled, so the backend needs to wait for periodic update send by the device.
+This could take seconds, minutes and in rare cases hours.
+
+#### What happens if you restart the backend?
+1. HA loses connects
+2. HA tries to reconnect.
+3. After a successful reconnect HA fetches data from the backend, and waits for state updates from the backend.
+
+If the state could not be fetched from the backend, due to the above-mentioned reasons, the entity will preserve its state, but an attribute of the entity shows `state_uncertain: True`.
+As soon as events have been received from the backend the attribute will switch to `state_uncertain: False`, which means that the state is now correct.
+
+#### What happens if you restart HA shortly after a restart of the backend?
+Entities are shown as unknown, as long as HA has not received any events from the backend, or was not able to fetch data initially.
+Behavior prior to custom_component version 1.11.0 was to show a default value.
+As soon as events have been received from the backend the state will switch to the correct state.
+
 ### Devices with buttons
 
 Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
