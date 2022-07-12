@@ -1,5 +1,5 @@
 Version 1.11.0 (2022-07-12)
-- Bump hahomematic to 2022.7.6
+- Bump hahomematic to 2022.7.7
     - Ignore further parameters by device (CURRENT_ILLUMINATION for HmIP-SMI, HmIP-SMO, HmIP-SPI)
     - Align entity naming to HA entity name
 - Use new HA entity name:
@@ -13,6 +13,7 @@ Version 1.11.0 (2022-07-12)
   Old behaviour was to display a DEFAULT value.
   As soon as events have been received from the CCU the state will switch to the correct state.
   This should be relevant, if HA has been restarted shortly after the CCU has been restart.
+  See [Readme](https://github.com/danielperna84/custom_homematic#noteworthy-about-entity-states) for further information.
 - Add attribute state_uncertain
   There is now an extra attribute at each entity, that shows is the state of the entity might be uncertain due to a CCU restart.
   This should be relevant, if the CCU has been restarted and HA is still running.
