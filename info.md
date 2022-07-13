@@ -6,8 +6,9 @@ Provides the following:
 - ConfigFlow incl. reconfiguration of existing installation.
 - Device Discovery (Detect CCUs in the local Network)
 - Device Trigger (PRESS_XXX Events are selectable in automations)
+- Device Actions (Devices can be selected in automation actions)
 - Virtual Remotes can be triggered in HA automations
-- The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors.
+- The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors/switch/select/number
 - Services:
   - Put paramset (Call to putParamset in the RPC XML interface)
   - Set device value (Set the value of a node)
@@ -16,6 +17,8 @@ Provides the following:
   - Enable climate away mode by duration
   - Disable climate away mode
   - Export device definition (Can be used to support integration of new devices)
+  - Light on time (Set on time for a light entity. Must be followed by a light.turn_on)
+  - Switch on time (Set on time for a switch entity. Must be followed by a switch.turn_on.)
   - Delete Device (Deletes a device from HA, but not from CCU). Can be used, if a device has been renamed in CCU.
   - Clear Cache (Clears the cache for a central unit from Home Assistant. Requires a restart)
   - Turn on Siren (Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren)
@@ -24,7 +27,7 @@ Provides the following:
   This works, if a homematic device is assigned to a single room in CCU. Multiple channels can be assigned to the same room.
   If the device is assigned to multiple rooms, or nothing is set, then the area in HA will stay empty.
   This has no effect on existing area assignements.
-
+- Display functions(Gewerke) in entity attributes
 
 Entity Support
 - Binary_Sensor
@@ -33,8 +36,8 @@ Entity Support
 - Cover
 - Light
 - Lock
-- Sensor
 - Number
 - Select
+- Sensor
 - Siren
 - Switch
