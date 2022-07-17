@@ -4,7 +4,7 @@
   "config_flow": true,
   "documentation": "https://github.com/danielperna84/custom_homematic",
   "issue_tracker": "https://github.com/danielperna84/hahomematic/issues",
-  "requirements": ["hahomematic==2022.7.8"],
+  "requirements": ["hahomematic==2022.7.9"],
   "ssdp": [
     {
       "manufacturer": "EQ3",
@@ -17,5 +17,5 @@
   "codeowners": ["@danielperna84", "@SukramJ"],
   "iot_class": "local_push",
   "loggers": ["hahomematic"],
-  "version": "1.11.1"
+  "version": "1.11.2"
 }
