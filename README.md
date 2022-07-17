@@ -296,18 +296,15 @@ Afterwards, the state updates will be sent by the CCU as events to HA. We don't 
 After a restart of the backend (esp. CCU), the Backend has initially no state information about its devices. Some devices are actively polled for updates, but many devices, esp. battery driven devices, cannot be polled, so the backend needs to wait for periodic update send by the device.
 This could take seconds, minutes and in rare cases hours.
 
-#### What happens if you restart the backend?
-1. HA loses connects
-2. HA tries to reconnect.
-3. After a successful reconnect HA fetches data from the backend, and waits for state updates from the backend.
+That's why the last state of an entity will be recovered after a HA restart.
+If you want to know how assured the displayed value is, there is an attribute `value_state` at each entity with the following values:
 
-If the state could not be fetched from the backend, due to the above-mentioned reasons, the entity will preserve its state, but an attribute of the entity shows `state_uncertain: True`.
-As soon as events have been received from the backend the attribute will switch to `state_uncertain: False`, which means that the state is now correct.
-
-#### What happens if you restart HA shortly after a restart of the backend?
-Entities are shown as unknown, as long as HA has not received any events from the backend, or was not able to fetch data initially.
-Behavior prior to custom_component version 1.11.0 was to show a default value.
-As soon as events have been received from the backend the state will switch to the correct state.
+- `valid` the value was either loaded from the CCU or received via an event
+- `not valid` there is no value. The state of the entity is `unknown`.
+- `restored` the value has been restored from the last saved state after an HA restart
+- `uncertain` the value could not be updated from the CCU after restarting the CCU, and no events were received either.
+- 
+If you want to be sure that the state of the entity is as consistent as possible, you should also check the `value_state` attribute for `valid`.
 
 ### Devices with buttons
 
