@@ -16,7 +16,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
+from .generic_entity import (
+    HaHomematicGenericRestoreEntity,
+    HaHomematicGenericSysvarEntity,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +35,7 @@ async def async_setup_entry(
     @callback
     def async_add_select(args: Any) -> None:
         """Add select from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicSelect(control_unit, hm_entity))
@@ -83,7 +86,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
+class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity):
     """Representation of the HomematicIP select entity."""
 
     _attr_entity_category: EntityCategory | None = EntityCategory.CONFIG
@@ -98,9 +101,11 @@ class HaHomematicSelect(HaHomematicGenericEntity[HmSelect], SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.value
+        if self._hm_entity.is_valid:
+            return self._hm_entity.value
+        if self.is_restored:
+            return self._restored_state.state  # type: ignore[union-attr]
+        return None
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""

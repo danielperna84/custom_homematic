@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
+from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
@@ -16,6 +17,7 @@ ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
 ATTR_VALUE_TYPE = "value_type"
+ATTR_VALUE_STATE = "value_state"
 
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
@@ -34,6 +36,15 @@ SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_VIRTUAL_KEY = "virtual_key"
 
 SYSVAR_SCAN_INTERVAL = timedelta(seconds=30)
+
+
+class HmEntityState(StrEnum):
+    """Enum with homematic entity states."""
+
+    NOT_VALID = "not valid"
+    RESTORED = "restored"
+    UNCERTAIN = "uncertain"
+    VALID = "valid"
 
 
 def _get_hmip_local_platforms() -> list[str]:

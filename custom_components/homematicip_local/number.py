@@ -7,14 +7,14 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.number import BaseNumber, HmSysvarNumber
 
-from homeassistant.components.number import NumberEntity, NumberMode
+from homeassistant.components.number import NumberEntity, NumberMode, RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import ATTR_VALUE_STATE, DOMAIN, HmEntityState
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmNumberEntityDescription
@@ -84,12 +84,13 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
+class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], RestoreNumber):
     """Representation of the HomematicIP number entity."""
 
     entity_description: HmNumberEntityDescription
     _attr_entity_category = EntityCategory.CONFIG
     _attr_mode = NumberMode.BOX
+    _restored_native_value: float | None = None
 
     def __init__(
         self,
@@ -116,15 +117,35 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], NumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return the current value."""
-        if not self._hm_entity.is_valid:
-            return None
-        if self._hm_entity.value is not None:
+        if self._hm_entity.is_valid and self._hm_entity.value is not None:
             return float(self._hm_entity.value * self._multiplier)
+        if self.is_restored:
+            return self._restored_native_value
         return None
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         await self._hm_entity.send_value(value / self._multiplier)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if self.is_restored:
+            attributes[ATTR_VALUE_STATE] = HmEntityState.RESTORED
+        return attributes
+
+    @property
+    def is_restored(self) -> bool:
+        """Return if the state is restored."""
+        return not self._hm_entity.is_valid and self._restored_native_value is not None
+
+    async def async_added_to_hass(self) -> None:
+        """Check, if state needs to be restored."""
+        await super().async_added_to_hass()
+        if not self._hm_entity.is_valid:
+            if restored_sensor_data := await self.async_get_last_number_data():
+                self._restored_native_value = restored_sensor_data.native_value
 
 
 class HaHomematicSysvarNumber(

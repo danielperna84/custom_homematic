@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.lock import BaseLock
+from hahomematic.devices.lock import LOCK_STATE_LOCKED, BaseLock
 
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ async def async_setup_entry(
     @callback
     def async_add_lock(args: Any) -> None:
         """Add lock from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicLock(control_unit, hm_entity))
@@ -54,7 +54,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
+class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
     """Representation of the HomematicIP lock entity."""
 
     _attr_supported_features = LockEntityFeature.OPEN
@@ -62,9 +62,11 @@ class HaHomematicLock(HaHomematicGenericEntity[BaseLock], LockEntity):
     @property
     def is_locked(self) -> bool | None:
         """Return true if lock is on."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.is_locked
+        if self._hm_entity.is_valid:
+            return self._hm_entity.is_locked
+        if self.is_restored:
+            return self._restored_state.state == LOCK_STATE_LOCKED  # type: ignore[union-attr]
+        return None
 
     @property
     def is_locking(self) -> bool | None:

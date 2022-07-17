@@ -9,13 +9,17 @@ from hahomematic.platforms.binary_sensor import HmBinarySensor, HmSysvarBinarySe
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
+from .generic_entity import (
+    HaHomematicGenericRestoreEntity,
+    HaHomematicGenericSysvarEntity,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +35,7 @@ async def async_setup_entry(
     @callback
     def async_add_binary_sensor(args: Any) -> None:
         """Add binary_sensor from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicBinarySensor(control_unit, hm_entity))
@@ -84,16 +88,18 @@ async def async_setup_entry(
 
 
 class HaHomematicBinarySensor(
-    HaHomematicGenericEntity[HmBinarySensor], BinarySensorEntity
+    HaHomematicGenericRestoreEntity[HmBinarySensor], BinarySensorEntity
 ):
     """Representation of the Homematic binary sensor."""
 
     @property
     def is_on(self) -> bool | None:
         """Return true if sensor is active."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.value
+        if self._hm_entity.is_valid:
+            return self._hm_entity.value
+        if self.is_restored:
+            return self._restored_state.state == STATE_ON  # type: ignore[union-attr]
+        return self._hm_entity.default
 
 
 class HaHomematicSysvarBinarySensor(

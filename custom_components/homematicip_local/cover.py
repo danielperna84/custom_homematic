@@ -1,9 +1,8 @@
 """binary_sensor for Homematic(IP) Local."""
 from __future__ import annotations
 
-from abc import ABC
 import logging
-from typing import Any, Union
+from typing import Any, TypeVar, Union
 
 from hahomematic.const import HmPlatform
 from hahomematic.devices.cover import CeBlind, CeCover, CeGarage, CeIpBlind
@@ -14,15 +13,21 @@ from homeassistant.components.cover import (
     CoverEntity,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_CLOSED
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericRestoreEntity
 
+ATTR_RESTORE_CURRENT_POSITION = "current_position"
+ATTR_RESTORE_CURRENT_TILT_POSITION = "current_tilt_position"
 _LOGGER = logging.getLogger(__name__)
+
+HmBaseCoverEntity = Union[CeCover, CeGarage]
+HmGenericCover = TypeVar("HmGenericCover", bound=HmBaseCoverEntity)
 
 
 async def async_setup_entry(
@@ -36,7 +41,7 @@ async def async_setup_entry(
     @callback
     def async_add_cover(args: Any) -> None:
         """Add cover from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             if isinstance(hm_entity, CeIpBlind):
@@ -72,27 +77,28 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
+class HaHomematicBaseCover(
+    HaHomematicGenericRestoreEntity[HmGenericCover], CoverEntity
+):
     """Representation of the HomematicIP cover entity."""
 
     @property
     def current_cover_position(self) -> int | None:
         """Return current position of cover."""
-        return self._hm_entity.current_cover_position
-
-    async def async_set_cover_position(self, **kwargs: Any) -> None:
-        """Move the cover to a specific position."""
-        # Hm cover is closed:1 -> open:0
-        if ATTR_POSITION in kwargs:
-            position = float(kwargs[ATTR_POSITION])
-            await self._hm_entity.set_cover_position(position)
+        if self._hm_entity.is_valid:
+            return self._hm_entity.current_cover_position
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_POSITION)  # type: ignore[union-attr]
+        return None
 
     @property
     def is_closed(self) -> bool | None:
         """Return if the cover is closed."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.is_closed
+        if self._hm_entity.is_valid:
+            return self._hm_entity.is_closed
+        if self.is_restored:
+            return self._restored_state.state == STATE_CLOSED  # type: ignore[union-attr]
+        return None
 
     @property
     def is_opening(self) -> bool | None:
@@ -103,6 +109,13 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
     def is_closing(self) -> bool | None:
         """Return if the cover is closing."""
         return self._hm_entity.is_closing
+
+    async def async_set_cover_position(self, **kwargs: Any) -> None:
+        """Move the cover to a specific position."""
+        # Hm cover is closed:1 -> open:0
+        if ATTR_POSITION in kwargs:
+            position = float(kwargs[ATTR_POSITION])
+            await self._hm_entity.set_cover_position(position)
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
@@ -117,54 +130,21 @@ class HaHomematicCover(HaHomematicGenericEntity[CeCover], CoverEntity):
         await self._hm_entity.stop_cover()
 
 
-class HaHomematicBlind(
-    HaHomematicGenericEntity[Union[CeBlind, CeIpBlind]], CoverEntity, ABC
-):
+class HaHomematicCover(HaHomematicBaseCover[CeCover]):
+    """Representation of the HomematicIP cover entity."""
+
+
+class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
     """Representation of the HomematicIP blind entity."""
-
-    @property
-    def current_cover_position(self) -> int | None:
-        """Return current position of cover."""
-        return self._hm_entity.current_cover_position
-
-    async def async_set_cover_position(self, **kwargs: Any) -> None:
-        """Move the cover to a specific position."""
-        # Hm cover is closed:1 -> open:0
-        if ATTR_POSITION in kwargs:
-            position = float(kwargs[ATTR_POSITION])
-            await self._hm_entity.set_cover_position(position)
-
-    @property
-    def is_closed(self) -> bool | None:
-        """Return if the cover is closed."""
-        return self._hm_entity.is_closed
-
-    @property
-    def is_opening(self) -> bool | None:
-        """Return if the cover is opening."""
-        return self._hm_entity.is_opening
-
-    @property
-    def is_closing(self) -> bool | None:
-        """Return if the cover is closing."""
-        return self._hm_entity.is_closing
-
-    async def async_open_cover(self, **kwargs: Any) -> None:
-        """Open the cover."""
-        await self._hm_entity.open_cover()
-
-    async def async_close_cover(self, **kwargs: Any) -> None:
-        """Close the cover."""
-        await self._hm_entity.close_cover()
-
-    async def async_stop_cover(self, **kwargs: Any) -> None:
-        """Stop the device if in motion."""
-        await self._hm_entity.stop_cover()
 
     @property
     def current_cover_tilt_position(self) -> int | None:
         """Return current tilt position of cover."""
-        return self._hm_entity.current_cover_tilt_position
+        if self._hm_entity.is_valid:
+            return self._hm_entity.current_cover_tilt_position
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TILT_POSITION)  # type: ignore[union-attr]
+        return None
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
         """Move the cover to a specific tilt position."""
@@ -185,44 +165,5 @@ class HaHomematicBlind(
         await self._hm_entity.stop_cover_tilt()
 
 
-class HaHomematicGarage(HaHomematicGenericEntity[CeGarage], CoverEntity):
+class HaHomematicGarage(HaHomematicBaseCover[CeGarage]):
     """Representation of the HomematicIP garage entity."""
-
-    @property
-    def current_cover_position(self) -> int | None:
-        """Return current position of the garage door."""
-        return self._hm_entity.current_cover_position
-
-    async def async_set_cover_position(self, **kwargs: Any) -> None:
-        """Move the garage door to a specific position."""
-        # Hm cover is closed:1 -> open:0
-        if ATTR_POSITION in kwargs:
-            position = float(kwargs[ATTR_POSITION])
-            await self._hm_entity.set_cover_position(position)
-
-    @property
-    def is_closed(self) -> bool | None:
-        """Return if the garage door is closed."""
-        return self._hm_entity.is_closed
-
-    @property
-    def is_opening(self) -> bool | None:
-        """Return if the garage door is opening."""
-        return self._hm_entity.is_opening
-
-    @property
-    def is_closing(self) -> bool | None:
-        """Return if the garage door is closing."""
-        return self._hm_entity.is_closing
-
-    async def async_open_cover(self, **kwargs: Any) -> None:
-        """Open the cover."""
-        await self._hm_entity.open_cover()
-
-    async def async_close_cover(self, **kwargs: Any) -> None:
-        """Close the cover."""
-        await self._hm_entity.close_cover()
-
-    async def async_stop_cover(self, **kwargs: Any) -> None:
-        """Stop the device if in motion."""
-        await self._hm_entity.stop_cover()

@@ -19,6 +19,7 @@ from homeassistant.components.siren import (
     SirenEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -27,7 +28,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ async def async_setup_entry(
     @callback
     def async_add_siren(args: Any) -> None:
         """Add siren from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicSiren(control_unit, hm_entity))
@@ -82,7 +83,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicSiren(HaHomematicGenericEntity[BaseSiren], SirenEntity):
+class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
     """Representation of the HomematicIP siren entity."""
 
     _attr_supported_features = (
@@ -95,9 +96,11 @@ class HaHomematicSiren(HaHomematicGenericEntity[BaseSiren], SirenEntity):
     @property
     def is_on(self) -> bool | None:
         """Return true if siren is on."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.is_on is True
+        if self._hm_entity.is_valid:
+            return self._hm_entity.is_on is True
+        if self.is_restored:
+            return self._restored_state.state == STATE_ON  # type: ignore[union-attr]
+        return None
 
     @property
     def available_tones(self) -> list[int | str] | dict[int, str] | None:
