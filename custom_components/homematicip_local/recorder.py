@@ -9,10 +9,11 @@ from hahomematic.const import (
     ATTR_MODEL,
     ATTR_NAME,
     ATTR_PARAMETER,
-    ATTR_STATE_UNCERTAIN,
 )
 
 from homeassistant.core import HomeAssistant, callback
+
+from .const import ATTR_VALUE_STATE
 
 
 @callback
@@ -26,5 +27,5 @@ def exclude_attributes(hass: HomeAssistant) -> set[str]:
         ATTR_MODEL,
         ATTR_NAME,
         ATTR_PARAMETER,
-        ATTR_STATE_UNCERTAIN,
+        ATTR_VALUE_STATE,
     }

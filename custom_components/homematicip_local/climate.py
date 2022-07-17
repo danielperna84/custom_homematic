@@ -30,7 +30,7 @@ from homeassistant.components.climate.const import (
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import STATE_UNKNOWN, TEMP_CELSIUS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -39,7 +39,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,6 +50,12 @@ SERVICE_ENABLE_AWAY_MODE_BY_DURATION = "enable_away_mode_by_duration"
 ATTR_AWAY_END = "end"
 ATTR_AWAY_HOURS = "hours"
 ATTR_AWAY_TEMPERATURE = "away_temperature"
+
+ATTR_RESTORE_TARGET_TEMPERATURE = "temperature"
+ATTR_RESTORE_CURRENT_TEMPERATURE = "current_temperature"
+ATTR_RESTORE_CURRENT_HUMIDITY = "current_humidity"
+ATTR_RESTORE_HVAC_MODE = "hvac_mode"
+ATTR_RESTORE_PRESET_MODE = "preset_mode"
 
 HM_HVAC_MODES = [cls.value for cls in HmHvacMode]
 
@@ -90,7 +96,7 @@ async def async_setup_entry(
     @callback
     def async_add_climate(args: Any) -> None:
         """Add climate from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicClimate(control_unit, hm_entity))
@@ -141,7 +147,9 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEntity):
+class HaHomematicClimate(
+    HaHomematicGenericRestoreEntity[BaseClimateEntity], ClimateEntity
+):
     """Representation of the HomematicIP climate entity."""
 
     def __init__(
@@ -159,17 +167,29 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     @property
     def target_temperature(self) -> float | None:
         """Return the temperature we try to reach."""
-        return self._hm_entity.target_temperature
+        if self._hm_entity.is_valid:
+            return self._hm_entity.target_temperature
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_TARGET_TEMPERATURE)  # type: ignore[union-attr]
+        return None
 
     @property
     def current_temperature(self) -> float | None:
         """Return the current temperature."""
-        return self._hm_entity.current_temperature
+        if self._hm_entity.is_valid:
+            return self._hm_entity.current_temperature
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TEMPERATURE)  # type: ignore[union-attr]
+        return None
 
     @property
     def current_humidity(self) -> int | None:
         """Return the current humidity."""
-        return self._hm_entity.current_humidity
+        if self._hm_entity.is_valid:
+            return self._hm_entity.current_humidity
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_HUMIDITY)  # type: ignore[union-attr]
+        return None
 
     @property
     def hvac_action(self) -> HVACAction | None:
@@ -181,11 +201,14 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     @property
     def hvac_mode(self) -> HVACMode | None:
         """Return hvac mode."""
-        if not self._hm_entity.is_valid:
-            return None
-        if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
-            return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
-        return HVACMode.OFF
+        if self._hm_entity.is_valid:
+            if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
+                return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
+            return HVACMode.OFF
+        if self.is_restored:
+            if (restored_hvac_mode := self._restored_state.state) != STATE_UNKNOWN:  # type: ignore[union-attr]
+                return HVACMode(value=restored_hvac_mode)
+        return None
 
     @property
     def hvac_modes(self) -> list[HVACMode]:
@@ -199,10 +222,13 @@ class HaHomematicClimate(HaHomematicGenericEntity[BaseClimateEntity], ClimateEnt
     @property
     def preset_mode(self) -> str | None:
         """Return the current preset mode."""
-        if self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES or str(
-            self._hm_entity.preset_mode
-        ).startswith(HM_PRESET_MODE_PREFIX):
-            return self._hm_entity.preset_mode
+        if self._hm_entity.is_valid:
+            if self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES or str(
+                self._hm_entity.preset_mode
+            ).startswith(HM_PRESET_MODE_PREFIX):
+                return self._hm_entity.preset_mode
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_PRESET_MODE)  # type: ignore[union-attr]
         return None
 
     @property

@@ -25,6 +25,7 @@ from homeassistant.components.light import (
     LightEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -32,10 +33,16 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .control_unit import ControlUnit
-from .generic_entity import HaHomematicGenericEntity
+from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_ON_TIME = "on_time"
+
+ATTR_RESTORE_COLOR_MODE = "color_mode"
+ATTR_RESTORE_BRIGHTNESS = "brightness"
+ATTR_RESTORE_COLOR_TEMP = "color_temp"
+ATTR_RESTORE_HS_COLOR = "hs_color"
+
 SERVICE_LIGHT_SET_ON_TIME = "light_set_on_time"
 
 
@@ -50,7 +57,7 @@ async def async_setup_entry(
     @callback
     def async_add_light(args: Any) -> None:
         """Add light from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
             entities.append(HaHomematicLight(control_unit, hm_entity))
@@ -84,18 +91,22 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
+class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity):
     """Representation of the HomematicIP light entity."""
 
     @property
     def color_mode(self) -> ColorMode:
         """Return the color mode of the light."""
-        if self._hm_entity.supports_hs_color:
-            return ColorMode.HS
-        if self._hm_entity.supports_color_temperature:
-            return ColorMode.COLOR_TEMP
-        if self._hm_entity.supports_brightness:
-            return ColorMode.BRIGHTNESS
+        if self._hm_entity.is_valid:
+            if self._hm_entity.supports_hs_color:
+                return ColorMode.HS
+            if self._hm_entity.supports_color_temperature:
+                return ColorMode.COLOR_TEMP
+            if self._hm_entity.supports_brightness:
+                return ColorMode.BRIGHTNESS
+        if self.is_restored:
+            if restored_color_mode := self._restored_state.attributes.get(ATTR_RESTORE_COLOR_MODE):  # type: ignore[union-attr]
+                return ColorMode(value=restored_color_mode)
         return ColorMode.ONOFF
 
     @property
@@ -116,19 +127,29 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     @property
     def is_on(self) -> bool | None:
         """Return true if dimmer is on."""
-        if not self._hm_entity.is_valid:
-            return None
-        return self._hm_entity.is_on is True
+        if self._hm_entity.is_valid:
+            return self._hm_entity.is_on is True
+        if self.is_restored:
+            return self._restored_state.state == STATE_ON  # type: ignore[union-attr]
+        return None
 
     @property
     def brightness(self) -> int | None:
         """Return the brightness of this light between 0..255."""
-        return self._hm_entity.brightness
+        if self._hm_entity.is_valid:
+            return self._hm_entity.brightness
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_BRIGHTNESS)  # type: ignore[union-attr]
+        return None
 
     @property
     def color_temp(self) -> int | None:
         """Return the color temperature of this light between 0..255."""
-        return self._hm_entity.color_temp
+        if self._hm_entity.is_valid:
+            return self._hm_entity.color_temp
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_COLOR_TEMP)  # type: ignore[union-attr]
+        return None
 
     @property
     def effect(self) -> str | None:
@@ -143,7 +164,11 @@ class HaHomematicLight(HaHomematicGenericEntity[BaseHmLight], LightEntity):
     @property
     def hs_color(self) -> tuple[float, float] | None:
         """Return the hue and saturation color value [float, float]."""
-        return self._hm_entity.hs_color
+        if self._hm_entity.is_valid:
+            return self._hm_entity.hs_color
+        if self.is_restored:
+            return self._restored_state.attributes.get(ATTR_RESTORE_HS_COLOR)  # type: ignore[union-attr]
+        return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""

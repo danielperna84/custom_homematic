@@ -13,13 +13,13 @@ from hahomematic.const import (
 )
 from hahomematic.platforms.sensor import HmSensor, HmSysvarSensor
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import RestoreSensor, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import ATTR_VALUE_STATE, DOMAIN, HmEntityState
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
@@ -88,10 +88,11 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
+class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
     """Representation of the HomematicIP sensor entity."""
 
     entity_description: HmSensorEntityDescription
+    _restored_native_value: Any = None
 
     def __init__(
         self,
@@ -113,23 +114,45 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], SensorEntity):
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
+        if self._hm_entity.is_valid:
+            if (
+                self._hm_entity.value is not None
+                and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
+                and self._multiplier != 1
+            ):
+                return self._hm_entity.value * self._multiplier
+            # Strings and enums with custom device class must be lowercase to be translatable.
+            if (
+                self._hm_entity.value is not None
+                and self.device_class is not None
+                and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
+                and self.device_class.startswith(DOMAIN.lower())
+            ):
+                return self._hm_entity.value.lower()
+            return self._hm_entity.value
+        if self.is_restored:
+            return self._restored_native_value
+        return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if self.is_restored:
+            attributes[ATTR_VALUE_STATE] = HmEntityState.RESTORED
+        return attributes
+
+    @property
+    def is_restored(self) -> bool:
+        """Return if the state is restored."""
+        return not self._hm_entity.is_valid and self._restored_native_value is not None
+
+    async def async_added_to_hass(self) -> None:
+        """Check, if state needs to be restored."""
+        await super().async_added_to_hass()
         if not self._hm_entity.is_valid:
-            return None
-        if (
-            self._hm_entity.value is not None
-            and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
-            and self._multiplier != 1
-        ):
-            return self._hm_entity.value * self._multiplier
-        # Strings and enums with custom device class must be lowercase to be translatable.
-        if (
-            self._hm_entity.value is not None
-            and self.device_class is not None
-            and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
-            and self.device_class.startswith(DOMAIN.lower())
-        ):
-            return self._hm_entity.value.lower()
-        return self._hm_entity.value
+            if restored_sensor_data := await self.async_get_last_sensor_data():
+                self._restored_native_value = restored_sensor_data.native_value
 
 
 class HaHomematicSysvarSensor(
