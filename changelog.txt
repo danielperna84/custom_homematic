@@ -1,4 +1,4 @@
-Version 1.11.2 (2022-07-17)
+Version 1.12.0 (2022-07-17)
 - Bump hahomematic to 2022.7.9
   - Remove state_uncertain from default attributes
 - Make entity state restoreable after HA restart
