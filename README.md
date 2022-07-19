@@ -184,8 +184,6 @@ These two options are required for _special_ network environments. If for exampl
 
 ## System variables
 
-This relevant for component versions > 1.8.0.
-
 System variables are fetched every 30 seconds from backend (CCU/Homegear), and are created initially as **deactived** entity.
 
 The types of system variables in the CCU are:
