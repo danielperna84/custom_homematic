@@ -81,6 +81,7 @@ HA_TO_HM_HVAC_MODE: dict[HVACMode, HmHvacMode] = {
 HM_TO_HA_ACTION: dict[HmHvacAction, HVACAction] = {
     HmHvacAction.COOL: HVACAction.COOLING,
     HmHvacAction.HEAT: HVACAction.HEATING,
+    HmHvacAction.IDLE: HVACAction.IDLE,
     HmHvacAction.OFF: HVACAction.OFF,
 }
 
