@@ -9,6 +9,7 @@ from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
+HMIP_LOCAL_MIN_VERSION = "2022.7"
 
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
