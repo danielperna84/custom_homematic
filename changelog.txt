@@ -1,3 +1,7 @@
+Version 1.12.3 (2022-07-21)
+- Bump hahomematic to 2022.7.12
+  - Add ELV-SH-BS2 to custom entities
+
 Version 1.12.2 (2022-07-21)
 - Block start of custom component if HA version is too old.
 
