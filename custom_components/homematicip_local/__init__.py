@@ -3,21 +3,32 @@ from __future__ import annotations
 
 import logging
 
+from awesomeversion import AwesomeVersion
 from hahomematic.central_unit import cleanup_cache_dirs
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP
+from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, HMIP_LOCAL_PLATFORMS
+from .const import DOMAIN, HMIP_LOCAL_MIN_VERSION, HMIP_LOCAL_PLATFORMS
 from .control_unit import ControlConfig, get_storage_folder
 from .services import async_setup_services, async_unload_services
 
+HA_VERSION_OBJ = AwesomeVersion(HA_VERSION)
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
+    if HA_VERSION_OBJ < HMIP_LOCAL_MIN_VERSION:
+        _LOGGER.warning("---")
+        _LOGGER.warning(
+            "This release of HomematicIP Local requires HA version %s and above",
+            HMIP_LOCAL_MIN_VERSION,
+        )
+        _LOGGER.warning("HomematicIP Local setup blocked")
+        _LOGGER.warning("---")
+        return False
     control = await ControlConfig(
         hass=hass,
         entry_id=config_entry.entry_id,
