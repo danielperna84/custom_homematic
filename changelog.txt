@@ -1,3 +1,6 @@
+Version 1.12.4 (2022-07-22)
+- Clean up accessing event helpers via hass
+
 Version 1.12.3 (2022-07-21)
 - Bump hahomematic to 2022.7.12
   - Add ELV-SH-BS2 to custom entities
