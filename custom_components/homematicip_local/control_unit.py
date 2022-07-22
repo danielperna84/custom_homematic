@@ -62,6 +62,7 @@ from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.util import slugify
 
 from .const import (
@@ -693,10 +694,8 @@ class HaHub(Entity):
         self._attr_name: str = self._control.central.instance_name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
-        self.remove_listener: Callable = (
-            self.hass.helpers.event.async_track_time_interval(
-                self._async_fetch_data, SYSVAR_SCAN_INTERVAL
-            )
+        self.remove_listener: Callable = async_track_time_interval(
+            self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
         )
 
     def de_init(self) -> None:
