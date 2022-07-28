@@ -254,6 +254,18 @@ disable_away_mode:
       integration: homematicip_local
       domain: climate
 
+update_entity:
+  name: Update an entity's value
+  description: Update an entity's value (Only required for edge cases)
+  fields:
+    entity_id:
+      name: Entity
+      description: Entity Id(s) of homematic entity.
+      required: true
+      selector:
+        entity:
+          integration: homematicip_local
+
 turn_on_siren:
   description: Turn siren on.
   target:
@@ -315,3 +327,5 @@ switch_set_on_time:
           max: 8580000
           unit_of_measurement: seconds
           mode: box
+
+
