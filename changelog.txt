@@ -1,6 +1,7 @@
-Version 1.12.5 (2022-07-24)
+Version 1.12.5 (2022-07-28)
 - Bump hahomematic to 2022.7.14
   - Add HmIP-BS2 to custom entities
+- Add call_source to load_entity_value calls
 
 Version 1.12.4 (2022-07-22)
 - Bump hahomematic to 2022.7.13
