@@ -29,8 +29,6 @@ ATTR_MODEL = "model"
 ATTR_FUNCTION = "function"
 ATTR_PARAMETER = "parameter"
 ATTR_ENTITY_TYPE = "entity_type"
-ATTR_CHANNEL_STATE = "channel_state"
-
 
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"

@@ -116,11 +116,17 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return the state attributes of the generic entity."""
         attributes = super().extra_state_attributes
         if isinstance(self._hm_entity, CeDimmer):
-            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
+            attributes[ATTR_CHANNEL_LEVEL] = (
+                self._hm_entity.channel_brightness / 255 * 100
+            )
         if isinstance(self._hm_entity, CeIpFixedColorLight):
             attributes[ATTR_COLOR_NAME] = self._hm_entity.color_name
-            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
-            attributes[ATTR_CHANNEL_COLOR] = self._hm_entity.channel_color_name
+            if self._hm_entity.brightness != self._hm_entity.channel_brightness:
+                attributes[ATTR_CHANNEL_LEVEL] = (
+                    self._hm_entity.channel_brightness / 255 * 100
+                )
+            if self._hm_entity.color_name != self._hm_entity.channel_color_name:
+                attributes[ATTR_CHANNEL_COLOR] = self._hm_entity.channel_color_name
 
         return attributes
 

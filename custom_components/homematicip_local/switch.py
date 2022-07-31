@@ -17,7 +17,7 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_CHANNEL_STATE, DOMAIN
+from .const import DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import (
     HaHomematicGenericRestoreEntity,
@@ -26,6 +26,7 @@ from .generic_entity import (
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_ON_TIME = "on_time"
+ATTR_CHANNEL_STATE = "channel_state"
 SERVICE_SWITCH_SET_ON_TIME = "switch_set_on_time"
 
 
@@ -111,7 +112,8 @@ class HaHomematicSwitch(
         """Return the state attributes of the generic entity."""
         attributes = super().extra_state_attributes
         if isinstance(self._hm_entity, CeSwitch):
-            attributes[ATTR_CHANNEL_STATE] = self._hm_entity.channel_value
+            if self._hm_entity.value != self._hm_entity.channel_value:
+                attributes[ATTR_CHANNEL_STATE] = self._hm_entity.channel_value
         return attributes
 
     @property
