@@ -26,6 +26,7 @@ from .generic_entity import (
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_ON_TIME = "on_time"
+ATTR_CHANNEL_STATE = "channel_state"
 SERVICE_SWITCH_SET_ON_TIME = "switch_set_on_time"
 
 
@@ -105,6 +106,15 @@ class HaHomematicSwitch(
     HaHomematicGenericRestoreEntity[Union[CeSwitch, HmSwitch]], SwitchEntity
 ):
     """Representation of the HomematicIP switch entity."""
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if isinstance(self._hm_entity, CeSwitch):
+            if self._hm_entity.value != self._hm_entity.channel_value:
+                attributes[ATTR_CHANNEL_STATE] = self._hm_entity.channel_value
+        return attributes
 
     @property
     def is_on(self) -> bool | None:

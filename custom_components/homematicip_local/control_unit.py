@@ -76,6 +76,8 @@ from .const import (
     EVENT_DATA_TITLE,
     EVENT_DEVICE_AVAILABILITY,
     HMIP_LOCAL_PLATFORMS,
+    IDENTIFIER_SEPARATOR,
+    MANUFACTURER,
     SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import HmBaseEntity, HmBaseSysvarEntity, HmCallbackEntity
@@ -219,21 +221,20 @@ class ControlUnit(BaseControlUnit):
 
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
-        info = self.central.device_information
         device_registry = dr.async_get(self._hass)
         device_registry.async_get_or_create(
             config_entry_id=self._entry_id,
             identifiers={
                 (
                     DOMAIN,
-                    info.identifier,
+                    self.central.instance_name,
                 )
             },
-            manufacturer=info.manufacturer,
+            manufacturer=MANUFACTURER,
             model="CU",
-            name=info.name,
+            name=self.central.instance_name,
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=info.central_url,
+            configuration_url=self.central.central_url,
         )
 
     @callback
@@ -256,21 +257,20 @@ class ControlUnit(BaseControlUnit):
         device_registry = dr.async_get(self._hass)
         for client in self._central.clients.values():
             if virtual_remote := client.get_virtual_remote():
-                info = virtual_remote.device_information
                 device_registry.async_get_or_create(
                     config_entry_id=self._entry_id,
                     identifiers={
                         (
                             DOMAIN,
-                            info.identifier,
+                            f"{virtual_remote.device_address}{IDENTIFIER_SEPARATOR}{virtual_remote.interface_id}",
                         )
                     },
-                    manufacturer=info.manufacturer,
-                    name=info.name,
-                    model=info.model,
-                    sw_version=info.version,
+                    manufacturer=MANUFACTURER,
+                    name=virtual_remote.name,
+                    model=virtual_remote.device_type,
+                    sw_version=virtual_remote.firmware,
                     # Link to the homematic control unit.
-                    via_device=cast(tuple[str, str], info.central),
+                    via_device=cast(tuple[str, str], self._central.instance_name),
                 )
 
     @callback
@@ -578,7 +578,7 @@ class ControlUnit(BaseControlUnit):
             identifiers={
                 (
                     DOMAIN,
-                    hm_device.device_information.identifier,
+                    f"{hm_device.device_address}{IDENTIFIER_SEPARATOR}{hm_device.interface_id}",
                 )
             }
         )

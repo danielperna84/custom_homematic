@@ -9,7 +9,9 @@ from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
+MANUFACTURER = "eQ-3"
 HMIP_LOCAL_MIN_VERSION = "2022.7"
+IDENTIFIER_SEPARATOR = "@"
 
 ATTR_INSTANCE_NAME = "instance_name"
 ATTR_INTERFACE = "interface"
@@ -19,6 +21,14 @@ ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
 ATTR_VALUE_TYPE = "value_type"
 ATTR_VALUE_STATE = "value_state"
+
+ATTR_NAME = "name"
+ATTR_INTERFACE_ID = "interface_id"
+ATTR_ADDRESS = "address"
+ATTR_MODEL = "model"
+ATTR_FUNCTION = "function"
+ATTR_PARAMETER = "parameter"
+ATTR_ENTITY_TYPE = "entity_type"
 
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
@@ -46,6 +56,13 @@ class HmEntityState(StrEnum):
     RESTORED = "restored"
     UNCERTAIN = "uncertain"
     VALID = "valid"
+
+
+class HmEntityType(StrEnum):
+    """Enum with hahomematic entity types."""
+
+    GENERIC = "generic"
+    CUSTOM = "custom"
 
 
 def _get_hmip_local_platforms() -> list[str]:

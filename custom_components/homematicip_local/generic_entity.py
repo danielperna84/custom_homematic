@@ -18,7 +18,21 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .const import ATTR_VALUE_STATE, DOMAIN, HmEntityState
+from .const import (
+    ATTR_ADDRESS,
+    ATTR_ENTITY_TYPE,
+    ATTR_FUNCTION,
+    ATTR_INTERFACE_ID,
+    ATTR_MODEL,
+    ATTR_NAME,
+    ATTR_PARAMETER,
+    ATTR_VALUE_STATE,
+    DOMAIN,
+    IDENTIFIER_SEPARATOR,
+    MANUFACTURER,
+    HmEntityState,
+    HmEntityType,
+)
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .helpers import HmGenericEntity, HmGenericSysvarEntity
@@ -58,27 +72,39 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        info = self._hm_entity.device_information
+        hm_device = self._hm_entity.device
         return DeviceInfo(
             identifiers={
                 (
                     DOMAIN,
-                    info.identifier,
+                    f"{hm_device.device_address}{IDENTIFIER_SEPARATOR}{hm_device.interface_id}",
                 )
             },
-            manufacturer=info.manufacturer,
-            model=info.model,
-            name=info.name,
-            sw_version=info.version,
-            suggested_area=info.room,
+            manufacturer=MANUFACTURER,
+            model=hm_device.device_type,
+            name=hm_device.name,
+            sw_version=hm_device.firmware,
+            suggested_area=hm_device.room,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], info.central),
+            via_device=cast(tuple[str, str], hm_device.central.instance_name),
         )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        attributes = self._hm_entity.attributes
+        attributes: dict[str, Any] = {
+            ATTR_INTERFACE_ID: self._hm_entity.device.interface_id,
+            ATTR_ADDRESS: self._hm_entity.channel_address,
+            ATTR_MODEL: self._hm_entity.device_type,
+        }
+        if isinstance(self._hm_entity, GenericEntity):
+            attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value
+            attributes[ATTR_PARAMETER] = self._hm_entity.parameter
+            attributes[ATTR_FUNCTION] = self._hm_entity.function
+
+        if isinstance(self._hm_entity, CustomEntity):
+            attributes[ATTR_ENTITY_TYPE] = HmEntityType.CUSTOM.value
+
         if (
             isinstance(self._hm_entity, GenericEntity) and self._hm_entity.is_readable
         ) or isinstance(self._hm_entity, CustomEntity):
@@ -90,6 +116,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 )
             else:
                 attributes[ATTR_VALUE_STATE] = HmEntityState.NOT_VALID
+
         return attributes
 
     async def async_added_to_hass(self) -> None:
@@ -234,27 +261,26 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        info = self._hm_sysvar_entity.device_information
+        hm_central = self._hm_sysvar_entity.central
         return DeviceInfo(
             identifiers={
                 (
                     DOMAIN,
-                    info.identifier,
+                    hm_central.instance_name,
                 )
             },
-            manufacturer=info.manufacturer,
-            model=info.model,
-            name=info.name,
-            sw_version=info.version,
-            suggested_area=info.room,
+            manufacturer=MANUFACTURER,
+            model=hm_central.model,
+            name=hm_central.instance_name,
+            sw_version=hm_central.version,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], info.central),
+            via_device=cast(tuple[str, str], hm_central.instance_name),
         )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        return self._hm_sysvar_entity.attributes
+        return {ATTR_NAME: self._hm_sysvar_entity.ccu_var_name}
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
