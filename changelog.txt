@@ -1,5 +1,8 @@
 Version 1.12.6 (2022-07-30)
 - Bump hahomematic to 2022.7.15
+  - Remove DeviceInfo
+  - Code Cleanup
+- Refactor DeviceInfo
 
 Version 1.12.5 (2022-07-28)
 - Bump hahomematic to 2022.7.14
