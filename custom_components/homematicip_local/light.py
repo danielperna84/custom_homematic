@@ -11,6 +11,8 @@ from hahomematic.devices.light import (
     HM_ARG_HS_COLOR,
     HM_ARG_RAMP_TIME,
     BaseHmLight,
+    CeDimmer,
+    CeIpFixedColorLight,
 )
 import voluptuous as vol
 
@@ -42,6 +44,10 @@ ATTR_RESTORE_COLOR_MODE = "color_mode"
 ATTR_RESTORE_BRIGHTNESS = "brightness"
 ATTR_RESTORE_COLOR_TEMP = "color_temp"
 ATTR_RESTORE_HS_COLOR = "hs_color"
+
+ATTR_COLOR_NAME = "color_name"
+ATTR_CHANNEL_COLOR = "channel_color"
+ATTR_CHANNEL_LEVEL = "channel_level"
 
 SERVICE_LIGHT_SET_ON_TIME = "light_set_on_time"
 
@@ -104,6 +110,19 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         if self._hm_entity.supports_brightness:
             return ColorMode.BRIGHTNESS
         return ColorMode.ONOFF
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if isinstance(self._hm_entity, CeDimmer):
+            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
+        if isinstance(self._hm_entity, CeIpFixedColorLight):
+            attributes[ATTR_COLOR_NAME] = self._hm_entity.color_name
+            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
+            attributes[ATTR_CHANNEL_COLOR] = self._hm_entity.channel_color_name
+
+        return attributes
 
     @property
     def supported_color_modes(self) -> set[ColorMode]:

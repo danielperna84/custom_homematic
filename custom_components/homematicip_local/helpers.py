@@ -9,6 +9,7 @@ from hahomematic.hub import HmHub
 
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
+
 from .const import IDENTIFIER_SEPARATOR
 
 # Union for entity types used as base class for entities

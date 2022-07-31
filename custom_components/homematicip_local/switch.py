@@ -17,7 +17,7 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import ATTR_CHANNEL_STATE, DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import (
     HaHomematicGenericRestoreEntity,
@@ -105,6 +105,14 @@ class HaHomematicSwitch(
     HaHomematicGenericRestoreEntity[Union[CeSwitch, HmSwitch]], SwitchEntity
 ):
     """Representation of the HomematicIP switch entity."""
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if isinstance(self._hm_entity, CeSwitch):
+            attributes[ATTR_CHANNEL_STATE] = self._hm_entity.channel_value
+        return attributes
 
     @property
     def is_on(self) -> bool | None:

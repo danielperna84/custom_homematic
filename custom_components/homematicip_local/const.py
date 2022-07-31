@@ -22,6 +22,16 @@ ATTR_RX_MODE = "rx_mode"
 ATTR_VALUE_TYPE = "value_type"
 ATTR_VALUE_STATE = "value_state"
 
+ATTR_NAME = "name"
+ATTR_INTERFACE_ID = "interface_id"
+ATTR_ADDRESS = "address"
+ATTR_MODEL = "model"
+ATTR_FUNCTION = "function"
+ATTR_PARAMETER = "parameter"
+ATTR_ENTITY_TYPE = "entity_type"
+ATTR_CHANNEL_STATE = "channel_state"
+
+
 CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
 CONF_SUBTYPE = "subtype"
@@ -48,6 +58,13 @@ class HmEntityState(StrEnum):
     RESTORED = "restored"
     UNCERTAIN = "uncertain"
     VALID = "valid"
+
+
+class HmEntityType(StrEnum):
+    """Enum with hahomematic entity types."""
+
+    GENERIC = "generic"
+    CUSTOM = "custom"
 
 
 def _get_hmip_local_platforms() -> list[str]:

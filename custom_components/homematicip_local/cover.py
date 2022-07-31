@@ -22,6 +22,8 @@ from .const import DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericRestoreEntity
 
+ATTR_CHANNEL_POSITION = "channel_position"
+ATTR_CHANNEL_TILT_POSITION = "channel_tilt_position"
 ATTR_RESTORE_CURRENT_POSITION = "current_position"
 ATTR_RESTORE_CURRENT_TILT_POSITION = "current_tilt_position"
 _LOGGER = logging.getLogger(__name__)
@@ -92,6 +94,14 @@ class HaHomematicBaseCover(
         return None
 
     @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if isinstance(self._hm_entity, CeCover):
+            attributes[ATTR_CHANNEL_POSITION] = self._hm_entity.channel_level * 100 if self._hm_entity.channel_level else 0
+        return attributes
+
+    @property
     def is_closed(self) -> bool | None:
         """Return if the cover is closed."""
         if self._hm_entity.is_valid:
@@ -145,6 +155,14 @@ class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
         if self.is_restored:
             return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TILT_POSITION)  # type: ignore[union-attr]
         return None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = super().extra_state_attributes
+        if channel_tilt_level := getattr(self._hm_entity, "channel_tilt_level"):
+            attributes[ATTR_CHANNEL_TILT_POSITION] = channel_tilt_level * 100
+        return attributes
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
         """Move the cover to a specific tilt position."""
