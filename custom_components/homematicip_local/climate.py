@@ -30,7 +30,7 @@ from homeassistant.components.climate.const import (
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNKNOWN, TEMP_CELSIUS
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, TEMP_CELSIUS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -207,7 +207,7 @@ class HaHomematicClimate(
                 return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
             return HVACMode.OFF
         if self.is_restored:
-            if (restored_hvac_mode := self._restored_state.state) != STATE_UNKNOWN:  # type: ignore[union-attr]
+            if (restored_hvac_mode := self._restored_state.state) not in (STATE_UNKNOWN, STATE_UNAVAILABLE):  # type: ignore[union-attr]
                 return HVACMode(value=restored_hvac_mode)
         return None
 

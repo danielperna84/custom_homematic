@@ -112,7 +112,10 @@ class HaHomematicSwitch(
         """Return the state attributes of the generic entity."""
         attributes = super().extra_state_attributes
         if isinstance(self._hm_entity, CeSwitch):
-            if self._hm_entity.value != self._hm_entity.channel_value:
+            if (
+                self._hm_entity.channel_value
+                and self._hm_entity.value != self._hm_entity.channel_value
+            ):
                 attributes[ATTR_CHANNEL_STATE] = self._hm_entity.channel_value
         return attributes
 
