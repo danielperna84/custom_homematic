@@ -19,7 +19,7 @@ from homeassistant.components.siren import (
     SirenEntityFeature,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_ON
+from homeassistant.const import STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -99,7 +99,11 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
         if self._hm_entity.is_valid:
             return self._hm_entity.is_on is True
         if self.is_restored:
-            return self._restored_state.state == STATE_ON  # type: ignore[union-attr]
+            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
+                return restored_state == STATE_ON
         return None
 
     @property

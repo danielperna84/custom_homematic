@@ -9,7 +9,7 @@ from hahomematic.platforms.binary_sensor import HmBinarySensor, HmSysvarBinarySe
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_ON
+from homeassistant.const import STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -98,7 +98,11 @@ class HaHomematicBinarySensor(
         if self._hm_entity.is_valid:
             return self._hm_entity.value
         if self.is_restored:
-            return self._restored_state.state == STATE_ON  # type: ignore[union-attr]
+            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
+                return restored_state == STATE_ON
         return self._hm_entity.default
 
 

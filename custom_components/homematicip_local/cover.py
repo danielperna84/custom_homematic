@@ -13,7 +13,7 @@ from homeassistant.components.cover import (
     CoverEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_CLOSED
+from homeassistant.const import STATE_CLOSED, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -97,7 +97,11 @@ class HaHomematicBaseCover(
         if self._hm_entity.is_valid:
             return self._hm_entity.is_closed
         if self.is_restored:
-            return self._restored_state.state == STATE_CLOSED  # type: ignore[union-attr]
+            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
+                return restored_state == STATE_CLOSED
         return None
 
     @property

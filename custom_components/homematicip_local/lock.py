@@ -9,6 +9,7 @@ from hahomematic.devices.lock import LOCK_STATE_LOCKED, BaseLock
 
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -65,7 +66,11 @@ class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
         if self._hm_entity.is_valid:
             return self._hm_entity.is_locked
         if self.is_restored:
-            return self._restored_state.state == LOCK_STATE_LOCKED  # type: ignore[union-attr]
+            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
+                return restored_state == LOCK_STATE_LOCKED
         return None
 
     @property

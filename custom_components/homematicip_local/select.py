@@ -9,6 +9,7 @@ from hahomematic.platforms.select import HmSelect, HmSysvarSelect
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
@@ -104,7 +105,11 @@ class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity)
         if self._hm_entity.is_valid:
             return self._hm_entity.value
         if self.is_restored:
-            return self._restored_state.state  # type: ignore[union-attr]
+            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
+                return restored_state
         return None
 
     async def async_select_option(self, option: str) -> None:
