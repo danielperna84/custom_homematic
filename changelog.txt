@@ -1,5 +1,5 @@
-Version 1.12.6 (2022-07-30)
-- Bump hahomematic to 2022.7.15
+Version 1.13.0 (2022-08-01)
+- Bump hahomematic to 2022.8.0
   - Remove device_info from model
   - Remove attributes from model
   - Code Cleanup
