@@ -351,5 +351,3 @@ class HaHomematicGenericSysvarEntity(
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         return {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
-
-

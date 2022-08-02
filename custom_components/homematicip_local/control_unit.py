@@ -46,11 +46,7 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
-from hahomematic.entity import (
-    BaseEntity,
-    CustomEntity,
-    GenericEntity,
-)
+from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
@@ -335,6 +331,13 @@ class ControlUnit(BaseControlUnit):
                 self.central.instance_name,
             )
             return []
+
+        for program_entity in self.central.hub.program_entities.values():
+            if (
+                program_entity.unique_id not in active_unique_ids
+                and program_entity.platform == platform
+            ):
+                hm_hub_entities.append(program_entity)
 
         for sysvar_entity in self.central.hub.syvar_entities.values():
             if (
@@ -720,6 +723,7 @@ class HaHub(Entity):
             self.name,
         )
         await self._hm_hub.fetch_sysvar_data()
+        await self._hm_hub.fetch_program_data()
 
     @property
     def state(self) -> Any | None:
