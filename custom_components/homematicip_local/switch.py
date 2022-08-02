@@ -155,12 +155,12 @@ class HaHomematicSysvarSwitch(
     @property
     def is_on(self) -> bool | None:
         """Return true if switch is on."""
-        return self._hm_sysvar_entity.value is True
+        return self._hm_hub_entity.value is True
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
-        await self._hm_sysvar_entity.send_variable(True)
+        await self._hm_hub_entity.send_variable(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
-        await self._hm_sysvar_entity.send_variable(False)
+        await self._hm_hub_entity.send_variable(False)

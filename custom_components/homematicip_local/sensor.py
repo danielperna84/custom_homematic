@@ -82,7 +82,7 @@ async def async_setup_entry(
     )
 
     async_add_hub_sensor(
-        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+        control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_SENSOR
         )
     )
@@ -174,4 +174,4 @@ class HaHomematicSysvarSensor(
     @property
     def native_value(self) -> Any:
         """Return the native value of the entity."""
-        return self._hm_sysvar_entity.value
+        return self._hm_hub_entity.value

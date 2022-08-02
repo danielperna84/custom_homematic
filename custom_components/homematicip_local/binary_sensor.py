@@ -81,7 +81,7 @@ async def async_setup_entry(
     )
 
     async_add_hub_binary_sensor(
-        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+        control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_BINARY_SENSOR
         )
     )
@@ -116,4 +116,4 @@ class HaHomematicSysvarBinarySensor(
     @property
     def is_on(self) -> bool | None:
         """Return the native value of the entity."""
-        return bool(self._hm_sysvar_entity.value)
+        return bool(self._hm_hub_entity.value)

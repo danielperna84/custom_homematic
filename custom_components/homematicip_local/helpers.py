@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TypeVar, Union
 
-from hahomematic.entity import CustomEntity, GenericEntity, GenericSystemVariable
+from hahomematic.entity import CustomEntity, GenericEntity, GenericHubEntity
 from hahomematic.hub import HmHub
 
 from homeassistant.components.number import NumberEntityDescription
@@ -15,13 +15,13 @@ from .const import IDENTIFIER_SEPARATOR
 # Union for entity types used as base class for entities
 HmBaseEntity = Union[CustomEntity, GenericEntity]
 # Union for entity types used as base class for sysvar entities
-HmBaseSysvarEntity = Union[HmHub, GenericSystemVariable]
+HmBaseHubEntity = Union[HmHub, GenericHubEntity]
 # Entities that support callbacks from backend
 HmCallbackEntity = (CustomEntity, GenericEntity)
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
-HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=HmBaseSysvarEntity)
+HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=HmBaseHubEntity)
 
 
 def get_device_address_from_identifiers(
