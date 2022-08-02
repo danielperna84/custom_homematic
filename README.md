@@ -288,7 +288,11 @@ Use 0 to reset the on time.
 
 ### `homematicip_local.update_entity`
 
-Update an entity's value (Only required for edge cases)
+Update an entity's value (Only required for edge cases). An entity can be updated at most every 60 seconds.
+
+This service is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this service, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices). 
+
+Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
 ## Additional information
 
