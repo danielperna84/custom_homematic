@@ -78,7 +78,7 @@ async def async_setup_entry(
     )
 
     async_add_hub_number(
-        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+        control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_NUMBER
         )
     )
@@ -173,10 +173,10 @@ class HaHomematicSysvarNumber(
     @property
     def native_value(self) -> float | None:
         """Return the current value."""
-        if self._hm_sysvar_entity.value:
-            return float(self._hm_sysvar_entity.value)
+        if self._hm_hub_entity.value:
+            return float(self._hm_hub_entity.value)
         return None
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        await self._hm_sysvar_entity.send_variable(value)
+        await self._hm_hub_entity.send_variable(value)

@@ -10,6 +10,7 @@ from hahomematic.entity import (
     CallbackEntity,
     CustomEntity,
     GenericEntity,
+    GenericHubEntity,
     GenericSystemVariable,
 )
 
@@ -235,33 +236,33 @@ class HaHomematicGenericRestoreEntity(
         self._restored_state = await self.async_get_last_state()
 
 
-class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
-    """Representation of the HomematicIP generic sysvar entity."""
+class HaHomematicGenericHubEntity(Entity):
+    """Representation of the HomematicIP generic hub entity."""
 
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_sysvar_entity: GenericSystemVariable,
+        hm_hub_entity: GenericHubEntity,
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._hm_sysvar_entity: GenericSystemVariable = hm_sysvar_entity
-        self._attr_should_poll = self._hm_sysvar_entity.should_poll
         self._attr_has_entity_name = True
-        self._attr_name = hm_sysvar_entity.name
-        self._attr_unique_id = hm_sysvar_entity.unique_id
+        self._attr_name = hm_hub_entity.name
+        self._attr_unique_id = hm_hub_entity.unique_id
         self._attr_entity_registry_enabled_default = False
+        self._attr_should_poll = hm_hub_entity.should_poll
+        self._hm_hub_entity = hm_hub_entity
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._hm_sysvar_entity.available
+        return self._hm_hub_entity.available
 
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        hm_central = self._hm_sysvar_entity.central
+        hm_central = self._cu.central
         return DeviceInfo(
             identifiers={
                 (
@@ -277,26 +278,33 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
             via_device=cast(tuple[str, str], hm_central.instance_name),
         )
 
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic entity."""
-        return {ATTR_NAME: self._hm_sysvar_entity.ccu_var_name}
-
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
-        if isinstance(self._hm_sysvar_entity, CallbackEntity):
-            self._hm_sysvar_entity.register_update_callback(
-                update_callback=self._async_sysvar_changed
+        if isinstance(self._hm_hub_entity, CallbackEntity):
+            self._hm_hub_entity.register_update_callback(
+                update_callback=self._async_hub_entity_changed
             )
-            self._hm_sysvar_entity.register_remove_callback(
-                remove_callback=self._async_sysvar_removed
+            self._hm_hub_entity.register_remove_callback(
+                remove_callback=self._async_hub_entity_removed
             )
-        self._cu.async_add_hm_sysvar_entity(
-            entity_id=self.entity_id, hm_sysvar_entity=self._hm_sysvar_entity
+        self._cu.async_add_hm_hub_entity(
+            entity_id=self.entity_id, hm_hub_entity=self._hm_hub_entity
+        )
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Run when hmip sysvar entity will be removed from hass."""
+        self._cu.async_remove_hm_hub_entity(self.entity_id)
+
+        # Remove callbacks.
+        self._hm_hub_entity.unregister_update_callback(
+            update_callback=self._async_hub_entity_changed
+        )
+        self._hm_hub_entity.unregister_remove_callback(
+            remove_callback=self._async_hub_entity_removed
         )
 
     @callback
-    def _async_sysvar_changed(self, *args: Any, **kwargs: Any) -> None:
+    def _async_hub_entity_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:
@@ -308,20 +316,8 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
                 self.name,
             )
 
-    async def async_will_remove_from_hass(self) -> None:
-        """Run when hmip sysvar entity will be removed from hass."""
-        self._cu.async_remove_hm_sysvar_entity(self.entity_id)
-
-        # Remove callbacks.
-        self._hm_sysvar_entity.unregister_update_callback(
-            update_callback=self._async_sysvar_changed
-        )
-        self._hm_sysvar_entity.unregister_remove_callback(
-            remove_callback=self._async_sysvar_removed
-        )
-
     @callback
-    def _async_sysvar_removed(self, *args: Any, **kwargs: Any) -> None:
+    def _async_hub_entity_removed(self, *args: Any, **kwargs: Any) -> None:
         """Handle hm sysvar entity removal."""
         self.hass.async_create_task(self.async_remove(force_remove=True))
 
@@ -332,3 +328,28 @@ class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], Entity):
             entity_registry = er.async_get(self.hass)
             if entity_id in entity_registry.entities:
                 entity_registry.async_remove(entity_id)
+
+
+class HaHomematicGenericSysvarEntity(
+    Generic[HmGenericSysvarEntity], HaHomematicGenericHubEntity
+):
+    """Representation of the HomematicIP generic sysvar entity."""
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_sysvar_entity: GenericSystemVariable,
+    ) -> None:
+        """Initialize the generic entity."""
+        super().__init__(
+            control_unit=control_unit,
+            hm_hub_entity=hm_sysvar_entity,
+        )
+        self._hm_hub_entity: GenericSystemVariable = hm_sysvar_entity
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        return {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
+
+

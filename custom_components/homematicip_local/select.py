@@ -81,7 +81,7 @@ async def async_setup_entry(
     )
 
     async_add_hub_select(
-        control_unit.async_get_new_hm_sysvar_entities_by_platform(
+        control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_SELECT
         )
     )
@@ -127,15 +127,15 @@ class HaHomematicSysvarSelect(
     @property
     def options(self) -> list[str]:
         """Return the options."""
-        if options := self._hm_sysvar_entity.value_list:
+        if options := self._hm_hub_entity.value_list:
             return options
         return []
 
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
-        return self._hm_sysvar_entity.value
+        return self._hm_hub_entity.value
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""
-        await self._hm_sysvar_entity.send_variable(option)
+        await self._hm_hub_entity.send_variable(option)
