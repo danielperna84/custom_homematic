@@ -1,5 +1,5 @@
 Version 1.13.1 (2022-08-02)
-- Bump hahomematic to 2022.8.1
+- Bump hahomematic to 2022.8.2
   - Code cleanup
   - Add program buttons
 - Add Service to update a single entity's value (only required for edge cases). See README.
