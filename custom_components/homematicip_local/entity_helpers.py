@@ -545,14 +545,13 @@ _ENTITY_DESCRIPTION_DEVICE_PARAM: dict[
 }
 
 _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
-    HmPlatform.BINARY_SENSOR: None,
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
     ),
-    HmPlatform.COVER: None,
-    HmPlatform.SENSOR: None,
+    HmPlatform.NUMBER: HmNumberEntityDescription(key="number_default"),
+    HmPlatform.SENSOR: HmSensorEntityDescription(key="sensor_default"),
     HmPlatform.SWITCH: SwitchEntityDescription(
         key="switch_default",
         device_class=SwitchDeviceClass.SWITCH,
@@ -560,7 +559,7 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
 }
 
 
-def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | None:
+def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     """Get the entity_description for platform."""
     entity_description: EntityDescription | None = None
     if isinstance(hm_entity, GenericEntity):
@@ -606,12 +605,15 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription | No
             if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit):
                 entity_description = entity_desc
 
-    if entity_description:
-        return entity_description
+    if entity_description is None and hasattr(hm_entity, "platform"):
+        entity_description = _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
 
-    if hasattr(hm_entity, "platform"):
-        return _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
-    return None
+    if entity_description is None:
+        entity_description = EntityDescription(key="default")
+
+    if entity_description.name is None:
+        entity_description.name = hm_entity.name
+    return entity_description
 
 
 def _get_entity_description_by_device_type_and_param(
