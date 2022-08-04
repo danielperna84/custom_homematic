@@ -325,7 +325,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
+_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], HmSensorEntityDescription
 ] = {
     (
@@ -444,7 +444,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
+_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], BinarySensorEntityDescription
 ] = {
     (frozenset({"SCI", "FCI1", "FCI16"}), "STATE"): BinarySensorEntityDescription(
@@ -518,7 +518,7 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescriptio
 
 _SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], SwitchEntityDescription] = {}
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM: dict[
+_SWITCH_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], SwitchEntityDescription
 ] = {}
 
@@ -535,13 +535,13 @@ _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_DEVICE_PARAM: dict[
+_ENTITY_DESCRIPTION_DEVICE_AND_PARAM: dict[
     HmPlatform, dict[tuple[str | frozenset[str], str], Any]
 ] = {
-    HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM,
-    HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_PARAM,
-    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_PARAM,
+    HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
 }
 
 _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
@@ -623,11 +623,11 @@ def _get_entity_description_by_device_type_and_param(
     do_wildcard_search: bool = True,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
-    if platform_device_param_descriptions := _ENTITY_DESCRIPTION_DEVICE_PARAM.get(
+    if platform_DEVICE_AND_PARAM_descriptions := _ENTITY_DESCRIPTION_DEVICE_AND_PARAM.get(
         platform
     ):
         entity_description: EntityDescription | None = None
-        for data, entity_desc in platform_device_param_descriptions.items():
+        for data, entity_desc in platform_DEVICE_AND_PARAM_descriptions.items():
             if (
                 _device_in_list(
                     devices=data[0],
