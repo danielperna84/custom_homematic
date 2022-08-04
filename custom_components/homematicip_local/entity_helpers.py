@@ -61,7 +61,7 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescript
     ),
 }
 
-_NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM: dict[
+_NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], HmNumberEntityDescription
 ] = {
     (
@@ -514,22 +514,22 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescriptio
     ),
 }
 
-_ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
+_ENTITY_DESCRIPTION_BY_DEVICE: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
+_ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_DEVICE_AND_PARAM: dict[
+_ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
     HmPlatform, dict[tuple[str | frozenset[str], str], Any]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
-    HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM,
+    HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
 }
 
@@ -604,7 +604,7 @@ def _get_entity_description_by_device_type_and_param(
     do_wildcard_search: bool = True,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
-    if platform_DEVICE_AND_PARAM_descriptions := _ENTITY_DESCRIPTION_DEVICE_AND_PARAM.get(
+    if platform_DEVICE_AND_PARAM_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(
         hm_entity.platform
     ):
         entity_description: EntityDescription | None = None
@@ -628,7 +628,7 @@ def _get_entity_description_by_param(
     hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
-    if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(hm_entity.platform):
+    if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):
         entity_description: EntityDescription | None = None
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
@@ -643,7 +643,7 @@ def _get_entity_description_by_device_type(
     hm_entity: HmGenericEntity, do_wildcard_search: bool = True
 ) -> EntityDescription | None:
     """Get entity_description by device_type"""
-    if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(hm_entity.platform):
+    if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(hm_entity.platform):
         entity_description: EntityDescription | None = None
         for devices, entity_desc in platform_device_descriptions.items():
             if _device_in_list(
