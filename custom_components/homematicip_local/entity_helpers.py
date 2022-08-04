@@ -564,38 +564,32 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     entity_description: EntityDescription | None = None
     if isinstance(hm_entity, GenericEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(
-            platform=hm_entity.platform,
-            device_type=hm_entity.device_type,
-            parameter=hm_entity.parameter,
+            hm_entity=hm_entity,
         ):
             entity_description = entity_desc
 
         if entity_description is None and hm_entity.sub_type:
             if entity_desc := _get_entity_description_by_device_type_and_param(
-                platform=hm_entity.platform,
-                device_type=hm_entity.sub_type,
-                parameter=hm_entity.parameter,
+                hm_entity=hm_entity,
                 do_wildcard_search=False,
             ):
                 entity_description = entity_desc
 
         if entity_description is None:
             if entity_desc := _get_entity_description_by_param(
-                platform=hm_entity.platform,
-                parameter=hm_entity.parameter,
+                hm_entity=hm_entity,
             ):
                 entity_description = entity_desc
 
     elif isinstance(hm_entity, CustomEntity):
         if entity_desc := _get_entity_description_by_device_type(
-            platform=hm_entity.platform, device_type=hm_entity.device_type
+            hm_entity=hm_entity
         ):
             entity_description = entity_desc
 
         if entity_description is None and hm_entity.sub_type:
             if entity_desc := _get_entity_description_by_device_type(
-                platform=hm_entity.platform,
-                device_type=hm_entity.sub_type,
+                hm_entity=hm_entity,
                 do_wildcard_search=False,
             ):
                 entity_description = entity_desc
@@ -617,24 +611,22 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
 
 
 def _get_entity_description_by_device_type_and_param(
-    platform: HmPlatform,
-    device_type: str,
-    parameter: str,
+    hm_entity: HmGenericEntity,
     do_wildcard_search: bool = True,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
     if platform_DEVICE_AND_PARAM_descriptions := _ENTITY_DESCRIPTION_DEVICE_AND_PARAM.get(
-        platform
+        hm_entity.platform
     ):
         entity_description: EntityDescription | None = None
         for data, entity_desc in platform_DEVICE_AND_PARAM_descriptions.items():
             if (
                 _device_in_list(
                     devices=data[0],
-                    device_type=device_type,
+                    device_type=hm_entity.device_type,
                     do_wildcard_search=do_wildcard_search,
                 )
-                and data[1] == parameter
+                and data[1] == hm_entity.parameter
             ):
                 entity_description = entity_desc
                 break
@@ -644,14 +636,13 @@ def _get_entity_description_by_device_type_and_param(
 
 
 def _get_entity_description_by_param(
-    platform: HmPlatform,
-    parameter: str,
+    hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
-    if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(platform):
+    if platform_param_descriptions := _ENTITY_DESCRIPTION_PARAM.get(hm_entity.platform):
         entity_description: EntityDescription | None = None
         for params, entity_desc in platform_param_descriptions.items():
-            if _param_in_list(params=params, parameter=parameter):
+            if _param_in_list(params=params, parameter=hm_entity.parameter):
                 entity_description = entity_desc
                 break
 
@@ -660,15 +651,15 @@ def _get_entity_description_by_param(
 
 
 def _get_entity_description_by_device_type(
-    platform: HmPlatform, device_type: str, do_wildcard_search: bool = True
+    hm_entity: HmGenericEntity, do_wildcard_search: bool = True
 ) -> EntityDescription | None:
     """Get entity_description by device_type"""
-    if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(platform):
+    if platform_device_descriptions := _ENTITY_DESCRIPTION_DEVICE.get(hm_entity.platform):
         entity_description: EntityDescription | None = None
         for devices, entity_desc in platform_device_descriptions.items():
             if _device_in_list(
                 devices=devices,
-                device_type=device_type,
+                device_type=hm_entity.device_type,
                 do_wildcard_search=do_wildcard_search,
             ):
                 entity_description = entity_desc
