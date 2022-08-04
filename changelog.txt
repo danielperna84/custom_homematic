@@ -1,3 +1,6 @@
+Version 1.13.2 (2022-08-05)
+- Refactor entity_description handling
+
 Version 1.13.1 (2022-08-02)
 - Bump hahomematic to 2022.8.2
   - Code cleanup
