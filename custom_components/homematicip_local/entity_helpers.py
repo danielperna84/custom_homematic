@@ -50,8 +50,6 @@ PARTICLESIZE = "\u00b5m"
 VAPOR_CONCENTRATION = "g/m³"
 
 
-_BUTTON_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], ButtonEntityDescription] = {}
-
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
@@ -516,20 +514,12 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescriptio
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], SwitchEntityDescription] = {}
-
-_SWITCH_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], SwitchEntityDescription
-] = {}
-
 _ENTITY_DESCRIPTION_DEVICE: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
-    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
 _ENTITY_DESCRIPTION_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
-    HmPlatform.BUTTON: _BUTTON_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
@@ -541,7 +531,6 @@ _ENTITY_DESCRIPTION_DEVICE_AND_PARAM: dict[
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_DEVICE_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
-    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
 }
 
 _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
