@@ -56,11 +56,13 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._attr_should_poll = self._hm_entity.should_poll
         self._attr_has_entity_name = True
         self._attr_unique_id = hm_entity.unique_id
-        self.entity_description = get_entity_description(self._hm_entity)
+        self.entity_description = get_entity_description(hm_entity=hm_entity)
         if (
             entity_registry_enabled_default := self._get_entity_registry_enabled_default()
         ) is not None:
             self._attr_entity_registry_enabled_default = entity_registry_enabled_default
+        if self.entity_description.name is None:
+            self._attr_name = hm_entity.name
         _LOGGER.debug("init: Setting up %s", hm_entity.entity_name_data.full_name)
 
     @property

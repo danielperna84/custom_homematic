@@ -389,6 +389,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
     ),
     frozenset({"DUTYCYCLE", "DUTY_CYCLE"}): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
+        name="Duty Cycle",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
@@ -399,6 +400,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
     ),
     frozenset({"LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"}): BinarySensorEntityDescription(
         key="LOW_BAT",
+        name="Low Battery",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -592,8 +594,6 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     if entity_description is None:
         entity_description = EntityDescription(key="default")
 
-    if entity_description.name is None:
-        entity_description.name = hm_entity.name
     return entity_description
 
 
