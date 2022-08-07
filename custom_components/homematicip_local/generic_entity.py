@@ -5,7 +5,11 @@ from datetime import timedelta
 import logging
 from typing import Any, Generic, cast
 
-from hahomematic.const import HmCallSource, HmEntityUsage
+from hahomematic.const import (
+    PARAMSET_KEY_MASTER,
+    HmCallSource,
+    HmEntityUsage,
+)
 from hahomematic.entity import (
     CallbackEntity,
     CustomEntity,
@@ -53,7 +57,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmGenericEntity = hm_entity
-        self._attr_should_poll = self._hm_entity.should_poll
+        self._attr_should_poll = (
+            isinstance(self._hm_entity, GenericEntity)
+            and self._hm_entity.paramset_key == PARAMSET_KEY_MASTER
+        )
         self._attr_has_entity_name = True
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
         self.entity_description = get_entity_description(hm_entity=hm_entity)
@@ -250,7 +257,7 @@ class HaHomematicGenericHubEntity(Entity):
         self._attr_name = hm_hub_entity.name
         self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         self._attr_entity_registry_enabled_default = False
-        self._attr_should_poll = hm_hub_entity.should_poll
+        self._attr_should_poll = False
         self._hm_hub_entity = hm_hub_entity
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
