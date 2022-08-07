@@ -157,7 +157,6 @@ class BaseControlUnit:
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
         return await CentralConfig(
-            domain=DOMAIN,
             name=self._instance_name,
             loop=self._hass.loop,
             xml_rpc_server=xml_rpc_server,
@@ -279,7 +278,7 @@ class ControlUnit(BaseControlUnit):
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """Return all hm-entities."""
         active_unique_ids = [
-            entity.unique_id for entity in self._active_hm_entities.values()
+            entity.unique_identifier for entity in self._active_hm_entities.values()
         ]
         # init dict
         hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
@@ -289,7 +288,7 @@ class ControlUnit(BaseControlUnit):
         for entity in new_entities:
             if (
                 entity.usage != HmEntityUsage.ENTITY_NO_CREATE
-                and entity.unique_id not in active_unique_ids
+                and entity.unique_identifier not in active_unique_ids
                 and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
@@ -302,7 +301,7 @@ class ControlUnit(BaseControlUnit):
     ) -> dict[HmPlatform, list[HmBaseHubEntity]]:
         """Return all hm-hub-entities."""
         active_unique_ids = [
-            entity.unique_id for entity in self._active_hm_hub_entities.values()
+            entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
         # init dict
         hm_hub_entities: dict[HmPlatform, list[HmBaseHubEntity]] = {}
@@ -310,7 +309,7 @@ class ControlUnit(BaseControlUnit):
             hm_hub_entities[hm_hub_platform] = []
 
         for hub_entity in new_hub_entities:
-            if hub_entity.unique_id not in active_unique_ids:
+            if hub_entity.unique_identifier not in active_unique_ids:
                 hm_hub_entities[hub_entity.platform].append(hub_entity)
 
         return hm_hub_entities
@@ -321,7 +320,7 @@ class ControlUnit(BaseControlUnit):
     ) -> list[HmBaseHubEntity]:
         """Return all new hm-hub-entities by platform."""
         active_unique_ids = [
-            entity.unique_id for entity in self._active_hm_hub_entities.values()
+            entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
 
         hm_hub_entities: list[HmBaseHubEntity] = []
@@ -334,14 +333,14 @@ class ControlUnit(BaseControlUnit):
 
         for program_entity in self.central.hub.program_entities.values():
             if (
-                program_entity.unique_id not in active_unique_ids
+                program_entity.unique_identifier not in active_unique_ids
                 and program_entity.platform == platform
             ):
                 hm_hub_entities.append(program_entity)
 
         for sysvar_entity in self.central.hub.syvar_entities.values():
             if (
-                sysvar_entity.unique_id not in active_unique_ids
+                sysvar_entity.unique_identifier not in active_unique_ids
                 and sysvar_entity.platform == platform
             ):
                 hm_hub_entities.append(sysvar_entity)
@@ -354,14 +353,14 @@ class ControlUnit(BaseControlUnit):
     ) -> list[BaseEntity]:
         """Return all new hm-entities by platform."""
         active_unique_ids = [
-            entity.unique_id for entity in self._active_hm_entities.values()
+            entity.unique_identifier for entity in self._active_hm_entities.values()
         ]
 
         hm_entities: list[BaseEntity] = []
         for entity in self.central.hm_entities.values():
             if (
                 entity.usage != HmEntityUsage.ENTITY_NO_CREATE
-                and entity.unique_id not in active_unique_ids
+                and entity.unique_identifier not in active_unique_ids
                 and entity.platform == platform
             ):
                 hm_entities.append(entity)

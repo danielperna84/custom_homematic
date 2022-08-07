@@ -1,6 +1,10 @@
-Version 1.13.3 (2022-08-06)
+Version 1.13.3 (2022-08-07)
 - Bump hahomematic to 2022.8.3
+  - Rename HM unique_id to unique_identifier
+  - Remove domain from model
+  - Remove should_poll from model
 - Refactor entity_description handling
+- Specify should_poll in CC
 
 Version 1.13.2 (2022-08-05)
 - Refactor entity_description handling
