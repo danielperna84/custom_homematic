@@ -1,4 +1,6 @@
 Version 1.13.3 (2022-08-08)
+- Bump hahomematic to 2022.8.4
+  - Add platform as field and remove obsolete constructors
 
 Version 1.13.2 (2022-08-07)
 - Bump hahomematic to 2022.8.3
