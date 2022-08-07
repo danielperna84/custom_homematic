@@ -55,7 +55,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._hm_entity: HmGenericEntity = hm_entity
         self._attr_should_poll = self._hm_entity.should_poll
         self._attr_has_entity_name = True
-        self._attr_unique_id = hm_entity.unique_id
+        self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
         self.entity_description = get_entity_description(hm_entity=hm_entity)
         if (
             entity_registry_enabled_default := self._get_entity_registry_enabled_default()
@@ -248,7 +248,7 @@ class HaHomematicGenericHubEntity(Entity):
         self._cu: ControlUnit = control_unit
         self._attr_has_entity_name = True
         self._attr_name = hm_hub_entity.name
-        self._attr_unique_id = hm_hub_entity.unique_id
+        self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         self._attr_entity_registry_enabled_default = False
         self._attr_should_poll = hm_hub_entity.should_poll
         self._hm_hub_entity = hm_hub_entity
