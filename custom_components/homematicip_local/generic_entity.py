@@ -91,7 +91,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             sw_version=hm_device.firmware,
             suggested_area=hm_device.room,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_device.central.instance_name),
+            via_device=cast(tuple[str, str], hm_device.central.name),
         )
 
     @property
@@ -100,7 +100,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         attributes: dict[str, Any] = {
             ATTR_INTERFACE_ID: self._hm_entity.device.interface_id,
             ATTR_ADDRESS: self._hm_entity.channel_address,
-            ATTR_MODEL: self._hm_entity.device_type,
+            ATTR_MODEL: self._hm_entity.device.device_type,
         }
         if isinstance(self._hm_entity, GenericEntity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value
@@ -272,15 +272,15 @@ class HaHomematicGenericHubEntity(Entity):
             identifiers={
                 (
                     DOMAIN,
-                    hm_central.instance_name,
+                    hm_central.name,
                 )
             },
             manufacturer=MANUFACTURER,
             model=hm_central.model,
-            name=hm_central.instance_name,
+            name=hm_central.name,
             sw_version=hm_central.version,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_central.instance_name),
+            via_device=cast(tuple[str, str], hm_central.name),
         )
 
     async def async_added_to_hass(self) -> None:

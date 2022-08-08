@@ -221,14 +221,14 @@ class ControlUnit(BaseControlUnit):
             identifiers={
                 (
                     DOMAIN,
-                    self.central.instance_name,
+                    self.central.name,
                 )
             },
             manufacturer=MANUFACTURER,
             model="CU",
-            name=self.central.instance_name,
+            name=self.central.name,
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=self.central.central_url,
+            configuration_url=self.central.config.central_url,
         )
 
     @callback
@@ -264,7 +264,7 @@ class ControlUnit(BaseControlUnit):
                     model=virtual_remote.device_type,
                     sw_version=virtual_remote.firmware,
                     # Link to the homematic control unit.
-                    via_device=cast(tuple[str, str], self._central.instance_name),
+                    via_device=cast(tuple[str, str], self._central.name),
                 )
 
     @callback
@@ -327,7 +327,7 @@ class ControlUnit(BaseControlUnit):
         if not self.central.hub:
             _LOGGER.debug(
                 "async_get_new_hm_sysvar_entities_by_platform: central.hub is not ready for %s",
-                self.central.instance_name,
+                self.central.name,
             )
             return []
 
@@ -597,7 +597,7 @@ class ControlUnit(BaseControlUnit):
             counter = platform_stats[platform]
             platform_stats[platform] = counter + 1
             if isinstance(entity, (CustomEntity, GenericEntity)):
-                device_types.append(entity.device_type)
+                device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
 
     def _get_active_entities_by_device_address(
@@ -608,7 +608,7 @@ class ControlUnit(BaseControlUnit):
         for entity in self._active_hm_entities.values():
             if (
                 isinstance(entity, HmCallbackEntity)
-                and device_address == entity.device_address
+                and device_address == entity.device.device_address
             ):
                 entities.append(entity)
         return entities
@@ -693,7 +693,7 @@ class HaHub(Entity):
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
-        self._attr_name: str = self._control.central.instance_name
+        self._attr_name: str = self._control.central.name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
         self.remove_listener: Callable = async_track_time_interval(
