@@ -4,6 +4,7 @@ Version 1.13.4 (2022-08-09)
 Version 1.13.3 (2022-08-08)
 - Bump hahomematic to 2022.8.4
   - Add platform as field and remove obsolete constructors
+- Add service set_device_value_raw
 
 Version 1.13.2 (2022-08-07)
 - Bump hahomematic to 2022.8.3
@@ -115,7 +116,6 @@ Version 1.9.0 (2022-06-29)
   - Add button to virtual remote
   - Remove HmIPW-FIO6 from custom device handling
 - Remove dummies for unit_of_measurement
-- Add service set_device_value_raw
 
 Version 1.8.6 (2022-06-07)
 - Bump hahomematic to 1.8.6
