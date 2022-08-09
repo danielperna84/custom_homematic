@@ -28,6 +28,7 @@ from homeassistant.const import (
     LIGHT_LUX,
     PERCENTAGE,
     POWER_WATT,
+    PRESSURE_BAR,
     PRESSURE_HPA,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     SPEED_KILOMETERS_PER_HOUR,
@@ -362,6 +363,18 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 }
 
 _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, HmSensorEntityDescription] = {
+    PERCENTAGE: HmSensorEntityDescription(
+        key="HUMIDITY",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    PRESSURE_BAR: HmSensorEntityDescription(
+        key="PRESSURE_BAR",
+        native_unit_of_measurement=PRESSURE_BAR,
+        device_class=SensorDeviceClass.PRESSURE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     TEMP_CELSIUS: HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=TEMP_CELSIUS,
