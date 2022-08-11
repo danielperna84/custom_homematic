@@ -1,3 +1,6 @@
+Version 1.13.7 (2022-08-11)
+- Cleanup entity_helper
+
 Version 1.13.6 (2022-08-11)
 - Fix entity_helper after #286
 
