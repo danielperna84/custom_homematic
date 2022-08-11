@@ -572,13 +572,6 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
         ):
             entity_description = entity_desc
 
-        if entity_description is None and hm_entity.device.sub_type:
-            if entity_desc := _get_entity_description_by_device_type_and_param(
-                hm_entity=hm_entity,
-                do_wildcard_search=False,
-            ):
-                entity_description = entity_desc
-
         if entity_description is None:
             if entity_desc := _get_entity_description_by_param(
                 hm_entity=hm_entity,
@@ -588,13 +581,6 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     elif isinstance(hm_entity, CustomEntity):
         if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
             entity_description = entity_desc
-
-        if entity_description is None and hm_entity.device.sub_type:
-            if entity_desc := _get_entity_description_by_device_type(
-                hm_entity=hm_entity,
-                do_wildcard_search=False,
-            ):
-                entity_description = entity_desc
 
     if entity_description is None and isinstance(hm_entity, GenericEntity):
         if hm_entity.platform == HmPlatform.SENSOR and hm_entity.unit is not None:
@@ -620,13 +606,20 @@ def _get_entity_description_by_device_type_and_param(
     ):
         entity_description: EntityDescription | None = None
         for data, entity_desc in platform_device_and_param_descriptions.items():
-            if (
+            if data[1] == hm_entity.parameter and (
                 _device_in_list(
                     devices=data[0],
                     device_type=hm_entity.device.device_type,
                     do_wildcard_search=do_wildcard_search,
                 )
-                and data[1] == hm_entity.parameter
+                or (
+                    hm_entity.device.sub_type
+                    and _device_in_list(
+                        devices=data[0],
+                        device_type=hm_entity.device.sub_type,
+                        do_wildcard_search=False,
+                    )
+                )
             ):
                 entity_description = entity_desc
                 break
@@ -665,6 +658,13 @@ def _get_entity_description_by_device_type(
                 devices=devices,
                 device_type=hm_entity.device.device_type,
                 do_wildcard_search=do_wildcard_search,
+            ) or (
+                hm_entity.device.sub_type
+                and _device_in_list(
+                    devices=devices,
+                    device_type=hm_entity.device.sub_type,
+                    do_wildcard_search=False,
+                )
             ):
                 entity_description = entity_desc
                 break
