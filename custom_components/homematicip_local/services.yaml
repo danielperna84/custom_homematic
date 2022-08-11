@@ -83,9 +83,9 @@ set_device_value:
           max: 99
     parameter:
       name: Parameter
-      description: Event to send i.e. PRESS_LONG, PRESS_SHORT
+      description: Parameter to send i.e STATE
       required: true
-      example: PRESS_LONG
+      example: STATE
       selector:
         text:
     value:
@@ -133,9 +133,9 @@ set_device_value_raw:
         text:
     parameter:
       name: Parameter
-      description: Event to send i.e. PRESS_LONG, PRESS_SHORT
+      description: Parameter to send i.e STATE
       required: true
-      example: PRESS_LONG
+      example: STATE
       selector:
         text:
     value:
