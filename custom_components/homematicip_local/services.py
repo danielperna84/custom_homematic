@@ -310,22 +310,8 @@ async def _async_service_set_device_value(
     channel = service.data[ATTR_CHANNEL]
     parameter = service.data[ATTR_PARAMETER]
     value = service.data[ATTR_VALUE]
+    value_type = service.data.get(ATTR_VALUE_TYPE)
     rx_mode = service.data.get(ATTR_RX_MODE)
-
-    # Convert value into correct XML-RPC Type.
-    # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
-    if value_type := service.data.get(ATTR_VALUE_TYPE):
-        if value_type == "int":
-            value = int(value)
-        elif value_type == "double":
-            value = float(value)
-        elif value_type == "boolean":
-            value = bool(value)
-        elif value_type == "dateTime.iso8601":
-            value = datetime.strptime(value, "%Y%m%dT%H:%M:%S")
-        else:
-            # Default is 'string'
-            value = str(value)
 
     if (
         address_data := _get_interface_address(
@@ -343,6 +329,7 @@ async def _async_service_set_device_value(
         channel_address=channel_address,
         parameter=parameter,
         value=value,
+        value_type=value_type,
         rx_mode=rx_mode,
     )
 
@@ -355,11 +342,33 @@ async def _async_service_set_device_value_raw(
     channel_address = service.data[ATTR_ADDRESS]
     parameter = service.data[ATTR_PARAMETER]
     value = service.data[ATTR_VALUE]
+    value_type = service.data.get(ATTR_VALUE_TYPE)
     rx_mode = service.data.get(ATTR_RX_MODE)
 
-    # Convert value into correct XML-RPC Type.
-    # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
-    if value_type := service.data.get(ATTR_VALUE_TYPE):
+    await _call_set_device_value(
+        hass=hass,
+        interface_id=interface_id,
+        channel_address=channel_address,
+        parameter=parameter,
+        value=value,
+        value_type=value_type,
+        rx_mode=rx_mode,
+    )
+
+
+async def _call_set_device_value(
+    hass: HomeAssistant,
+    interface_id: str,
+    channel_address: str,
+    parameter: str,
+    value: Any,
+    value_type: str | None,
+    rx_mode: str | None = None,
+) -> None:
+    """Call the set_value on the backend."""
+    if value_type:
+        # Convert value into correct XML-RPC Type.
+        # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
         if value_type == "int":
             value = int(value)
         elif value_type == "double":
@@ -371,25 +380,6 @@ async def _async_service_set_device_value_raw(
         else:
             # Default is 'string'
             value = str(value)
-
-        await _call_set_device_value(
-            hass=hass,
-            interface_id=interface_id,
-            channel_address=channel_address,
-            parameter=parameter,
-            value=value,
-            rx_mode=rx_mode,
-        )
-
-
-async def _call_set_device_value(
-    hass: HomeAssistant,
-    interface_id: str,
-    channel_address: str,
-    parameter: str,
-    value: Any,
-    rx_mode: str | None = None,
-) -> None:
 
     _LOGGER.debug(
         "Calling setValue: %s, %s, %s, %s, %s",
