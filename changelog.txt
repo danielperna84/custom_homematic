@@ -1,3 +1,7 @@
+Version 1.14.0 (2022-08-08)
+- Bump hahomematic to 2022.8.5
+  - Add cache for rega script files
+
 Version 1.13.7 (2022-08-11)
 - Cleanup entity_helper
 
