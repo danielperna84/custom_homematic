@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
+from typing import Any
 
 from hahomematic.const import (
     ATTR_ADDRESS,
@@ -48,6 +49,7 @@ SERVICE_DELETE_DEVICE = "delete_device"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
+SERVICE_SET_DEVICE_VALUE_RAW = "set_device_value_raw"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_UPDATE_ENTITY = "update_entity"
@@ -58,6 +60,7 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
+    SERVICE_SET_DEVICE_VALUE_RAW,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_UPDATE_ENTITY,
@@ -111,6 +114,19 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.Schema(
     }
 )
 
+SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW = vol.Schema(
+    {
+        vol.Required(ATTR_INTERFACE_ID): cv.string,
+        vol.Required(ATTR_ADDRESS): cv.string,
+        vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
+        vol.Required(ATTR_VALUE): cv.match_all,
+        vol.Optional(ATTR_VALUE_TYPE): vol.In(
+            ["boolean", "dateTime.iso8601", "double", "int", "string"]
+        ),
+        vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
+    }
+)
+
 SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
     {
         vol.Required(ATTR_DEVICE_ID): cv.string,
@@ -148,6 +164,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_install_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_DEVICE_VALUE:
             await _async_service_set_device_value(hass=hass, service=service)
+        elif service_name == SERVICE_SET_DEVICE_VALUE_RAW:
+            await _async_service_set_device_value_raw(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
         elif service_name == SERVICE_UPDATE_ENTITY:
@@ -189,6 +207,13 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_SET_DEVICE_VALUE,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_SET_DEVICE_VALUE_RAW,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW,
     )
 
     async_register_admin_service(
@@ -312,13 +337,66 @@ async def _async_service_set_device_value(
     interface_id: str = address_data[0]
     channel_address: str = address_data[1]
 
+    await _call_set_device_value(
+        hass=hass,
+        interface_id=interface_id,
+        channel_address=channel_address,
+        parameter=parameter,
+        value=value,
+        rx_mode=rx_mode,
+    )
+
+
+async def _async_service_set_device_value_raw(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to call setValue method for HomeMatic devices."""
+    interface_id = service.data[ATTR_INTERFACE_ID]
+    channel_address = service.data[ATTR_ADDRESS]
+    parameter = service.data[ATTR_PARAMETER]
+    value = service.data[ATTR_VALUE]
+    rx_mode = service.data.get(ATTR_RX_MODE)
+
+    # Convert value into correct XML-RPC Type.
+    # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
+    if value_type := service.data.get(ATTR_VALUE_TYPE):
+        if value_type == "int":
+            value = int(value)
+        elif value_type == "double":
+            value = float(value)
+        elif value_type == "boolean":
+            value = bool(value)
+        elif value_type == "dateTime.iso8601":
+            value = datetime.strptime(value, "%Y%m%dT%H:%M:%S")
+        else:
+            # Default is 'string'
+            value = str(value)
+
+        await _call_set_device_value(
+            hass=hass,
+            interface_id=interface_id,
+            channel_address=channel_address,
+            parameter=parameter,
+            value=value,
+            rx_mode=rx_mode,
+        )
+
+
+async def _call_set_device_value(
+    hass: HomeAssistant,
+    interface_id: str,
+    channel_address: str,
+    parameter: str,
+    value: Any,
+    rx_mode: str | None = None,
+) -> None:
+
     _LOGGER.debug(
-        "Calling setValue: %s, %s, %s, %s, %s, %s",
+        "Calling setValue: %s, %s, %s, %s, %s",
         interface_id,
         channel_address,
         parameter,
         value,
-        value_type,
         rx_mode,
     )
 
