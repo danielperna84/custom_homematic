@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.entity import CustomEntity, GenericEntity
@@ -51,7 +50,7 @@ PARTICLESIZE = "\u00b5m"
 VAPOR_CONCENTRATION = "g/m³"
 
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescription] = {
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
@@ -63,7 +62,7 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmNumberEntityDescript
 }
 
 _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], HmNumberEntityDescription
+    tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (
         frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E", "HmIP-HEATING"}),
@@ -76,7 +75,7 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "AIR_PRESSURE": HmSensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=PRESSURE_HPA,
@@ -325,7 +324,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], HmSensorEntityDescript
 }
 
 _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], HmSensorEntityDescription
+    tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (
         frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
@@ -362,7 +361,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, HmSensorEntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     PERCENTAGE: HmSensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
@@ -389,9 +388,7 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, HmSensorEntityDescription] = {
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
-    str | frozenset[str], BinarySensorEntityDescription
-] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "ALARMSTATE": BinarySensorEntityDescription(
         key="ALARMSTATE",
         device_class=BinarySensorDeviceClass.SAFETY,
@@ -458,7 +455,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[
 }
 
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], BinarySensorEntityDescription
+    tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (frozenset({"SCI", "FCI1", "FCI16"}), "STATE"): BinarySensorEntityDescription(
         key="STATE",
@@ -496,7 +493,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], CoverEntityDescription] = {
+_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
     frozenset(
         {"HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"}
     ): CoverEntityDescription(
@@ -521,7 +518,7 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], CoverEntityDescription
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescription] = {
+_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "INHIBIT": SwitchEntityDescription(
         key="INHIBIT",
         device_class=SwitchDeviceClass.SWITCH,
@@ -529,11 +526,15 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], SwitchEntityDescriptio
     ),
 }
 
-_ENTITY_DESCRIPTION_BY_DEVICE: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
+_ENTITY_DESCRIPTION_BY_DEVICE: dict[
+    HmPlatform, dict[str | frozenset[str], EntityDescription]
+] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] = {
+_ENTITY_DESCRIPTION_BY_PARAM: dict[
+    HmPlatform, dict[str | frozenset[str], EntityDescription]
+] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
@@ -541,14 +542,14 @@ _ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | frozenset[str], Any]] 
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
-    HmPlatform, dict[tuple[str | frozenset[str], str], Any]
+    HmPlatform, dict[tuple[str | frozenset[str], str], EntityDescription]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
 }
 
-_DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
+_DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
@@ -565,52 +566,42 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, Any] = {
 
 def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     """Get the entity_description for platform."""
-    entity_description: EntityDescription | None = None
     if isinstance(hm_entity, GenericEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(
-            hm_entity=hm_entity,
+            hm_entity=hm_entity
         ):
-            entity_description = entity_desc
+            return entity_desc
 
-        if entity_description is None:
-            if entity_desc := _get_entity_description_by_param(
-                hm_entity=hm_entity,
-            ):
-                entity_description = entity_desc
+        if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
+            return entity_desc
 
-    elif isinstance(hm_entity, CustomEntity):
-        if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
-            entity_description = entity_desc
-
-    if entity_description is None and isinstance(hm_entity, GenericEntity):
-        if hm_entity.platform == HmPlatform.SENSOR and hm_entity.unit is not None:
+        if hm_entity.platform == HmPlatform.SENSOR and hm_entity.unit:
             if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit):
-                entity_description = entity_desc
+                return entity_desc
 
-    if entity_description is None and hasattr(hm_entity, "platform"):
-        entity_description = _DEFAULT_DESCRIPTION.get(hm_entity.platform, None)
+        if entity_desc := _DEFAULT_DESCRIPTION.get(hm_entity.platform):
+            return entity_desc
 
-    if entity_description is None:
-        entity_description = EntityDescription(key="default")
+    if isinstance(hm_entity, CustomEntity):
+        if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
+            return entity_desc
 
-    return entity_description
+    return EntityDescription(key="default")
 
 
 def _get_entity_description_by_device_type_and_param(
     hm_entity: GenericEntity,
-    do_wildcard_search: bool = True,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
     if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(
         hm_entity.platform
     ):
-        entity_description: EntityDescription | None = None
         for data, entity_desc in platform_device_and_param_descriptions.items():
             if data[1] == hm_entity.parameter and (
                 _device_in_list(
                     devices=data[0],
                     device_type=hm_entity.device.device_type,
-                    do_wildcard_search=do_wildcard_search,
+                    do_wildcard_search=True,
                 )
                 or (
                     hm_entity.device.sub_type
@@ -621,10 +612,7 @@ def _get_entity_description_by_device_type_and_param(
                     )
                 )
             ):
-                entity_description = entity_desc
-                break
-
-        return entity_description
+                return entity_desc
     return None
 
 
@@ -635,29 +623,24 @@ def _get_entity_description_by_param(
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(
         hm_entity.platform
     ):
-        entity_description: EntityDescription | None = None
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
-                entity_description = entity_desc
-                break
-
-        return entity_description
+                return entity_desc
     return None
 
 
 def _get_entity_description_by_device_type(
-    hm_entity: HmGenericEntity, do_wildcard_search: bool = True
+    hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type"""
     if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(
         hm_entity.platform
     ):
-        entity_description: EntityDescription | None = None
         for devices, entity_desc in platform_device_descriptions.items():
             if _device_in_list(
                 devices=devices,
                 device_type=hm_entity.device.device_type,
-                do_wildcard_search=do_wildcard_search,
+                do_wildcard_search=True,
             ) or (
                 hm_entity.device.sub_type
                 and _device_in_list(
@@ -666,10 +649,7 @@ def _get_entity_description_by_device_type(
                     do_wildcard_search=False,
                 )
             ):
-                entity_description = entity_desc
-                break
-
-        return entity_description
+                return entity_desc
     return None
 
 
