@@ -1,10 +1,10 @@
 Version 1.13.4 (2022-08-09)
 - Add entity_description for HB percentage and pressure
+- Add service set_device_value_raw
 
 Version 1.13.3 (2022-08-08)
 - Bump hahomematic to 2022.8.4
   - Add platform as field and remove obsolete constructors
-- Add service set_device_value_raw
 
 Version 1.13.2 (2022-08-07)
 - Bump hahomematic to 2022.8.3
