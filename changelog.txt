@@ -1,3 +1,6 @@
+Version 1.13.6 (2022-08-11)
+- Fix entity_helper after #286
+
 Version 1.13.5 (2022-08-11)
 - Refactor service set_device_valueXXX
 
