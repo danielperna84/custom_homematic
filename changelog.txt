@@ -1,4 +1,9 @@
-Version 1.14.0 (2022-08-08)
+Version 1.14.1 (2022-08-12)
+- Bump hahomematic to 2022.8.6
+  - Reduce api calls for light
+  - Fix color for HM-LC-RGBW-WM
+
+Version 1.14.0 (2022-08-11)
 - Bump hahomematic to 2022.8.5
   - Add cache for rega script files
 
