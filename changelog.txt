@@ -1,3 +1,6 @@
+Version 1.14.2 (2022-08-16)
+- Bump hahomematic to 2022.8.8
+
 Version 1.14.2 (2022-08-12)
 - Bump hahomematic to 2022.8.7
   - Fix hs_color for CeColorDimmer(HM-LC-RGBW-WM)
