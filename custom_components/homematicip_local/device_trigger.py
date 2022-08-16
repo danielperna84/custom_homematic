@@ -23,7 +23,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
 from . import DOMAIN
-from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE
+from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
 from .helpers import get_device_address_at_interface_from_identifiers
 
@@ -59,9 +59,9 @@ async def async_get_triggers(
 
     triggers = []
     for entry_id in device.config_entries:
-        if entry_id not in hass.data[DOMAIN]:
+        if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
             continue
-        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit.central.clients.get(interface_id) is None:
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):

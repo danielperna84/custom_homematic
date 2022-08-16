@@ -14,7 +14,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_VALUE_STATE, DOMAIN, HmEntityState
+from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmNumberEntityDescription
@@ -28,7 +28,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local number platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
 
     @callback
     def async_add_number(args: Any) -> None:

@@ -9,7 +9,7 @@ from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN
+from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit
 
 REDACT_CONFIG = {ATTR_USERNAME, ATTR_PASSWORD}
@@ -19,7 +19,7 @@ async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, config_entry: ConfigEntry
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
     diag: dict[str, Any] = {
         "config": async_redact_data(config_entry.as_dict(), REDACT_CONFIG)
     }

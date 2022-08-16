@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericRestoreEntity
 
@@ -27,7 +27,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local lock platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][config_entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
 
     @callback
     def async_add_lock(args: Any) -> None:

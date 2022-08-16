@@ -34,6 +34,9 @@ CONF_INTERFACE_ID = "interface_id"
 CONF_EVENT_TYPE = "event_type"
 CONF_SUBTYPE = "subtype"
 
+DEFAULT_CALLBACK_PORT = "default_callback_port"
+CONTROL_UNITS = "control_units"
+
 EVENT_DEVICE_AVAILABILITY = "homematic.device_availability"
 EVENT_DATA_IDENTIFIER = "identifier"
 EVENT_DATA_TITLE = "title"
