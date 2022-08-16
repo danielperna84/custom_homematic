@@ -5,6 +5,8 @@ import logging
 
 from awesomeversion import AwesomeVersion
 from hahomematic.central_unit import cleanup_cache_dirs
+from hahomematic.const import ATTR_CALLBACK_PORT
+from hahomematic.helpers import find_free_port
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION
@@ -14,6 +16,7 @@ from .const import DOMAIN, HMIP_LOCAL_MIN_VERSION, HMIP_LOCAL_PLATFORMS
 from .control_unit import ControlConfig, get_storage_folder
 from .services import async_setup_services, async_unload_services
 
+DEFAULT_CALLBACK_PORT = "default_callback_port"
 HA_VERSION_OBJ = AwesomeVersion(HA_VERSION)
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,12 +30,18 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         )
         _LOGGER.warning("Homematic(IP) Local setup blocked")
         return False
+
+    hass.data.setdefault(DOMAIN, {})
+    if (default_callback_port := hass.data[DOMAIN].get(DEFAULT_CALLBACK_PORT)) is None:
+        default_callback_port = find_free_port()
+        hass.data[DOMAIN][DEFAULT_CALLBACK_PORT] = default_callback_port
+
     control = await ControlConfig(
         hass=hass,
         entry_id=config_entry.entry_id,
         data=config_entry.data,
+        default_port=default_callback_port,
     ).async_get_control_unit()
-    hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = control
     hass.config_entries.async_setup_platforms(config_entry, HMIP_LOCAL_PLATFORMS)
     await control.async_start()

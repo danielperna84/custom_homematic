@@ -88,6 +88,7 @@ class BaseControlUnit:
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._data = control_config.data
+        self._default_callback_port = control_config.default_callback_port
         self._instance_name = self._data[ATTR_INSTANCE_NAME]
         self._central: CentralUnit | None = None
 
@@ -139,7 +140,8 @@ class BaseControlUnit:
     async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         xml_rpc_server = register_xml_rpc_server(
-            local_port=self._data.get(ATTR_CALLBACK_PORT) or PORT_ANY,
+            local_port=self._data.get(ATTR_CALLBACK_PORT)
+            or self._default_callback_port,
         )
 
         storage_folder = get_storage_folder(self._hass)
@@ -652,11 +654,13 @@ class ControlConfig:
         hass: HomeAssistant,
         entry_id: str,
         data: Mapping[str, Any],
+        default_port: int = PORT_ANY,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
+        self.default_callback_port = default_port
 
     async def async_get_control_unit(self) -> ControlUnit:
         """Identify the used client."""

@@ -1,5 +1,7 @@
 Version 1.14.2 (2022-08-16)
 - Bump hahomematic to 2022.8.8
+  - Create all XmlRpc server by requested port(s)
+- Use a default callback port if not configured
 
 Version 1.14.2 (2022-08-12)
 - Bump hahomematic to 2022.8.7
