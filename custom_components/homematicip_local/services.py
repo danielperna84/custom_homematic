@@ -33,6 +33,7 @@ from .const import (
     ATTR_PARAMSET_KEY,
     ATTR_RX_MODE,
     ATTR_VALUE_TYPE,
+    CONTROL_UNITS,
     DOMAIN,
 )
 from .control_unit import ControlUnit, HaHub
@@ -241,7 +242,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 async def async_unload_services(hass: HomeAssistant) -> None:
     """Unload Homematic(IP) Local services."""
-    if hass.data[DOMAIN]:
+    if hass.data[DOMAIN][CONTROL_UNITS]:
         return
 
     for hmip_local_service in HMIP_LOCAL_SERVICES:
@@ -546,7 +547,7 @@ def _get_interface_address(
 def _get_entity(hass: HomeAssistant, entity_id: str) -> HmBaseEntity | None:
     """Return entity by given entity_id."""
     control_unit: ControlUnit
-    for control_unit in hass.data[DOMAIN].values():
+    for control_unit in hass.data[DOMAIN][CONTROL_UNITS].values():
         if hm_entity := control_unit.async_get_hm_entity(entity_id=entity_id):
             return hm_entity
     return None
@@ -558,7 +559,7 @@ def _get_entities_by_platform(
     """Return entities by given platform."""
     control_unit: ControlUnit
     hm_entities: list[BaseEntity] = []
-    for control_unit in hass.data[DOMAIN].values():
+    for control_unit in hass.data[DOMAIN][CONTROL_UNITS].values():
         hm_entities.extend(
             control_unit.async_get_hm_entities_by_platform(platform=platform)
         )
@@ -580,8 +581,8 @@ def _get_cu_by_interface_id(
     hass: HomeAssistant, interface_id: str
 ) -> ControlUnit | None:
     """Get ControlUnit by interface_id."""
-    for entry_id in hass.data[DOMAIN].keys():
-        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit and control_unit.central.clients.get(interface_id):
             return control_unit
     return None
@@ -589,8 +590,8 @@ def _get_cu_by_interface_id(
 
 def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HaHub | None:
     """Get ControlUnit by device address."""
-    for entry_id in hass.data[DOMAIN].keys():
-        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if (
             control_unit
             and control_unit.hub

@@ -45,7 +45,7 @@ from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, DOMAIN
+from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, CONTROL_UNITS, DOMAIN
 from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_serial
 
 _LOGGER = logging.getLogger(__name__)
@@ -316,7 +316,9 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
 
     @property
     def _control_unit(self) -> ControlUnit:
-        control_unit: ControlUnit = self.hass.data[DOMAIN][self.config_entry.entry_id]
+        control_unit: ControlUnit = self.hass.data[DOMAIN][CONTROL_UNITS][
+            self.config_entry.entry_id
+        ]
         return control_unit
 
 

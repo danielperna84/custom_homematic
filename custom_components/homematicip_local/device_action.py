@@ -14,7 +14,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType, TemplateVarsType
 
 from . import DOMAIN
-from .const import CONF_SUBTYPE
+from .const import CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
 from .helpers import get_device_address_at_interface_from_identifiers
 
@@ -49,9 +49,9 @@ async def async_get_actions(
 
     actions = []
     for entry_id in device.config_entries:
-        if entry_id not in hass.data[DOMAIN]:
+        if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
             continue
-        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit.central.clients.get(interface_id) is None:
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
@@ -97,9 +97,9 @@ async def async_call_action_from_config(
     interface_id = data[1]
 
     for entry_id in device.config_entries:
-        if entry_id not in hass.data[DOMAIN]:
+        if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
             continue
-        control_unit: ControlUnit = hass.data[DOMAIN][entry_id]
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit.central.clients.get(interface_id) is None:
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
