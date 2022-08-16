@@ -46,6 +46,7 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
+from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
@@ -64,6 +65,7 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_PATH,
+    CONTROL_UNITS,
     DOMAIN,
     EVENT_DATA_AVAILABLE,
     EVENT_DATA_IDENTIFIER,
@@ -75,7 +77,12 @@ from .const import (
     MANUFACTURER,
     SYSVAR_SCAN_INTERVAL,
 )
-from .helpers import HmBaseEntity, HmBaseHubEntity, HmCallbackEntity
+from .helpers import (
+    HmBaseEntity,
+    HmBaseHubEntity,
+    HmCallbackEntity,
+    get_device_address_at_interface_from_identifiers,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -762,3 +769,35 @@ async def validate_config_and_get_serial(control_config: ControlConfig) -> str |
 def get_storage_folder(hass: HomeAssistant) -> str:
     """Return the base path where to store files for this integration."""
     return f"{hass.config.config_dir}/{DOMAIN}"
+
+
+def get_cu_by_interface_id(
+    hass: HomeAssistant, interface_id: str
+) -> ControlUnit | None:
+    """Get ControlUnit by interface_id."""
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
+        if control_unit and control_unit.central.clients.get(interface_id):
+            return control_unit
+    return None
+
+
+def get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+    """Return the homematic device."""
+    device_registry = dr.async_get(hass)
+    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
+    if not device_entry:
+        return None
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device_entry.identifiers
+        )
+    ) is None:
+        return None
+
+    device_address = data[0]
+    interface_id = data[1]
+
+    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+        return control_unit.central.hm_devices.get(device_address)
+    return None

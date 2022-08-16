@@ -1,5 +1,6 @@
-Version 1.14.4 (2022-08-16)
+Version 1.15.0 (2022-08-16)
 - Bump hahomematic to 2022.8.10
+- Add click events to logbook
 
 Version 1.14.3 (2022-08-16)
 - Bump hahomematic to 2022.8.9
