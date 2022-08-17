@@ -5,7 +5,6 @@ import logging
 
 from awesomeversion import AwesomeVersion
 from hahomematic.central_unit import cleanup_cache_dirs
-from hahomematic.const import ATTR_CALLBACK_PORT
 from hahomematic.helpers import find_free_port
 
 from homeassistant.config_entries import ConfigEntry
