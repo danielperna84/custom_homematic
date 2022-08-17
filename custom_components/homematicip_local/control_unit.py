@@ -46,6 +46,7 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
+from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
@@ -64,6 +65,7 @@ from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
     ATTR_PATH,
+    CONTROL_UNITS,
     DOMAIN,
     EVENT_DATA_AVAILABLE,
     EVENT_DATA_IDENTIFIER,
@@ -75,7 +77,12 @@ from .const import (
     MANUFACTURER,
     SYSVAR_SCAN_INTERVAL,
 )
-from .helpers import HmBaseEntity, HmBaseHubEntity, HmCallbackEntity
+from .helpers import (
+    HmBaseEntity,
+    HmBaseHubEntity,
+    HmCallbackEntity,
+    get_device_address_at_interface_from_identifiers,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -491,16 +498,11 @@ class ControlUnit(BaseControlUnit):
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
         """Execute the callback used for device related events."""
-        if hm_event_type == HmEventType.KEYPRESS:
+        if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
             device_address = event_data[ATTR_ADDRESS]
             if device_entry := self._async_get_device(device_address=device_address):
                 event_data[ATTR_DEVICE_ID] = device_entry.id
                 event_data[ATTR_NAME] = device_entry.name_by_user or device_entry.name
-            self._hass.bus.fire(
-                event_type=hm_event_type.value,
-                event_data=event_data,
-            )
-        elif hm_event_type == HmEventType.IMPULSE:
             self._hass.bus.fire(
                 event_type=hm_event_type.value,
                 event_data=event_data,
@@ -762,3 +764,35 @@ async def validate_config_and_get_serial(control_config: ControlConfig) -> str |
 def get_storage_folder(hass: HomeAssistant) -> str:
     """Return the base path where to store files for this integration."""
     return f"{hass.config.config_dir}/{DOMAIN}"
+
+
+def get_cu_by_interface_id(
+    hass: HomeAssistant, interface_id: str
+) -> ControlUnit | None:
+    """Get ControlUnit by interface_id."""
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
+        if control_unit and control_unit.central.clients.get(interface_id):
+            return control_unit
+    return None
+
+
+def get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+    """Return the homematic device."""
+    device_registry = dr.async_get(hass)
+    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
+    if not device_entry:
+        return None
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device_entry.identifiers
+        )
+    ) is None:
+        return None
+
+    device_address = data[0]
+    interface_id = data[1]
+
+    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+        return control_unit.central.hm_devices.get(device_address)
+    return None

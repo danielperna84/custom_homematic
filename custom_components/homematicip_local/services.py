@@ -14,7 +14,6 @@ from hahomematic.const import (
     HmCallSource,
     HmPlatform,
 )
-from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, GenericEntity
 import voluptuous as vol
 
@@ -36,7 +35,7 @@ from .const import (
     CONTROL_UNITS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, HaHub
+from .control_unit import ControlUnit, HaHub, get_cu_by_interface_id, get_device
 from .helpers import HmBaseEntity, get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
@@ -262,9 +261,7 @@ async def _async_service_delete_device(
     device_address: str = address_data[1]
 
     if interface_id and device_address:
-        if control_unit := _get_cu_by_interface_id(
-            hass=hass, interface_id=interface_id
-        ):
+        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
             await control_unit.central.delete_device(
                 interface_id=interface_id, device_address=device_address
             )
@@ -281,7 +278,7 @@ async def _async_service_export_device_definition(
     """Service to call setValue method for HomeMatic devices."""
     device_id = service.data[ATTR_DEVICE_ID]
 
-    if hm_device := _get_device(hass=hass, device_id=device_id):
+    if hm_device := get_device(hass=hass, device_id=device_id):
         await hm_device.export_device_definition()
 
         _LOGGER.debug(
@@ -392,9 +389,7 @@ async def _call_set_device_value(
     )
 
     if interface_id and channel_address:
-        if control_unit := _get_cu_by_interface_id(
-            hass=hass, interface_id=interface_id
-        ):
+        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
             await control_unit.central.set_value(
                 interface_id=interface_id,
                 channel_address=channel_address,
@@ -413,7 +408,7 @@ async def _async_service_set_install_mode(
     time: int = service.data.get(ATTR_TIME, 60)
     device_address = service.data.get(ATTR_ADDRESS)
 
-    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         await control_unit.central.set_install_mode(
             interface_id, t=time, mode=mode, device_address=device_address
         )
@@ -460,9 +455,7 @@ async def _async_service_put_paramset(
     )
 
     if interface_id and address:
-        if control_unit := _get_cu_by_interface_id(
-            hass=hass, interface_id=interface_id
-        ):
+        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
             await control_unit.central.put_paramset(
                 interface_id=interface_id,
                 address=address,
@@ -499,27 +492,6 @@ async def _async_service_update_entity(
                 hm_entity.entity_name_data.full_name,
             )
             await hm_entity.load_entity_value(call_source=HmCallSource.MANUAL)
-
-
-def _get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
-    """Return the homematic device."""
-    device_registry = dr.async_get(hass)
-    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
-    if not device_entry:
-        return None
-    if (
-        data := get_device_address_at_interface_from_identifiers(
-            identifiers=device_entry.identifiers
-        )
-    ) is None:
-        return None
-
-    device_address = data[0]
-    interface_id = data[1]
-
-    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.hm_devices.get(device_address)
-    return None
 
 
 def _get_interface_address(
@@ -570,21 +542,10 @@ def _get_hm_entity(
     hass: HomeAssistant, interface_id: str, channel_address: str, parameter: str
 ) -> GenericEntity | None:
     """Get homematic entity."""
-    if control_unit := _get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         return control_unit.central.get_hm_entity(
             channel_address=channel_address, parameter=parameter
         )
-    return None
-
-
-def _get_cu_by_interface_id(
-    hass: HomeAssistant, interface_id: str
-) -> ControlUnit | None:
-    """Get ControlUnit by interface_id."""
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
-        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if control_unit and control_unit.central.clients.get(interface_id):
-            return control_unit
     return None
 
 
