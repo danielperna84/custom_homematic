@@ -498,16 +498,11 @@ class ControlUnit(BaseControlUnit):
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
         """Execute the callback used for device related events."""
-        if hm_event_type == HmEventType.KEYPRESS:
+        if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
             device_address = event_data[ATTR_ADDRESS]
             if device_entry := self._async_get_device(device_address=device_address):
                 event_data[ATTR_DEVICE_ID] = device_entry.id
                 event_data[ATTR_NAME] = device_entry.name_by_user or device_entry.name
-            self._hass.bus.fire(
-                event_type=hm_event_type.value,
-                event_data=event_data,
-            )
-        elif hm_event_type == HmEventType.IMPULSE:
             self._hass.bus.fire(
                 event_type=hm_event_type.value,
                 event_data=event_data,

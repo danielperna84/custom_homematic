@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import cast
 
 from hahomematic.const import HmEventType
-from hahomematic.entity import ClickEvent
+from hahomematic.entity import BaseEvent
 
 from homeassistant.components.logbook.const import (
     LOGBOOK_ENTRY_MESSAGE,
@@ -27,15 +26,15 @@ def async_describe_events(
     """Describe logbook events."""
 
     @callback
-    def async_describe_homematic_keypress_event(event: Event) -> dict[str, str]:
+    def async_describe_homematic_event(event: Event) -> dict[str, str]:
         """Describe Homematic(IP) Local logbook event."""
         event_data: dict = event.data
 
         if hm_device := get_device(hass=hass, device_id=event.data[ATTR_DEVICE_ID]):
             channel_address = f"{event_data[CONF_ADDRESS]}:{event_data[CONF_SUBTYPE]}"
             e_type = event_data[CONF_TYPE].upper()
-            hm_event: ClickEvent = cast(
-                ClickEvent, hm_device.action_events.get((channel_address, e_type))
+            hm_event: BaseEvent | None = hm_device.action_events.get(
+                (channel_address, e_type)
             )
             if hm_event:
                 event_name = hm_event.entity_name_data.full_name.replace(
@@ -49,6 +48,12 @@ def async_describe_events(
 
     async_describe_event(
         HMIP_DOMAIN,
-        str(HmEventType.KEYPRESS.value),
-        async_describe_homematic_keypress_event,
+        HmEventType.KEYPRESS.value,
+        async_describe_homematic_event,
+    )
+
+    async_describe_event(
+        HMIP_DOMAIN,
+        HmEventType.IMPULSE.value,
+        async_describe_homematic_event,
     )
