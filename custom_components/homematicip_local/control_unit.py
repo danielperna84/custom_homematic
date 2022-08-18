@@ -120,6 +120,7 @@ class BaseControlUnit:
                 "Starting ControlUnit %s not possible, CentralUnit is not available",
                 self._instance_name,
             )
+        _LOGGER.info("Started ControlUnit for %s", self._instance_name)
 
     @callback
     def stop(self, *args: Any) -> None:
@@ -127,6 +128,7 @@ class BaseControlUnit:
         Used as an argument to EventBus.async_listen_once.
         """
         self._hass.async_create_task(self.async_stop())
+        _LOGGER.info("Stopped ControlUnit for %s", self._instance_name)
 
     async def async_stop(self) -> None:
         """Stop the control unit."""

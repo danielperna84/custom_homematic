@@ -1,3 +1,7 @@
+Version 1.15.1 (2022-08-18)
+- Bump hahomematic to 2022.8.11
+- Adjust logging (level and message)
+
 Version 1.15.0 (2022-08-16)
 - Bump hahomematic to 2022.8.10
 - Add click events to logbook
