@@ -290,7 +290,7 @@ Use 0 to reset the on time.
 Set on time for a switch entity. Must be followed by a `switch.turn_on`.
 Use 0 to reset the on time.
 
-### `homematicip_local.update_entity`
+### `homeassistant.update_entity`
 
 Update an entity's value (Only required for edge cases). An entity can be updated at most every 60 seconds.
 

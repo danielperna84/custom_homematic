@@ -40,8 +40,8 @@ async def test_form(hass: HomeAssistant) -> None:
     assert if_hmip_rf[ATTR_PORT] == 2010
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 2001
-    if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
-    assert if_virtual_devices[ATTR_PORT] == 9292
+
+    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
@@ -53,8 +53,8 @@ async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     assert interface.get(IF_HMIP_RF_NAME) is None
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 5555
-    if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
-    assert if_virtual_devices[ATTR_PORT] == 9292
+
+    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
@@ -84,8 +84,8 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     assert if_hmip_rf[ATTR_PORT] == 42010
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 42001
-    if_virtual_devices = interface[IF_VIRTUAL_DEVICES_NAME]
-    assert if_virtual_devices[ATTR_PORT] == 49292
+
+    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
@@ -103,7 +103,7 @@ async def async_check_form(
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
         return_value=True,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
@@ -130,7 +130,6 @@ async def async_check_form(
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -158,7 +157,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
         side_effect=InvalidAuth,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
@@ -184,7 +183,6 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -205,7 +203,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_input",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
         side_effect=CannotConnect,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
@@ -231,7 +229,6 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
         )
-        assert flow["context"]["unique_id"] == TEST_HOST
 
         result3 = await hass.config_entries.flow.async_configure(
             result["flow_id"],

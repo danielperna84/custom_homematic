@@ -11,7 +11,6 @@ from hahomematic.const import (
     ATTR_NAME,
     ATTR_PARAMETER,
     ATTR_VALUE,
-    HmCallSource,
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity, GenericEntity
@@ -52,7 +51,6 @@ SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_DEVICE_VALUE_RAW = "set_device_value_raw"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
-SERVICE_UPDATE_ENTITY = "update_entity"
 
 HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
@@ -63,7 +61,6 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_SET_DEVICE_VALUE_RAW,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
-    SERVICE_UPDATE_ENTITY,
 ]
 
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
@@ -137,12 +134,6 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
     }
 )
 
-SCHEMA_SERVICE_UPDATE_ENTITY = vol.Schema(
-    {
-        vol.Required(ATTR_ENTITY_ID): cv.string,
-    }
-)
-
 
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Create the hahomematic services."""
@@ -168,8 +159,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_device_value_raw(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
-        elif service_name == SERVICE_UPDATE_ENTITY:
-            await _async_service_update_entity(hass=hass, service=service)
 
     async_register_admin_service(
         hass=hass,
@@ -229,13 +218,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_PUT_PARAMSET,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_PUT_PARAMSET,
-    )
-
-    hass.services.async_register(
-        domain=DOMAIN,
-        service=SERVICE_UPDATE_ENTITY,
-        service_func=async_call_hmip_local_service,
-        schema=SCHEMA_SERVICE_UPDATE_ENTITY,
     )
 
 
@@ -463,35 +445,6 @@ async def _async_service_put_paramset(
                 value=paramset,
                 rx_mode=rx_mode,
             )
-
-
-async def _async_service_update_entity(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
-    """Service to update an entity."""
-    entity_id = service.data[ATTR_ENTITY_ID]
-    if hm_entity := _get_entity(hass=hass, entity_id=entity_id):
-        if isinstance(hm_entity, GenericEntity):
-            old_value = hm_entity.value
-            await hm_entity.load_entity_value(call_source=HmCallSource.MANUAL)
-            if old_value == hm_entity.value:
-                _LOGGER.info(
-                    "Service update_entity: No value updated for %s",
-                    hm_entity.entity_name_data.full_name,
-                )
-            else:
-                _LOGGER.info(
-                    "Service update_entity: Value updated for %s from %s to %s",
-                    hm_entity.entity_name_data.full_name,
-                    old_value,
-                    hm_entity.value,
-                )
-        else:
-            _LOGGER.info(
-                "Service update_entity: Calling update for %s",
-                hm_entity.entity_name_data.full_name,
-            )
-            await hm_entity.load_entity_value(call_source=HmCallSource.MANUAL)
 
 
 def _get_interface_address(
