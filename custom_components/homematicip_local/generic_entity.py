@@ -179,7 +179,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
         if isinstance(self._hm_entity, (GenericEntity, CustomEntity)):
-            await self._hm_entity.load_entity_value(call_source=HmCallSource.SCHEDULED)
+            await self._hm_entity.load_entity_value(call_source=HmCallSource.MANUAL_OR_SCHEDULED)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
