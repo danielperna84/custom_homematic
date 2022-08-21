@@ -198,6 +198,8 @@ The types of system variables in the CCU are:
 System variables have a description that can be added in the CCU's UI.
 If you add the marker `hahm` to the description exteded features for this system variable can be used in HA.
 This `hahm` marker is used to control the entity creation in HA.
+Switching system variables from DEFAULT -> EXTENDED or EXTENDED -> DEFAULT requires a restart of HA or a reload of the integration.
+
 When using Homegear system variables are handled like the DEFAULT.
 
 ### This is how entities are created from system variables:
