@@ -349,7 +349,7 @@ class ControlUnit(BaseControlUnit):
             ):
                 hm_hub_entities.append(program_entity)
 
-        for sysvar_entity in self.central.hub.syvar_entities.values():
+        for sysvar_entity in self.central.hub.sysvar_entities.values():
             if (
                 sysvar_entity.unique_identifier not in active_unique_ids
                 and sysvar_entity.platform == platform
@@ -744,7 +744,7 @@ class HaHub(Entity):
 
     async def async_set_variable(self, name: str, value: Any) -> None:
         """Set variable value on CCU/Homegear."""
-        sysvar_entity = self._hm_hub.syvar_entities.get(name)
+        sysvar_entity = self._hm_hub.sysvar_entities.get(name)
         if not sysvar_entity or name in self.extra_state_attributes:
             _LOGGER.error("Variable %s not found on %s", name, self.name)
             return
