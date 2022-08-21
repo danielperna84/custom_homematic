@@ -1,4 +1,4 @@
-Version 1.15.1 (2022-08-18)
+Version 1.15.1 (2022-08-21)
 - Bump hahomematic to 2022.8.11
 - Adjust logging (level and message)
 - Remove service homematicip_local.update_entity. Use service homeassistant.update_entity instead.
