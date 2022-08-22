@@ -689,7 +689,7 @@ class ControlConfig:
 
 
 class HaHub(Entity):
-    """The HomeMatic hub. (CCU2/HomeGear)."""
+    """The HomeMatic hub. (CCU/HomeGear)."""
 
     _attr_should_poll = False
     _attr_icon = "mdi:gradient-vertical"
