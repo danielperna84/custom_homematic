@@ -38,6 +38,7 @@ DEFAULT_CALLBACK_PORT = "default_callback_port"
 CONTROL_UNITS = "control_units"
 
 EVENT_DEVICE_AVAILABILITY = "homematic.device_availability"
+EVENT_DEVICE_TYPE = "device_type"
 EVENT_DATA_IDENTIFIER = "identifier"
 EVENT_DATA_TITLE = "title"
 EVENT_DATA_MESSAGE = "message"

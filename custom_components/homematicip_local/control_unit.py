@@ -14,6 +14,7 @@ from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
+    ATTR_DEVICE_TYPE,
     ATTR_HOST,
     ATTR_INTERFACE,
     ATTR_INTERFACE_ID,
@@ -72,6 +73,7 @@ from .const import (
     EVENT_DATA_MESSAGE,
     EVENT_DATA_TITLE,
     EVENT_DEVICE_AVAILABILITY,
+    EVENT_DEVICE_TYPE,
     HMIP_LOCAL_PLATFORMS,
     IDENTIFIER_SEPARATOR,
     MANUFACTURER,
@@ -511,6 +513,7 @@ class ControlUnit(BaseControlUnit):
             )
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
+            device_type = event_data[ATTR_DEVICE_TYPE]
             name: str | None = None
             if device_entry := self._async_get_device(device_address=device_address):
                 event_data[ATTR_DEVICE_ID] = device_entry.id
@@ -525,6 +528,7 @@ class ControlUnit(BaseControlUnit):
                     availability_event_data = {
                         ATTR_ENTITY_ID: self._hub.entity_id,
                         EVENT_DATA_IDENTIFIER: device_address,
+                        EVENT_DEVICE_TYPE: device_type,
                         EVENT_DATA_TITLE: title,
                         EVENT_DATA_MESSAGE: message,
                         EVENT_DATA_AVAILABLE: value is True,
