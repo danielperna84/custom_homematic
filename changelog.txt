@@ -1,6 +1,12 @@
+Version 1.15.3 (2022-08-23)
+- Bump hahomematic to 2022.8.13
+  - Allow three states for a forced availability of a device
+- Fix device availability wording
+- Fix wording in homematicip_local_persistent_notification.yaml
+
 Version 1.15.2 (2022-08-23)
 - Bump hahomematic to 2022.8.12
-  - Add platform and device_type to device availability event
+- Add device_type to device availability event
 
 Version 1.15.1 (2022-08-21)
 - Bump hahomematic to 2022.8.11

@@ -11,6 +11,7 @@ from hahomematic.const import (
     ATTR_NAME,
     ATTR_PARAMETER,
     ATTR_VALUE,
+    HmForcedDeviceAvailability,
     HmPlatform,
 )
 from hahomematic.entity import BaseEntity, GenericEntity
@@ -45,6 +46,7 @@ DEFAULT_CHANNEL = 1
 
 SERVICE_CLEAR_CACHE = "clear_cache"
 SERVICE_DELETE_DEVICE = "delete_device"
+SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
@@ -55,6 +57,7 @@ SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
     SERVICE_DELETE_DEVICE,
+    SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
@@ -76,6 +79,12 @@ SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
 )
 
 SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
+    {
+        vol.Required(ATTR_DEVICE_ID): cv.string,
+    }
+)
+
+SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.Schema(
     {
         vol.Required(ATTR_DEVICE_ID): cv.string,
     }
@@ -149,6 +158,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_delete_device(hass=hass, service=service)
         elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
+        elif service_name == SERVICE_FORCE_DEVICE_AVAILABILITY:
+            await _async_service_force_device_availability(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
@@ -182,6 +193,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_EXPORT_DEVICE_DEFINITION,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION,
+    )
+
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_FORCE_DEVICE_AVAILABILITY,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY,
     )
 
     hass.services.async_register(
@@ -265,6 +284,24 @@ async def _async_service_export_device_definition(
 
         _LOGGER.debug(
             "Called export_device_definition: %s, %s",
+            hm_device.name,
+            hm_device.device_address,
+        )
+
+
+async def _async_service_force_device_availability(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to force device availability on a HomeMatic devices."""
+    device_id = service.data[ATTR_DEVICE_ID]
+
+    if hm_device := get_device(hass=hass, device_id=device_id):
+        hm_device.set_forced_availability(
+            forced_availability=HmForcedDeviceAvailability.FORCE_TRUE
+        )
+
+        _LOGGER.debug(
+            "Called force_device_availability: %s, %s",
             hm_device.name,
             hm_device.device_address,
         )

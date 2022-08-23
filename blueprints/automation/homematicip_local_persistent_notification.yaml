@@ -23,7 +23,7 @@ action:
   - choose:
     - conditions:
       - condition: template
-        value_template: '{{trigger.event.data.available == true }}'
+        value_template: '{{trigger.event.data.unavailable == true }}'
       sequence:
         - service: persistent_notification.create
           data:
@@ -32,7 +32,7 @@ action:
             message: "{{ trigger.event.data.message }}"
     - conditions:
       - condition: template
-        value_template: '{{trigger.event.data.available == false }}'
+        value_template: '{{trigger.event.data.unavailable == false }}'
       sequence:
         - service: persistent_notification.dismiss
           data:
