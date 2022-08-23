@@ -3,6 +3,10 @@ Version 1.15.3 (2022-08-23)
   - Allow three states for a forced availability of a device
 - Fix device availability wording
 - Fix wording in homematicip_local_persistent_notification.yaml
+- Added blueprints:
+  - homematicip_local_reactivate_device_by_type.yaml - Reactivate a device by device type
+  - homematicip_local_reactivate_device_full.yaml - Reactivate every device
+  - homematicip_local_reactivate_single_device.yaml -  Reactivate a single device
 
 Version 1.15.2 (2022-08-23)
 - Bump hahomematic to 2022.8.12
