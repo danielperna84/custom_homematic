@@ -36,6 +36,18 @@ export_device_definition:
         device:
           integration: homematicip_local
 
+force_device_availability:
+  name: Force device availability
+  description: Force a device to be available, this will override the real state
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: true
+      selector:
+        device:
+          integration: homematicip_local
+
 set_variable_value:
   name: Set variable value
   description: Set the name of a node.
