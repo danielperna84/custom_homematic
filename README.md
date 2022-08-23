@@ -443,6 +443,9 @@ The following blueprints can be used to simplify the usage of Homematic device:
 - [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml)
 - [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml)
 - [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml)
+- [Reactivate device by type](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_by_type.yaml)
+- [Reactivate every device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_full.yaml)
+- [Reactivate single device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml)
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
 I (SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
