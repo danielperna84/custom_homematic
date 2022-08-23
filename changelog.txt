@@ -1,4 +1,4 @@
-Version 1.15.3 (2022-08-23)
+Version 1.16.0 (2022-08-23)
 - Bump hahomematic to 2022.8.13
   - Allow three states for a forced availability of a device
 - Fix device availability wording
