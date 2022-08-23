@@ -204,7 +204,7 @@ When using Homegear system variables are handled like the DEFAULT.
 
 ### This is how entities are created from system variables:
 
-- all **character strings** are created as `sensor` entity
+- all **character strings** are created as `sensor` entity. Don't tag **character strings** with `hahm`.
 - DEFAULT: system variables that do **not** have the  **marker** `hahm` in description:
   - value list, number --> `sensor` entity
   - alert, logic value --> `binary_sensor` entity
