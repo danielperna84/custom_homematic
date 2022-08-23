@@ -68,7 +68,7 @@ from .const import (
     ATTR_PATH,
     CONTROL_UNITS,
     DOMAIN,
-    EVENT_DATA_AVAILABLE,
+    EVENT_DATA_UNAVAILABLE,
     EVENT_DATA_IDENTIFIER,
     EVENT_DATA_MESSAGE,
     EVENT_DATA_TITLE,
@@ -513,25 +513,25 @@ class ControlUnit(BaseControlUnit):
             )
         elif hm_event_type == HmEventType.DEVICE:
             device_address = event_data[ATTR_ADDRESS]
-            device_type = event_data[ATTR_DEVICE_TYPE]
             name: str | None = None
             if device_entry := self._async_get_device(device_address=device_address):
                 event_data[ATTR_DEVICE_ID] = device_entry.id
                 name = device_entry.name_by_user or device_entry.name
             interface_id = event_data[ATTR_INTERFACE_ID]
             parameter = event_data[ATTR_PARAMETER]
-            value = event_data[ATTR_VALUE]
+            unavailable = event_data[ATTR_VALUE]
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 title = f"{DOMAIN.upper()}-Device not reachable"
                 message = f"{name} / {device_address} on interface {interface_id}"
                 if self._hub:
                     availability_event_data = {
                         ATTR_ENTITY_ID: self._hub.entity_id,
+                        ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
                         EVENT_DATA_IDENTIFIER: device_address,
-                        EVENT_DEVICE_TYPE: device_type,
+                        EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
                         EVENT_DATA_TITLE: title,
                         EVENT_DATA_MESSAGE: message,
-                        EVENT_DATA_AVAILABLE: value is True,
+                        EVENT_DATA_UNAVAILABLE: unavailable,
                     }
                     self._hass.bus.fire(
                         event_type=EVENT_DEVICE_AVAILABILITY,

@@ -42,7 +42,7 @@ EVENT_DEVICE_TYPE = "device_type"
 EVENT_DATA_IDENTIFIER = "identifier"
 EVENT_DATA_TITLE = "title"
 EVENT_DATA_MESSAGE = "message"
-EVENT_DATA_AVAILABLE = "available"
+EVENT_DATA_UNAVAILABLE = "unavailable"
 
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
