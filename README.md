@@ -252,6 +252,11 @@ Exports a device definition (2 files) to
 Please create a pull request with both files at [pydevccu](https://github.com/danielperna84/pydevccu), if the device not exists, to support future development of this component.
 This data can be used by the developers to add customized entities for new devices.
 
+### `homematicip_local.force_device_availability`
+
+Reactivate a device in Home Assistant, that has been made unavailable by an UNREACH event from CCU.
+This service will only override the availability status of a device and all it's dependant entities. There is no communication to the backend to enforce a reactivation!
+
 ### `homematicip_local.put_paramset`
 
 Call to `putParamset` in the XML-RPC interface.

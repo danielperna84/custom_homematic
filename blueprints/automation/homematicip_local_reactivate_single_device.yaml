@@ -1,0 +1,27 @@
+blueprint:
+  name: Homematic(IP) reactivate single device
+  description: Reactivate a single device marked as not available.
+  domain: automation
+  source_url: https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml
+  input:
+    device_id:
+      name: Homematic device
+      description: The Homematic device to reactivate.
+      selector:
+        device:
+          integration: homematicip_local
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+- platform: event
+  event_type: homematic.device_availability
+  event_data:
+    device_id: !input device_id
+    unavailable: true
+
+action:
+- service: homematicip_local.force_device_availability
+  data:
+    device_id: "{{ trigger.event.data.device_id }}"
