@@ -255,7 +255,10 @@ This data can be used by the developers to add customized entities for new devic
 ### `homematicip_local.force_device_availability`
 
 Reactivate a device in Home Assistant, that has been made unavailable by an UNREACH event from CCU.
-This service will only override the availability status of a device and all it's dependant entities. There is no communication to the backend to enforce a reactivation!
+This service will only override the availability status of a device and all its dependant entities. There is no communication to the backend to enforce a reactivation!
+
+This is not a solution for communication problems with homematic devices. 
+Use this only to reactivate devices with flaky communication to gain control again.
 
 ### `homematicip_local.put_paramset`
 
