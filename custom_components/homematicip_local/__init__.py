@@ -8,7 +8,7 @@ from hahomematic.central_unit import cleanup_cache_dirs
 from hahomematic.helpers import find_free_port
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION
+from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION_STR
 from homeassistant.core import HomeAssistant
 
 from .const import (
@@ -21,13 +21,16 @@ from .const import (
 from .control_unit import ControlConfig, get_storage_folder
 from .services import async_setup_services, async_unload_services
 
-HA_VERSION_OBJ = AwesomeVersion(HA_VERSION)
+HA_VERSION = AwesomeVersion(HA_VERSION_STR)
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up HA-Homematic from a config entry."""
-    if HA_VERSION_OBJ < HMIP_LOCAL_MIN_VERSION:
+    min_version = AwesomeVersion(HMIP_LOCAL_MIN_VERSION)
+    if (HA_VERSION.section(0) < min_version.section(0)) and (
+        HA_VERSION.section(1) < min_version.section(1)
+    ):
         _LOGGER.warning(
             "This release of Homematic(IP) Local requires HA version %s and above",
             HMIP_LOCAL_MIN_VERSION,

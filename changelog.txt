@@ -1,5 +1,7 @@
 Version 1.16.1 (2022-08-23)
 - Bump hahomematic to 2022.8.14
+  - Exclude STRING sysvar from extended check
+- Improve version check
 
 Version 1.16.0 (2022-08-23)
 - Bump hahomematic to 2022.8.13
