@@ -255,7 +255,6 @@ enable_away_mode_by_calendar:
   description: Enable climate away mode by calendar.
   target:
     entity:
-      integration: homematicip_local
       domain: climate
   fields:
     end:
@@ -282,7 +281,6 @@ enable_away_mode_by_duration:
   description: Enable climate away mode by duration.
   target:
     entity:
-      integration: homematicip_local
       domain: climate
   fields:
     hours:
@@ -313,14 +311,12 @@ disable_away_mode:
   description: Disable climate away mode.
   target:
     entity:
-      integration: homematicip_local
       domain: climate
 
 turn_on_siren:
   description: Turn siren on.
   target:
     entity:
-      integration: homematicip_local
       domain: siren
   fields:
     tone:
@@ -346,7 +342,6 @@ light_set_on_time:
   description: Set on time for a light entity. Must be followed by a light.turn_on.
   target:
     entity:
-      integration: homematicip_local
       domain: light
   fields:
     on_time:
@@ -364,7 +359,6 @@ switch_set_on_time:
   description: Set on time for a switch entity. Must be followed by a switch.turn_on.
   target:
     entity:
-      integration: homematicip_local
       domain: switch
   fields:
     on_time:
