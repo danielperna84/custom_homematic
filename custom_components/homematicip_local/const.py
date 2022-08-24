@@ -10,7 +10,7 @@ from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
 MANUFACTURER = "eQ-3"
-HMIP_LOCAL_MIN_VERSION = "2022.7"
+HMIP_LOCAL_MIN_VERSION = "2022.9"
 IDENTIFIER_SEPARATOR = "@"
 
 ATTR_INSTANCE_NAME = "instance_name"
