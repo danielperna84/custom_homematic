@@ -160,8 +160,6 @@ class HaHomematicSysvarSensor(
 ):
     """Representation of the HomematicIP hub sensor entity."""
 
-    _attr_entity_registry_enabled_default = False
-
     def __init__(
         self,
         control_unit: ControlUnit,

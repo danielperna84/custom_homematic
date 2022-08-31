@@ -1,4 +1,7 @@
-Version 1.16.1 (2022-08-27)
+Version 1.16.4 (2022-09-XX)
+- Remove unneeded _attr
+
+Version 1.16.3 (2022-08-27)
 - Bump hahomematic to 2022.8.15
   - Fix select entity detection
 
