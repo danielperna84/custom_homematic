@@ -150,8 +150,6 @@ class HaHomematicSysvarSwitch(
 ):
     """Representation of the HomematicIP hub switch entity."""
 
-    _attr_entity_registry_enabled_default = False
-
     @property
     def is_on(self) -> bool | None:
         """Return true if switch is on."""

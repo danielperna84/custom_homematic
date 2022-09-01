@@ -154,7 +154,6 @@ class HaHomematicSysvarNumber(
     """Representation of the HomematicIP hub number entity."""
 
     _attr_mode = NumberMode.BOX
-    _attr_entity_registry_enabled_default = False
 
     def __init__(
         self,

@@ -122,8 +122,6 @@ class HaHomematicSysvarSelect(
 ):
     """Representation of the HomematicIP hub select entity."""
 
-    _attr_entity_registry_enabled_default = False
-
     @property
     def options(self) -> list[str]:
         """Return the options."""
