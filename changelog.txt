@@ -1,4 +1,6 @@
-Version 1.16.4 (2022-09-XX)
+Version 1.16.4 (2022-09-02)
+- Bump hahomematic to 2022.9.0
+  - Exclude value from event_data if None
 - Remove unneeded _attr
 
 Version 1.16.3 (2022-08-27)
