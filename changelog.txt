@@ -1,3 +1,6 @@
+Version 1.16.5 (2022-09-02)
+- Add blueprint for HB-RC-12-EP-C by @djusHa
+
 Version 1.16.4 (2022-09-02)
 - Bump hahomematic to 2022.9.0
   - Exclude value from event_data if None
