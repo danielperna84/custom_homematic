@@ -111,6 +111,7 @@ class HaHomematicSysvarBinarySensor(
 ):
     """Representation of the HomematicIP hub binary_sensor entity."""
 
+    @property
     def is_on(self) -> bool | None:
         """Return the native value of the entity."""
         return bool(self._hm_hub_entity.value)

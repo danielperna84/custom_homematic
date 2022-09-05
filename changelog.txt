@@ -1,5 +1,6 @@
 Version 1.16.5 (2022-09-02)
 - Add blueprint for HB-RC-12-EP-C by @djusHa
+- Fix sysvar binary_sensors
 
 Version 1.16.4 (2022-09-02)
 - Bump hahomematic to 2022.9.0
