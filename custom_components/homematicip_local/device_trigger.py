@@ -106,6 +106,6 @@ async def async_attach_trigger(
         hass=hass,
         config=event_config,
         action=action,
-        automation_info=trigger_info,
+        trigger_info=trigger_info,
         platform_type="device",
     )
