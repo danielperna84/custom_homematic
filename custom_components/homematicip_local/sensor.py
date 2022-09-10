@@ -1,6 +1,8 @@
 """sensor for Homematic(IP) Local."""
 from __future__ import annotations
 
+from datetime import date, datetime
+from decimal import Decimal
 import logging
 from typing import Any
 
@@ -18,6 +20,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit
@@ -112,7 +115,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
             self._attr_native_unit_of_measurement = hm_entity.unit
 
     @property
-    def native_value(self) -> Any:
+    def native_value(self) -> StateType | date | datetime | Decimal:
         """Return the native value of the entity."""
         if self._hm_entity.is_valid:
             if (
@@ -120,7 +123,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
                 and self._multiplier != 1
             ):
-                return self._hm_entity.value * self._multiplier
+                return self._hm_entity.value * self._multiplier  # type: ignore[no-any-return]
             # Strings and enums with custom device class must be lowercase to be translatable.
             if (
                 self._hm_entity.value is not None
@@ -128,10 +131,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
                 and self.device_class.startswith(DOMAIN.lower())
             ):
-                return self._hm_entity.value.lower()
+                return self._hm_entity.value.lower()  # type: ignore[no-any-return]
             return self._hm_entity.value
         if self.is_restored:
-            return self._restored_native_value
+            return self._restored_native_value  # type: ignore[no-any-return]
         return None
 
     @property
@@ -170,6 +173,6 @@ class HaHomematicSysvarSensor(
         self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
 
     @property
-    def native_value(self) -> Any:
+    def native_value(self) -> StateType | date | datetime | Decimal:
         """Return the native value of the entity."""
         return self._hm_hub_entity.value
