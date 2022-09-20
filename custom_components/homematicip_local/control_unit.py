@@ -162,6 +162,7 @@ class BaseControlUnit:
             interface = self._data[ATTR_INTERFACE][interface_name]
             interface_configs.add(
                 InterfaceConfig(
+                    central_name=self._instance_name,
                     interface=interface_name,
                     port=interface[ATTR_PORT],
                     path=interface.get(ATTR_PATH),
