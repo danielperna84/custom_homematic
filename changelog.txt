@@ -1,3 +1,9 @@
+Version 1.16.6 (2022-09-20)
+- Bump hahomematic to 2022.9.1
+  - Improve XmlServer shutdown
+  - Add name to threads and executors
+  - Improve ThreadPoolExecutor shutdown
+
 Version 1.16.5 (2022-09-02)
 - Add blueprint for HB-RC-12-EP-C by @djusHa
 - Fix sysvar binary_sensors
