@@ -34,7 +34,7 @@ from hahomematic.const import (
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
-    HH_EVENT_HUB_ENTITY_CREATED,
+    HH_EVENT_HUB_CREATED,
     HH_EVENT_LIST_DEVICES,
     HH_EVENT_NEW_DEVICES,
     HH_EVENT_RE_ADDED_DEVICE,
@@ -203,7 +203,8 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         # {entity_id, sysvar_entity}
         self._active_hm_hub_entities: dict[str, HmBaseHubEntity] = {}
-        self._hub: HaHub | None = None
+        self._hub_scheduler: HmHubScheduler | None = None
+        self._hub_entity: HaHubEntity | None = None
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
@@ -217,15 +218,15 @@ class ControlUnit(BaseControlUnit):
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
-        if self._hub:
-            self._hub.de_init()
+        if self._hub_scheduler:
+            self._hub_scheduler.de_init()
 
         await super().async_stop()
 
     @property
-    def hub(self) -> HaHub | None:
-        """Return the Hub."""
-        return self._hub
+    def hub_entity(self) -> HaHubEntity | None:
+        """Return the hub entity."""
+        return self._hub_entity
 
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
@@ -452,12 +453,15 @@ class ControlUnit(BaseControlUnit):
                         hm_entities,  # Don't send device if None, it would override default value in listeners
                     )
             self._async_add_virtual_remotes_to_device_registry()
-        elif src == HH_EVENT_HUB_ENTITY_CREATED:
-            if not self._hub and self.central.hub:
-                self._hub = HaHub(
+        elif src == HH_EVENT_HUB_CREATED:
+            if not self._hub_scheduler and self.central.hub:
+                self._hub_scheduler = HmHubScheduler(
                     self._hass, control_unit=self, hm_hub=self.central.hub
                 )
-                self._hub.async_write_ha_state()
+                self._hub_entity = HaHubEntity(
+                    self._hass, control_unit=self, hm_hub=self.central.hub
+                )
+                self._hub_entity.async_write_ha_state()
             new_hub_entities = args[0]
             # Handle event of new hub entity creation in Homematic(IP) Local.
             for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
@@ -524,9 +528,9 @@ class ControlUnit(BaseControlUnit):
             if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                 title = f"{DOMAIN.upper()}-Device not reachable"
                 message = f"{name} / {device_address} on interface {interface_id}"
-                if self._hub:
+                if self._hub_entity:
                     availability_event_data = {
-                        ATTR_ENTITY_ID: self._hub.entity_id,
+                        ATTR_ENTITY_ID: self._hub_entity.entity_id,
                         ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
                         EVENT_DATA_IDENTIFIER: device_address,
                         EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
@@ -693,7 +697,36 @@ class ControlConfig:
         )
 
 
-class HaHub(Entity):
+class HmHubScheduler:
+    """The HomeMatic hub scheduler. (CCU/HomeGear)."""
+
+    def __init__(
+        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
+    ) -> None:
+        """Initialize HomeMatic hub scheduler."""
+        self.hass = hass
+        self._control: ControlUnit = control_unit
+        self._hm_hub: HmHub = hm_hub
+        self.remove_listener: Callable = async_track_time_interval(
+            self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
+        )
+
+    def de_init(self) -> None:
+        """De_init the hub scheduler."""
+        if self.remove_listener and callback(self.remove_listener):
+            self.remove_listener()
+
+    async def _async_fetch_data(self, now: datetime) -> None:
+        """Fetch data from backend."""
+        _LOGGER.debug(
+            "Fetching sysvars for %s",
+            self._control.central.name,
+        )
+        await self._hm_hub.fetch_sysvar_data()
+        await self._hm_hub.fetch_program_data()
+
+
+class HaHubEntity(Entity):
     """The HomeMatic hub. (CCU/HomeGear)."""
 
     _attr_should_poll = False
@@ -709,14 +742,6 @@ class HaHub(Entity):
         self._attr_name: str = self._control.central.name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
         self._hm_hub.register_update_callback(self._async_update_hub)
-        self.remove_listener: Callable = async_track_time_interval(
-            self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
-        )
-
-    def de_init(self) -> None:
-        """De_init the hub."""
-        if self.remove_listener and callback(self.remove_listener):
-            self.remove_listener()
 
     @property
     def available(self) -> bool:
@@ -727,15 +752,6 @@ class HaHub(Entity):
     def control(self) -> ControlUnit:
         """Return the control unit."""
         return self._control
-
-    async def _async_fetch_data(self, now: datetime) -> None:
-        """Fetch data from backend."""
-        _LOGGER.debug(
-            "Fetching sysvars for %s",
-            self.name,
-        )
-        await self._hm_hub.fetch_sysvar_data()
-        await self._hm_hub.fetch_program_data()
 
     @property
     def state(self) -> Any | None:

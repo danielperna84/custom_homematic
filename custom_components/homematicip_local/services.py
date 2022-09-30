@@ -35,7 +35,7 @@ from .const import (
     CONTROL_UNITS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, HaHub, get_cu_by_interface_id, get_device
+from .control_unit import ControlUnit, HaHubEntity, get_cu_by_interface_id, get_device
 from .helpers import HmBaseEntity, get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
@@ -315,7 +315,7 @@ async def _async_service_set_variable_value(
     name = service.data[ATTR_NAME]
     value = service.data[ATTR_VALUE]
 
-    if hub := _get_hub_by_entity_id(hass=hass, entity_id=entity_id):
+    if hub := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
         await hub.async_set_variable(name=name, value=value)
 
 
@@ -437,7 +437,7 @@ async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) 
     """Service to clear the cache."""
     entity_id = service.data[ATTR_ENTITY_ID]
 
-    if hub := _get_hub_by_entity_id(hass=hass, entity_id=entity_id):
+    if hub := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
         await hub.control.central.clear_all()
 
 
@@ -539,14 +539,14 @@ def _get_hm_entity(
     return None
 
 
-def _get_hub_by_entity_id(hass: HomeAssistant, entity_id: str) -> HaHub | None:
+def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubEntity | None:
     """Get ControlUnit by device address."""
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if (
             control_unit
-            and control_unit.hub
-            and control_unit.hub.entity_id == entity_id
+            and control_unit.hub_entity
+            and control_unit.hub_entity.entity_id == entity_id
         ):
-            return control_unit.hub
+            return control_unit.hub_entity
     return None
