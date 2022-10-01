@@ -269,21 +269,7 @@ class HaHomematicGenericHubEntity(Entity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        hm_central = self._cu.central
-        return DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    hm_central.name,
-                )
-            },
-            manufacturer=MANUFACTURER,
-            model=hm_central.model,
-            name=hm_central.name,
-            sw_version=hm_central.version,
-            # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_central.name),
-        )
+        return self._cu.device_info
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""

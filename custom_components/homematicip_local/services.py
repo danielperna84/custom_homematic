@@ -315,8 +315,8 @@ async def _async_service_set_variable_value(
     name = service.data[ATTR_NAME]
     value = service.data[ATTR_VALUE]
 
-    if hub := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        await hub.async_set_variable(name=name, value=value)
+    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
+        await hub_entity.async_set_variable(name=name, value=value)
 
 
 async def _async_service_set_device_value(
@@ -437,8 +437,8 @@ async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) 
     """Service to clear the cache."""
     entity_id = service.data[ATTR_ENTITY_ID]
 
-    if hub := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        await hub.control.central.clear_all()
+    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
+        await hub_entity.control.central.clear_all()
 
 
 async def _async_service_put_paramset(
