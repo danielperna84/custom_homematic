@@ -58,7 +58,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.util import slugify
 
@@ -222,6 +222,26 @@ class ControlUnit(BaseControlUnit):
             self._hub_scheduler.de_init()
 
         await super().async_stop()
+
+    @property
+    def device_info(self) -> DeviceInfo | None:
+        """Return device specific attributes."""
+        if self._central:
+            return DeviceInfo(
+                identifiers={
+                    (
+                        DOMAIN,
+                        self._central.name,
+                    )
+                },
+                manufacturer=MANUFACTURER,
+                model=self._central.model,
+                name=self._central.name,
+                sw_version=self._central.version,
+                # Link to the homematic control unit.
+                via_device=cast(tuple[str, str], self._central.name),
+            )
+        return None
 
     @property
     def hub_entity(self) -> HaHubEntity | None:
@@ -736,7 +756,6 @@ class HaHubEntity(Entity):
         self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
     ) -> None:
         """Initialize HomeMatic hub."""
-        self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
         self._attr_name: str = self._control.central.name
