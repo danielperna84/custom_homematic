@@ -760,6 +760,8 @@ class HaHubEntity(Entity):
         self._hm_hub: HmHub = hm_hub
         self._attr_name: str = self._control.central.name
         self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
+        self._attr_unique_id = hm_hub.unique_identifier
+        self._attr_device_info = self._control.device_info
         self._hm_hub.register_update_callback(self._async_update_hub)
 
     @property
