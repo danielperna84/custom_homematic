@@ -756,6 +756,7 @@ class HaHubEntity(Entity):
         self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
     ) -> None:
         """Initialize HomeMatic hub."""
+        self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
         self._attr_name: str = self._control.central.name
