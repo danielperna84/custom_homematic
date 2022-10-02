@@ -10,7 +10,8 @@ clear_cache:
       required: true
       selector:
         entity:
-          domain: homematicip_local
+          integration: homematicip_local
+          device_class: homematic_hub
 
 delete_device:
   name: Delete a device
@@ -58,7 +59,8 @@ set_variable_value:
       required: true
       selector:
         entity:
-          domain: homematicip_local
+          integration: homematicip_local
+          device_class: homematic_hub
     name:
       name: Name
       description: Name of the variable to set.

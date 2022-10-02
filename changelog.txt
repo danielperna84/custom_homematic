@@ -2,6 +2,7 @@ Version 1.18.0 (2022-09-30)
 - Bump hahomematic to 2022.10.0
   - Rename hub event
 - Split hub between scheduler and entity
+- Convert hub entity to sensor
 - Reorg device_info for ControlUnit
 
 Version 1.17.0 (2022-09-20)
