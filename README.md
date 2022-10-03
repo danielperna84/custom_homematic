@@ -190,6 +190,7 @@ These two options are required for _special_ network environments. If for exampl
 ## System variables
 
 System variables are fetched every 30 seconds from backend (CCU/Homegear), and are created initially as **deactived** entity.
+There is a special system variable named `sensor.{instance_name}` that represensts the backend and returns the count of `Servicemeldungen`. That's why there is no dedicated system variable for `Servicemeldungen`. This entity is also used in service calls (e.g. `set_variable_value`) to identify the used backend.
 
 The types of system variables in the CCU are:
 - character string (Zeichenkette)
@@ -199,7 +200,7 @@ The types of system variables in the CCU are:
 - alert (Alarm)
 
 System variables have a description that can be added in the CCU's UI.
-If you add the marker `hahm` to the description exteded features for this system variable can be used in HA.
+If you add the marker `hahm` to the description extended features for this system variable can be used in HA.
 This `hahm` marker is used to control the entity creation in HA.
 Switching system variables from DEFAULT -> EXTENDED or EXTENDED -> DEFAULT requires a restart of HA or a reload of the integration.
 
@@ -372,7 +373,7 @@ Set boolean variable to true:
 action:
   service: homematicip_local.set_variable_value
   data:
-    entity_id: homematicip_local.ccu2
+    entity_id: sesnsor.ccu2
     name: Variablename
     value: '3'
 ```
@@ -453,7 +454,7 @@ The following blueprints can be used to simplify the usage of Homematic device:
 Feel free to contribute:
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
-I (SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
+I (@SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
 Feel free to copy, improve, enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
 
 Just copy these files to "your ha-config_dir"/blueprints/automation

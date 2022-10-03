@@ -61,6 +61,18 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
+    @callback
+    def async_add_hub(args: Any) -> None:
+        """Add hub from Homematic(IP) Local."""
+
+        entities = []
+
+        for hm_entity in args:
+            entities.append(hm_entity)
+
+        if entities:
+            async_add_entities(entities)
+
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
@@ -79,6 +91,15 @@ async def async_setup_entry(
             async_add_hub_sensor,
         )
     )
+    config_entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            control_unit.async_signal_new_hm_entity(
+                config_entry.entry_id, HmPlatform.HUB
+            ),
+            async_add_hub,
+        )
+    )
 
     async_add_sensor(
         control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.SENSOR)
@@ -88,6 +109,10 @@ async def async_setup_entry(
         control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_SENSOR
         )
+    )
+
+    async_add_hub(
+        control_unit.async_get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB)
     )
 
 

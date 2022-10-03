@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from copy import deepcopy
-from datetime import datetime
+from datetime import date, datetime
+from decimal import Decimal
 import logging
 from typing import Any, cast
 
@@ -52,15 +53,16 @@ from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
 from hahomematic.xml_rpc_server import register_xml_rpc_server
 
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, ATTR_NAME
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.util import slugify
+from homeassistant.helpers.typing import StateType
 
 from .const import (
     ATTR_INSTANCE_NAME,
@@ -75,6 +77,7 @@ from .const import (
     EVENT_DEVICE_AVAILABILITY,
     EVENT_DEVICE_TYPE,
     HMIP_LOCAL_PLATFORMS,
+    HOMEMATIC_HUB_DEVICE_CLASS,
     IDENTIFIER_SEPARATOR,
     MANUFACTURER,
     SYSVAR_SCAN_INTERVAL,
@@ -204,7 +207,7 @@ class ControlUnit(BaseControlUnit):
         # {entity_id, sysvar_entity}
         self._active_hm_hub_entities: dict[str, HmBaseHubEntity] = {}
         self._hub_scheduler: HmHubScheduler | None = None
-        self._hub_entity: HaHubEntity | None = None
+        self._hub_entity: HaHubSensor | None = None
 
     async def async_init_central(self) -> None:
         """Start the control unit."""
@@ -244,7 +247,7 @@ class ControlUnit(BaseControlUnit):
         return None
 
     @property
-    def hub_entity(self) -> HaHubEntity | None:
+    def hub_entity(self) -> HaHubSensor | None:
         """Return the hub entity."""
         return self._hub_entity
 
@@ -478,10 +481,17 @@ class ControlUnit(BaseControlUnit):
                 self._hub_scheduler = HmHubScheduler(
                     self._hass, control_unit=self, hm_hub=self.central.hub
                 )
-                self._hub_entity = HaHubEntity(
-                    self._hass, control_unit=self, hm_hub=self.central.hub
+                self._hub_entity = HaHubSensor(
+                    control_unit=self, hm_hub=self.central.hub
                 )
-                self._hub_entity.async_write_ha_state()
+                async_dispatcher_send(
+                    self._hass,
+                    self.async_signal_new_hm_entity(
+                        entry_id=self._entry_id, platform=HmPlatform.HUB
+                    ),
+                    [self._hub_entity],
+                )
+
             new_hub_entities = args[0]
             # Handle event of new hub entity creation in Homematic(IP) Local.
             for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
@@ -746,23 +756,20 @@ class HmHubScheduler:
         await self._hm_hub.fetch_program_data()
 
 
-class HaHubEntity(Entity):
+class HaHubSensor(SensorEntity):
     """The HomeMatic hub. (CCU/HomeGear)."""
 
     _attr_should_poll = False
     _attr_icon = "mdi:gradient-vertical"
 
-    def __init__(
-        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
-    ) -> None:
+    def __init__(self, control_unit: ControlUnit, hm_hub: HmHub) -> None:
         """Initialize HomeMatic hub."""
-        self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
-        self._attr_name: str = self._control.central.name
-        self.entity_id = f"{DOMAIN}.{slugify(self._attr_name.lower())}"
+        self._attr_name: str = control_unit.central.name
         self._attr_unique_id = hm_hub.unique_identifier
-        self._attr_device_info = self._control.device_info
+        self._attr_device_info = control_unit.device_info
+        self._attr_device_class = HOMEMATIC_HUB_DEVICE_CLASS
         self._hm_hub.register_update_callback(self._async_update_hub)
 
     @property
@@ -776,23 +783,14 @@ class HaHubEntity(Entity):
         return self._control
 
     @property
-    def state(self) -> Any | None:
-        """Return the value of the entity."""
+    def native_value(self) -> StateType | date | datetime | Decimal:
+        """Return the native value of the entity."""
         return self._hm_hub.value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes."""
         return self._hm_hub.attributes
-
-    async def async_set_variable(self, name: str, value: Any) -> None:
-        """Set variable value on CCU/Homegear."""
-        sysvar_entity = self._hm_hub.sysvar_entities.get(name)
-        if not sysvar_entity or name in self.extra_state_attributes:
-            _LOGGER.error("Variable %s not found on %s", name, self.name)
-            return
-
-        await self._hm_hub.set_system_variable(name=name, value=value)
 
     @callback
     def _async_update_hub(self, *args: Any) -> None:

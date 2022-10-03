@@ -1,8 +1,11 @@
-Version 1.18.0 (2022-09-30)
+Version 1.18.0 (2022-10-03)
 - Bump hahomematic to 2022.10.0
   - Rename hub event
+  - Remove Servicemeldungen from sysvars. It's already included in the hub_entity (sensor.{instance_name}) (See README)
 - Split hub between scheduler and entity
+- Convert hub entity to sensor
 - Reorg device_info for ControlUnit
+- Deprecation warning: The entity homematicip_local.{instance_name} must be replaced by sensor.{instance_name} in service calls (set_variable_value) till HA 11.2022.
 
 Version 1.17.0 (2022-09-20)
 - Bump hahomematic to 2022.9.1

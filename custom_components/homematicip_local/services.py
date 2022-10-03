@@ -35,7 +35,7 @@ from .const import (
     CONTROL_UNITS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, HaHubEntity, get_cu_by_interface_id, get_device
+from .control_unit import ControlUnit, HaHubSensor, get_cu_by_interface_id, get_device
 from .helpers import HmBaseEntity, get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
@@ -316,7 +316,8 @@ async def _async_service_set_variable_value(
     value = service.data[ATTR_VALUE]
 
     if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        await hub_entity.async_set_variable(name=name, value=value)
+        if ha_hub := hub_entity.control.central.hub:
+            await ha_hub.set_system_variable(name=name, value=value)
 
 
 async def _async_service_set_device_value(
@@ -539,8 +540,17 @@ def _get_hm_entity(
     return None
 
 
-def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubEntity | None:
+def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubSensor | None:
     """Get ControlUnit by device address."""
+    if entity_id.startswith("homematicip_local"):
+        old_entity_id = entity_id
+        entity_id = entity_id.replace("homematicip_local.", "sensor.")
+        _LOGGER.warning(
+            "Using service call with %s will be removed with HA 11.2022. Use %s instead",
+            old_entity_id,
+            entity_id,
+        )
+
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if (
