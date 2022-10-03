@@ -372,7 +372,7 @@ Set boolean variable to true:
 action:
   service: homematicip_local.set_variable_value
   data:
-    entity_id: homematicip_local.ccu2
+    entity_id: sesnsor.ccu2
     name: Variablename
     value: '3'
 ```
@@ -453,7 +453,7 @@ The following blueprints can be used to simplify the usage of Homematic device:
 Feel free to contribute:
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
-I (SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
+I (@SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
 Feel free to copy, improve, enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
 
 Just copy these files to "your ha-config_dir"/blueprints/automation
