@@ -795,7 +795,11 @@ class HaHubSensor(SensorEntity):
     @callback
     def _async_update_hub(self, *args: Any) -> None:
         """Update the HA hub."""
-        self.async_write_ha_state()
+        if self.hass:
+            self.async_write_ha_state()
+
+        if self.enabled is False:
+            _LOGGER.warning("Entity %s must not be disabled to support full operations for %s", self.entity_id, DOMAIN)
 
 
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
