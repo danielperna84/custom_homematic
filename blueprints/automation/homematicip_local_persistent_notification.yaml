@@ -8,7 +8,8 @@ blueprint:
       name: Hub Entity
       selector:
         entity:
-          domain: homematicip_local
+          integration: homematicip_local
+          device_class: homematic_hub
 
 mode: restart
 max_exceeded: silent
