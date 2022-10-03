@@ -1,5 +1,7 @@
 Version 1.18.1 (2022-10-04)
 - Update state translations
+- Add warning if hub sensor is disabled
+- Avoid hub sensor update before full initialized
 
 Version 1.18.0 (2022-10-03)
 - Bump hahomematic to 2022.10.0

@@ -190,7 +190,7 @@ These two options are required for _special_ network environments. If for exampl
 ## System variables
 
 System variables are fetched every 30 seconds from backend (CCU/Homegear), and are created initially as **deactived** entity.
-There is a special system variable named `sensor.{instance_name}` that represensts the backend and returns the count of `Servicemeldungen`. That's why there is no dedicated system variable for `Servicemeldungen`. This entity is also used in service calls (e.g. `set_variable_value`) to identify the used backend.
+There is a special system variable named `sensor.{instance_name}` that represensts the backend and returns the count of `Servicemeldungen`. That's why there is no dedicated system variable for `Servicemeldungen`. This entity is also used in service calls (e.g. `set_variable_value`) to identify the used backend. This entity __must not be disabled__ to support full operations of Homematic(IP) Local.
 
 The types of system variables in the CCU are:
 - character string (Zeichenkette)
