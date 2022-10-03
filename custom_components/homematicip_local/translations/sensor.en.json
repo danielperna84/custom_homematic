@@ -11,44 +11,44 @@
       "unlocked": "Unlocked"
     },
     "homematicip_local__smoke_detector_alarm_status": {
-      "idle_off": "idle off",
-      "primary_alarm": "Primary Alarm",
-      "intrusion_alarm": "Intrusion Alarm",
-      "secondary_alarm": "Secondary Alarm"
+      "idle_off": "Idle off",
+      "primary_alarm": "Primary alarm",
+      "intrusion_alarm": "Intrusion alarm",
+      "secondary_alarm": "Secondary alarm"
     },
     "homematicip_local__sec_key_error": {
-      "no_error": "no error",
-      "clutch_failure": "clutch failure",
-      "motor_aborted": "motor aborted"
+      "no_error": "No error",
+      "clutch_failure": "Clutch failure",
+      "motor_aborted": "Motor aborted"
     },
     "homematicip_local__door_state": {
-      "closed": "closed",
-      "open": "open",
-      "ventilation_position": "ventilation position",
-      "position_unknown": "position unknown"
+      "closed": "Closed",
+      "open": "Open",
+      "ventilation_position": "Ventilation position",
+      "position_unknown": "Position unknown"
     },
     "homematicip_local__direction": {
       "none": "",
-      "up": "up",
-      "down": "down",
-      "undefined": "undefined"
+      "up": "Up",
+      "down": "Down",
+      "undefined": "Undefined"
     },
     "homematicip_local__sec_direction": {
       "none": "",
-      "up": "closing",
-      "down": "opening",
-      "undefined": "undefined"
+      "up": "Closing",
+      "down": "Opening",
+      "undefined": "Undefined"
     },
     "homematicip_local__sec_win_status": {
-      "trickle_charge": "trickle charge",
-      "charge": "charge",
-      "discharge": "discharge",
-      "state_unknown": "state unknown"
+      "trickle_charge": "Trickle charge",
+      "charge": "Charge",
+      "discharge": "Discharge",
+      "state_unknown": "State unknown"
     },
     "homematicip_local__sec_win_error": {
-      "no_error": "no error",
-      "motor_turn_error": "motor turn error",
-      "motor_tilt_error": "motor tilt error"
+      "no_error": "No error",
+      "motor_turn_error": "Motor turn error",
+      "motor_tilt_error": "Motor tilt error"
     }
   }
 }
