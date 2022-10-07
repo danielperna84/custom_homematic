@@ -9,7 +9,7 @@ from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
-MANUFACTURER = "eQ-3"
+MANUFACTURER_EQ3 = "eQ-3"
 HMIP_LOCAL_MIN_VERSION = "2022.10"
 IDENTIFIER_SEPARATOR = "@"
 HOMEMATIC_HUB_DEVICE_CLASS = "homematic_hub"

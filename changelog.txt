@@ -1,5 +1,9 @@
 Version 1.18.2 (2022-10-07)
 - Bump hahomematic to 2022.10.1
+  - Ignore OPERATING_VOLTAGE for HmIP-PMFS
+  - Add ALPHA-IP-RBG
+- Differentiate manufacturer in device_info
+- Use device_class speed
 
 Version 1.18.1 (2022-10-04)
 - Update state translations
