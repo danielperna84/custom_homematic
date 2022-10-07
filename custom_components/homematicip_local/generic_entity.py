@@ -348,12 +348,8 @@ class HaHomematicGenericSysvarEntity(
 
 def get_manufacturer(device_type: str) -> str | None:
     """Return the manufacturer of a device."""
-    if device_type.lower().startswith("hm"):
-        return MANUFACTURER_EQ3
-    if device_type.lower().startswith("elv"):
-        return "ELV"
     if device_type.lower().startswith("hb"):
         return "Homebrew"
     if device_type.lower().startswith("alpha"):
         return "Möhlenhoff"
-    return None
+    return MANUFACTURER_EQ3
