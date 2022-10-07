@@ -30,7 +30,7 @@ from .const import (
     ATTR_VALUE_STATE,
     DOMAIN,
     IDENTIFIER_SEPARATOR,
-    MANUFACTURER,
+    MANUFACTURER_EQ3,
     HmEntityState,
     HmEntityType,
 )
@@ -85,7 +85,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                     f"{hm_device.device_address}{IDENTIFIER_SEPARATOR}{hm_device.interface_id}",
                 )
             },
-            manufacturer=MANUFACTURER,
+            manufacturer=get_manufacturer(device_type=hm_device.device_type),
             model=hm_device.device_type,
             name=hm_device.name,
             sw_version=hm_device.firmware,
@@ -344,3 +344,16 @@ class HaHomematicGenericSysvarEntity(
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         return {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
+
+
+def get_manufacturer(device_type: str) -> str | None:
+    """Return the manufacturer of a device."""
+    if device_type.lower().startswith("hm"):
+        return MANUFACTURER_EQ3
+    if device_type.lower().startswith("elv"):
+        return "ELV"
+    if device_type.lower().startswith("hb"):
+        return "Homebrew"
+    if device_type.lower().startswith("alpha"):
+        return "Möhlenhoff"
+    return None

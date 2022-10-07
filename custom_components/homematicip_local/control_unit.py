@@ -79,7 +79,7 @@ from .const import (
     HMIP_LOCAL_PLATFORMS,
     HOMEMATIC_HUB_DEVICE_CLASS,
     IDENTIFIER_SEPARATOR,
-    MANUFACTURER,
+    MANUFACTURER_EQ3,
     SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import (
@@ -237,7 +237,7 @@ class ControlUnit(BaseControlUnit):
                         self._central.name,
                     )
                 },
-                manufacturer=MANUFACTURER,
+                manufacturer=MANUFACTURER_EQ3,
                 model=self._central.model,
                 name=self._central.name,
                 sw_version=self._central.version,
@@ -262,7 +262,7 @@ class ControlUnit(BaseControlUnit):
                     self.central.name,
                 )
             },
-            manufacturer=MANUFACTURER,
+            manufacturer=MANUFACTURER_EQ3,
             model="CU",
             name=self.central.name,
             entry_type=DeviceEntryType.SERVICE,
@@ -297,7 +297,7 @@ class ControlUnit(BaseControlUnit):
                             f"{virtual_remote.device_address}{IDENTIFIER_SEPARATOR}{virtual_remote.interface_id}",
                         )
                     },
-                    manufacturer=MANUFACTURER,
+                    manufacturer=MANUFACTURER_EQ3,
                     name=virtual_remote.name,
                     model=virtual_remote.device_type,
                     sw_version=virtual_remote.firmware,
@@ -799,7 +799,11 @@ class HaHubSensor(SensorEntity):
             self.async_write_ha_state()
 
         if self.enabled is False:
-            _LOGGER.warning("Entity %s must not be disabled to support full operations for %s", self.entity_id, DOMAIN)
+            _LOGGER.warning(
+                "Entity %s must not be disabled to support full operations for %s",
+                self.entity_id,
+                DOMAIN,
+            )
 
 
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
