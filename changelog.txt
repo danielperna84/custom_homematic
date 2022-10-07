@@ -1,3 +1,6 @@
+Version 1.19.1 (2022-10-07)
+- Simplify manufacturer selection
+
 Version 1.19.0 (2022-10-07)
 - Bump hahomematic to 2022.10.1
   - Ignore OPERATING_VOLTAGE for HmIP-PMFS
