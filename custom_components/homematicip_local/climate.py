@@ -17,16 +17,14 @@ import voluptuous as vol
 
 from homeassistant.components.climate import (
     ATTR_TEMPERATURE,
-    ClimateEntity,
-    ClimateEntityFeature,
-    HVACAction,
-)
-from homeassistant.components.climate.const import (
     PRESET_AWAY,
     PRESET_BOOST,
     PRESET_COMFORT,
     PRESET_ECO,
     PRESET_NONE,
+    ClimateEntity,
+    ClimateEntityFeature,
+    HVACAction,
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry

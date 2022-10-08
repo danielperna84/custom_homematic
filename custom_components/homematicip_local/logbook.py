@@ -7,10 +7,7 @@ from collections.abc import Callable
 from hahomematic.const import HmEventType
 from hahomematic.entity import BaseEvent
 
-from homeassistant.components.logbook.const import (
-    LOGBOOK_ENTRY_MESSAGE,
-    LOGBOOK_ENTRY_NAME,
-)
+from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
 from homeassistant.const import ATTR_DEVICE_ID, CONF_ADDRESS, CONF_TYPE
 from homeassistant.core import Event, HomeAssistant, callback
 
