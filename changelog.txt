@@ -1,3 +1,7 @@
+Version 1.19.4 (2022-10-10)
+- Bump hahomematic to 2022.10.4
+  - Allow entity creation for some internal parameters
+
 Version 1.19.3 (2022-10-10)
 - Bump hahomematic to 2022.10.3
   - Fix HM Blind/Cover custom entity types
