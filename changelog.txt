@@ -1,3 +1,7 @@
+Version 1.19.5 (2022-10-11)
+- Bump hahomematic to 2022.10.5
+  - Set HM Thermostat to manual mode before switching off
+
 Version 1.19.4 (2022-10-10)
 - Bump hahomematic to 2022.10.4
   - Allow entity creation for some internal parameters
