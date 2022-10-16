@@ -12,7 +12,7 @@ Please report issues in [hahomamatic repo](https://github.com/danielperna84/haho
 
 # Homematic(IP) Local (WIP documentation)
 
-The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic Hubs into Home Assistant.  
+The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
 
 **Please take the time to read the entire documentation before asking for help. It will answer the most common questions that come up while working with this integration.**
@@ -258,7 +258,7 @@ This data can be used by the developers to add customized entities for new devic
 
 ### `homematicip_local.force_device_availability`
 
-Reactivate a device in Home Assistant, that has been made unavailable by an UNREACH event from CCU.
+Reactivate a device in Home Assistant that has been made unavailable by an UNREACH event from CCU.
 This service will only override the availability status of a device and all its dependant entities. There is no communication to the backend to enforce a reactivation!
 
 This is not a solution for communication problems with homematic devices. 
@@ -306,7 +306,7 @@ Use 0 to reset the on time.
 
 ### `homeassistant.update_entity`
 
-Update an entity's value (Only required for edge cases). An entity can be updated at most every 60 seconds.
+Update the value of an entity (only required for edge cases). An entity can be updated at most every 60 seconds.
 
 This service is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this service, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices). 
 
@@ -319,7 +319,7 @@ Attention: This service gets the value for the entity via a 'getValue' from the 
 The integration fetches the states of all devices on initially startup and on reconnect from the backend (CCU/Homegear).
 Afterwards, the state updates will be sent by the CCU as events to HA. We don't fetch states, except for system variables, after initial startup.
 
-After a restart of the backend (esp. CCU), the Backend has initially no state information about its devices. Some devices are actively polled for updates, but many devices, esp. battery driven devices, cannot be polled, so the backend needs to wait for periodic update send by the device.
+After a restart of the backend (esp. CCU), the backend has initially no state information about its devices. Some devices are actively polled for updates, but many devices, esp. battery driven devices, cannot be polled, so the backend needs to wait for periodic update send by the device.
 This could take seconds, minutes and in rare cases hours.
 
 That's why the last state of an entity will be recovered after a HA restart.
@@ -446,15 +446,15 @@ The following blueprints can be used to simplify the usage of Homematic device:
 - [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for two button remote like HmIP-KRCA.
 - [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for two button remote like HmIP-WRC6.
 - [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml): Support for two button remote like HmIP-RC8.
-- [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml): Enable persitant notifications about unavailable devices.
+- [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml): Enable persistant notifications about unavailable devices.
 - [Reactivate device by type](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_by_type.yaml). Reactivate unavailable devices by device type.
 - [Reactivate every device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_full.yaml). Reactivate all unavailable devices. NOT recommended. Usage of `by device type` or `single device` should be preferred.
-- [Reactivate single device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml) Reactivate a unavailable single device.
+- [Reactivate single device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml) Reactivate a single unavailable device.
 
 Feel free to contribute:
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
-I (@SukramJ) use these blueprints on my own system and share them with you, but i don't want to investigate in blueprints for devices, that i don't own!
-Feel free to copy, improve, enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
+I (@SukramJ) use these blueprints on my own system and share them with you, but I don't want to investigate in blueprints for devices, that I don't own!
+Feel free to copy, improve or enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
 
 Just copy these files to "your ha-config_dir"/blueprints/automation
