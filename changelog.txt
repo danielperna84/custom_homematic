@@ -1,3 +1,8 @@
+Version 1.19.6 (2022-10-15)
+- Bump hahomematic to 2022.10.6
+  - Use HmHvacMode HEAT instead of AUTO for simple thermostats
+  - Add HUMIDITY and ACTUAL_TEMPERATURE to heating groups
+
 Version 1.19.5 (2022-10-11)
 - Bump hahomematic to 2022.10.5
   - Set HM Thermostat to manual mode before switching off
