@@ -332,6 +332,13 @@ If you want to know how assured the displayed value is, there is an attribute `v
 - 
 If you want to be sure that the state of the entity is as consistent as possible, you should also check the `value_state` attribute for `valid`.
 
+### Rename of device/channel in CCU not reflected in Home Assistant
+
+Option 1: Just rename entity_id and name in HA
+Option 2: Reload the Integration or restart HA, that will reload the names from CCU . This will show the the new entity name, if not changed manually in HA. The entity_id will not change.
+Option 3: Use the service hahm.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
+Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installes systems)
+
 ### Devices with buttons
 
 Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
