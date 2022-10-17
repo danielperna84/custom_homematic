@@ -345,6 +345,9 @@ Option 4: Delete and reinstall the Integration. That will recreate all devices a
 
 Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
 
+### Fixing RSSI values
+See this [explanation](https://github.com/danielperna84/hahomematic/blob/devel/docs/rssi_fix.md) how the RSSI values are fixed.
+
 ### Pressing buttons via automation
 
 It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `homematicip_local.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
