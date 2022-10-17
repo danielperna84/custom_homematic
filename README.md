@@ -341,6 +341,12 @@ Option 2: Reload the Integration or restart HA, that will reload the names from 
 Option 3: Use the service hahm.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
 Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installes systems)
 
+### Unignore device parameters
+
+Not all parameters of a Homematic device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
+
+BUT remember: Some paramters are already created as entities, but are [deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities).
+
 ### Devices with buttons
 
 Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
@@ -466,7 +472,7 @@ The following blueprints can be used to simplify the usage of Homematic device:
 Feel free to contribute:
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
-I (@SukramJ) use these blueprints on my own system and share them with you, but I don't want to investigate in blueprints for devices, that I don't own!
+These blueprints on my own system and share them with you, but I don't want to investigate in blueprints for devices, that I don't own!
 Feel free to copy, improve or enhance these blueprints and adopt them to other devices, and if you like create a PR with a new blueprint.
 
 Just copy these files to "your ha-config_dir"/blueprints/automation
