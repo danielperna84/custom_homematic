@@ -191,7 +191,9 @@ These two options are required for _special_ network environments. If for exampl
 
 ## System variables
 
-System variables are fetched every 30 seconds from backend (CCU/Homegear), and are created initially as **deactived** entity.
+System variables are fetched every 30 seconds from backend (CCU/Homegear) and belong to a device of type CCU. You could also click on service on the integration's overview in HA.
+
+System variables are initially created as **[deactived](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
 There is a special system variable named `sensor.{instance_name}` that represensts the backend and returns the count of `Servicemeldungen`. That's why there is no dedicated system variable for `Servicemeldungen`. This entity is also used in service calls (e.g. `set_variable_value`) to identify the used backend. This entity __must not be disabled__ to support full operations of Homematic(IP) Local.
 
 The types of system variables in the CCU are:
@@ -345,7 +347,7 @@ Option 4: Delete and reinstall the Integration. That will recreate all devices a
 
 Not all parameters of a Homematic device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
 
-BUT remember: Some paramters are already created as entities, but are [deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities).
+BUT remember: Some paramters are already created as entities, but are **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)**.
 
 ### Devices with buttons
 
