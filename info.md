@@ -1,8 +1,6 @@
-[HA Homematic Custom Component](https://github.com/danielperna84/custom_homematic) for Home Assistant
+Custom Component [Homematic(IP) Local](https://github.com/danielperna84/custom_homematic) for Home Assistant
 
 This is a custom component to integrate [HA Homematic](https://github.com/danielperna84/hahomematic) into [Home Assistant](https://www.home-assistant.io).
-
-HomematicIP Local requires HA 2022.7 and above.
 
 Provides the following:
 - ConfigFlow incl. reconfiguration of existing installation.
@@ -10,8 +8,8 @@ Provides the following:
 - Device Trigger (PRESS_XXX Events are selectable in automations)
 - Device Actions (Devices can be selected in automation actions)
 - Entity state is restored after startup
-- Virtual Remotes can be triggered in HA automations
-- The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors/switch/select/number
+- Virtual Remotes can be triggered in HA automations or pressed by buttons
+- The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors/switch/select/number. Programs are displayed as buttons
 - Services:
   - Put paramset (Call to putParamset in the RPC XML interface)
   - Set device value (Set the value of a node)
