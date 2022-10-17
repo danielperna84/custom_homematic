@@ -7,10 +7,11 @@ HomematicIP Local requires HA 2022.10 and above.
 
 [State of the integration](https://github.com/danielperna84/custom_homematic/blob/devel/info.md)
 
-# ISSUES
+# ISSUES and DISCUSSIONS
 Please report issues in [hahomamatic repo](https://github.com/danielperna84/hahomematic/issues).
+New discussions can be started and found in [hahomamatic repo](https://github.com/danielperna84/hahomematic/discussions).
 
-# Homematic(IP) Local (WIP documentation)
+# Homematic(IP) Local (documentation)
 
 The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
