@@ -1,3 +1,7 @@
+Version 1.19.7 (2022-10-18)
+- Bump hahomematic to 2022.10.7
+  - Accept some existing prefix for sysvars and programs to avoid additional prefixing
+
 Version 1.19.6 (2022-10-15)
 - Bump hahomematic to 2022.10.6
   - Use HmHvacMode HEAT instead of AUTO for simple thermostats
