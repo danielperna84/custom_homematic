@@ -1,6 +1,8 @@
-Version 1.19.7 (2022-10-18)
+Version 1.19.7 (2022-10-20)
 - Bump hahomematic to 2022.10.7
   - Accept some existing prefix for sysvars and programs to avoid additional prefixing
+  - Read min/max temperature for climate devices
+  - Min set temperature for thermostats is now 5.0 degree. 4.5. degree is only off
 
 Version 1.19.6 (2022-10-15)
 - Bump hahomematic to 2022.10.6

@@ -124,7 +124,7 @@ async def async_setup_entry(
         {
             vol.Required(ATTR_AWAY_END): cv.datetime,
             vol.Required(ATTR_AWAY_TEMPERATURE, default=18.0): vol.All(
-                vol.Coerce(float), vol.Range(min=4.5, max=30.5)
+                vol.Coerce(float), vol.Range(min=5.0, max=30.5)
             ),
         },
         "async_enable_away_mode_by_calendar",
@@ -134,7 +134,7 @@ async def async_setup_entry(
         {
             vol.Required(ATTR_AWAY_HOURS): cv.positive_int,
             vol.Required(ATTR_AWAY_TEMPERATURE, default=18.0): vol.All(
-                vol.Coerce(float), vol.Range(min=4.5, max=30.5)
+                vol.Coerce(float), vol.Range(min=5.0, max=30.5)
             ),
         },
         "async_enable_away_mode_by_duration",
