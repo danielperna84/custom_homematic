@@ -1,3 +1,7 @@
+Version 1.19.8 (2022-10-21)
+- Bump hahomematic to 2022.10.8
+  - Add semaphore to fetch sysvar and programs from backend
+
 Version 1.19.7 (2022-10-20)
 - Bump hahomematic to 2022.10.7
   - Accept some existing prefix for sysvars and programs to avoid additional prefixing
