@@ -630,6 +630,16 @@ class ControlUnit(BaseControlUnit):
             }
         )
 
+    async def async_fetch_all_system_variables(self) -> None:
+        """Fetch all system variables from CCU / Homegear."""
+        if not self._hub_scheduler:
+            _LOGGER.debug(
+                "Hub scheduler for %s is not initialized", self._instance_name
+            )
+            return None
+
+        await self._hub_scheduler.async_fetch_sysvars()
+
     @callback
     def async_get_entity_stats(self) -> tuple[dict[str, int], list[str]]:
         """Return statistics data about entities per platform."""
@@ -749,11 +759,15 @@ class HmHubScheduler:
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
         _LOGGER.debug(
-            "Fetching sysvars for %s",
-            self._control.central.name,
+            "Scheduled fetching of programs and sysvars for %s", self._control.central.name
         )
         await self._hm_hub.fetch_sysvar_data()
         await self._hm_hub.fetch_program_data()
+
+    async def async_fetch_sysvars(self) -> None:
+        """Fetching sysvars from backend."""
+        _LOGGER.debug("Manually fetching of sysvars for %s", self._control.central.name)
+        await self._hm_hub.fetch_sysvar_data()
 
 
 class HaHubSensor(SensorEntity):

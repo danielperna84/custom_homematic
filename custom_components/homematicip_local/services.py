@@ -46,8 +46,9 @@ DEFAULT_CHANNEL = 1
 
 SERVICE_CLEAR_CACHE = "clear_cache"
 SERVICE_DELETE_DEVICE = "delete_device"
-SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
+SERVICE_FETCH_SYSTEM_VARIABLES = "fetch_system_variables"
+SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_DEVICE_VALUE_RAW = "set_device_value_raw"
@@ -57,8 +58,9 @@ SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
     SERVICE_DELETE_DEVICE,
-    SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_EXPORT_DEVICE_DEFINITION,
+    SERVICE_FETCH_SYSTEM_VARIABLES,
+    SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_DEVICE_VALUE_RAW,
@@ -81,6 +83,12 @@ SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
 SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
     {
         vol.Required(ATTR_DEVICE_ID): cv.string,
+    }
+)
+
+SCHEMA_SERVICE_FETCH_SYSTEM_VARIABLES = vol.Schema(
+    {
+        vol.Required(ATTR_ENTITY_ID): cv.string,
     }
 )
 
@@ -158,6 +166,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_delete_device(hass=hass, service=service)
         elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
+        elif service_name == SERVICE_FETCH_SYSTEM_VARIABLES:
+            await _async_service_fetch_system_variables(hass=hass, service=service)
         elif service_name == SERVICE_FORCE_DEVICE_AVAILABILITY:
             await _async_service_force_device_availability(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
@@ -193,6 +203,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_EXPORT_DEVICE_DEFINITION,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION,
+    )
+
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_FETCH_SYSTEM_VARIABLES,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_FETCH_SYSTEM_VARIABLES,
     )
 
     async_register_admin_service(
@@ -440,6 +458,16 @@ async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) 
 
     if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
         await hub_entity.control.central.clear_all()
+
+
+async def _async_service_fetch_system_variables(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to fetch system variables from backend."""
+    entity_id = service.data[ATTR_ENTITY_ID]
+
+    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
+        await hub_entity.control.async_fetch_all_system_variables()
 
 
 async def _async_service_put_paramset(

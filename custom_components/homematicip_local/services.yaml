@@ -37,6 +37,19 @@ export_device_definition:
         device:
           integration: homematicip_local
 
+fetch_system_variables:
+  name: Fetch system variables
+  description: Fetch system variables from backend.
+  fields:
+    entity_id:
+      name: Entity
+      description: Name(s) of homematic central to fetch system variables from.
+      required: true
+      selector:
+        entity:
+          integration: homematicip_local
+          device_class: homematic_hub
+
 force_device_availability:
   name: Force device availability
   description: Force a device to be available, this will override the real state
