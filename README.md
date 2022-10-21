@@ -260,6 +260,11 @@ Exports a device definition (2 files) to
 Please create a pull request with both files at [pydevccu](https://github.com/danielperna84/pydevccu), if the device not exists, to support future development of this component.
 This data can be used by the developers to add customized entities for new devices.
 
+### `homematicip_local.fetch_system_variables`
+
+Service to fetch system variables on demand from backend independent from default 30s schedule.
+Using this service too often could have a negative effect on the stability of your backend.
+
 ### `homematicip_local.force_device_availability`
 
 Reactivate a device in Home Assistant that has been made unavailable by an UNREACH event from CCU.

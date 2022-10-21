@@ -1,6 +1,7 @@
 Version 1.19.8 (2022-10-21)
 - Bump hahomematic to 2022.10.8
   - Add semaphore to fetch sysvar and programs from backend
+- Add service to fetch system variables on demand from backend independent from default 30s schedule.
 
 Version 1.19.7 (2022-10-20)
 - Bump hahomematic to 2022.10.7
