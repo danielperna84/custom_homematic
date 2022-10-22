@@ -759,7 +759,8 @@ class HmHubScheduler:
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
         _LOGGER.debug(
-            "Scheduled fetching of programs and sysvars for %s", self._control.central.name
+            "Scheduled fetching of programs and sysvars for %s",
+            self._control.central.name,
         )
         await self._hm_hub.fetch_sysvar_data()
         await self._hm_hub.fetch_program_data()

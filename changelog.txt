@@ -1,3 +1,6 @@
+Version 1.19.9 (2022-10-22)
+- Add generic option to modify icon based on state
+
 Version 1.19.8 (2022-10-21)
 - Bump hahomematic to 2022.10.8
   - Add semaphore to fetch sysvar and programs from backend

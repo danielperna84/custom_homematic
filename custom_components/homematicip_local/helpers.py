@@ -1,7 +1,10 @@
 """Helper."""
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import date, datetime
+from decimal import Decimal
 from typing import TypeVar, Union
 
 from hahomematic.entity import CustomEntity, GenericEntity, GenericHubEntity
@@ -9,6 +12,7 @@ from hahomematic.hub import HmHub
 
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.helpers.typing import StateType
 
 from .const import IDENTIFIER_SEPARATOR
 
@@ -56,3 +60,4 @@ class HmSensorEntityDescription(SensorEntityDescription):
     """Class describing Homematic(IP) Local sensor entities."""
 
     multiplier: int | None = None
+    icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
