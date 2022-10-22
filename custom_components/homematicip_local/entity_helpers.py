@@ -112,8 +112,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
-        icon="mdi:arrow-up-down",
         device_class="homematicip_local__door_state",
+        icon_fn=lambda value: "mdi:garage-open"
+        if value in ("open", "ventilation_position")
+        else "mdi:garage",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
@@ -189,8 +191,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
-        icon="mdi:lock",
         device_class="homematicip_local__lock_state",
+        icon_fn=lambda value: "mdi:lock-open"
+        if value == "unlocked"
+        else "mdi:lock",
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}
@@ -332,8 +336,10 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
-        icon="mdi:window-closed",
         device_class="homematicip_local__srh",
+        icon_fn=lambda value: "mdi:window-open"
+        if value in ("open", "tilted")
+        else "mdi:window-closed",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
