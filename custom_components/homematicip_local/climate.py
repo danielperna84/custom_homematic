@@ -160,8 +160,6 @@ class HaHomematicClimate(
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
         self._attr_temperature_unit = TEMP_CELSIUS
         self._attr_target_temperature_step = hm_entity.target_temperature_step
-        self._attr_min_temp = float(hm_entity.min_temp)
-        self._attr_max_temp = float(hm_entity.max_temp)
 
     @property
     def target_temperature(self) -> float | None:
@@ -217,6 +215,16 @@ class HaHomematicClimate(
             if hm_hvac_mode in HM_TO_HA_HVAC_MODE:
                 hvac_modes.append(HM_TO_HA_HVAC_MODE[hm_hvac_mode])
         return hvac_modes
+
+    @property
+    def min_temp(self) -> float:
+        """Return the minimum temperature."""
+        return self._hm_entity.min_temp
+
+    @property
+    def max_temp(self) -> float:
+        """Return the maximum temperature."""
+        return self._hm_entity.max_temp
 
     @property
     def preset_mode(self) -> str | None:
