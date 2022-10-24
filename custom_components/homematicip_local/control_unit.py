@@ -42,6 +42,7 @@ from hahomematic.const import (
     HH_EVENT_REPLACE_DEVICE,
     HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
+    PARAMSET_KEY_MASTER,
     PORT_ANY,
     HmEntityUsage,
     HmEventType,
@@ -80,6 +81,7 @@ from .const import (
     HOMEMATIC_HUB_DEVICE_CLASS,
     IDENTIFIER_SEPARATOR,
     MANUFACTURER_EQ3,
+    MASTER_SCAN_INTERVAL,
     SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import (
@@ -206,7 +208,7 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         # {entity_id, sysvar_entity}
         self._active_hm_hub_entities: dict[str, HmBaseHubEntity] = {}
-        self._hub_scheduler: HmHubScheduler | None = None
+        self._scheduler: HmScheduler | None = None
         self._hub_entity: HaHubSensor | None = None
 
     async def async_init_central(self) -> None:
@@ -221,8 +223,8 @@ class ControlUnit(BaseControlUnit):
 
     async def async_stop(self) -> None:
         """Stop the control unit."""
-        if self._hub_scheduler:
-            self._hub_scheduler.de_init()
+        if self._scheduler:
+            self._scheduler.de_init()
 
         await super().async_stop()
 
@@ -477,8 +479,8 @@ class ControlUnit(BaseControlUnit):
                     )
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
-            if not self._hub_scheduler and self.central.hub:
-                self._hub_scheduler = HmHubScheduler(
+            if not self._scheduler and self.central.hub:
+                self._scheduler = HmScheduler(
                     self._hass, control_unit=self, hm_hub=self.central.hub
                 )
                 self._hub_entity = HaHubSensor(
@@ -632,13 +634,13 @@ class ControlUnit(BaseControlUnit):
 
     async def async_fetch_all_system_variables(self) -> None:
         """Fetch all system variables from CCU / Homegear."""
-        if not self._hub_scheduler:
+        if not self._scheduler:
             _LOGGER.debug(
                 "Hub scheduler for %s is not initialized", self._instance_name
             )
             return None
 
-        await self._hub_scheduler.async_fetch_sysvars()
+        await self._scheduler.async_fetch_sysvars()
 
     @callback
     def async_get_entity_stats(self) -> tuple[dict[str, int], list[str]]:
@@ -737,7 +739,7 @@ class ControlConfig:
         )
 
 
-class HmHubScheduler:
+class HmScheduler:
     """The HomeMatic hub scheduler. (CCU/HomeGear)."""
 
     def __init__(
@@ -747,14 +749,19 @@ class HmHubScheduler:
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
-        self.remove_listener: Callable = async_track_time_interval(
+        self.remove_sysvar_listener: Callable = async_track_time_interval(
             self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
+        )
+        self.remove_master_listener: Callable = async_track_time_interval(
+            self.hass, self._async_fetch_master_data, MASTER_SCAN_INTERVAL
         )
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self.remove_listener and callback(self.remove_listener):
-            self.remove_listener()
+        if self.remove_sysvar_listener and callback(self.remove_sysvar_listener):
+            self.remove_sysvar_listener()
+        if self.remove_master_listener and callback(self.remove_master_listener):
+            self.remove_master_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
@@ -769,6 +776,16 @@ class HmHubScheduler:
         """Fetching sysvars from backend."""
         _LOGGER.debug("Manually fetching of sysvars for %s", self._control.central.name)
         await self._hm_hub.fetch_sysvar_data()
+
+    async def _async_fetch_master_data(self, now: datetime) -> None:
+        """Fetch master entities from backend."""
+        _LOGGER.debug(
+            "Scheduled fetching of master entities for %s",
+            self._control.central.name,
+        )
+        await self._control.central.device_data.refesh_entity_data(
+            paramset_key=PARAMSET_KEY_MASTER
+        )
 
 
 class HaHubSensor(SensorEntity):
