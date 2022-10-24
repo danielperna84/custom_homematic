@@ -52,6 +52,8 @@ SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 SERVICE_VIRTUAL_KEY = "virtual_key"
 
 SYSVAR_SCAN_INTERVAL = timedelta(seconds=30)
+# only used for entities from MASTER paramset
+MASTER_SCAN_INTERVAL = timedelta(seconds=300)
 
 
 class HmEntityState(StrEnum):

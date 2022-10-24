@@ -1,6 +1,7 @@
 Version 1.19.10 (2022-10-23)
 - Bump hahomematic to 2022.10.9
   - Fix: don't hide unignored parameters
+- Fix scan interval for MASTER polling
 
 Version 1.19.9 (2022-10-22)
 - Add generic option to modify icon based on state

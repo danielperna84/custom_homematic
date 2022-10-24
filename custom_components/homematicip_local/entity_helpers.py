@@ -192,9 +192,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
         device_class="homematicip_local__lock_state",
-        icon_fn=lambda value: "mdi:lock-open"
-        if value == "unlocked"
-        else "mdi:lock",
+        icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
     ),
     frozenset(
         {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}

@@ -22,11 +22,19 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
+from .const import (
+    ATTR_VALUE_STATE,
+    CONTROL_UNITS,
+    MASTER_SCAN_INTERVAL,
+    DOMAIN,
+    HmEntityState,
+)
 from .control_unit import ControlUnit
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
 
+# only used for entities from MASTER paramset
+SCAN_INTERVAL = MASTER_SCAN_INTERVAL
 _LOGGER = logging.getLogger(__name__)
 
 
