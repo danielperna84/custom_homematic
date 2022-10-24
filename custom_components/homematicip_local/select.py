@@ -15,15 +15,13 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, MASTER_SCAN_INTERVAL, DOMAIN
+from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit
 from .generic_entity import (
     HaHomematicGenericRestoreEntity,
     HaHomematicGenericSysvarEntity,
 )
 
-# only used for entities from MASTER paramset
-SCAN_INTERVAL = MASTER_SCAN_INTERVAL
 _LOGGER = logging.getLogger(__name__)
 
 

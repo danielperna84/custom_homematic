@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic, cast
 
-from hahomematic.const import PARAMSET_KEY_MASTER, HmCallSource, HmEntityUsage
+from hahomematic.const import HmCallSource, HmEntityUsage
 from hahomematic.entity import (
     CallbackEntity,
     CustomEntity,
@@ -44,6 +44,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     """Representation of the HomematicIP generic entity."""
 
     _attr_has_entity_name = True
+    _attr_should_poll = False
 
     def __init__(
         self,
@@ -53,10 +54,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmGenericEntity = hm_entity
-        self._attr_should_poll = (
-            isinstance(self._hm_entity, GenericEntity)
-            and self._hm_entity.paramset_key == PARAMSET_KEY_MASTER
-        )
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
         self.entity_description = get_entity_description(hm_entity=hm_entity)
         if (
