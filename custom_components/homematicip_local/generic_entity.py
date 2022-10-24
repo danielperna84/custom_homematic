@@ -1,7 +1,6 @@
 """Generic entity for the HomematicIP Cloud component."""
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
 from typing import Any, Generic, cast
 
@@ -38,7 +37,6 @@ from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .helpers import HmGenericEntity, HmGenericSysvarEntity
 
-SCAN_INTERVAL = timedelta(seconds=120)
 _LOGGER = logging.getLogger(__name__)
 
 
