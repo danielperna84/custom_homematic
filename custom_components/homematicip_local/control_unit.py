@@ -52,7 +52,6 @@ from hahomematic.const import (
 from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
 from hahomematic.hub import HmHub
-from hahomematic.xml_rpc_server import register_xml_rpc_server
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, ATTR_NAME
@@ -155,13 +154,6 @@ class BaseControlUnit:
 
     async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
-        xml_rpc_server = register_xml_rpc_server(
-            local_port=self._data.get(ATTR_CALLBACK_PORT)
-            or self._default_callback_port,
-        )
-
-        storage_folder = get_storage_folder(self._hass)
-        client_session = aiohttp_client.async_get_clientsession(self._hass)
         interface_configs: set[InterfaceConfig] = set()
         for interface_name in self._data[ATTR_INTERFACE]:
             interface = self._data[ATTR_INTERFACE][interface_name]
@@ -177,16 +169,14 @@ class BaseControlUnit:
         central_id = self._entry_id[-10:]
         return await CentralConfig(
             name=self._instance_name,
-            loop=self._hass.loop,
-            xml_rpc_server=xml_rpc_server,
-            storage_folder=storage_folder,
+            storage_folder=get_storage_folder(self._hass),
             host=self._data[ATTR_HOST],
             username=self._data[ATTR_USERNAME],
             password=self._data[ATTR_PASSWORD],
             central_id=central_id,
             tls=self._data[ATTR_TLS],
             verify_tls=self._data[ATTR_VERIFY_TLS],
-            client_session=client_session,
+            client_session=aiohttp_client.async_get_clientsession(self._hass),
             json_port=self._data[ATTR_JSON_PORT],
             callback_host=self._data.get(ATTR_CALLBACK_HOST)
             if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
@@ -194,6 +184,7 @@ class BaseControlUnit:
             callback_port=self._data.get(ATTR_CALLBACK_PORT)
             if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
             else None,
+            default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
         ).get_central()
 
