@@ -100,46 +100,46 @@ class BaseControlUnit:
         """Init the control unit."""
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
-        self._data = control_config.data
+        self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
-        self._instance_name = self._data[ATTR_INSTANCE_NAME]
+        self._instance_name = control_config[ATTR_INSTANCE_NAME]
         self._central: CentralUnit | None = None
 
     async def async_init_central(self) -> None:
-        """Start the control unit."""
+        """Start the central unit."""
         _LOGGER.debug(
-            "Init ControlUnit %s",
+            "Init central unit %s",
             self._instance_name,
         )
         self._central = await self._async_create_central()
 
-    async def async_start(self) -> None:
-        """Start the control unit."""
+    async def async_start_central(self) -> None:
+        """Start the central unit."""
         _LOGGER.debug(
-            "Starting ControlUnit %s",
+            "Starting central unit %s",
             self._instance_name,
         )
         if self._central:
             await self._central.start()
         else:
             _LOGGER.exception(
-                "Starting ControlUnit %s not possible, CentralUnit is not available",
+                "Starting central unit %s not possible.",
                 self._instance_name,
             )
-        _LOGGER.info("Started ControlUnit for %s", self._instance_name)
+        _LOGGER.info("Started central unit for %s", self._instance_name)
 
     @callback
-    def stop(self, *args: Any) -> None:
+    def stop_central(self, *args: Any) -> None:
         """Wrap the call to async_stop.
         Used as an argument to EventBus.async_listen_once.
         """
-        self._hass.async_create_task(self.async_stop())
-        _LOGGER.info("Stopped ControlUnit for %s", self._instance_name)
+        self._hass.async_create_task(self.async_stop_central())
+        _LOGGER.info("Stopped central unit for %s", self._instance_name)
 
-    async def async_stop(self) -> None:
+    async def async_stop_central(self) -> None:
         """Stop the control unit."""
         _LOGGER.debug(
-            "Stopping ControlUnit %s",
+            "Stopping central unit %s",
             self._instance_name,
         )
         if self._central is not None:
@@ -147,7 +147,7 @@ class BaseControlUnit:
 
     @property
     def central(self) -> CentralUnit:
-        """Return the Homematic(IP) Local central_unit instance."""
+        """Return the Homematic(IP) Local central unit instance."""
         if self._central is not None:
             return self._central
         raise HomeAssistantError("homematicip_local.central not initialized")
@@ -155,8 +155,8 @@ class BaseControlUnit:
     async def _async_create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         interface_configs: set[InterfaceConfig] = set()
-        for interface_name in self._data[ATTR_INTERFACE]:
-            interface = self._data[ATTR_INTERFACE][interface_name]
+        for interface_name in self._config_data[ATTR_INTERFACE]:
+            interface = self._config_data[ATTR_INTERFACE][interface_name]
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
@@ -170,19 +170,19 @@ class BaseControlUnit:
         return await CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
-            host=self._data[ATTR_HOST],
-            username=self._data[ATTR_USERNAME],
-            password=self._data[ATTR_PASSWORD],
+            host=self._config_data[ATTR_HOST],
+            username=self._config_data[ATTR_USERNAME],
+            password=self._config_data[ATTR_PASSWORD],
             central_id=central_id,
-            tls=self._data[ATTR_TLS],
-            verify_tls=self._data[ATTR_VERIFY_TLS],
+            tls=self._config_data[ATTR_TLS],
+            verify_tls=self._config_data[ATTR_VERIFY_TLS],
             client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._data[ATTR_JSON_PORT],
-            callback_host=self._data.get(ATTR_CALLBACK_HOST)
-            if not self._data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
+            json_port=self._config_data[ATTR_JSON_PORT],
+            callback_host=self._config_data.get(ATTR_CALLBACK_HOST)
+            if not self._config_data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
             else None,
-            callback_port=self._data.get(ATTR_CALLBACK_PORT)
-            if not self._data.get(ATTR_CALLBACK_PORT) == PORT_ANY
+            callback_port=self._config_data.get(ATTR_CALLBACK_PORT)
+            if not self._config_data.get(ATTR_CALLBACK_PORT) == PORT_ANY
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
@@ -203,7 +203,7 @@ class ControlUnit(BaseControlUnit):
         self._hub_entity: HaHubSensor | None = None
 
     async def async_init_central(self) -> None:
-        """Start the control unit."""
+        """Start the central unit."""
         await super().async_init_central()
         # register callback
         if self._central:
@@ -212,12 +212,12 @@ class ControlUnit(BaseControlUnit):
 
         self._async_add_central_to_device_registry()
 
-    async def async_stop(self) -> None:
-        """Stop the control unit."""
+    async def async_stop_central(self) -> None:
+        """Stop the central unit."""
         if self._scheduler:
             self._scheduler.de_init()
 
-        await super().async_stop()
+        await super().async_stop_central()
 
     @property
     def device_info(self) -> DeviceInfo | None:
@@ -675,14 +675,14 @@ class ControlUnitTemp(BaseControlUnit):
             await self._central.start_direct()
         else:
             _LOGGER.exception(
-                "Starting temporary ControlUnit %s not possible, CentralUnit is not available",
+                "Starting temporary ControlUnit %s not possible, central unit is not available",
                 self._instance_name,
             )
 
-    async def async_stop(self) -> None:
+    async def async_stop_central(self) -> None:
         """Stop the control unit."""
         await self.central.clear_all()
-        await super().async_stop()
+        await super().async_stop_central()
 
     async def async_validate_config_and_get_serial(self) -> str | None:
         """Validate the control configuration."""
