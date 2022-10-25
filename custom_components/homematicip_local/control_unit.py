@@ -102,7 +102,7 @@ class BaseControlUnit:
         self._entry_id = control_config.entry_id
         self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
-        self._instance_name = control_config[ATTR_INSTANCE_NAME]
+        self._instance_name = self._config_data[ATTR_INSTANCE_NAME]
         self._central: CentralUnit | None = None
 
     async def async_init_central(self) -> None:
@@ -123,7 +123,7 @@ class BaseControlUnit:
             await self._central.start()
         else:
             _LOGGER.exception(
-                "Starting central unit %s not possible.",
+                "Starting central unit %s not possible",
                 self._instance_name,
             )
         _LOGGER.info("Started central unit for %s", self._instance_name)
@@ -774,7 +774,7 @@ class HmScheduler:
             "Scheduled fetching of master entities for %s",
             self._control.central.name,
         )
-        await self._control.central.device_data.refesh_entity_data(
+        await self._control.central.device_data.refresh_entity_data(
             paramset_key=PARAMSET_KEY_MASTER
         )
 
