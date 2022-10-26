@@ -82,7 +82,7 @@ async def async_setup_entry(
 
 
 class HaHomematicButton(HaHomematicGenericEntity[HmButton], ButtonEntity):
-    """Representation of the Homematic button."""
+    """Representation of the Homematic(IP) Local button."""
 
     async def async_press(self) -> None:
         """Execute a button press."""
@@ -90,7 +90,7 @@ class HaHomematicButton(HaHomematicGenericEntity[HmButton], ButtonEntity):
 
 
 class HaHomematicProgramButton(HaHomematicGenericHubEntity, ButtonEntity):
-    """Representation of the Homematic button."""
+    """Representation of the Homematic(IP) Local button."""
 
     def __init__(
         self,

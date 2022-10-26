@@ -223,7 +223,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
-        """Handle a discovered Homematic(IP) Local CCU."""
+        """Handle a discovered HomeMatic CCU."""
         _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
         instance_name = _get_instance_name(
             friendly_name=discovery_info.upnp.get("friendlyName")
@@ -374,10 +374,10 @@ def _get_instance_name(friendly_name: Any | None) -> str | None:
     if not friendly_name:
         return None
     name = str(friendly_name)
-    if name.startswith("HomeMatic Central - "):
-        return name.replace("HomeMatic Central - ", "")
-    if name.startswith("HomeMatic Central "):
-        return name.replace("HomeMatic Central ", "")
+    if name.startswith("Homematic Central - "):
+        return name.replace("Homematic Central - ", "")
+    if name.startswith("Homematic Central "):
+        return name.replace("Homematic Central ", "")
     return name
 
 

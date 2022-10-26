@@ -94,7 +94,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseControlUnit:
-    """Base central point to control a Homematic CCU."""
+    """Base central point to control a central unit."""
 
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
@@ -190,7 +190,7 @@ class BaseControlUnit:
 
 
 class ControlUnit(BaseControlUnit):
-    """Central unit to control a Homematic CCU."""
+    """Unit to control a central unit."""
 
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
@@ -663,7 +663,7 @@ class ControlUnit(BaseControlUnit):
 
 
 class ControlUnitTemp(BaseControlUnit):
-    """Central unit to control a Homematic CCU for temporary usage."""
+    """Central unit to control a central unit for temporary usage."""
 
     async def async_start_direct(self) -> None:
         """Start the temporary control unit."""
@@ -731,12 +731,12 @@ class ControlConfig:
 
 
 class HmScheduler:
-    """The HomeMatic hub scheduler. (CCU/HomeGear)."""
+    """The Homematic(IP) Local hub scheduler. (CCU/HomeGear)."""
 
     def __init__(
         self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
     ) -> None:
-        """Initialize HomeMatic hub scheduler."""
+        """Initialize Homematic(IP) Local hub scheduler."""
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
@@ -780,13 +780,13 @@ class HmScheduler:
 
 
 class HaHubSensor(SensorEntity):
-    """The HomeMatic hub. (CCU/HomeGear)."""
+    """The Homematic(IP) Local hub. (CCU/HomeGear)."""
 
     _attr_should_poll = False
     _attr_icon = "mdi:gradient-vertical"
 
     def __init__(self, control_unit: ControlUnit, hm_hub: HmHub) -> None:
-        """Initialize HomeMatic hub."""
+        """Initialize Homematic(IP) Local hub."""
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
         self._attr_name: str = control_unit.central.name

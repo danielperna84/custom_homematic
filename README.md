@@ -1,7 +1,7 @@
 # custom_homematic
-Custom Home Assistant Component for HomeMatic
+Custom Home Assistant Component for HomeMatic and HomematicIP
 
-HomematicIP Local requires HA 2022.10 and above.
+Homematic(IP) Local requires HA 2022.10 and above.
 
 [Installation](https://github.com/danielperna84/custom_homematic/wiki/Installation)
 
@@ -13,14 +13,14 @@ New discussions can be started and found in [hahomamatic repo](https://github.co
 
 # Homematic(IP) Local (documentation)
 
-The [Homematic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
+The [HomeMatic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
 
 **Please take the time to read the entire documentation before asking for help. It will answer the most common questions that come up while working with this integration.**
 
 ## Device support
 
-HomeMatic devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant. However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about. It may become relevant though if new hardware becomes available. In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity. In such a case you may report the missing customization in the [hahomematic](https://github.com/danielperna84/hahomematic) repository.
+HomeMatic and HomematicIP devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant. However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about. It may become relevant though if new hardware becomes available. In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity. In such a case you may report the missing customization in the [hahomematic](https://github.com/danielperna84/hahomematic) repository.
 See this [list of devices supported by custom entities](https://github.com/danielperna84/hahomematic/wiki/Homematic-Devices-supported-by-custom-entity).
 
 ### Deactivated Entities
@@ -46,11 +46,16 @@ Due to a bug in previous version of the CCU2 / CCU3, this integration requires a
 
 To allow communication to your HomeMatic hub, a few ports on the hub have to be accessible from your Home Assistant machine. The relevant default ports are:
 
-- HomeMatic RF (_old_ wireless devices): `2001` / `42001` (with enabled TLS)
-- Homematic IP (wireless and wired): `2010` / `42010` (with enabled TLS)
+- BidCosRF (_old_ wireless devices): `2001` / `42001` (with enabled TLS)
+- HomematicIP (wireless and wired): `2010` / `42010` (with enabled TLS)
 - HomeMatic wired (_old_ wired devices): `2000` / `42000` (with enabled TLS)
 - Virtual thermostat groups: `9292` / `49292` (with enabled TLS)
 - JSON-RPC (used to get names and rooms): `80` / `443` (with enabled TLS)
+
+Advanced setups might consider this:
+
+This integration starts a local XmLRPC server within HA, which automatically selects a free port or uses the optionally defined callback port.
+This means that the CCU must be able to start a new connection to the system running HA and to the port. So check the firewall of the system running HA (host/VM) to allow communication from the CCU.
 
 ### Authentication
 
@@ -76,7 +81,7 @@ Adding Homematic(IP) Local to you Home Assistant instance can be done via the us
 
 ## Auto-discovery
 
-The integration supports auto-discovery for the CCU and compatible hubs like RaspberryMatic. The Home Assistant User Interface will notify you about the integrationg being available for setup. It will pre-fill the instance-name and IP address of your HomeMatic hub. If you have already set up the integration manually, you can either click the _Ignore_ button or re-configure your existing instance to let Home Assistant know the existing instance is the one it has detected. After re-configuring your instance a HA restart is required.
+The integration supports auto-discovery for the CCU and compatible hubs like RaspberryMatic. The Home Assistant User Interface will notify you about the integrationg being available for setup. It will pre-fill the instance-name and IP address of your Homematic hub. If you have already set up the integration manually, you can either click the _Ignore_ button or re-configure your existing instance to let Home Assistant know the existing instance is the one it has detected. After re-configuring your instance a HA restart is required.
 
 Autodiscovery uses the last 10-digits of your rf-module's serial to uniquely identify your CCU, but there are rare cases, where the CCU API and the UPNP-Message contains/returns different values. In these cases, where the auto-discovered instance does not disappear after a HA restart, just click on the _Ignore_ button. 
 Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
@@ -133,22 +138,22 @@ This page always displays the default values, also when reconfiguring the integr
 ```yaml
 hmip_rf_enabled:
   required: true
-  description: Enable Homematic IP (wiredless and wired).
+  description: Enable HomematicIP (wiredless and wired).
   type: boolean
   default: true
 hmip_rf_port:
   required: false
-  description: Port for Homematic IP (wireless and wired).
+  description: Port for HomematicIP (wireless and wired).
   type: integer
   default: 2010
 bidos_rf_enabled:
   required: true
-  description: Enable Homematic (wireless).
+  description: Enable BidCos (HomeMatic wireless).
   type: boolean
   default: true
 bidos_rf_port:
   required: false
-  description: Port for Homematic (wireless).
+  description: Port for BidCos (HomeMatic wireless).
   type: integer
   default: 2001
 virtual_devices_enabled:
@@ -168,12 +173,12 @@ virtual_devices_path:
   default: /groups
 hs485d_enabled:
   required: true
-  description: Enable Homematic (wired).
+  description: Enable HomeMatic wired.
   type: boolean
   default: false
 hs485d_port:
   required: false
-  description: Port for Homematic (wired).
+  description: Port for HomeMatic wired.
   type: integer
   default: 2000
 ```
@@ -241,15 +246,15 @@ Delete a device from Home Assistant.
 
 ### `homematicip_local.disable_away_mode`
 
-Disable the away mode for `climate` devices. This only works with Homematic IP devices.
+Disable the away mode for `climate` devices. This only works with HomematicIP devices.
 
 ### `homematicip_local.enable_away_mode_by_calendar`
 
-Enable the away mode immediately, and specify the end time by date. This only works with Homematic IP devices.
+Enable the away mode immediately, and specify the end time by date. This only works with HomematicIP devices.
 
 ### `homematicip_local.enable_away_mode_by_duration`
 
-Enable the away mode immediately, and specify the end time by setting a duration. This only works with Homematic IP devices.
+Enable the away mode immediately, and specify the end time by setting a duration. This only works with HomematicIP devices.
 
 ### `homematicip_local.export_device_definition`
 
@@ -353,7 +358,7 @@ Option 4: Delete and reinstall the Integration. That will recreate all devices a
 
 ### Unignore device parameters
 
-Not all parameters of a Homematic device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
+Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
 
 BUT remember: Some paramters are already created as entities, but are **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)**.
 
@@ -378,9 +383,9 @@ data:
   channel: 3
 ```
 
-### Events for Homematic IP devices
+### Events for HomematicIP devices
 
-To receive button-press events for some Homematic IP devices like WRC2 / WRC6 (wall switch) or SPDR (passage sensor) or the KRC4 (key ring remote control) you have to temporary create an empty program for each channel in the CCU:
+To receive button-press events for some HomematicIP devices like WRC2 / WRC6 (wall switch) or SPDR (passage sensor) or the KRC4 (key ring remote control) you have to temporary create an empty program for each channel in the CCU:
 
 1. In the menu of your CCU's admin panel go to `Programs and connections` > `Programs & CCU connection`
 2. Go to `New` in the footer menu
@@ -469,7 +474,7 @@ BidCos-RF devices have an optional parameter for put_paramset which defines the 
 
 ## Available Blueprints
 
-The following blueprints can be used to simplify the usage of Homematic device:
+The following blueprints can be used to simplify the usage of HomeMatic and HomematicIP device:
 - [Support for 2-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-2-button.yaml): Support for two button remote like HmIP-WRC2.
 - [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for two button remote like HmIP-KRCA.
 - [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for two button remote like HmIP-WRC6.

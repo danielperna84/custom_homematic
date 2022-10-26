@@ -1,4 +1,4 @@
-"""Support for HomeMatic sensors."""
+"""Support for Homematic(IP) Local sensors."""
 from __future__ import annotations
 
 import logging

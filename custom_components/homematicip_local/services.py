@@ -270,7 +270,7 @@ async def async_unload_services(hass: HomeAssistant) -> None:
 async def _async_service_delete_device(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to delete a HomeMatic device from HA."""
+    """Service to delete a Homematic(IP) Local device from HA."""
     device_id = service.data[ATTR_DEVICE_ID]
 
     if (address_data := _get_interface_address(hass=hass, device_id=device_id)) is None:
@@ -294,7 +294,7 @@ async def _async_service_delete_device(
 async def _async_service_export_device_definition(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to call setValue method for HomeMatic devices."""
+    """Service to call setValue method for Homematic(IP) Local devices."""
     device_id = service.data[ATTR_DEVICE_ID]
 
     if hm_device := get_device(hass=hass, device_id=device_id):
@@ -310,7 +310,7 @@ async def _async_service_export_device_definition(
 async def _async_service_force_device_availability(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to force device availability on a HomeMatic devices."""
+    """Service to force device availability on a Homematic(IP) Local devices."""
     device_id = service.data[ATTR_DEVICE_ID]
 
     if hm_device := get_device(hass=hass, device_id=device_id):
@@ -328,7 +328,7 @@ async def _async_service_force_device_availability(
 async def _async_service_set_variable_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to call setValue method for HomeMatic system variable."""
+    """Service to call setValue method for Homematic(IP) Local system variable."""
     entity_id = service.data[ATTR_ENTITY_ID]
     name = service.data[ATTR_NAME]
     value = service.data[ATTR_VALUE]
@@ -341,7 +341,7 @@ async def _async_service_set_variable_value(
 async def _async_service_set_device_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to call setValue method for HomeMatic devices."""
+    """Service to call setValue method for Homematic(IP) Local devices."""
     device_id = service.data[ATTR_DEVICE_ID]
     channel = service.data[ATTR_CHANNEL]
     parameter = service.data[ATTR_PARAMETER]
@@ -373,7 +373,7 @@ async def _async_service_set_device_value(
 async def _async_service_set_device_value_raw(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to call setValue method for HomeMatic devices."""
+    """Service to call setValue method for Homematic(IP) Local devices."""
     interface_id = service.data[ATTR_INTERFACE_ID]
     channel_address = service.data[ATTR_ADDRESS]
     parameter = service.data[ATTR_PARAMETER]
@@ -473,7 +473,7 @@ async def _async_service_fetch_system_variables(
 async def _async_service_put_paramset(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
-    """Service to call the putParamset method on a HomeMatic connection."""
+    """Service to call the putParamset method on a Homematic(IP) Local connection."""
     device_id = service.data[ATTR_DEVICE_ID]
     channel = service.data.get(ATTR_CHANNEL)
     paramset_key = service.data[ATTR_PARAMSET_KEY]

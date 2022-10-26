@@ -90,7 +90,7 @@ async def async_setup_entry(
 class HaHomematicBinarySensor(
     HaHomematicGenericRestoreEntity[HmBinarySensor], BinarySensorEntity
 ):
-    """Representation of the Homematic binary sensor."""
+    """Representation of the Homematic(IP) Local binary sensor."""
 
     @property
     def is_on(self) -> bool | None:
