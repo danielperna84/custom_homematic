@@ -15,13 +15,6 @@ from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescript
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
-    UnitOfEnergy,
-    UnitOfLength,
-    UnitOfPower,
-    UnitOfPressure,
-    UnitOfSpeed,
-    UnitOfTemperature,
-    UnitOfVolume,
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
@@ -30,8 +23,17 @@ from homeassistant.const import (
     FREQUENCY_HERTZ,
     LIGHT_LUX,
     PERCENTAGE,
+    PRESSURE_BAR,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    TEMP_CELSIUS,
     TIME_MINUTES,
+    UnitOfEnergy,
+    UnitOfLength,
+    UnitOfPower,
+    UnitOfPressure,
+    UnitOfSpeed,
+    UnitOfTemperature,
+    UnitOfVolume,
 )
 from homeassistant.helpers.entity import EntityCategory, EntityDescription
 
