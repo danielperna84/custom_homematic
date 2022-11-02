@@ -20,20 +20,20 @@ from homeassistant.const import (
     DEGREE,
     ELECTRIC_CURRENT_MILLIAMPERE,
     ELECTRIC_POTENTIAL_VOLT,
-    ENERGY_KILO_WATT_HOUR,
-    ENERGY_WATT_HOUR,
     FREQUENCY_HERTZ,
-    LENGTH_MILLIMETERS,
     LIGHT_LUX,
     PERCENTAGE,
-    POWER_WATT,
     PRESSURE_BAR,
-    PRESSURE_HPA,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-    SPEED_KILOMETERS_PER_HOUR,
     TEMP_CELSIUS,
     TIME_MINUTES,
-    VOLUME_CUBIC_METERS,
+    UnitOfEnergy,
+    UnitOfLength,
+    UnitOfPower,
+    UnitOfPressure,
+    UnitOfSpeed,
+    UnitOfTemperature,
+    UnitOfVolume,
 )
 from homeassistant.helpers.entity import EntityCategory, EntityDescription
 
@@ -78,7 +78,7 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "AIR_PRESSURE": HmSensorEntityDescription(
         key="AIR_PRESSURE",
-        native_unit_of_measurement=PRESSURE_HPA,
+        native_unit_of_measurement=UnitOfPressure.HPA,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -125,7 +125,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "ENERGY_COUNTER": HmSensorEntityDescription(
         key="ENERGY_COUNTER",
-        native_unit_of_measurement=ENERGY_WATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
@@ -137,13 +137,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "GAS_ENERGY_COUNTER": HmSensorEntityDescription(
         key="GAS_ENERGY_COUNTER",
-        native_unit_of_measurement=VOLUME_CUBIC_METERS,
+        native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
-        native_unit_of_measurement=VOLUME_CUBIC_METERS,
+        native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -155,13 +155,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "IEC_ENERGY_COUNTER": HmSensorEntityDescription(
         key="IEC_ENERGY_COUNTER",
-        native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "IEC_POWER": HmSensorEntityDescription(
         key="IEC_POWER",
-        native_unit_of_measurement=POWER_WATT,
+        native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -251,13 +251,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "POWER": HmSensorEntityDescription(
         key="POWER",
-        native_unit_of_measurement=POWER_WATT,
+        native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "RAIN_COUNTER": HmSensorEntityDescription(
         key="RAIN_COUNTER",
-        native_unit_of_measurement=LENGTH_MILLIMETERS,
+        native_unit_of_measurement=UnitOfLength.MILLIMETERS,
         icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
@@ -272,7 +272,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         {"ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"}
     ): HmSensorEntityDescription(
         key="TEMPERATURE",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -319,7 +319,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "WIND_SPEED": HmSensorEntityDescription(
         key="WIND_SPEED",
-        native_unit_of_measurement=SPEED_KILOMETERS_PER_HOUR,
+        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=SensorDeviceClass.SPEED,
         icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
@@ -375,13 +375,13 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     ),
     PRESSURE_BAR: HmSensorEntityDescription(
         key="PRESSURE_BAR",
-        native_unit_of_measurement=PRESSURE_BAR,
+        native_unit_of_measurement=UnitOfPressure.BAR,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     TEMP_CELSIUS: HmSensorEntityDescription(
         key="TEMPERATURE",
-        native_unit_of_measurement=TEMP_CELSIUS,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),

@@ -1,7 +1,7 @@
 # custom_homematic
 Custom Home Assistant Component for HomeMatic and HomematicIP
 
-Homematic(IP) Local requires HA 2022.10 and above.
+Homematic(IP) Local requires HA 2022.11 and above.
 
 [Installation](https://github.com/danielperna84/custom_homematic/wiki/Installation)
 
