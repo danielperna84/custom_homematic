@@ -374,10 +374,10 @@ def _get_instance_name(friendly_name: Any | None) -> str | None:
     if not friendly_name:
         return None
     name = str(friendly_name)
-    if name.startswith("Homematic Central - "):
-        return name.replace("Homematic Central - ", "")
-    if name.startswith("Homematic Central "):
-        return name.replace("Homematic Central ", "")
+    if name.startswith("HomeMatic Central - "):
+        return name.replace("HomeMatic Central - ", "")
+    if name.startswith("HomeMatic Central "):
+        return name.replace("HomeMatic Central ", "")
     return name
 
 

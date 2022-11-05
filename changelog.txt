@@ -1,5 +1,5 @@
 Version 1.21.0 (2022-11-03)
-- Bump hahomematic to 2022.11.0
+- Bump hahomematic to 2022.11.1
   - Use generic property implementation
 - Use UnitOf* enums
 
