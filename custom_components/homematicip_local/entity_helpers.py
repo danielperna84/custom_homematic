@@ -4,7 +4,8 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.entity import CustomEntity, GenericEntity
+from hahomematic.entity import CustomEntity, GenericEntity, WrapperEntity
+from hahomematic.helpers import device_in_list
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -571,7 +572,7 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
 
 def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
     """Get the entity_description for platform."""
-    if isinstance(hm_entity, GenericEntity):
+    if isinstance(hm_entity, (GenericEntity, WrapperEntity)):
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
         ):
@@ -595,7 +596,7 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
 
 
 def _get_entity_description_by_device_type_and_param(
-    hm_entity: GenericEntity,
+    hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
     if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(
@@ -603,14 +604,14 @@ def _get_entity_description_by_device_type_and_param(
     ):
         for data, entity_desc in platform_device_and_param_descriptions.items():
             if data[1] == hm_entity.parameter and (
-                _device_in_list(
+                device_in_list(
                     devices=data[0],
                     device_type=hm_entity.device.device_type,
                     do_wildcard_search=True,
                 )
                 or (
                     hm_entity.device.sub_type
-                    and _device_in_list(
+                    and device_in_list(
                         devices=data[0],
                         device_type=hm_entity.device.sub_type,
                         do_wildcard_search=False,
@@ -622,7 +623,7 @@ def _get_entity_description_by_device_type_and_param(
 
 
 def _get_entity_description_by_param(
-    hm_entity: GenericEntity,
+    hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter"""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(
@@ -642,13 +643,13 @@ def _get_entity_description_by_device_type(
         hm_entity.platform
     ):
         for devices, entity_desc in platform_device_descriptions.items():
-            if _device_in_list(
+            if device_in_list(
                 devices=devices,
                 device_type=hm_entity.device.device_type,
                 do_wildcard_search=True,
             ) or (
                 hm_entity.device.sub_type
-                and _device_in_list(
+                and device_in_list(
                     devices=devices,
                     device_type=hm_entity.device.sub_type,
                     do_wildcard_search=False,
@@ -656,25 +657,6 @@ def _get_entity_description_by_device_type(
             ):
                 return entity_desc
     return None
-
-
-def _device_in_list(
-    devices: str | frozenset[str], device_type: str, do_wildcard_search: bool
-) -> bool:
-    """Return if device is in set."""
-    if isinstance(devices, str):
-        if do_wildcard_search:
-            return device_type.lower().startswith(devices.lower())
-        return device_type.lower() == devices.lower()
-    if isinstance(devices, frozenset):
-        for device in devices:
-            if do_wildcard_search:
-                if device_type.lower().startswith(device.lower()):
-                    return True
-            else:
-                if device_type.lower() == device.lower():
-                    return True
-    return False
 
 
 def _param_in_list(params: str | frozenset[str], parameter: str) -> bool:
