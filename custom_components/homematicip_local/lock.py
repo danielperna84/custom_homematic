@@ -15,7 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
-from .control_unit import ControlUnit
+from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -43,9 +43,7 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(
-                config_entry.entry_id, HmPlatform.LOCK
-            ),
+            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.LOCK),
             async_add_lock,
         )
     )

@@ -1,7 +1,10 @@
 Version 1.21.0 (2022-11-03)
 - Bump hahomematic to 2022.11.1
   - Use generic property implementation
+  - Code cleanup
+  - Add option to wrap entities to a different platform
 - Use UnitOf* enums
+- Make async_signal_new_hm_entity a function
 
 Version 1.20.1 (2022-10-25)
 - Bump hahomematic to 2022.10.10

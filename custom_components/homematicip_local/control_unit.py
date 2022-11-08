@@ -454,6 +454,7 @@ class ControlUnit(BaseControlUnit):
             new_entities = []
             for device in new_devices:
                 new_entities.extend(device.entities.values())
+                new_entities.extend(device.wrapper_entities.values())
                 new_entities.extend(device.custom_entities.values())
 
             # Handle event of new device creation in Homematic(IP) Local.
