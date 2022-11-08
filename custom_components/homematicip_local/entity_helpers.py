@@ -374,6 +374,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_visible_default=False,
     ),
 }
 

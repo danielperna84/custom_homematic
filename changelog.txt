@@ -1,4 +1,7 @@
-Version 1.21.0 (2022-11-03)
+Version 1.21.1 (2022-11-08)
+- hide LEVEL sensor on creation
+
+Version 1.21.0 (2022-11-08)
 - Bump hahomematic to 2022.11.1
   - Use generic property implementation
   - Code cleanup
