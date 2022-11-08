@@ -369,6 +369,15 @@ Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not b
 ### Fixing RSSI values
 See this [explanation](https://github.com/danielperna84/hahomematic/blob/devel/docs/rssi_fix.md) how the RSSI values are fixed.
 
+### Changing the default platform for some parameters
+
+#### HmIP-eTRv* / LEVEL, number to sensor entity
+
+The `LEVEL` parameter of the HmIP-eTRV can be written, i.e. this parameter is created as a __number__ entity and the valve can be moved to any position.
+However, this __manual position__ is reversed shortly thereafter by the device's internal control logic, causing the valve to return to its original position almost immediately. Since the internal control logic of the device can neither be bypassed nor deactivated, manual control of the valve opening degree is not useful. The `LEVEL` parameter is therefore created as a sensor, and thus also supports long-term statistics.
+
+If you need the `LEVEL` parameter as number entity, then this can be done by using the [unignore](https://github.com/danielperna84/custom_homematic#unignore-device-parameters) feature by adding LEVEL to the file.
+
 ### Pressing buttons via automation
 
 It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `homematicip_local.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
