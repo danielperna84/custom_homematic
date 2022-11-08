@@ -3,7 +3,9 @@ Version 1.21.0 (2022-11-03)
   - Use generic property implementation
   - Code cleanup
   - Add option to wrap entities to a different platform
+  - Wrap LEVEL of HmIP-TRV*, HmIP-HEATING to sensor
 - Use UnitOf* enums
+- Add EntityDescription for LEVEL of HmIP-TRV*, HmIP-HEATING as sensor
 - Make async_signal_new_hm_entity a function
 
 Version 1.20.1 (2022-10-25)
