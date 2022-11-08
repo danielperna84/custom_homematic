@@ -11,6 +11,7 @@ from hahomematic.entity import (
     GenericEntity,
     GenericHubEntity,
     GenericSystemVariable,
+    WrapperEntity,
 )
 
 from homeassistant.core import State, callback
@@ -97,7 +98,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             ATTR_ADDRESS: self._hm_entity.channel_address,
             ATTR_MODEL: self._hm_entity.device.device_type,
         }
-        if isinstance(self._hm_entity, GenericEntity):
+        if isinstance(self._hm_entity, (GenericEntity, WrapperEntity)):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value
             attributes[ATTR_PARAMETER] = self._hm_entity.parameter
             attributes[ATTR_FUNCTION] = self._hm_entity.function
@@ -106,7 +107,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.CUSTOM.value
 
         if (
-            isinstance(self._hm_entity, GenericEntity) and self._hm_entity.is_readable
+            isinstance(self._hm_entity, (GenericEntity, WrapperEntity))
+            and self._hm_entity.is_readable
         ) or isinstance(self._hm_entity, CustomEntity):
             if self._hm_entity.is_valid:
                 attributes[ATTR_VALUE_STATE] = (
@@ -132,7 +134,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
         # Init value of entity.
-        if isinstance(self._hm_entity, (GenericEntity, CustomEntity)):
+        if isinstance(self._hm_entity, (GenericEntity, CustomEntity, WrapperEntity)):
             await self._hm_entity.load_entity_value(call_source=HmCallSource.HA_INIT)
         if (
             isinstance(self._hm_entity, GenericEntity)

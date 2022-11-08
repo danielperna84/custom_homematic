@@ -23,7 +23,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
 from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
-from .control_unit import ControlUnit
+from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
 
@@ -76,27 +76,21 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(
-                config_entry.entry_id, HmPlatform.SENSOR
-            ),
+            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.SENSOR),
             async_add_sensor,
         )
     )
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(
-                config_entry.entry_id, HmPlatform.HUB_SENSOR
-            ),
+            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.HUB_SENSOR),
             async_add_hub_sensor,
         )
     )
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            control_unit.async_signal_new_hm_entity(
-                config_entry.entry_id, HmPlatform.HUB
-            ),
+            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.HUB),
             async_add_hub,
         )
     )

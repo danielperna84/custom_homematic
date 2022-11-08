@@ -7,7 +7,12 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import TypeVar, Union
 
-from hahomematic.entity import CustomEntity, GenericEntity, GenericHubEntity
+from hahomematic.entity import (
+    CustomEntity,
+    GenericEntity,
+    GenericHubEntity,
+    WrapperEntity,
+)
 from hahomematic.hub import HmHub
 
 from homeassistant.components.number import NumberEntityDescription
@@ -17,11 +22,11 @@ from homeassistant.helpers.typing import StateType
 from .const import IDENTIFIER_SEPARATOR
 
 # Union for entity types used as base class for entities
-HmBaseEntity = Union[CustomEntity, GenericEntity]
+HmBaseEntity = Union[CustomEntity, GenericEntity, WrapperEntity]
 # Union for entity types used as base class for sysvar entities
 HmBaseHubEntity = Union[HmHub, GenericHubEntity]
 # Entities that support callbacks from backend
-HmCallbackEntity = (CustomEntity, GenericEntity)
+HmCallbackEntity = (CustomEntity, GenericEntity, WrapperEntity)
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local

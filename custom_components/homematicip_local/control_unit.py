@@ -436,11 +436,6 @@ class ControlUnit(BaseControlUnit):
         del self._active_hm_hub_entities[entity_id]
 
     @callback
-    def async_signal_new_hm_entity(self, entry_id: str, platform: HmPlatform) -> str:
-        """Gateway specific event to signal new device."""
-        return f"{DOMAIN}-new-entity-{entry_id}-{platform.value}"
-
-    @callback
     def _async_callback_system_event(self, src: str, *args: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
@@ -454,6 +449,7 @@ class ControlUnit(BaseControlUnit):
             new_entities = []
             for device in new_devices:
                 new_entities.extend(device.entities.values())
+                new_entities.extend(device.wrapper_entities.values())
                 new_entities.extend(device.custom_entities.values())
 
             # Handle event of new device creation in Homematic(IP) Local.
@@ -463,7 +459,7 @@ class ControlUnit(BaseControlUnit):
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
                         self._hass,
-                        self.async_signal_new_hm_entity(
+                        async_signal_new_hm_entity(
                             entry_id=self._entry_id, platform=platform
                         ),
                         hm_entities,  # Don't send device if None, it would override default value in listeners
@@ -479,7 +475,7 @@ class ControlUnit(BaseControlUnit):
                 )
                 async_dispatcher_send(
                     self._hass,
-                    self.async_signal_new_hm_entity(
+                    async_signal_new_hm_entity(
                         entry_id=self._entry_id, platform=HmPlatform.HUB
                     ),
                     [self._hub_entity],
@@ -493,7 +489,7 @@ class ControlUnit(BaseControlUnit):
                 if hm_hub_entities and len(hm_hub_entities) > 0:
                     async_dispatcher_send(
                         self._hass,
-                        self.async_signal_new_hm_entity(
+                        async_signal_new_hm_entity(
                             entry_id=self._entry_id, platform=platform
                         ),
                         hm_hub_entities,
@@ -827,6 +823,11 @@ class HaHubSensor(SensorEntity):
                 self.entity_id,
                 DOMAIN,
             )
+
+
+def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:
+    """Gateway specific event to signal new device."""
+    return f"{DOMAIN}-new-entity-{entry_id}-{platform.value}"
 
 
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
