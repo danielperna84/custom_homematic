@@ -365,6 +365,16 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon="mdi:lock-alert",
         device_class="homematicip_local__sec_key_error",
     ),
+    (
+        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E", "HmIP-HEATING"}),
+        "LEVEL",
+    ): HmSensorEntityDescription(
+        key="LEVEL",
+        icon="mdi:pipe-valve",
+        native_unit_of_measurement=PERCENTAGE,
+        multiplier=100,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
 }
 
 _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
