@@ -28,9 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up Homematic(IP) Local from a config entry."""
     min_version = AwesomeVersion(HMIP_LOCAL_MIN_VERSION)
-    if (HA_VERSION.section(0) < min_version.section(0)) and (
-        HA_VERSION.section(1) < min_version.section(1)
-    ):
+    if HA_VERSION < min_version:
         _LOGGER.warning(
             "This release of Homematic(IP) Local requires HA version %s and above",
             HMIP_LOCAL_MIN_VERSION,
