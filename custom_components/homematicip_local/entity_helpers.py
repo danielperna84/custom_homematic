@@ -5,7 +5,7 @@ import logging
 
 from hahomematic.const import HmPlatform
 from hahomematic.entity import CustomEntity, GenericEntity, WrapperEntity
-from hahomematic.helpers import device_in_list
+from hahomematic.helpers import contains_device
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -615,18 +615,10 @@ def _get_entity_description_by_device_type_and_param(
     ):
         for data, entity_desc in platform_device_and_param_descriptions.items():
             if data[1] == hm_entity.parameter and (
-                device_in_list(
-                    devices=data[0],
+                contains_device(
+                    search_elements=data[0],
                     device_type=hm_entity.device.device_type,
-                    do_wildcard_search=True,
-                )
-                or (
-                    hm_entity.device.sub_type
-                    and device_in_list(
-                        devices=data[0],
-                        device_type=hm_entity.device.sub_type,
-                        do_wildcard_search=False,
-                    )
+                    sub_type=hm_entity.device.sub_type,
                 )
             ):
                 return entity_desc
@@ -654,17 +646,10 @@ def _get_entity_description_by_device_type(
         hm_entity.platform
     ):
         for devices, entity_desc in platform_device_descriptions.items():
-            if device_in_list(
-                devices=devices,
+            if contains_device(
+                search_elements=devices,
                 device_type=hm_entity.device.device_type,
-                do_wildcard_search=True,
-            ) or (
-                hm_entity.device.sub_type
-                and device_in_list(
-                    devices=devices,
-                    device_type=hm_entity.device.sub_type,
-                    do_wildcard_search=False,
-                )
+                sub_type=hm_entity.device.sub_type,
             ):
                 return entity_desc
     return None
