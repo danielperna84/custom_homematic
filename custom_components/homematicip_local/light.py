@@ -45,7 +45,7 @@ ATTR_RESTORE_BRIGHTNESS = "brightness"
 ATTR_RESTORE_COLOR_TEMP = "color_temp"
 ATTR_RESTORE_HS_COLOR = "hs_color"
 
-ATTR_COLOR_NAME = "color_name"
+ATTR_COLOR = "color"
 ATTR_CHANNEL_COLOR = "channel_color"
 ATTR_CHANNEL_LEVEL = "channel_level"
 
@@ -122,7 +122,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
                     self._hm_entity.channel_brightness / 255 * 100
                 )
         if isinstance(self._hm_entity, CeIpFixedColorLight):
-            attributes[ATTR_COLOR_NAME] = self._hm_entity.color_name
+            attributes[ATTR_COLOR] = self._hm_entity.color_name
             if (
                 self._hm_entity.channel_brightness
                 and self._hm_entity.brightness != self._hm_entity.channel_brightness
