@@ -1,6 +1,7 @@
 Version 1.21.3 (2022-11-13)
 - Bump hahomematic to 2022.11.2
   - Generalize some collection helpers
+- Rename attribute COLOR_NAME to COLOR
 
 Version 1.21.2 (2022-11-09)
 - Simplify version check
