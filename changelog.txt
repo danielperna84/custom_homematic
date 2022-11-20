@@ -1,6 +1,10 @@
 Version 1.22.1 (2022-12-01)
 - Bump hahomematic to 2022.12.1
   - Improve naming of modules
+  - Add new platform for text sysvars
+- Remove support for old hub entities with homematicip_local.*
+- Raise min HA version to 2022.12
+- Use EntityFeature return type for climate/light supported features
 
 Version 1.22.0 (2022-12-01)
 - Bump hahomematic to 2022.12.0
