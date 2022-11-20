@@ -248,11 +248,11 @@ class HaHomematicClimate(
         return preset_modes
 
     @property
-    def supported_features(self) -> int:
+    def supported_features(self) -> ClimateEntityFeature:
         """Return the list of supported features."""
-        supported_features: int = ClimateEntityFeature.TARGET_TEMPERATURE
+        supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
         if self._hm_entity.supports_preset:
-            supported_features += ClimateEntityFeature.PRESET_MODE
+            supported_features |= ClimateEntityFeature.PRESET_MODE
         return supported_features
 
     async def async_set_temperature(self, **kwargs: Any) -> None:

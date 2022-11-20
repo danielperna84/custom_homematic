@@ -144,13 +144,11 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         return {self.color_mode}
 
     @property
-    def supported_features(self) -> int:
+    def supported_features(self) -> LightEntityFeature:
         """Return the list of supported features."""
-        supported_features = 0
-        if self._hm_entity.supports_transition:
-            supported_features += LightEntityFeature.TRANSITION
+        supported_features = LightEntityFeature.TRANSITION
         if self._hm_entity.supports_effects:
-            supported_features += LightEntityFeature.EFFECT
+            supported_features |= LightEntityFeature.EFFECT
         return supported_features
 
     @property
