@@ -1,5 +1,6 @@
 Version 1.22.0 (2022-11-30)
 - Raise hour limit for away mode to 999 hours
+- Add multiplier 100 to LEVEL
 
 Version 1.21.3 (2022-11-13)
 - Bump hahomematic to 2022.11.2

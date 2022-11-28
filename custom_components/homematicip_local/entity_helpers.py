@@ -188,6 +188,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     frozenset(["LEVEL", "FILLING_LEVEL"]): HmSensorEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
+        multiplier=100,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "LOCK_STATE": HmSensorEntityDescription(
