@@ -5,8 +5,8 @@ import logging
 from typing import Any, Union
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.switch import CeSwitch
-from hahomematic.platforms.switch import HmSwitch, HmSysvarSwitch
+from hahomematic.custom_platforms.switch import CeSwitch
+from hahomematic.generic_platforms.switch import HmSwitch, HmSysvarSwitch
 import voluptuous as vol
 
 from homeassistant.components.switch import SwitchEntity

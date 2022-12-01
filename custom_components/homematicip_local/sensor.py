@@ -13,7 +13,7 @@ from hahomematic.const import (
     TYPE_STRING,
     HmPlatform,
 )
-from hahomematic.platforms.sensor import HmSensor, HmSysvarSensor
+from hahomematic.generic_platforms.sensor import HmSensor, HmSysvarSensor
 
 from homeassistant.components.sensor import RestoreSensor, SensorEntity
 from homeassistant.config_entries import ConfigEntry

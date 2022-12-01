@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.number import BaseNumber, HmSysvarNumber
+from hahomematic.generic_platforms.number import BaseNumber, HmSysvarNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode, RestoreNumber
 from homeassistant.config_entries import ConfigEntry
