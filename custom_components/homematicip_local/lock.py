@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.devices.lock import LOCK_STATE_LOCKED, BaseLock
+from hahomematic.custom_platforms.lock import LOCK_STATE_LOCKED, BaseLock
 
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
