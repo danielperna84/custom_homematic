@@ -227,12 +227,13 @@ When using Homegear system variables are handled like the DEFAULT.
   - value lists --> `select` entity
   - number --> `number` entity
   - alarm, logic value —> `switch` entity
+  - character string —> `text` entity
 
-Using `select`, `number` and `switch` results in the following advantages:
+Using `select`, `number`, `switch` and `text` results in the following advantages:
 - System variables can be changed directly in the UI without additional logic.
-- The general services for `select`, `number` and `switch` can be used.
+- The general services for `select`, `number`, `switch` and `text` can be used.
 - The service `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
-- Use of device based automations (actions) is possile.
+- Use of device based automations (actions) is possible.
 
 ## Services
 
