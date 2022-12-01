@@ -572,12 +572,13 @@ def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubSensor | 
     """Get ControlUnit by device address."""
     if entity_id.startswith("homematicip_local"):
         old_entity_id = entity_id
-        entity_id = entity_id.replace("homematicip_local.", "sensor.")
+        new_entity_id = entity_id.replace("homematicip_local.", "sensor.")
         _LOGGER.warning(
-            "Using service call with %s will be removed with HA 11.2022. Use %s instead",
+            "Using service call with %s has be removed with HA 12.2022. Use %s instead",
             old_entity_id,
-            entity_id,
+            new_entity_id,
         )
+        return None
 
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]

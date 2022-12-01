@@ -736,18 +736,18 @@ class HmScheduler:
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
-        self.remove_sysvar_listener: Callable = async_track_time_interval(
+        self.remove_sysvar_listener: Callable | None = async_track_time_interval(
             self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
         )
-        self.remove_master_listener: Callable = async_track_time_interval(
+        self.remove_master_listener: Callable | None = async_track_time_interval(
             self.hass, self._async_fetch_master_data, MASTER_SCAN_INTERVAL
         )
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self.remove_sysvar_listener and callback(self.remove_sysvar_listener):
+        if self.remove_sysvar_listener:
             self.remove_sysvar_listener()
-        if self.remove_master_listener and callback(self.remove_master_listener):
+        if self.remove_master_listener:
             self.remove_master_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:

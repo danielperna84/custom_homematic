@@ -1,7 +1,7 @@
 # custom_homematic
 Custom Home Assistant Component for HomeMatic and HomematicIP
 
-Homematic(IP) Local requires HA 2022.11 and above.
+Homematic(IP) Local requires HA 2022.12 and above.
 
 [Installation](https://github.com/danielperna84/custom_homematic/wiki/Installation)
 
@@ -227,12 +227,13 @@ When using Homegear system variables are handled like the DEFAULT.
   - value lists --> `select` entity
   - number --> `number` entity
   - alarm, logic value —> `switch` entity
+  - character string —> `text` entity (>= HA 2022.12)
 
-Using `select`, `number` and `switch` results in the following advantages:
+Using `select`, `number`, `switch` and `text` results in the following advantages:
 - System variables can be changed directly in the UI without additional logic.
-- The general services for `select`, `number` and `switch` can be used.
+- The general services for `select`, `number`, `switch` and `text` can be used.
 - The service `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
-- Use of device based automations (actions) is possile.
+- Use of device based automations (actions) is possible.
 
 ## Services
 
@@ -354,7 +355,7 @@ Option 1: Just rename entity_id and name in HA
 
 Option 2: Reload the Integration or restart HA, that will reload the names from CCU . This will show the the new entity name, if not changed manually in HA. The entity_id will not change.
 
-Option 3: Use the service hahm.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
+Option 3: Use the service homematicip_local.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
 
 Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installes systems)
 
