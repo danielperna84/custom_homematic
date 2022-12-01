@@ -1,4 +1,4 @@
-"""binary_sensor for Homematic(IP) Local."""
+"""button for Homematic(IP) Local."""
 from __future__ import annotations
 
 import logging

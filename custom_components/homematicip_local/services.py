@@ -578,7 +578,7 @@ def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubSensor | 
             old_entity_id,
             new_entity_id,
         )
-        return
+        return None
 
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]

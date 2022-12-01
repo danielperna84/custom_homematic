@@ -1,4 +1,4 @@
-"""binary_switch for Homematic(IP) Local."""
+"""switch for Homematic(IP) Local."""
 from __future__ import annotations
 
 import logging
