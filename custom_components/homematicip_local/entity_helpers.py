@@ -109,14 +109,14 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
         key="DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__direction",
+        translation_key="direction",
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
-        device_class="homematicip_local__door_state",
         icon_fn=lambda value: "mdi:garage-open"
         if value in ("open", "ventilation_position")
         else "mdi:garage",
+        translation_key="door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
@@ -196,8 +196,8 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
-        device_class="homematicip_local__lock_state",
         icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
+        translation_key="lock_state",
     ),
     (
         "MASS_CONCENTRATION_PM_1",
@@ -284,7 +284,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
-        device_class="homematicip_local__smoke_detector_alarm_status",
         icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
         if value in ("primary_alarm", "secondary_alarm")
         else (
@@ -347,35 +346,35 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
-        device_class="homematicip_local__srh",
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
+        translation_key="srh",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         icon="mdi:battery-50",
-        device_class="homematicip_local__sec_win_status",
+        translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__sec_direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         icon="mdi:lock-alert",
-        device_class="homematicip_local__sec_win_error",
+        translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__sec_direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         icon="mdi:lock-alert",
-        device_class="homematicip_local__sec_key_error",
+        translation_key="sec_key_error",
     ),
     (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",

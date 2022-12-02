@@ -129,9 +129,8 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
             # Strings and enums with custom device class must be lowercase to be translatable.
             if (
                 self._hm_entity.value is not None
-                and self.device_class is not None
+                and self.translation_key is not None
                 and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
-                and self.device_class.startswith(DOMAIN.lower())
             ):
                 return self._hm_entity.value.lower()
             return self._hm_entity.value

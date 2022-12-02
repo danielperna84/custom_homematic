@@ -85,7 +85,78 @@
       "press_cont": "Button \"{subtype}\" continuously pressed",
       "press_long_release": "Button \"{subtype}\" long press released",
       "press_long_start": "Button \"{subtype}\" started long press"
-
+    }
+  },
+  "entity": {
+    "sensor": {
+      "srh": {
+        "state": {
+          "closed": "Gesloten",
+          "tilted": "Gekanteld",
+          "open": "Geopend"
+        }
+      },
+      "lock_state": {
+        "state": {
+          "unknown": "Unknown",
+          "locked": "Locked",
+          "unlocked": "Unlocked"
+        }
+      },
+      "smoke_detector_alarm_status": {
+        "state": {
+          "idle_off": "Ruststand uit",
+          "primary_alarm": "Primair  Alarm",
+          "intrusion_alarm": "Inbraakalarm",
+          "secondary_alarm": "Secundair Alarm"
+        }
+      },
+      "sec_key_error": {
+        "state": {
+          "no_error": "No error",
+          "clutch_failure": "Clutch failure",
+          "motor_aborted": "Motor aborted"
+        }
+      },
+      "door_state": {
+        "state": {
+          "closed": "Closed",
+          "open": "Open",
+          "ventilation_position": "Ventilation position",
+          "position_unknown": "Position unknown"
+        }
+      },
+      "direction": {
+        "state": {
+          "none": "",
+          "up": "Up",
+          "down": "Down",
+          "undefined": "Undefined"
+        }
+      },
+      "sec_direction": {
+        "state": {
+          "none": "",
+          "up": "Closing",
+          "down": "Opening",
+          "undefined": "Undefined"
+        }
+      },
+      "sec_win_status": {
+        "state": {
+          "trickle_charge": "Trickle charge",
+          "charge": "Charge",
+          "discharge": "Discharge",
+          "state_unknown": "State unknown"
+        }
+      },
+      "sec_win_error": {
+        "state": {
+          "no_error": "No error",
+          "motor_turn_error": "Motor turn error",
+          "motor_tilt_error": "Motor tilt error"
+        }
+      }
     }
   }
 }

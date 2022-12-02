@@ -90,5 +90,77 @@
       "press_short": "Kurzer Tastendruck auf Taster \"{subtype}\"",
       "press_long": "Langer Tastendruck auf Taster \"{subtype}\""
     }
+  },
+  "entity": {
+    "sensor": {
+      "srh": {
+        "state": {
+          "closed": "Geschlossen",
+          "tilted": "Gekippt",
+          "open": "Offen"
+        }
+      },
+      "lock_state": {
+        "state": {
+          "unknown": "Unbekannt",
+          "locked": "Verriegelt",
+          "unlocked": "Unverriegelt"
+        }
+      },
+      "smoke_detector_alarm_status": {
+        "state": {
+          "idle_off": "Untätig",
+          "primary_alarm": "Primär-Alarm",
+          "intrusion_alarm": "Einbruch-Alarm",
+          "secondary_alarm": "Sekundär-Alarm"
+        }
+      },
+      "sec_key_error": {
+        "state": {
+          "no_error": "Kein Fehler",
+          "clutch_failure": "Einkuppeln fehlgeschlagen",
+          "motor_aborted": "Motorlauf abgebrochen"
+        }
+      },
+      "door_state": {
+        "state": {
+          "closed": "Geschlossen",
+          "open": "Offen",
+          "ventilation_position": "Belüftung",
+          "position_unknown": "Position unbekannt"
+        }
+      },
+      "direction": {
+        "state": {
+          "none": "",
+          "up": "Hoch",
+          "down": "Runter",
+          "undefined": "Nicht definiert"
+        }
+      },
+      "sec_direction": {
+        "state": {
+          "none": "",
+          "up": "Schließend",
+          "down": "Öffnend",
+          "undefined": "Nicht definiert"
+        }
+      },
+      "sec_win_status": {
+        "state": {
+          "trickle_charge": "Erhaltungsladung",
+          "charge": "Ladend",
+          "discharge": "Versorgung durch Akku",
+          "state_unknown": "Zustand unbekannt"
+        }
+      },
+      "sec_win_error": {
+        "state": {
+          "no_error": "Kein Fehler",
+          "motor_turn_error": "Fehler Drehantrieb",
+          "motor_tilt_error": "Fehler Kippantrieb"
+        }
+      }
+    }
   }
 }
