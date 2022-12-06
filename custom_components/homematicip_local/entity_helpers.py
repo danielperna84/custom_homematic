@@ -108,11 +108,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
         key="DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
         translation_key="direction",
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:garage-open"
         if value in ("open", "ventilation_position")
         else "mdi:garage",
@@ -196,6 +198,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
         translation_key="lock_state",
     ),
@@ -346,6 +349,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
@@ -353,31 +357,37 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:battery-50",
         translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
         translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
         translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
         translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
         translation_key="sec_key_error",
     ),
     (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
