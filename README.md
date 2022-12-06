@@ -56,7 +56,7 @@ Advanced setups might consider this:
 
 This integration starts a local XmLRPC server within HA, which automatically selects a free port or uses the optionally defined callback port.
 This means that the CCU must be able to start a new connection to the system running HA and to the port. So check the firewall of the system running HA (host/VM) to allow communication from the CCU.
-If running HA on docker it is recommended to use `network_mode: host`, or specify [callback host/port](https://github.com/danielperna84/custom_homematic#central).
+If running HA on docker it is recommended to use `network_mode: host`, or specify [callback host/port](https://github.com/danielperna84/custom_homematic#callback_host-and-callback_port).
 
 ### Authentication
 
