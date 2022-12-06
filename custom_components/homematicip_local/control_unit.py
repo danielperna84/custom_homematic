@@ -749,9 +749,9 @@ class HmScheduler:
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self.remove_sysvar_listener:
+        if self.remove_sysvar_listener is not None:
             self.remove_sysvar_listener()
-        if self.remove_master_listener:
+        if self.remove_master_listener is not None:
             self.remove_master_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:
