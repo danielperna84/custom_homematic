@@ -322,7 +322,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "WIND_SPEED": HmSensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
-        device_class=SensorDeviceClass.SPEED,
+        device_class=SensorDeviceClass.WIND_SPEED,
         icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
     ),
