@@ -1,6 +1,7 @@
 Version 1.23.1 (2022-12-09)
 - Bump hahomematic to 2022.12.2
   - Add HM-LC-AO-SM as light
+- Change device_class of weather wind speed sensor to new device class wind_speed
 
 Version 1.23.0 (2022-12-01)
 - Bump hahomematic to 2022.12.1
