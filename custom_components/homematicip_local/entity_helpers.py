@@ -46,9 +46,9 @@ from .helpers import (
 
 _LOGGER = logging.getLogger(__name__)
 
-CONCENTRATION_CM3 = "1/cm\u00b3"
-PARTICLESIZE = "\u00b5m"
-VAPOR_CONCENTRATION = "g/m³"
+CONCENTRATION_CM3: Final = "1/cm\u00b3"
+CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"
+PARTICLESIZE: Final = "\u00b5m"
 
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
@@ -301,7 +301,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "VAPOR_CONCENTRATION": HmSensorEntityDescription(
         key="VAPOR_CONCENTRATION",
-        native_unit_of_measurement=VAPOR_CONCENTRATION,
+        native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -322,7 +322,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     "WIND_SPEED": HmSensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
-        device_class=SensorDeviceClass.SPEED,
+        device_class=SensorDeviceClass.WIND_SPEED,
         icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -398,9 +398,9 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    VAPOR_CONCENTRATION: HmSensorEntityDescription(
-        key="VAPOR_CONCENTRATION",
-        native_unit_of_measurement=VAPOR_CONCENTRATION,
+    CONCENTRATION_GRAMS_PER_CUBIC_METER: HmSensorEntityDescription(
+        key="CONCENTRATION_GRAMS_PER_CUBIC_METER",
+        native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
