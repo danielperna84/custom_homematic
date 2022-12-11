@@ -16,6 +16,9 @@ from hahomematic.custom_platforms.climate import (
 import voluptuous as vol
 
 from homeassistant.components.climate import (
+    ATTR_CURRENT_HUMIDITY,
+    ATTR_CURRENT_TEMPERATURE,
+    ATTR_PRESET_MODE,
     ATTR_TEMPERATURE,
     PRESET_AWAY,
     PRESET_BOOST,
@@ -49,14 +52,6 @@ ATTR_AWAY_END = "end"
 ATTR_AWAY_HOURS = "hours"
 ATTR_AWAY_TEMPERATURE = "away_temperature"
 ATTR_AWAY_START = "start"
-
-ATTR_RESTORE_TARGET_TEMPERATURE = "temperature"
-ATTR_RESTORE_CURRENT_TEMPERATURE = "current_temperature"
-ATTR_RESTORE_CURRENT_HUMIDITY = "current_humidity"
-ATTR_RESTORE_HVAC_MODE = "hvac_mode"
-ATTR_RESTORE_PRESET_MODE = "preset_mode"
-
-HM_HVAC_MODES = [cls for cls in HmHvacMode]
 
 SUPPORTED_HA_PRESET_MODES = [
     PRESET_AWAY,
@@ -167,7 +162,7 @@ class HaHomematicClimate(
         if self._hm_entity.is_valid:
             return self._hm_entity.target_temperature
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_TARGET_TEMPERATURE)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_TEMPERATURE)  # type: ignore[union-attr]
         return None
 
     @property
@@ -176,7 +171,7 @@ class HaHomematicClimate(
         if self._hm_entity.is_valid:
             return self._hm_entity.current_temperature
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TEMPERATURE)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_CURRENT_TEMPERATURE)  # type: ignore[union-attr]
         return None
 
     @property
@@ -185,7 +180,7 @@ class HaHomematicClimate(
         if self._hm_entity.is_valid:
             return self._hm_entity.current_humidity
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_HUMIDITY)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_CURRENT_HUMIDITY)  # type: ignore[union-attr]
         return None
 
     @property
@@ -235,7 +230,7 @@ class HaHomematicClimate(
             ).startswith(HM_PRESET_MODE_PREFIX):
                 return self._hm_entity.preset_mode
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_PRESET_MODE)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_PRESET_MODE)  # type: ignore[union-attr]
         return None
 
     @property

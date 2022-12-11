@@ -8,6 +8,8 @@ from hahomematic.const import HmPlatform
 from hahomematic.custom_platforms.cover import CeBlind, CeCover, CeGarage, CeIpBlind
 
 from homeassistant.components.cover import (
+    ATTR_CURRENT_POSITION,
+    ATTR_CURRENT_TILT_POSITION,
     ATTR_POSITION,
     ATTR_TILT_POSITION,
     CoverEntity,
@@ -22,8 +24,6 @@ from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
-ATTR_RESTORE_CURRENT_POSITION = "current_position"
-ATTR_RESTORE_CURRENT_TILT_POSITION = "current_tilt_position"
 _LOGGER = logging.getLogger(__name__)
 
 HmBaseCoverEntity = Union[CeCover, CeGarage]
@@ -86,7 +86,7 @@ class HaHomematicBaseCover(
         if self._hm_entity.is_valid:
             return self._hm_entity.current_cover_position
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_POSITION)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_CURRENT_POSITION)  # type: ignore[union-attr]
         return None
 
     @property
@@ -145,7 +145,7 @@ class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
         if self._hm_entity.is_valid:
             return self._hm_entity.current_cover_tilt_position
         if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TILT_POSITION)  # type: ignore[union-attr]
+            return self._restored_state.attributes.get(ATTR_CURRENT_TILT_POSITION)  # type: ignore[union-attr]
         return None
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
