@@ -61,18 +61,6 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
-    @callback
-    def async_add_hub(args: Any) -> None:
-        """Add hub from Homematic(IP) Local."""
-
-        entities = []
-
-        for hm_entity in args:
-            entities.append(hm_entity)
-
-        if entities:
-            async_add_entities(entities)
-
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
@@ -87,13 +75,6 @@ async def async_setup_entry(
             async_add_hub_sensor,
         )
     )
-    config_entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.HUB),
-            async_add_hub,
-        )
-    )
 
     async_add_sensor(
         control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.SENSOR)
@@ -103,10 +84,6 @@ async def async_setup_entry(
         control_unit.async_get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_SENSOR
         )
-    )
-
-    async_add_hub(
-        control_unit.async_get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB)
     )
 
 
@@ -142,7 +119,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
                 and self._multiplier != 1
             ):
-                return self._hm_entity.value * self._multiplier  # type: ignore[no-any-return]
+                return self._hm_entity.value * self._multiplier
             # Strings and enums with custom device class must be lowercase to be translatable.
             if (
                 self._hm_entity.value is not None
@@ -150,10 +127,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
                 and self.device_class.startswith(DOMAIN.lower())
             ):
-                return self._hm_entity.value.lower()  # type: ignore[no-any-return]
+                return self._hm_entity.value.lower()
             return self._hm_entity.value
         if self.is_restored:
-            return self._restored_native_value  # type: ignore[no-any-return]
+            return self._restored_native_value
         return None
 
     @property
