@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.entity import CustomEntity, GenericEntity, WrapperEntity

@@ -4,14 +4,13 @@ clear_cache:
   name: Clear the cache
   description: Clear the cache. Requires a restart.
   fields:
-    entity_id:
+    entry_id:
       name: Entity
       description: Name(s) of homematic central to clear the cache.
       required: true
       selector:
-        entity:
+        config_entry:
           integration: homematicip_local
-          device_class: homematic_hub
 
 delete_device:
   name: Delete a device
@@ -41,14 +40,13 @@ fetch_system_variables:
   name: Fetch system variables
   description: Fetch system variables from backend.
   fields:
-    entity_id:
+    entry_id:
       name: Entity
       description: Name(s) of homematic central to fetch system variables from.
       required: true
       selector:
-        entity:
+        config_entry:
           integration: homematicip_local
-          device_class: homematic_hub
 
 force_device_availability:
   name: Force device availability
@@ -66,14 +64,13 @@ set_variable_value:
   name: Set variable value
   description: Set the name of a node.
   fields:
-    entity_id:
+    entry_id:
       name: Entity
       description: Name(s) of homematic central to set value.
       required: true
       selector:
-        entity:
+        config_entry:
           integration: homematicip_local
-          device_class: homematic_hub
     name:
       name: Name
       description: Name of the variable to set.

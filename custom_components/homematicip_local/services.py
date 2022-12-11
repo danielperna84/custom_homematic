@@ -17,7 +17,7 @@ from hahomematic.const import (
 from hahomematic.entity import BaseEntity, GenericEntity
 import voluptuous as vol
 
-from homeassistant.const import ATTR_ENTITY_ID, ATTR_MODE, ATTR_TIME
+from homeassistant.const import ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
@@ -35,12 +35,13 @@ from .const import (
     CONTROL_UNITS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, HaHubSensor, get_cu_by_interface_id, get_device
+from .control_unit import ControlUnit, get_cu_by_interface_id, get_device
 from .helpers import HmBaseEntity, get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
 ATTR_CHANNEL = "channel"
+ATTR_ENTRY_ID = "entry_id"
 ATTR_DEVICE_ID = "device_id"
 DEFAULT_CHANNEL = 1
 
@@ -70,7 +71,7 @@ HMIP_LOCAL_SERVICES = [
 
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
     {
-        vol.Required(ATTR_ENTITY_ID): cv.string,
+        vol.Required(ATTR_ENTRY_ID): cv.string,
     }
 )
 
@@ -88,7 +89,7 @@ SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
 
 SCHEMA_SERVICE_FETCH_SYSTEM_VARIABLES = vol.Schema(
     {
-        vol.Required(ATTR_ENTITY_ID): cv.string,
+        vol.Required(ATTR_ENTRY_ID): cv.string,
     }
 )
 
@@ -100,7 +101,7 @@ SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.Schema(
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
-        vol.Required(ATTR_ENTITY_ID): cv.string,
+        vol.Required(ATTR_ENTRY_ID): cv.string,
         vol.Required(ATTR_NAME): cv.string,
         vol.Required(ATTR_VALUE): cv.match_all,
     }
@@ -329,13 +330,13 @@ async def _async_service_set_variable_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local system variable."""
-    entity_id = service.data[ATTR_ENTITY_ID]
+    entry_id = service.data[ATTR_ENTRY_ID]
     name = service.data[ATTR_NAME]
     value = service.data[ATTR_VALUE]
 
-    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        if ha_hub := hub_entity.control.central.hub:
-            await ha_hub.set_system_variable(name=name, value=value)
+    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+        if hub := control.central.hub:
+            await hub.set_system_variable(name=name, value=value)
 
 
 async def _async_service_set_device_value(
@@ -454,20 +455,18 @@ async def _async_service_set_install_mode(
 
 async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to clear the cache."""
-    entity_id = service.data[ATTR_ENTITY_ID]
-
-    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        await hub_entity.control.central.clear_all()
+    entry_id = service.data[ATTR_ENTRY_ID]
+    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+        await control.central.clear_all()
 
 
 async def _async_service_fetch_system_variables(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to fetch system variables from backend."""
-    entity_id = service.data[ATTR_ENTITY_ID]
-
-    if hub_entity := _get_hub_entity_by_id(hass=hass, entity_id=entity_id):
-        await hub_entity.control.async_fetch_all_system_variables()
+    entry_id = service.data[ATTR_ENTRY_ID]
+    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+        await control.async_fetch_all_system_variables()
 
 
 async def _async_service_put_paramset(
@@ -568,24 +567,10 @@ def _get_hm_entity(
     return None
 
 
-def _get_hub_entity_by_id(hass: HomeAssistant, entity_id: str) -> HaHubSensor | None:
-    """Get ControlUnit by device address."""
-    if entity_id.startswith("homematicip_local"):
-        old_entity_id = entity_id
-        new_entity_id = entity_id.replace("homematicip_local.", "sensor.")
-        _LOGGER.warning(
-            "Using service call with %s has be removed with HA 12.2022. Use %s instead",
-            old_entity_id,
-            new_entity_id,
-        )
+def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
+    """Get ControlUnit by entry_id."""
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS].get(entry_id)
+    if control_unit is None:
+        _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
         return None
-
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
-        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if (
-            control_unit
-            and control_unit.hub_entity
-            and control_unit.hub_entity.entity_id == entity_id
-        ):
-            return control_unit.hub_entity
-    return None
+    return control_unit
