@@ -49,7 +49,7 @@ from hahomematic.const import (
     HmPlatform,
 )
 from hahomematic.device import HmDevice
-from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity
+from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity, GenericHubEntity
 from hahomematic.hub import HmHub
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_NAME
@@ -81,7 +81,6 @@ from .const import (
 )
 from .helpers import (
     HmBaseEntity,
-    HmBaseHubEntity,
     HmCallbackEntity,
     get_device_address_at_interface_from_identifiers,
 )
@@ -194,7 +193,7 @@ class ControlUnit(BaseControlUnit):
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         # {entity_id, sysvar_entity}
-        self._active_hm_hub_entities: dict[str, HmBaseHubEntity] = {}
+        self._active_hm_hub_entities: dict[str, GenericHubEntity] = {}
         self._scheduler: HmScheduler | None = None
 
     async def async_init_central(self) -> None:
@@ -318,14 +317,14 @@ class ControlUnit(BaseControlUnit):
 
     @callback
     def async_get_new_hm_hub_entities(
-        self, new_hub_entities: list[HmBaseHubEntity]
-    ) -> dict[HmPlatform, list[HmBaseHubEntity]]:
+        self, new_hub_entities: list[GenericHubEntity]
+    ) -> dict[HmPlatform, list[GenericHubEntity]]:
         """Return all hm-hub-entities."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
         # init dict
-        hm_hub_entities: dict[HmPlatform, list[HmBaseHubEntity]] = {}
+        hm_hub_entities: dict[HmPlatform, list[GenericHubEntity]] = {}
         for hm_hub_platform in AVAILABLE_HM_HUB_PLATFORMS:
             hm_hub_entities[hm_hub_platform] = []
 
@@ -338,13 +337,13 @@ class ControlUnit(BaseControlUnit):
     @callback
     def async_get_new_hm_hub_entities_by_platform(
         self, platform: HmPlatform
-    ) -> list[HmBaseHubEntity]:
+    ) -> list[GenericHubEntity]:
         """Return all new hm-hub-entities by platform."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
 
-        hm_hub_entities: list[HmBaseHubEntity] = []
+        hm_hub_entities: list[GenericHubEntity] = []
         if not self.central.hub:
             _LOGGER.debug(
                 "async_get_new_hm_sysvar_entities_by_platform: central.hub is not ready for %s",
@@ -410,7 +409,7 @@ class ControlUnit(BaseControlUnit):
 
     @callback
     def async_add_hm_hub_entity(
-        self, entity_id: str, hm_hub_entity: HmBaseHubEntity
+        self, entity_id: str, hm_hub_entity: GenericHubEntity
     ) -> None:
         """Add entity to active hub entities."""
         self._active_hm_hub_entities[entity_id] = hm_hub_entity
