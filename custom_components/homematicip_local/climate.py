@@ -28,7 +28,7 @@ from homeassistant.components.climate import (
     HVACMode,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, TEMP_CELSIUS
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
@@ -56,7 +56,7 @@ ATTR_RESTORE_CURRENT_HUMIDITY = "current_humidity"
 ATTR_RESTORE_HVAC_MODE = "hvac_mode"
 ATTR_RESTORE_PRESET_MODE = "preset_mode"
 
-HM_HVAC_MODES = [cls.value for cls in HmHvacMode]
+HM_HVAC_MODES = [cls for cls in HmHvacMode]
 
 SUPPORTED_HA_PRESET_MODES = [
     PRESET_AWAY,
@@ -158,7 +158,7 @@ class HaHomematicClimate(
     ) -> None:
         """Initialize the climate entity."""
         super().__init__(control_unit=control_unit, hm_entity=hm_entity)
-        self._attr_temperature_unit = TEMP_CELSIUS
+        self._attr_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_target_temperature_step = hm_entity.target_temperature_step
 
     @property
