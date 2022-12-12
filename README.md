@@ -94,7 +94,8 @@ Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 ```yaml
 instance_name:
   required: true
-  description: Name to identify your HomeMatic hub. This has to be unique for each configured hub. Allowed characters are a-z and 0-9.
+  description: Name to identify your HomeMatic hub. This has to be unique for each configured hub. Allowed characters are a-z and 0-9. 
+               If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.
   type: string
 host:
   required: true
@@ -200,7 +201,6 @@ These two options are required for _special_ network environments. If for exampl
 System variables are fetched every 30 seconds from backend (CCU/Homegear) and belong to a device of type CCU. You could also click on service on the integration's overview in HA.
 
 System variables are initially created as **[deactived](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
-There is a special system variable named `sensor.{instance_name}` that represensts the backend and returns the count of `Servicemeldungen`. That's why there is no dedicated system variable for `Servicemeldungen`. This entity is also used in service calls (e.g. `set_variable_value`) to identify the used backend. This entity __must not be disabled__ to support full operations of Homematic(IP) Local.
 
 The types of system variables in the CCU are:
 - character string (Zeichenkette)
