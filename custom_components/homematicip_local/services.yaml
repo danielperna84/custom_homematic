@@ -269,13 +269,20 @@ enable_away_mode_by_calendar:
     entity:
       domain: climate
   fields:
+    start:
+      name: Start time
+      description: The time when the away mode should automatically be enabled.
+      required: false
+      example: 2022-12-28 14:00
+      selector:
+        datetime:
     end:
       name: End time
       description: The time when the away mode should automatically be disabled.
       required: true
-      example: 2022-01-28 14:00
+      example: 2023-01-28 14:00
       selector:
-        text:
+        datetime:
     away_temperature:
       name: Set point temperature
       description: The temperature for the away mode.
