@@ -48,6 +48,7 @@ SERVICE_ENABLE_AWAY_MODE_BY_DURATION = "enable_away_mode_by_duration"
 ATTR_AWAY_END = "end"
 ATTR_AWAY_HOURS = "hours"
 ATTR_AWAY_TEMPERATURE = "away_temperature"
+ATTR_AWAY_START = "start"
 
 ATTR_RESTORE_TARGET_TEMPERATURE = "temperature"
 ATTR_RESTORE_CURRENT_TEMPERATURE = "current_temperature"
@@ -120,6 +121,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
         {
+            vol.Optional(ATTR_AWAY_START): cv.datetime,
             vol.Required(ATTR_AWAY_END): cv.datetime,
             vol.Required(ATTR_AWAY_TEMPERATURE, default=18.0): vol.All(
                 vol.Coerce(float), vol.Range(min=5.0, max=30.5)
@@ -279,10 +281,10 @@ class HaHomematicClimate(
         await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
-        self, end: datetime, away_temperature: float
+        self, end: datetime, away_temperature: float, start: datetime | None = None,
     ) -> None:
         """Enable the away mode by calendar on thermostat."""
-        start = datetime.now() - timedelta(minutes=10)
+        start = start or datetime.now() - timedelta(minutes=10)
         await self._hm_entity.enable_away_mode_by_calendar(
             start=start, end=end, away_temperature=away_temperature
         )

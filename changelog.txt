@@ -1,3 +1,6 @@
+Version 1.24.2 (2022-12-1)
+- Add start date and time for service homematicip_local.enable_away_mode_by_calendar and use date and time pickers
+
 Version 1.24.1 (2022-12-12)
 - Bump hahomematic to 2022.12.3
   - Add separate off_temperature for HM heating group HM-CC-VG-1

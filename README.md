@@ -252,11 +252,11 @@ Disable the away mode for `climate` devices. This only works with HomematicIP de
 
 ### `homematicip_local.enable_away_mode_by_calendar`
 
-Enable the away mode immediately, and specify the end by time and date (e.g. 2022-10-01 10:00). This only works with HomematicIP devices.
+Enable the away mode immediately or by start date and time (e.g. 2022-09-01 10:00), and specify the end by date and time (e.g. 2022-10-01 10:00). This only works with HomematicIP devices.
 
 ### `homematicip_local.enable_away_mode_by_duration`
 
-Enable the away mode immediately, and specify the end time by setting a duration. This only works with HomematicIP devices.
+Enable the away mode immediately, and specify the end time by setting a duration (in hours). This only works with HomematicIP devices.
 
 ### `homematicip_local.export_device_definition`
 
