@@ -333,7 +333,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (
-        frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
+        frozenset({"SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
@@ -514,12 +514,12 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 
 _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
     frozenset(
-        {"HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"}
+        {"BBL", "FBL", "DRBLI4", "DRBL4"}
     ): CoverEntityDescription(
         key="BLIND",
         device_class=CoverDeviceClass.BLIND,
     ),
-    frozenset({"HmIP-BROLL", "HmIP-FROLL"}): CoverEntityDescription(
+    frozenset({"BROLL", "FROLL"}): CoverEntityDescription(
         key="SHUTTER",
         device_class=CoverDeviceClass.SHUTTER,
     ),
@@ -527,7 +527,7 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
         key="HDM1",
         device_class=CoverDeviceClass.SHADE,
     ),
-    frozenset({"HmIP-MOD-HO", "HmIP-MOD-TM"}): CoverEntityDescription(
+    frozenset({"MOD-HO", "MOD-TM"}): CoverEntityDescription(
         key="GARAGE-HO",
         device_class=CoverDeviceClass.GARAGE,
     ),

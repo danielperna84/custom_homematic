@@ -1,4 +1,7 @@
-Version 1.24.2 (2022-12-1)
+Version 1.24.3 (2022-12-15)
+- Use more sub_types for device selection
+
+Version 1.24.2 (2022-12-13)
 - Bump hahomematic to 2022.12.3
   - Fix disable away_mode in climate. Now goes back to the origin control_mode.
 - Add start date and time for service homematicip_local.enable_away_mode_by_calendar and use date and time pickers
