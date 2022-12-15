@@ -459,7 +459,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
     ),
     "SABOTAGE": BinarySensorEntityDescription(
         key="SABOTAGE",
-        device_class=BinarySensorDeviceClass.SAFETY,
+        device_class=BinarySensorDeviceClass.TAMPER,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),

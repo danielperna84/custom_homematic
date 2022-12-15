@@ -1,5 +1,6 @@
 Version 1.24.3 (2022-12-15)
 - Use more sub_types for device selection
+- Use device class tamper for sabotage parameter
 
 Version 1.24.2 (2022-12-13)
 - Bump hahomematic to 2022.12.3
