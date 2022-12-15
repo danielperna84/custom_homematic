@@ -17,6 +17,6 @@
   "codeowners": ["@danielperna84", "@SukramJ"],
   "iot_class": "local_push",
   "loggers": ["hahomematic"],
-  "version": "1.24.2",
+  "version": "1.24.3",
   "integration_type": "hub"
 }
