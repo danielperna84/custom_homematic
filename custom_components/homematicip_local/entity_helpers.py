@@ -385,7 +385,6 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
     (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",
-        device_class=SensorDeviceClass.ENUM,
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
