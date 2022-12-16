@@ -6,7 +6,7 @@ from typing import Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.entity import CustomEntity, GenericEntity, WrapperEntity
-from hahomematic.helpers import contains_device
+from hahomematic.helpers import element_matches_key
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -66,10 +66,7 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
 _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
-    (
-        frozenset({"HmIP-eTRV", "HmIP-HEATING"}),
-        "LEVEL",
-    ): HmNumberEntityDescription(
+    (frozenset({"HmIP-eTRV", "HmIP-HEATING"}), "LEVEL",): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
@@ -281,8 +278,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
     ),
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
-        icon="mdi:smoke-detector",
         device_class="homematicip_local__smoke_detector_alarm_status",
+        icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
+        if value in ("primary_alarm", "secondary_alarm")
+        else (
+            "mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"
+        ),
+        translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
@@ -367,10 +369,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon="mdi:lock-alert",
         device_class="homematicip_local__sec_key_error",
     ),
-    (
-        frozenset({"HmIP-eTRV", "HmIP-HEATING"}),
-        "LEVEL",
-    ): HmSensorEntityDescription(
+    (frozenset({"HmIP-eTRV", "HmIP-HEATING"}), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
@@ -476,7 +475,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
-    (frozenset({"HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"}), "STATE"): BinarySensorEntityDescription(
+    (
+        frozenset({"HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"}),
+        "STATE",
+    ): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),
@@ -616,9 +618,9 @@ def _get_entity_description_by_device_type_and_param(
     ):
         for data, entity_desc in platform_device_and_param_descriptions.items():
             if data[1] == hm_entity.parameter and (
-                contains_device(
+                element_matches_key(
                     search_elements=data[0],
-                    device_type=hm_entity.device.device_type,
+                    compare_with=hm_entity.device.device_type,
                 )
             ):
                 return entity_desc
@@ -646,9 +648,9 @@ def _get_entity_description_by_device_type(
         hm_entity.platform
     ):
         for devices, entity_desc in platform_device_descriptions.items():
-            if contains_device(
+            if element_matches_key(
                 search_elements=devices,
-                device_type=hm_entity.device.device_type,
+                compare_with=hm_entity.device.device_type,
             ):
                 return entity_desc
     return None
