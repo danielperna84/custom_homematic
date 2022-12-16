@@ -67,7 +67,7 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (
-        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E", "HmIP-HEATING"}),
+        frozenset({"HmIP-eTRV", "HmIP-HEATING"}),
         "LEVEL",
     ): HmNumberEntityDescription(
         key="LEVEL",
@@ -333,7 +333,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
     (
-        frozenset({"SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
+        frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
@@ -368,7 +368,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         device_class="homematicip_local__sec_key_error",
     ),
     (
-        frozenset({"TRV", "TRV-B", "TRV-C", "TRV-E", "HmIP-HEATING"}),
+        frozenset({"HmIP-eTRV", "HmIP-HEATING"}),
         "LEVEL",
     ): HmSensorEntityDescription(
         key="LEVEL",
@@ -476,7 +476,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | frozenset[str], str], EntityDescription
 ] = {
-    (frozenset({"SCI", "FCI1", "FCI16"}), "STATE"): BinarySensorEntityDescription(
+    (frozenset({"HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"}), "STATE"): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),
@@ -487,10 +487,9 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     (
         frozenset(
             {
-                "SWD",
-                "SWDO-I",
-                "SWDM",
-                "SWDO-PL",
+                "HmIP-SWD",
+                "HmIP-SWDO",
+                "HmIP-SWDM",
                 "HM-Sec-SC",
                 "HM-SCI-3-FM",
                 "ZEL STG RM FFK",
@@ -514,20 +513,20 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 
 _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
     frozenset(
-        {"BBL", "FBL", "DRBLI4", "DRBL4"}
+        {"HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"}
     ): CoverEntityDescription(
         key="BLIND",
         device_class=CoverDeviceClass.BLIND,
     ),
-    frozenset({"BROLL", "FROLL"}): CoverEntityDescription(
+    frozenset({"HmIP-BROLL", "HmIP-FROLL"}): CoverEntityDescription(
         key="SHUTTER",
         device_class=CoverDeviceClass.SHUTTER,
     ),
     "HmIP-HDM1": CoverEntityDescription(
-        key="HDM1",
+        key="HmIP-HDM1",
         device_class=CoverDeviceClass.SHADE,
     ),
-    frozenset({"MOD-HO", "MOD-TM"}): CoverEntityDescription(
+    frozenset({"HmIP-MOD-HO", "HmIP-MOD-TM"}): CoverEntityDescription(
         key="GARAGE-HO",
         device_class=CoverDeviceClass.GARAGE,
     ),
@@ -620,7 +619,6 @@ def _get_entity_description_by_device_type_and_param(
                 contains_device(
                     search_elements=data[0],
                     device_type=hm_entity.device.device_type,
-                    sub_type=hm_entity.device.sub_type,
                 )
             ):
                 return entity_desc
@@ -651,7 +649,6 @@ def _get_entity_description_by_device_type(
             if contains_device(
                 search_elements=devices,
                 device_type=hm_entity.device.device_type,
-                sub_type=hm_entity.device.sub_type,
             ):
                 return entity_desc
     return None
