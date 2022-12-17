@@ -5,13 +5,20 @@ Custom Home Assistant Component for HomeMatic and HomematicIP
 
 [State of the integration](https://github.com/danielperna84/custom_homematic/blob/devel/info.md)
 
+[Wiki with addional information](https://github.com/danielperna84/hahomematic/wiki)
+Please support the community by adding more valuable information to the wiki.
+
 # ISSUES and DISCUSSIONS
 Please report issues in [hahomamatic repo](https://github.com/danielperna84/hahomematic/issues).
 New discussions can be started and found in [hahomamatic repo](https://github.com/danielperna84/hahomematic/discussions).
+Feature requests can be added as a discussion too. 
+A good practice is to search in issues and discussions before starting a new one.
 
 # Homematic(IP) Local (documentation)
 
-The [HomeMatic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
+The [HomeMatic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). 
+It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. 
+You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
 
 Support for CUxD is not possible due to a missing Python library for BinRPC.
@@ -20,8 +27,12 @@ Support for CUxD is not possible due to a missing Python library for BinRPC.
 
 ## Device support
 
-HomeMatic and HomematicIP devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant. However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about. It may become relevant though if new hardware becomes available. In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity. In such a case you may report the missing customization in the [hahomematic](https://github.com/danielperna84/hahomematic) repository.
-See this [list of devices supported by custom entities](https://github.com/danielperna84/hahomematic/wiki/Homematic-Devices-supported-by-custom-entity).
+HomeMatic and HomematicIP devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant. 
+However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about. 
+It may become relevant though if new hardware becomes available. 
+In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity. 
+In such a case you may report the missing customization in the [hahomematic](https://github.com/danielperna84/hahomematic) repository.
+Please report missing devices **after** you installed the integration and ensured it is missing or faulty.
 
 ### Deactivated Entities
 A lot of additional entities were initially created _deactivated_ and can be _activated_, if necessary, in the `advanced settings` of the entity.
@@ -329,6 +340,16 @@ This service is not needed to update entities in general, because 99,9% of the e
 Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
 ## Additional information
+
+### What is the meaning of this persistant notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
+This integration does not fetch new updates from the CCU, it **receives** state changes and new values for devices from the CCU by the XmlRPC server.
+
+Therefor the integration checks if this mechanism works:
+
+Regardless of regular device updates, HA checks the availability of the CCU with a `PING` every 15 seconds, and expects a `PONG` event as a response on the XMLRPC server.
+This persistent notification is only displayed in HA if the received PONG events and the device updates are missing for 5 minutes, but it also disappears again as soon as events are received again.
+
+So the message means there is a problem in the communication from the CCU to HA that was **identified** by the integration but not **caused**.
 
 ### Noteworthy about entity states
 
