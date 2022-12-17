@@ -92,7 +92,7 @@ class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity)
     def options(self) -> list[str]:
         """Return the options."""
         if options := self._hm_entity.value_list:
-            return options
+            return list(options)
         return []
 
     @property
