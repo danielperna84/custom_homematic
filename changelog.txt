@@ -1,8 +1,11 @@
-Version 1.24.3 (2022-12-15)
+Version 1.24.3 (2022-12-18)
 - Bump hahomematic to 2022.12.5
-  - Remove sub_type from model to simplify code
-  - Refactor binary_sensor check
-  - Convert value_list to tuple
+  - Code Cleanup
+   - Remove sub_type from model to simplify code
+   - Remove obsolete methods
+   - Refactor binary_sensor check
+   - Convert value_list to tuple
+   - Use tuple for immutable lists
 - Remove sub_types for device selection
 - Convert frozenset to tuple in entity helper
 - Use device class tamper for sabotage parameter
