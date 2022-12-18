@@ -281,7 +281,10 @@ class HaHomematicClimate(
         await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
-        self, end: datetime, away_temperature: float, start: datetime | None = None,
+        self,
+        end: datetime,
+        away_temperature: float,
+        start: datetime | None = None,
     ) -> None:
         """Enable the away mode by calendar on thermostat."""
         start = start or datetime.now() - timedelta(minutes=10)
