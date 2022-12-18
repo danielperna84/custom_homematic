@@ -52,21 +52,21 @@ CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"
 PARTICLESIZE: Final = "\u00b5m"
 
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
+_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
     ),
-    frozenset({"LEVEL", "LEVEL_SLATS"}): HmNumberEntityDescription(
+    ("LEVEL", "LEVEL_SLATS"): HmNumberEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
     ),
 }
 
 _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], EntityDescription
+    tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
-    (frozenset({"HmIP-eTRV", "HmIP-HEATING"}), "LEVEL",): HmNumberEntityDescription(
+    (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
@@ -74,7 +74,7 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "AIR_PRESSURE": HmSensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=UnitOfPressure.HPA,
@@ -104,7 +104,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"ACTIVITY_STATE", "DIRECTION"}): HmSensorEntityDescription(
+    ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
         key="DIRECTION",
         icon="mdi:arrow-up-down",
         device_class="homematicip_local__direction",
@@ -146,7 +146,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(["HUMIDITY", "ACTUAL_HUMIDITY"]): HmSensorEntityDescription(
+    ("HUMIDITY", "ACTUAL_HUMIDITY"): HmSensorEntityDescription(
         key="HUMIDITY",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.HUMIDITY,
@@ -164,15 +164,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(
-        {
-            "ILLUMINATION",
-            "AVERAGE_ILLUMINATION",
-            "CURRENT_ILLUMINATION",
-            "HIGHEST_ILLUMINATION",
-            "LOWEST_ILLUMINATION",
-            "LUX",
-        }
+    (
+        "ILLUMINATION",
+        "AVERAGE_ILLUMINATION",
+        "CURRENT_ILLUMINATION",
+        "HIGHEST_ILLUMINATION",
+        "LOWEST_ILLUMINATION",
+        "LUX",
     ): HmSensorEntityDescription(
         key="ILLUMINATION",
         native_unit_of_measurement=LIGHT_LUX,
@@ -183,7 +181,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         key="IP_ADDRESS",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    frozenset(["LEVEL", "FILLING_LEVEL"]): HmSensorEntityDescription(
+    ("LEVEL", "FILLING_LEVEL"): HmSensorEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
@@ -194,24 +192,27 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         device_class="homematicip_local__lock_state",
         icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
     ),
-    frozenset(
-        {"MASS_CONCENTRATION_PM_1", "MASS_CONCENTRATION_PM_1_24H_AVERAGE"}
+    (
+        "MASS_CONCENTRATION_PM_1",
+        "MASS_CONCENTRATION_PM_1_24H_AVERAGE",
     ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM1,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(
-        {"MASS_CONCENTRATION_PM_10", "MASS_CONCENTRATION_PM_10_24H_AVERAGE"}
+    (
+        "MASS_CONCENTRATION_PM_10",
+        "MASS_CONCENTRATION_PM_10_24H_AVERAGE",
     ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
         device_class=SensorDeviceClass.PM10,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(
-        {"MASS_CONCENTRATION_PM_2_5", "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE"}
+    (
+        "MASS_CONCENTRATION_PM_2_5",
+        "MASS_CONCENTRATION_PM_2_5_24H_AVERAGE",
     ): HmSensorEntityDescription(
         key="MASS_CONCENTRATION_PM_2_5",
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
@@ -241,7 +242,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         native_unit_of_measurement=PARTICLESIZE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset({"BATTERY_STATE", "OPERATING_VOLTAGE"}): HmSensorEntityDescription(
+    ("BATTERY_STATE", "OPERATING_VOLTAGE"): HmSensorEntityDescription(
         key="OPERATING_VOLTAGE",
         native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
@@ -261,16 +262,14 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
-    frozenset({"RSSI_DEVICE", "RSSI_PEER"}): HmSensorEntityDescription(
+    ("RSSI_DEVICE", "RSSI_PEER"): HmSensorEntityDescription(
         key="RSSI",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    frozenset(
-        {"ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"}
-    ): HmSensorEntityDescription(
+    ("ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"): HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -313,8 +312,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    frozenset(
-        {"WIND_DIR", "WIND_DIR_RANGE", "WIND_DIRECTION", "WIND_DIRECTION_RANGE"}
+    (
+        "WIND_DIR",
+        "WIND_DIR_RANGE",
+        "WIND_DIRECTION",
+        "WIND_DIRECTION_RANGE",
     ): HmSensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
@@ -331,10 +333,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
 }
 
 _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], EntityDescription
+    tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
     (
-        frozenset({"HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"}),
+        ("HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"),
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
@@ -368,7 +370,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon="mdi:lock-alert",
         device_class="homematicip_local__sec_key_error",
     ),
-    (frozenset({"HmIP-eTRV", "HmIP-HEATING"}), "LEVEL",): HmSensorEntityDescription(
+    (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
@@ -405,7 +407,7 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "ALARMSTATE": BinarySensorEntityDescription(
         key="ALARMSTATE",
         device_class=BinarySensorDeviceClass.SAFETY,
@@ -414,7 +416,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    frozenset({"DUTYCYCLE", "DUTY_CYCLE"}): BinarySensorEntityDescription(
+    ("DUTYCYCLE", "DUTY_CYCLE"): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
         name="Duty Cycle",
         device_class=BinarySensorDeviceClass.PROBLEM,
@@ -425,7 +427,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
         key="HEATER_STATE",
         device_class=BinarySensorDeviceClass.HEAT,
     ),
-    frozenset({"LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"}): BinarySensorEntityDescription(
+    ("LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"): BinarySensorEntityDescription(
         key="LOW_BAT",
         name="Low Battery",
         device_class=BinarySensorDeviceClass.BATTERY,
@@ -447,7 +449,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
         key="PRESENCE_DETECTION_STATE",
         device_class=BinarySensorDeviceClass.PRESENCE,
     ),
-    frozenset({"PROCESS", "WORKING"}): BinarySensorEntityDescription(
+    ("PROCESS", "WORKING"): BinarySensorEntityDescription(
         key="PROCESS",
         device_class=BinarySensorDeviceClass.RUNNING,
     ),
@@ -472,12 +474,9 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescripti
 }
 
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
-    tuple[str | frozenset[str], str], EntityDescription
+    tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
-    (
-        frozenset({"HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"}),
-        "STATE",
-    ): BinarySensorEntityDescription(
+    (("HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"), "STATE",): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),
@@ -486,15 +485,13 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         device_class=BinarySensorDeviceClass.SMOKE,
     ),
     (
-        frozenset(
-            {
-                "HmIP-SWD",
-                "HmIP-SWDO",
-                "HmIP-SWDM",
-                "HM-Sec-SC",
-                "HM-SCI-3-FM",
-                "ZEL STG RM FFK",
-            }
+        (
+            "HmIP-SWD",
+            "HmIP-SWDO",
+            "HmIP-SWDM",
+            "HM-Sec-SC",
+            "HM-SCI-3-FM",
+            "ZEL STG RM FFK",
         ),
         "STATE",
     ): BinarySensorEntityDescription(
@@ -512,14 +509,12 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
-    frozenset(
-        {"HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"}
-    ): CoverEntityDescription(
+_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+    ("HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"): CoverEntityDescription(
         key="BLIND",
         device_class=CoverDeviceClass.BLIND,
     ),
-    frozenset({"HmIP-BROLL", "HmIP-FROLL"}): CoverEntityDescription(
+    ("HmIP-BROLL", "HmIP-FROLL"): CoverEntityDescription(
         key="SHUTTER",
         device_class=CoverDeviceClass.SHUTTER,
     ),
@@ -527,7 +522,7 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
         key="HmIP-HDM1",
         device_class=CoverDeviceClass.SHADE,
     ),
-    frozenset({"HmIP-MOD-HO", "HmIP-MOD-TM"}): CoverEntityDescription(
+    ("HmIP-MOD-HO", "HmIP-MOD-TM"): CoverEntityDescription(
         key="GARAGE-HO",
         device_class=CoverDeviceClass.GARAGE,
     ),
@@ -537,7 +532,7 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | frozenset[str], EntityDescription] = {
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
+_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "INHIBIT": SwitchEntityDescription(
         key="INHIBIT",
         device_class=SwitchDeviceClass.SWITCH,
@@ -546,13 +541,13 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | frozenset[str], EntityDescription] = {
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE: dict[
-    HmPlatform, dict[str | frozenset[str], EntityDescription]
+    HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
 }
 
 _ENTITY_DESCRIPTION_BY_PARAM: dict[
-    HmPlatform, dict[str | frozenset[str], EntityDescription]
+    HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
@@ -561,7 +556,7 @@ _ENTITY_DESCRIPTION_BY_PARAM: dict[
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
-    HmPlatform, dict[tuple[str | frozenset[str], str], EntityDescription]
+    HmPlatform, dict[tuple[str | tuple[str, ...], str], EntityDescription]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
@@ -655,11 +650,11 @@ def _get_entity_description_by_device_type(
     return None
 
 
-def _param_in_list(params: str | frozenset[str], parameter: str) -> bool:
+def _param_in_list(params: str | tuple[str, ...], parameter: str) -> bool:
     """Return if parameter is in set."""
     if isinstance(params, str):
         return parameter.lower() == params.lower()
-    if isinstance(params, frozenset):
+    if isinstance(params, tuple):
         for device in params:
             if parameter.lower() == device.lower():
                 return True
