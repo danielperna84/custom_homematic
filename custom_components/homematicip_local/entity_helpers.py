@@ -57,8 +57,9 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
     ),
-    ("LEVEL", "LEVEL_SLATS"): HmNumberEntityDescription(
+    ("LEVEL", "LEVEL_2"): HmNumberEntityDescription(
         key="LEVEL",
+        multiplier=100,
         native_unit_of_measurement=PERCENTAGE,
     ),
 }
@@ -69,8 +70,9 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
-        native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
+        native_unit_of_measurement=PERCENTAGE,
+        entity_registry_enabled_default=False,
     ),
 }
 
@@ -128,6 +130,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+    "FILLING_LEVEL": HmSensorEntityDescription(
+        key="FILLING_LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "FREQUENCY": HmSensorEntityDescription(
         key="FREQUENCY",
         native_unit_of_measurement=FREQUENCY_HERTZ,
@@ -181,7 +188,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         key="IP_ADDRESS",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    ("LEVEL", "FILLING_LEVEL"): HmSensorEntityDescription(
+    ("LEVEL", "LEVEL_2"): HmSensorEntityDescription(
         key="LEVEL",
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
