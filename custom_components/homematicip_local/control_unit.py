@@ -67,11 +67,13 @@ from .const import (
     ATTR_PATH,
     CONTROL_UNITS,
     DOMAIN,
+    EVENT_DATA_ERROR,
+    EVENT_DATA_ERROR_NAME,
+    EVENT_DATA_ERROR_VALUE,
     EVENT_DATA_IDENTIFIER,
     EVENT_DATA_MESSAGE,
     EVENT_DATA_TITLE,
     EVENT_DATA_UNAVAILABLE,
-    EVENT_DEVICE_AVAILABILITY,
     EVENT_DEVICE_TYPE,
     HMIP_LOCAL_PLATFORMS,
     IDENTIFIER_SEPARATOR,
@@ -505,57 +507,25 @@ class ControlUnit(BaseControlUnit):
         self, hm_event_type: HmEventType, event_data: dict[str, Any]
     ) -> None:
         """Execute the callback used for device related events."""
-        if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
-            device_address = event_data[ATTR_ADDRESS]
-            if device_entry := self._async_get_device(device_address=device_address):
-                event_data[ATTR_DEVICE_ID] = device_entry.id
-                event_data[ATTR_NAME] = device_entry.name_by_user or device_entry.name
-            self._hass.bus.fire(
-                event_type=hm_event_type.value,
-                event_data=event_data,
-            )
-        elif hm_event_type == HmEventType.DEVICE:
-            device_address = event_data[ATTR_ADDRESS]
-            name: str | None = None
-            if device_entry := self._async_get_device(device_address=device_address):
-                event_data[ATTR_DEVICE_ID] = device_entry.id
-                name = device_entry.name_by_user or device_entry.name
-            interface_id = event_data[ATTR_INTERFACE_ID]
-            parameter = event_data[ATTR_PARAMETER]
-            unavailable = event_data[ATTR_VALUE]
-            if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
-                title = f"{DOMAIN.upper()}-Device not reachable"
-                message = f"{name} / {device_address} on interface {interface_id}"
-                availability_event_data = {
-                    ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
-                    EVENT_DATA_IDENTIFIER: device_address,
-                    EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
-                    EVENT_DATA_TITLE: title,
-                    EVENT_DATA_MESSAGE: message,
-                    EVENT_DATA_UNAVAILABLE: unavailable,
-                }
-                self._hass.bus.fire(
-                    event_type=EVENT_DEVICE_AVAILABILITY,
-                    event_data=availability_event_data,
-                )
-        elif hm_event_type == HmEventType.INTERFACE:
-            interface_id = event_data[ATTR_INTERFACE_ID]
+
+        interface_id = event_data[ATTR_INTERFACE_ID]
+        if hm_event_type == HmEventType.INTERFACE:
             interface_event_type = event_data[ATTR_TYPE]
             available = event_data[ATTR_VALUE]
             if interface_event_type == HmInterfaceEventType.PROXY:
                 title = f"{DOMAIN.upper()}-Interface not reachable"
-                message = f"No connection to interface {interface_id}"
                 if available:
                     self._async_dismiss_persistent_notification(
                         identifier=f"proxy-{interface_id}"
                     )
                 else:
                     self._async_create_persistent_notification(
-                        identifier=f"proxy-{interface_id}", title=title, message=message
+                        identifier=f"proxy-{interface_id}",
+                        title=title,
+                        message=f"No connection to interface {interface_id}",
                     )
             if interface_event_type == HmInterfaceEventType.CALLBACK:
                 title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
-                message = f"No callback events received for interface {interface_id} {CHECK_INTERVAL}s."
                 if available:
                     self._async_dismiss_persistent_notification(
                         identifier=f"callback-{interface_id}"
@@ -564,8 +534,65 @@ class ControlUnit(BaseControlUnit):
                     self._async_create_persistent_notification(
                         identifier=f"callback-{interface_id}",
                         title=title,
-                        message=message,
+                        message=f"No callback events received for interface {interface_id} {CHECK_INTERVAL}s.",
                     )
+        else:
+            device_address = event_data[ATTR_ADDRESS]
+            name: str | None = None
+            if device_entry := self._async_get_device(device_address=device_address):
+                event_data[ATTR_DEVICE_ID] = device_entry.id
+                name = device_entry.name_by_user or device_entry.name
+                event_data[ATTR_NAME] = name
+
+            if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
+                self._hass.bus.fire(
+                    event_type=hm_event_type.value,
+                    event_data=event_data,
+                )
+            elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
+                parameter = event_data[ATTR_PARAMETER]
+                unavailable = event_data[ATTR_VALUE]
+                if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
+                    title = f"{DOMAIN.upper()} Device not reachable"
+                    availability_event_data = {
+                        ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
+                        EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
+                        EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
+                        EVENT_DATA_TITLE: title,
+                        EVENT_DATA_MESSAGE: f"{name}/{device_address} on interface {interface_id}",
+                        EVENT_DATA_UNAVAILABLE: unavailable,
+                    }
+                    self._hass.bus.fire(
+                        event_type=hm_event_type.value,
+                        event_data=availability_event_data,
+                    )
+            elif hm_event_type == HmEventType.DEVICE_ERROR:
+                error_parameter = event_data[ATTR_PARAMETER]
+                error_parameter_display = error_parameter.replace("_", " ").title()
+                title = f"{DOMAIN.upper()} Device Error"
+                error_message: str = ""
+                error_value = event_data[ATTR_VALUE]
+                display_error: bool = False
+                if isinstance(error_value, bool):
+                    display_error = error_value
+                    error_message = f"{name}/{device_address} on interface {interface_id}: {error_parameter_display}"
+                if isinstance(error_value, int):
+                    display_error = error_value != 0
+                    error_message = f"{name}/{device_address} on interface {interface_id}: {error_parameter_display} {error_value}"
+                error_event_data = {
+                    ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
+                    EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
+                    EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
+                    EVENT_DATA_TITLE: title,
+                    EVENT_DATA_MESSAGE: error_message,
+                    EVENT_DATA_ERROR_NAME: error_parameter,
+                    EVENT_DATA_ERROR_VALUE: error_value,
+                    EVENT_DATA_ERROR: display_error,
+                }
+                self._hass.bus.fire(
+                    event_type=hm_event_type.value,
+                    event_data=error_event_data,
+                )
 
     @callback
     def _async_create_persistent_notification(

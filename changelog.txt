@@ -1,3 +1,9 @@
+Version 1.25.0 (2022-12-21)
+- Bump hahomematic to 2022.12.7
+  - Send ERROR_* parameters as homematic.device_error event
+- Fire homematic.device_error event
+- Add blueprint to display device error as persistent notification
+
 Version 1.24.4 (2022-12-20)
 - Bump hahomematic to 2022.12.6
   - Add additional checks for custom entities
