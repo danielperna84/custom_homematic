@@ -1,3 +1,7 @@
+Version 1.25.0 (2022-12-22)
+- Bump hahomematic to 2022.12.8
+  - Reformat code
+
 Version 1.25.0 (2022-12-21)
 - Bump hahomematic to 2022.12.7
   - Send ERROR_* parameters as homematic.device_error event
