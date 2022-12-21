@@ -515,7 +515,7 @@ The following blueprints can be used to simplify the usage of HomeMatic and Home
 - [Reactivate device by type](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_by_type.yaml). Reactivate unavailable devices by device type.
 - [Reactivate every device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_full.yaml). Reactivate all unavailable devices. NOT recommended. Usage of `by device type` or `single device` should be preferred.
 - [Reactivate single device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml) Reactivate a single unavailable device.
-- [Show device errors](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_show_device_error.yaml) Show all error eventy emitted by a device.
+- [Show device errors](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_show_device_error.yaml) Show all error eventy emitted by a device. This is an unfiltered blueprint. More filters should be added to the trigger.
 
 Feel free to contribute:
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
