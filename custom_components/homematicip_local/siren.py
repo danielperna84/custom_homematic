@@ -96,8 +96,8 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
         """Return true if siren is on."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_on is True
-        if self.is_restored:
-            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            if (restored_state := self._restored_state.state) not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
             ):
@@ -119,13 +119,15 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
         acoustic_alarm = kwargs.get(ATTR_TONE, DISABLE_ACOUSTIC_SIGNAL)
         if not self.available_tones or acoustic_alarm not in self.available_tones:
             raise ValueError(
-                f"Invalid tone specified for entity {self.entity_id}: {acoustic_alarm}, "
+                f"Invalid tone specified "
+                f"for entity {self.entity_id}: {acoustic_alarm}, "
                 "check the available_tones attribute for valid tones to pass in"
             )
         optical_alarm = kwargs.get(ATTR_LIGHT, DISABLE_OPTICAL_SIGNAL)
         if not self.available_lights or optical_alarm not in self.available_lights:
             raise ValueError(
-                f"Invalid light specified for entity {self.entity_id}: {optical_alarm}, "
+                f"Invalid light specified "
+                f"for entity {self.entity_id}: {optical_alarm}, "
                 "check the available_lights attribute for valid tones to pass in"
             )
 

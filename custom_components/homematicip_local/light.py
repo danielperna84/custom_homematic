@@ -105,8 +105,8 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
                 return ColorMode.COLOR_TEMP
             if self._hm_entity.supports_brightness:
                 return ColorMode.BRIGHTNESS
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_COLOR_MODE)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_COLOR_MODE)
 
         return ColorMode.ONOFF
 
@@ -159,8 +159,8 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return true if dimmer is on."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_on is True
-        if self.is_restored:
-            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            if (restored_state := self._restored_state.state) not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
             ):
@@ -172,8 +172,8 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return the brightness of this light between 0..255."""
         if self._hm_entity.is_valid:
             return self._hm_entity.brightness
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_BRIGHTNESS)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_BRIGHTNESS)
         return None
 
     @property
@@ -181,8 +181,8 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return the color temperature of this light between 0..255."""
         if self._hm_entity.is_valid:
             return self._hm_entity.color_temp
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_COLOR_TEMP)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_COLOR_TEMP)
         return None
 
     @property
@@ -200,8 +200,8 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return the hue and saturation color value [float, float]."""
         if self._hm_entity.is_valid:
             return self._hm_entity.hs_color
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_HS_COLOR)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_HS_COLOR)
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:

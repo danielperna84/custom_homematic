@@ -58,7 +58,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
         self.entity_description = get_entity_description(hm_entity=hm_entity)
         if (
-            entity_registry_enabled_default := self._get_entity_registry_enabled_default()
+            entity_registry_enabled_default := self._get_entity_registry_enabled_default()  # noqa: E501
         ) is not None:
             self._attr_entity_registry_enabled_default = entity_registry_enabled_default
         if self.entity_description.name is None:
@@ -78,7 +78,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             identifiers={
                 (
                     DOMAIN,
-                    f"{hm_device.device_address}{IDENTIFIER_SEPARATOR}{hm_device.interface_id}",
+                    f"{hm_device.device_address}"
+                    f"{IDENTIFIER_SEPARATOR}"
+                    f"{hm_device.interface_id}",
                 )
             },
             manufacturer=get_manufacturer(device_type=hm_device.device_type),
@@ -144,7 +146,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             isinstance(self._hm_entity, CustomEntity) and not self._hm_entity.is_valid
         ):
             _LOGGER.debug(
-                "CCU did not provide initial value for %s. See README for more information",
+                "CCU did not provide initial value for %s. "
+                "See README for more information",
                 self._hm_entity.full_name,
             )
 

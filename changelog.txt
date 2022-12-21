@@ -1,4 +1,9 @@
-Version 1.25.0 (2022-12-22)
+Version 1.26.0 (2022-12-22)
+- Align translations to new schema
+- Use more UnitOf enums
+- Reformat code / check with flake 8
+
+Version 1.25.1 (2022-12-22)
 - Bump hahomematic to 2022.12.8
   - Reformat code
   - Refactor entity inheritance

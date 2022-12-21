@@ -63,7 +63,6 @@ from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
     ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
     ATTR_PATH,
     CONTROL_UNITS,
     DOMAIN,
@@ -127,7 +126,9 @@ class BaseControlUnit:
 
     @callback
     def stop_central(self, *args: Any) -> None:
-        """Wrap the call to async_stop.
+        """
+        Wrap the call to async_stop.
+
         Used as an argument to EventBus.async_listen_once.
         """
         self._hass.async_create_task(self.async_stop_central())
@@ -278,7 +279,9 @@ class ControlUnit(BaseControlUnit):
                     identifiers={
                         (
                             DOMAIN,
-                            f"{virtual_remote.device_address}{IDENTIFIER_SEPARATOR}{virtual_remote.interface_id}",
+                            f"{virtual_remote.device_address}"
+                            f"{IDENTIFIER_SEPARATOR}"
+                            f"{virtual_remote.interface_id}",
                         )
                     },
                     manufacturer=MANUFACTURER_EQ3,
@@ -348,7 +351,8 @@ class ControlUnit(BaseControlUnit):
         hm_hub_entities: list[GenericHubEntity] = []
         if not self.central.hub:
             _LOGGER.debug(
-                "async_get_new_hm_sysvar_entities_by_platform: central.hub is not ready for %s",
+                "async_get_new_hm_sysvar_entities_by_platform: "
+                "central.hub is not ready for %s",
                 self.central.name,
             )
             return []
@@ -453,7 +457,7 @@ class ControlUnit(BaseControlUnit):
                         async_signal_new_hm_entity(
                             entry_id=self._entry_id, platform=platform
                         ),
-                        hm_entities,  # Don't send device if None, it would override default value in listeners
+                        hm_entities,
                     )
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
@@ -534,7 +538,8 @@ class ControlUnit(BaseControlUnit):
                     self._async_create_persistent_notification(
                         identifier=f"callback-{interface_id}",
                         title=title,
-                        message=f"No callback events received for interface {interface_id} {CHECK_INTERVAL}s.",
+                        message=f"No callback events received for interface "
+                        f"{interface_id} {CHECK_INTERVAL}s.",
                     )
         else:
             device_address = event_data[ATTR_ADDRESS]
@@ -559,7 +564,8 @@ class ControlUnit(BaseControlUnit):
                         EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
                         EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
                         EVENT_DATA_TITLE: title,
-                        EVENT_DATA_MESSAGE: f"{name}/{device_address} on interface {interface_id}",
+                        EVENT_DATA_MESSAGE: f"{name}/{device_address} "
+                        f"on interface {interface_id}",
                         EVENT_DATA_UNAVAILABLE: unavailable,
                     }
                     self._hass.bus.fire(
@@ -575,10 +581,16 @@ class ControlUnit(BaseControlUnit):
                 display_error: bool = False
                 if isinstance(error_value, bool):
                     display_error = error_value
-                    error_message = f"{name}/{device_address} on interface {interface_id}: {error_parameter_display}"
+                    error_message = (
+                        f"{name}/{device_address} on interface {interface_id}: "
+                        f"{error_parameter_display}"
+                    )
                 if isinstance(error_value, int):
                     display_error = error_value != 0
-                    error_message = f"{name}/{device_address} on interface {interface_id}: {error_parameter_display} {error_value}"
+                    error_message = (
+                        f"{name}/{device_address} on interface {interface_id}: "
+                        f"{error_parameter_display} {error_value}"
+                    )
                 error_event_data = {
                     ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
                     EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
@@ -618,7 +630,9 @@ class ControlUnit(BaseControlUnit):
             identifiers={
                 (
                     DOMAIN,
-                    f"{hm_device.device_address}{IDENTIFIER_SEPARATOR}{hm_device.interface_id}",
+                    f"{hm_device.device_address}"
+                    f"{IDENTIFIER_SEPARATOR}"
+                    f"{hm_device.interface_id}",
                 )
             }
         )
@@ -675,7 +689,8 @@ class ControlUnitTemp(BaseControlUnit):
             await self._central.start_direct()
         else:
             _LOGGER.exception(
-                "Starting temporary ControlUnit %s not possible, central unit is not available",
+                "Starting temporary ControlUnit %s not possible, "
+                "central unit is not available",
                 self._instance_name,
             )
 
@@ -764,7 +779,7 @@ class HmScheduler:
         await self._hm_hub.fetch_program_data()
 
     async def async_fetch_sysvars(self) -> None:
-        """Fetching sysvars from backend."""
+        """Fetch sysvars from backend."""
         _LOGGER.debug("Manually fetching of sysvars for %s", self._control.central.name)
         await self._hm_hub.fetch_sysvar_data()
 

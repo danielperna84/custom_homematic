@@ -161,8 +161,8 @@ class HaHomematicClimate(
         """Return the temperature we try to reach."""
         if self._hm_entity.is_valid:
             return self._hm_entity.target_temperature
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_TEMPERATURE)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_TEMPERATURE)
         return None
 
     @property
@@ -170,8 +170,8 @@ class HaHomematicClimate(
         """Return the current temperature."""
         if self._hm_entity.is_valid:
             return self._hm_entity.current_temperature
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_CURRENT_TEMPERATURE)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_CURRENT_TEMPERATURE)
         return None
 
     @property
@@ -179,13 +179,13 @@ class HaHomematicClimate(
         """Return the current humidity."""
         if self._hm_entity.is_valid:
             return self._hm_entity.current_humidity
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_CURRENT_HUMIDITY)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_CURRENT_HUMIDITY)
         return None
 
     @property
     def hvac_action(self) -> HVACAction | None:
-        """Return the hvac action"""
+        """Return the hvac action."""
         if self._hm_entity.hvac_action in HM_TO_HA_ACTION:
             return HM_TO_HA_ACTION[self._hm_entity.hvac_action]
         return None
@@ -197,8 +197,11 @@ class HaHomematicClimate(
             if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
                 return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
             return HVACMode.OFF
-        if self.is_restored:
-            if (restored_state := self._restored_state.state) not in (STATE_UNKNOWN, STATE_UNAVAILABLE):  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            if (restored_state := self._restored_state.state) not in (
+                STATE_UNKNOWN,
+                STATE_UNAVAILABLE,
+            ):
                 return HVACMode(value=restored_state)
         return None
 
@@ -229,8 +232,8 @@ class HaHomematicClimate(
                 self._hm_entity.preset_mode
             ).startswith(HM_PRESET_MODE_PREFIX):
                 return self._hm_entity.preset_mode
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_PRESET_MODE)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_PRESET_MODE)
         return None
 
     @property

@@ -620,8 +620,8 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
 def _get_entity_description_by_device_type_and_param(
     hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter"""
-    if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(
+    """Get entity_description by device_type and parameter."""
+    if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(  # noqa: E501
         hm_entity.platform
     ):
         for data, entity_desc in platform_device_and_param_descriptions.items():
@@ -638,7 +638,7 @@ def _get_entity_description_by_device_type_and_param(
 def _get_entity_description_by_param(
     hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter"""
+    """Get entity_description by device_type and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(
         hm_entity.platform
     ):
@@ -651,7 +651,7 @@ def _get_entity_description_by_param(
 def _get_entity_description_by_device_type(
     hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type"""
+    """Get entity_description by device_type."""
     if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(
         hm_entity.platform
     ):

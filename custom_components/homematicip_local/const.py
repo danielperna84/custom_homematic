@@ -14,7 +14,6 @@ HMIP_LOCAL_MIN_VERSION = "2022.12.0b0"
 IDENTIFIER_SEPARATOR = "@"
 
 ATTR_INSTANCE_NAME = "instance_name"
-ATTR_INTERFACE = "interface"
 ATTR_PARAMSET = "paramset"
 ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"

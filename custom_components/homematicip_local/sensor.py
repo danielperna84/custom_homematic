@@ -126,7 +126,8 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._multiplier != 1
             ):
                 return self._hm_entity.value * self._multiplier
-            # Strings and enums with custom device class must be lowercase to be translatable.
+            # Strings and enums with custom device class must be lowercase
+            # to be translatable.
             if (
                 self._hm_entity.value is not None
                 and self.translation_key is not None
