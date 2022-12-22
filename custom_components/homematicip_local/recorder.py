@@ -11,6 +11,7 @@ from .const import (
     ATTR_MODEL,
     ATTR_NAME,
     ATTR_PARAMETER,
+    ATTR_VALUE_LIST,
     ATTR_VALUE_STATE,
 )
 
@@ -26,5 +27,6 @@ def exclude_attributes(hass: HomeAssistant) -> set[str]:
         ATTR_MODEL,
         ATTR_NAME,
         ATTR_PARAMETER,
+        ATTR_VALUE_LIST,
         ATTR_VALUE_STATE,
     }

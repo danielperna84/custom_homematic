@@ -22,7 +22,13 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
+from .const import (
+    ATTR_VALUE_LIST,
+    ATTR_VALUE_STATE,
+    CONTROL_UNITS,
+    DOMAIN,
+    HmEntityState,
+)
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
@@ -139,6 +145,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         attributes = super().extra_state_attributes
         if self.is_restored:
             attributes[ATTR_VALUE_STATE] = HmEntityState.RESTORED
+        if self._hm_entity.value_list:
+            attributes[ATTR_VALUE_LIST] = [
+                item.lower() for item in self._hm_entity.value_list
+            ]
         return attributes
 
     @property
