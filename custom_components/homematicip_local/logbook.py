@@ -30,11 +30,11 @@ def async_describe_events(
         if hm_device := get_device(hass=hass, device_id=event.data[ATTR_DEVICE_ID]):
             channel_address = f"{event_data[CONF_ADDRESS]}:{event_data[CONF_SUBTYPE]}"
             e_type = event_data[CONF_TYPE].upper()
-            hm_event: BaseEvent | None = hm_device.action_events.get(
+            hm_event: BaseEvent | None = hm_device.events.get(
                 (channel_address, e_type)
             )
             if hm_event:
-                event_name = hm_event.entity_name_data.full_name.replace(
+                event_name = hm_event.full_name.replace(
                     hm_event.parameter.replace("_", " ").title(), ""
                 ).strip()
                 return {

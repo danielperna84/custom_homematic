@@ -1,6 +1,8 @@
 Version 1.25.0 (2022-12-22)
 - Bump hahomematic to 2022.12.8
   - Reformat code
+  - Refactor entity inheritance
+- Follow backend: Refactor entity inheritance
 
 Version 1.25.0 (2022-12-21)
 - Bump hahomematic to 2022.12.7

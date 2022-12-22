@@ -63,7 +63,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             self._attr_entity_registry_enabled_default = entity_registry_enabled_default
         if self.entity_description.name is None:
             self._attr_name = hm_entity.name
-        _LOGGER.debug("init: Setting up %s", hm_entity.entity_name_data.full_name)
+        _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
     def available(self) -> bool:
@@ -145,7 +145,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         ):
             _LOGGER.debug(
                 "CCU did not provide initial value for %s. See README for more information",
-                self._hm_entity.entity_name_data.full_name,
+                self._hm_entity.full_name,
             )
 
     def _get_entity_registry_enabled_default(self) -> bool | None:
