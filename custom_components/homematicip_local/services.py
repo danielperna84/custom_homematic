@@ -561,7 +561,7 @@ def _get_hm_entity(
 ) -> GenericEntity | None:
     """Get homematic entity."""
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.get_hm_entity(
+        return control_unit.central.get_generic_entity(
             channel_address=channel_address, parameter=parameter
         )
     return None

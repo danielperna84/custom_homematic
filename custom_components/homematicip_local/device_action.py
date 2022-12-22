@@ -55,7 +55,7 @@ async def async_get_actions(
         if control_unit.central.clients.get(interface_id) is None:
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
-            for entity in hm_device.entities.values():
+            for entity in hm_device.generic_entities.values():
                 if not isinstance(entity, HmAction):
                     continue
                 if entity.parameter not in ACTION_PARAMS:
@@ -103,7 +103,7 @@ async def async_call_action_from_config(
         if control_unit.central.clients.get(interface_id) is None:
             continue
         if hm_device := control_unit.central.hm_devices.get(device_address):
-            for entity in hm_device.entities.values():
+            for entity in hm_device.generic_entities.values():
                 if not isinstance(entity, HmAction):
                     continue
                 if (

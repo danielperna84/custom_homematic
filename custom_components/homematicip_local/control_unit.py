@@ -439,7 +439,7 @@ class ControlUnit(BaseControlUnit):
             new_devices = args[0]
             new_entities = []
             for device in new_devices:
-                new_entities.extend(device.entities.values())
+                new_entities.extend(device.generic_entities.values())
                 new_entities.extend(device.wrapper_entities.values())
                 new_entities.extend(device.custom_entities.values())
 
