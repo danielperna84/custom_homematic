@@ -285,6 +285,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
         if value in ("primary_alarm", "secondary_alarm")
         else (

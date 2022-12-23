@@ -15,20 +15,18 @@ from hahomematic.const import (
 )
 from hahomematic.generic_platforms.sensor import HmSensor, HmSysvarSensor
 
-from homeassistant.components.sensor import RestoreSensor, SensorEntity
+from homeassistant.components.sensor import (
+    RestoreSensor,
+    SensorDeviceClass,
+    SensorEntity,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import (
-    ATTR_VALUE_LIST,
-    ATTR_VALUE_STATE,
-    CONTROL_UNITS,
-    DOMAIN,
-    HmEntityState,
-)
+from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
@@ -115,6 +113,12 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         )
         if not hasattr(self, "entity_description") and hm_entity.unit:
             self._attr_native_unit_of_measurement = hm_entity.unit
+        if self.device_class == SensorDeviceClass.ENUM:
+            self._attr_options = (
+                [item.lower() for item in hm_entity.value_list]
+                if hm_entity.value_list
+                else None
+            )
 
     @property
     def native_value(self) -> StateType | date | datetime | Decimal:
@@ -145,10 +149,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         attributes = super().extra_state_attributes
         if self.is_restored:
             attributes[ATTR_VALUE_STATE] = HmEntityState.RESTORED
-        if self._hm_entity.value_list:
-            attributes[ATTR_VALUE_LIST] = [
-                item.lower() for item in self._hm_entity.value_list
-            ]
+
         return attributes
 
     @property
@@ -184,6 +185,12 @@ class HaHomematicSysvarSensor(
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
         self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
+        if self.device_class == SensorDeviceClass.ENUM:
+            self._attr_options = (
+                [item.lower() for item in hm_sysvar_entity.value_list]
+                if hm_sysvar_entity.value_list
+                else None
+            )
 
     @property
     def native_value(self) -> StateType | date | datetime | Decimal:

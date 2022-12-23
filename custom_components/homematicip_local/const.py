@@ -18,7 +18,6 @@ ATTR_PARAMSET = "paramset"
 ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
-ATTR_VALUE_LIST = "value_list"
 ATTR_VALUE_TYPE = "value_type"
 ATTR_VALUE_STATE = "value_state"
 
