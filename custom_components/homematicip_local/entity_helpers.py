@@ -45,9 +45,9 @@ from .helpers import (
 
 _LOGGER = logging.getLogger(__name__)
 
-CONCENTRATION_CM3: Final = "1/cm\u00b3"
-CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"
-PARTICLESIZE: Final = "\u00b5m"
+CONCENTRATION_CM3: Final = "1/cm\u00b3"  # HmIP-SFD
+CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"  # HB-UNI-Sensor-THPD-BME280
+LENGTH_MICROMETER: Final = "\u00b5m"  # HmIP-SFD
 
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
@@ -230,24 +230,21 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "NUMBER_CONCENTRATION_PM_1": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM1,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "NUMBER_CONCENTRATION_PM_10": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM10,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "NUMBER_CONCENTRATION_PM_2_5": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_2_5",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM25,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "TYPICAL_PARTICLE_SIZE": HmSensorEntityDescription(
         key="TYPICAL_PARTICLE_SIZE",
-        native_unit_of_measurement=PARTICLESIZE,
+        native_unit_of_measurement=LENGTH_MICROMETER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     ("BATTERY_STATE", "OPERATING_VOLTAGE"): HmSensorEntityDescription(
@@ -312,7 +309,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "VAPOR_CONCENTRATION": HmSensorEntityDescription(
         key="VAPOR_CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "VOLTAGE": HmSensorEntityDescription(
@@ -417,7 +413,6 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     CONCENTRATION_GRAMS_PER_CUBIC_METER: HmSensorEntityDescription(
         key="CONCENTRATION_GRAMS_PER_CUBIC_METER",
         native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }
