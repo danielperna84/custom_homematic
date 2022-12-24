@@ -5,7 +5,9 @@ Version 1.26.0 (2022-12-25)
 - Use more UnitOf enums
 - Reformat code / check with flake 8
 - Remove wrong device_classes
-- Add options for enum sensors
+- Add options for enum sensors. Makes state values selectable in triggers.
+- Add SensorStateClass.TOTAL_INCREASING to svEnergyCounter_* sysvars
+- Add SensorStateClass.MEASUREMENT to numeric sysvars
 
 Version 1.25.1 (2022-12-22)
 - Bump hahomematic to 2022.12.8

@@ -7,6 +7,9 @@ import logging
 from typing import Any
 
 from hahomematic.const import (
+    SYSVAR_HM_TYPE_FLOAT,
+    SYSVAR_HM_TYPE_INTEGER,
+    SYSVAR_TYPE_LIST,
     TYPE_ENUM,
     TYPE_FLOAT,
     TYPE_INTEGER,
@@ -19,6 +22,7 @@ from homeassistant.components.sensor import (
     RestoreSensor,
     SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -184,12 +188,21 @@ class HaHomematicSysvarSensor(
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
-        self._attr_options = list(hm_sysvar_entity.value_list)
-        if self.options:
+        if hm_sysvar_entity.data_type == SYSVAR_TYPE_LIST:
+            self._attr_options = list(hm_sysvar_entity.value_list)
             self._attr_device_class = SensorDeviceClass.ENUM
         else:
-            self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
-
+            if hm_sysvar_entity.data_type in (
+                SYSVAR_HM_TYPE_FLOAT,
+                SYSVAR_HM_TYPE_INTEGER,
+            ):
+                self._attr_state_class = (
+                    SensorStateClass.TOTAL_INCREASING
+                    if hm_sysvar_entity.ccu_var_name.startswith("svEnergyCounter_")
+                    else SensorStateClass.MEASUREMENT
+                )
+            if unit := hm_sysvar_entity.unit:
+                self._attr_native_unit_of_measurement = unit
 
     @property
     def native_value(self) -> StateType | date | datetime | Decimal:
