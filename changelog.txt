@@ -1,11 +1,12 @@
-Version 1.26.0 (2022-12-25)
+Version 1.26.0 (2022-12-28)
 - Bump hahomematic to 2022.12.9
   - Remove empty unit for numeric sysvars
-- Align translations to new schema
-- Use more UnitOf enums
+- Align custom_component to HA 2023.01
+  - Align translations to new schema
+  - Remove wrong device_classes
+  - Use more UnitOf enums
+  - Add options for enum sensors. Makes state values selectable in triggers.
 - Reformat code / check with flake 8
-- Remove wrong device_classes
-- Add options for enum sensors. Makes state values selectable in triggers.
 - Add SensorStateClass.TOTAL_INCREASING to svEnergyCounter_* sysvars
 - Add SensorStateClass.MEASUREMENT to numeric sysvars
 
