@@ -301,6 +301,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         else (
             "mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"
         ),
+        device_class=SensorDeviceClass.ENUM,
         translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(

@@ -165,6 +165,22 @@
           "motor_tilt_error": "Fehler Kippantrieb"
         }
       }
+    },
+    "climate": {
+      "hmip_climate": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "Profile 1": "P1",
+              "Profile 2": "P2",
+              "Profile 3": "P3",
+              "Profile 4": "P4",
+              "Profile 5": "P5",
+              "Profile 6": "P6"
+            }
+          }
+        }
+      }
     }
   }
 }

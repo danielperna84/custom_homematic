@@ -146,6 +146,8 @@ class HaHomematicClimate(
 ):
     """Representation of the HomematicIP climate entity."""
 
+    _attr_translation_key = "hmip_climate"
+
     def __init__(
         self,
         control_unit: ControlUnit,
