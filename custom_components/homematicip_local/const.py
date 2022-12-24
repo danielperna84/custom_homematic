@@ -10,16 +10,14 @@ from homeassistant.const import Platform
 
 DOMAIN = "homematicip_local"
 MANUFACTURER_EQ3 = "eQ-3"
-HMIP_LOCAL_MIN_VERSION = "2022.12.0b0"
+HMIP_LOCAL_MIN_VERSION = "2023.01.0.dev0"
 IDENTIFIER_SEPARATOR = "@"
 
 ATTR_INSTANCE_NAME = "instance_name"
-ATTR_INTERFACE = "interface"
 ATTR_PARAMSET = "paramset"
 ATTR_PARAMSET_KEY = "paramset_key"
 ATTR_PATH = "path"
 ATTR_RX_MODE = "rx_mode"
-ATTR_VALUE_LIST = "value_list"
 ATTR_VALUE_TYPE = "value_type"
 ATTR_VALUE_STATE = "value_state"
 

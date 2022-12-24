@@ -10,6 +10,7 @@ from hahomematic.const import (
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
     ATTR_HOST,
+    ATTR_INTERFACE,
     ATTR_JSON_PORT,
     ATTR_PASSWORD,
     ATTR_PORT,
@@ -45,7 +46,7 @@ from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import ATTR_INSTANCE_NAME, ATTR_INTERFACE, ATTR_PATH, CONTROL_UNITS, DOMAIN
+from .const import ATTR_INSTANCE_NAME, ATTR_PATH, CONTROL_UNITS, DOMAIN
 from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_serial
 
 _LOGGER = logging.getLogger(__name__)

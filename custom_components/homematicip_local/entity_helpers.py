@@ -20,21 +20,19 @@ from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     CONCENTRATION_PARTS_PER_MILLION,
     DEGREE,
-    ELECTRIC_CURRENT_MILLIAMPERE,
-    ELECTRIC_POTENTIAL_VOLT,
-    FREQUENCY_HERTZ,
     LIGHT_LUX,
     PERCENTAGE,
-    PRESSURE_BAR,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-    TEMP_CELSIUS,
-    TIME_MINUTES,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
     UnitOfEnergy,
+    UnitOfFrequency,
     UnitOfLength,
     UnitOfPower,
     UnitOfPressure,
     UnitOfSpeed,
     UnitOfTemperature,
+    UnitOfTime,
     UnitOfVolume,
 )
 from homeassistant.helpers.entity import EntityCategory, EntityDescription
@@ -47,15 +45,15 @@ from .helpers import (
 
 _LOGGER = logging.getLogger(__name__)
 
-CONCENTRATION_CM3: Final = "1/cm\u00b3"
-CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"
-PARTICLESIZE: Final = "\u00b5m"
+CONCENTRATION_CM3: Final = "1/cm\u00b3"  # HmIP-SFD
+CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"  # HB-UNI-Sensor-THPD-BME280
+LENGTH_MICROMETER: Final = "\u00b5m"  # HmIP-SFD
 
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
-        native_unit_of_measurement=FREQUENCY_HERTZ,
+        native_unit_of_measurement=UnitOfFrequency.HERTZ,
     ),
     ("LEVEL", "LEVEL_2"): HmNumberEntityDescription(
         key="LEVEL",
@@ -102,21 +100,23 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "CURRENT": HmSensorEntityDescription(
         key="CURRENT",
-        native_unit_of_measurement=ELECTRIC_CURRENT_MILLIAMPERE,
+        native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
         key="DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__direction",
+        translation_key="direction",
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
-        device_class="homematicip_local__door_state",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:garage-open"
         if value in ("open", "ventilation_position")
         else "mdi:garage",
+        translation_key="door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
         key="DUTY_CYCLE_LEVEL",
@@ -137,7 +137,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "FREQUENCY": HmSensorEntityDescription(
         key="FREQUENCY",
-        native_unit_of_measurement=FREQUENCY_HERTZ,
+        native_unit_of_measurement=UnitOfFrequency.HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -196,8 +196,9 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
-        device_class="homematicip_local__lock_state",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
+        translation_key="lock_state",
     ),
     (
         "MASS_CONCENTRATION_PM_1",
@@ -229,29 +230,26 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "NUMBER_CONCENTRATION_PM_1": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_1",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM1,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "NUMBER_CONCENTRATION_PM_10": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_10",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM10,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "NUMBER_CONCENTRATION_PM_2_5": HmSensorEntityDescription(
         key="NUMBER_CONCENTRATION_PM_2_5",
         native_unit_of_measurement=CONCENTRATION_CM3,
-        device_class=SensorDeviceClass.PM25,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "TYPICAL_PARTICLE_SIZE": HmSensorEntityDescription(
         key="TYPICAL_PARTICLE_SIZE",
-        native_unit_of_measurement=PARTICLESIZE,
+        native_unit_of_measurement=LENGTH_MICROMETER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     ("BATTERY_STATE", "OPERATING_VOLTAGE"): HmSensorEntityDescription(
         key="OPERATING_VOLTAGE",
-        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -284,16 +282,17 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
-        device_class="homematicip_local__smoke_detector_alarm_status",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
         if value in ("primary_alarm", "secondary_alarm")
         else (
             "mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"
         ),
+        translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
-        native_unit_of_measurement=TIME_MINUTES,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
         icon="mdi:weather-sunny",
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
@@ -310,12 +309,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "VAPOR_CONCENTRATION": HmSensorEntityDescription(
         key="VAPOR_CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "VOLTAGE": HmSensorEntityDescription(
         key="VOLTAGE",
-        native_unit_of_measurement=ELECTRIC_POTENTIAL_VOLT,
+        native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
@@ -347,35 +345,41 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         "STATE",
     ): HmSensorEntityDescription(
         key="SRH_STATE",
-        device_class="homematicip_local__srh",
+        device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
+        translation_key="srh",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:battery-50",
-        device_class="homematicip_local__sec_win_status",
+        translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__sec_direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        device_class="homematicip_local__sec_win_error",
+        translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        device_class="homematicip_local__sec_direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
+        device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        device_class="homematicip_local__sec_key_error",
+        translation_key="sec_key_error",
     ),
     (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
         key="LEVEL",
@@ -394,13 +398,13 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    PRESSURE_BAR: HmSensorEntityDescription(
+    UnitOfPressure.BAR: HmSensorEntityDescription(
         key="PRESSURE_BAR",
         native_unit_of_measurement=UnitOfPressure.BAR,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    TEMP_CELSIUS: HmSensorEntityDescription(
+    UnitOfTemperature.CELSIUS: HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -409,7 +413,6 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     CONCENTRATION_GRAMS_PER_CUBIC_METER: HmSensorEntityDescription(
         key="CONCENTRATION_GRAMS_PER_CUBIC_METER",
         native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
-        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }
@@ -613,8 +616,8 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
 def _get_entity_description_by_device_type_and_param(
     hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter"""
-    if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(
+    """Get entity_description by device_type and parameter."""
+    if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(  # noqa: E501
         hm_entity.platform
     ):
         for data, entity_desc in platform_device_and_param_descriptions.items():
@@ -631,7 +634,7 @@ def _get_entity_description_by_device_type_and_param(
 def _get_entity_description_by_param(
     hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter"""
+    """Get entity_description by device_type and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(
         hm_entity.platform
     ):
@@ -644,7 +647,7 @@ def _get_entity_description_by_param(
 def _get_entity_description_by_device_type(
     hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type"""
+    """Get entity_description by device_type."""
     if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(
         hm_entity.platform
     ):

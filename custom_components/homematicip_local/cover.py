@@ -8,6 +8,8 @@ from hahomematic.const import HmPlatform
 from hahomematic.custom_platforms.cover import CeBlind, CeCover, CeGarage, CeIpBlind
 
 from homeassistant.components.cover import (
+    ATTR_CURRENT_POSITION,
+    ATTR_CURRENT_TILT_POSITION,
     ATTR_POSITION,
     ATTR_TILT_POSITION,
     CoverEntity,
@@ -22,8 +24,6 @@ from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
-ATTR_RESTORE_CURRENT_POSITION = "current_position"
-ATTR_RESTORE_CURRENT_TILT_POSITION = "current_tilt_position"
 _LOGGER = logging.getLogger(__name__)
 
 HmBaseCoverEntity = Union[CeCover, CeGarage]
@@ -85,8 +85,8 @@ class HaHomematicBaseCover(
         """Return current position of cover."""
         if self._hm_entity.is_valid:
             return self._hm_entity.current_cover_position
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_POSITION)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_CURRENT_POSITION)
         return None
 
     @property
@@ -94,8 +94,8 @@ class HaHomematicBaseCover(
         """Return if the cover is closed."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_closed
-        if self.is_restored:
-            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            if (restored_state := self._restored_state.state) not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
             ):
@@ -144,8 +144,8 @@ class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
         """Return current tilt position of cover."""
         if self._hm_entity.is_valid:
             return self._hm_entity.current_cover_tilt_position
-        if self.is_restored:
-            return self._restored_state.attributes.get(ATTR_RESTORE_CURRENT_TILT_POSITION)  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            return self._restored_state.attributes.get(ATTR_CURRENT_TILT_POSITION)
         return None
 
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:

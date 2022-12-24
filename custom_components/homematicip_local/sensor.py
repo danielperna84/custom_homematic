@@ -7,6 +7,9 @@ import logging
 from typing import Any
 
 from hahomematic.const import (
+    SYSVAR_HM_TYPE_FLOAT,
+    SYSVAR_HM_TYPE_INTEGER,
+    SYSVAR_TYPE_LIST,
     TYPE_ENUM,
     TYPE_FLOAT,
     TYPE_INTEGER,
@@ -15,20 +18,19 @@ from hahomematic.const import (
 )
 from hahomematic.generic_platforms.sensor import HmSensor, HmSysvarSensor
 
-from homeassistant.components.sensor import RestoreSensor, SensorEntity
+from homeassistant.components.sensor import (
+    RestoreSensor,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import (
-    ATTR_VALUE_LIST,
-    ATTR_VALUE_STATE,
-    CONTROL_UNITS,
-    DOMAIN,
-    HmEntityState,
-)
+from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
@@ -115,6 +117,12 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         )
         if not hasattr(self, "entity_description") and hm_entity.unit:
             self._attr_native_unit_of_measurement = hm_entity.unit
+        if self.device_class == SensorDeviceClass.ENUM:
+            self._attr_options = (
+                [item.lower() for item in hm_entity.value_list]
+                if hm_entity.value_list
+                else None
+            )
 
     @property
     def native_value(self) -> StateType | date | datetime | Decimal:
@@ -126,12 +134,12 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._multiplier != 1
             ):
                 return self._hm_entity.value * self._multiplier
-            # Strings and enums with custom device class must be lowercase to be translatable.
+            # Strings and enums with custom device class must be lowercase
+            # to be translatable.
             if (
                 self._hm_entity.value is not None
-                and self.device_class is not None
+                and self.translation_key is not None
                 and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
-                and self.device_class.startswith(DOMAIN.lower())
             ):
                 return self._hm_entity.value.lower()
             return self._hm_entity.value
@@ -145,10 +153,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         attributes = super().extra_state_attributes
         if self.is_restored:
             attributes[ATTR_VALUE_STATE] = HmEntityState.RESTORED
-        if self._hm_entity.value_list:
-            attributes[ATTR_VALUE_LIST] = [
-                item.lower() for item in self._hm_entity.value_list
-            ]
+
         return attributes
 
     @property
@@ -183,7 +188,25 @@ class HaHomematicSysvarSensor(
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
-        self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
+        if hm_sysvar_entity.data_type == SYSVAR_TYPE_LIST:
+            self._attr_options = (
+                list(hm_sysvar_entity.value_list)
+                if hm_sysvar_entity.value_list
+                else None
+            )
+            self._attr_device_class = SensorDeviceClass.ENUM
+        else:
+            if hm_sysvar_entity.data_type in (
+                SYSVAR_HM_TYPE_FLOAT,
+                SYSVAR_HM_TYPE_INTEGER,
+            ):
+                self._attr_state_class = (
+                    SensorStateClass.TOTAL_INCREASING
+                    if hm_sysvar_entity.ccu_var_name.startswith("svEnergyCounter_")
+                    else SensorStateClass.MEASUREMENT
+                )
+            if unit := hm_sysvar_entity.unit:
+                self._attr_native_unit_of_measurement = unit
 
     @property
     def native_value(self) -> StateType | date | datetime | Decimal:

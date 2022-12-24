@@ -63,8 +63,8 @@ class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
         """Return true if lock is on."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_locked
-        if self.is_restored:
-            if (restored_state := self._restored_state.state) not in (  # type: ignore[union-attr]
+        if self.is_restored and self._restored_state:
+            if (restored_state := self._restored_state.state) not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
             ):
