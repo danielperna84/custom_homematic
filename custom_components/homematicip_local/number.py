@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import HmPlatform, SYSVAR_HM_TYPE_FLOAT, SYSVAR_HM_TYPE_INTEGER
+from hahomematic.const import SYSVAR_HM_TYPE_FLOAT, SYSVAR_HM_TYPE_INTEGER, HmPlatform
 from hahomematic.generic_platforms.number import BaseNumber, HmSysvarNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode, RestoreNumber
@@ -164,7 +164,10 @@ class HaHomematicSysvarNumber(
             self._attr_native_max_value = float(hm_sysvar_entity.max)
         if hm_sysvar_entity.unit:
             self._attr_native_unit_of_measurement = hm_sysvar_entity.unit
-        elif hm_sysvar_entity.data_type in (SYSVAR_HM_TYPE_FLOAT, SYSVAR_HM_TYPE_INTEGER):
+        elif hm_sysvar_entity.data_type in (
+            SYSVAR_HM_TYPE_FLOAT,
+            SYSVAR_HM_TYPE_INTEGER,
+        ):
             self._attr_native_unit_of_measurement = " "
 
     @property

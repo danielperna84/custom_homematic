@@ -189,7 +189,11 @@ class HaHomematicSysvarSensor(
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
         if hm_sysvar_entity.data_type == SYSVAR_TYPE_LIST:
-            self._attr_options = list(hm_sysvar_entity.value_list)
+            self._attr_options = (
+                list(hm_sysvar_entity.value_list)
+                if hm_sysvar_entity.value_list
+                else None
+            )
             self._attr_device_class = SensorDeviceClass.ENUM
         else:
             if hm_sysvar_entity.data_type in (
