@@ -7,7 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.generic_platforms.text import HmSysvarText, HmText
 
-from homeassistant.components.text import TextEntity, TextMode
+from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
@@ -82,10 +82,6 @@ async def async_setup_entry(
 class HaHomematicText(HaHomematicGenericRestoreEntity[HmText], TextEntity):
     """Representation of the HomematicIP text entity."""
 
-    _attr_mode = TextMode.TEXT
-    _attr_native_min = 0
-    _attr_native_max = 255
-
     @property
     def native_value(self) -> str | None:
         """Return the value reported by the text."""
@@ -106,10 +102,6 @@ class HaHomematicText(HaHomematicGenericRestoreEntity[HmText], TextEntity):
 
 class HaHomematicSysvarText(HaHomematicGenericSysvarEntity[HmSysvarText], TextEntity):
     """Representation of the HomematicIP hub text entity."""
-
-    _attr_mode = TextMode.TEXT
-    _attr_native_min = 0
-    _attr_native_max = 255
 
     @property
     def native_value(self) -> str | None:
