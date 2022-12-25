@@ -159,7 +159,11 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
     @property
     def icon(self) -> str | None:
         """Return the icon to use in the frontend, if any."""
-        if self.entity_description.icon_fn:
+        if (
+            hasattr(self, "entity_description")
+            and hasattr(self.entity_description, "icon_fn")
+            and self.entity_description.icon_fn
+        ):
             return self.entity_description.icon_fn(self.native_value)
         return super().icon
 

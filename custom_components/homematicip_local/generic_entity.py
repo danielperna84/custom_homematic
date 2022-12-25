@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic, cast
 
-from hahomematic.const import HmCallSource, HmEntityUsage
+from hahomematic.const import HmCallSource
 from hahomematic.entity import (
     CallbackEntity,
     CustomEntity,
@@ -56,13 +56,16 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmGenericEntity = hm_entity
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
-        self.entity_description = get_entity_description(hm_entity=hm_entity)
-        if (
-            entity_registry_enabled_default := self._get_entity_registry_enabled_default()  # noqa: E501
-        ) is not None:
-            self._attr_entity_registry_enabled_default = entity_registry_enabled_default
-        if self.entity_description.name is None:
+        if entity_description := get_entity_description(hm_entity=hm_entity):
+            self.entity_description = entity_description
+            if entity_description.name is None:
+                self._attr_name = hm_entity.name
+            if entity_description.entity_registry_enabled_default:
+                self._attr_entity_registry_enabled_default = hm_entity.enabled_default
+        else:
             self._attr_name = hm_entity.name
+            self._attr_entity_registry_enabled_default = hm_entity.enabled_default
+
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
@@ -120,7 +123,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 )
             else:
                 attributes[ATTR_VALUE_STATE] = HmEntityState.NOT_VALID
-
         return attributes
 
     async def async_added_to_hass(self) -> None:
@@ -150,18 +152,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 "See README for more information",
                 self._hm_entity.full_name,
             )
-
-    def _get_entity_registry_enabled_default(self) -> bool | None:
-        """Return, if entity should be enabled based on usage attribute."""
-        if self._hm_entity.usage in {
-            HmEntityUsage.CE_SECONDARY,
-            HmEntityUsage.CE_VISIBLE,
-            HmEntityUsage.ENTITY_NO_CREATE,
-        }:
-            return False
-        if self._hm_entity.usage in {HmEntityUsage.CE_PRIMARY}:
-            return True
-        return None
 
     @callback
     def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -256,9 +246,19 @@ class HaHomematicGenericHubEntity(Entity):
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._attr_name = hm_hub_entity.name
-        self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         self._hm_hub_entity = hm_hub_entity
+        self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
+        if entity_description := get_entity_description(hm_entity=hm_hub_entity):
+            self.entity_description = entity_description
+            if entity_description.name is None:
+                self._attr_name = hm_hub_entity.name
+            if entity_description.entity_registry_enabled_default:
+                self._attr_entity_registry_enabled_default = (
+                    hm_hub_entity.enabled_default
+                )
+        else:
+            self._attr_name = hm_hub_entity.name
+            self._attr_entity_registry_enabled_default = hm_hub_entity.enabled_default
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
