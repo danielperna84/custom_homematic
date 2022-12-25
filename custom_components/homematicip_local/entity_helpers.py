@@ -16,6 +16,7 @@ from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
+from homeassistant.components.text import TextEntityDescription
 from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     CONCENTRATION_PARTS_PER_MILLION,
@@ -593,6 +594,7 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
         key="switch_default",
         device_class=SwitchDeviceClass.SWITCH,
     ),
+    HmPlatform.TEXT: TextEntityDescription(key="text_default"),
 }
 
 
