@@ -542,6 +542,13 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
+_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+    "HmIP-PS": SwitchEntityDescription(
+        key="OUTLET",
+        device_class=SwitchDeviceClass.OUTLET,
+    ),
+}
+
 _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "INHIBIT": SwitchEntityDescription(
         key="INHIBIT",
@@ -554,6 +561,7 @@ _ENTITY_DESCRIPTION_BY_DEVICE: dict[
     HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
 _ENTITY_DESCRIPTION_BY_PARAM: dict[
