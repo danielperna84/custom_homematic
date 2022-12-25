@@ -12,7 +12,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
@@ -85,8 +84,6 @@ async def async_setup_entry(
 
 class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity):
     """Representation of the HomematicIP select entity."""
-
-    _attr_entity_category: EntityCategory | None = EntityCategory.CONFIG
 
     @property
     def options(self) -> list[str]:

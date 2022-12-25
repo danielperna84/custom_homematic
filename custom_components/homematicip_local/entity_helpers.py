@@ -5,7 +5,12 @@ import logging
 from typing import Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.entity import CustomEntity, GenericEntity, WrapperEntity
+from hahomematic.entity import (
+    CustomEntity,
+    GenericEntity,
+    GenericHubEntity,
+    WrapperEntity,
+)
 from hahomematic.helpers import element_matches_key
 
 from homeassistant.components.binary_sensor import (
@@ -14,6 +19,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
+from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
@@ -426,11 +432,27 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
+    "BURST_LIMIT_WARNING": BinarySensorEntityDescription(
+        key="BURST_LIMIT_WARNING",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
     ("DUTYCYCLE", "DUTY_CYCLE"): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
         name="Duty Cycle",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
+    "DEW_POINT_ALARM": BinarySensorEntityDescription(
+        key="DEW_POINT_ALARM",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_registry_enabled_default=False,
+    ),
+    "EMERGENCY_OPERATION": BinarySensorEntityDescription(
+        key="EMERGENCY_OPERATION",
+        device_class=BinarySensorDeviceClass.SAFETY,
         entity_registry_enabled_default=False,
     ),
     "HEATER_STATE": BinarySensorEntityDescription(
@@ -519,6 +541,14 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
+_BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+    "RESET_MOTION": ButtonEntityDescription(
+        key="RESET_MOTION",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+    ),
+}
+
 _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
     ("HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"): CoverEntityDescription(
         key="BLIND",
@@ -542,10 +572,23 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
+_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+    "HmIP-PS": SwitchEntityDescription(
+        key="OUTLET",
+        device_class=SwitchDeviceClass.OUTLET,
+    ),
+}
+
 _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "INHIBIT": SwitchEntityDescription(
         key="INHIBIT",
         device_class=SwitchDeviceClass.SWITCH,
+        entity_registry_enabled_default=False,
+    ),
+    ("MOTION_DETECTION_ACTIVE", "PRESENCE_DETECTION_ACTIVE"): SwitchEntityDescription(
+        key="MOTION_DETECTION_ACTIVE",
+        device_class=SwitchDeviceClass.SWITCH,
+        entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),
 }
@@ -554,12 +597,14 @@ _ENTITY_DESCRIPTION_BY_DEVICE: dict[
     HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
+    HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
 _ENTITY_DESCRIPTION_BY_PARAM: dict[
     HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.BUTTON: _BUTTOM_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
@@ -573,22 +618,48 @@ _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
 }
 
+
 _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
     ),
-    HmPlatform.NUMBER: HmNumberEntityDescription(key="number_default"),
-    HmPlatform.SENSOR: HmSensorEntityDescription(key="sensor_default"),
     HmPlatform.SWITCH: SwitchEntityDescription(
         key="switch_default",
+        device_class=SwitchDeviceClass.SWITCH,
+    ),
+    HmPlatform.SELECT: SelectEntityDescription(
+        key="select_default", entity_category=EntityCategory.CONFIG
+    ),
+    HmPlatform.HUB_BUTTON: ButtonEntityDescription(
+        key="hub_button_default",
+        icon="mdi:gesture-tap",
+        entity_registry_enabled_default=False,
+    ),
+    HmPlatform.HUB_SWITCH: SwitchEntityDescription(
+        key="hub_switch_default",
         device_class=SwitchDeviceClass.SWITCH,
     ),
 }
 
 
-def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
+def __get_entity_description(
+    hm_entity: HmGenericEntity | GenericHubEntity,
+) -> EntityDescription | None:
+    """Get the entity_description for platform."""
+    if entity_desc := get_entity_description(hm_entity=hm_entity):
+        if entity_desc.name is None:
+            entity_desc.name = hm_entity.name
+        if entity_desc.entity_registry_enabled_default:
+            entity_desc.entity_registry_enabled_default = hm_entity.enabled_default
+        return entity_desc
+    return None
+
+
+def get_entity_description(
+    hm_entity: HmGenericEntity | GenericHubEntity,
+) -> EntityDescription | None:
     """Get the entity_description for platform."""
     if isinstance(hm_entity, (GenericEntity, WrapperEntity)):
         if entity_desc := _get_entity_description_by_device_type_and_param(
@@ -603,14 +674,11 @@ def get_entity_description(hm_entity: HmGenericEntity) -> EntityDescription:
             if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit):
                 return entity_desc
 
-        if entity_desc := _DEFAULT_DESCRIPTION.get(hm_entity.platform):
-            return entity_desc
-
     if isinstance(hm_entity, CustomEntity):
         if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
             return entity_desc
 
-    return EntityDescription(key="default")
+    return _DEFAULT_DESCRIPTION.get(hm_entity.platform)
 
 
 def _get_entity_description_by_device_type_and_param(
