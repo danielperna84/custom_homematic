@@ -30,7 +30,13 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
+from .const import (
+    ATTR_VALUE_STATE,
+    CONTROL_UNITS,
+    DOMAIN,
+    TOTAL_INCREASING_SYSVAR,
+    HmEntityState,
+)
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
 from .helpers import HmSensorEntityDescription
@@ -206,7 +212,7 @@ class HaHomematicSysvarSensor(
             ):
                 self._attr_state_class = (
                     SensorStateClass.TOTAL_INCREASING
-                    if hm_sysvar_entity.ccu_var_name.startswith("svEnergyCounter_")
+                    if hm_sysvar_entity.ccu_var_name.startswith(TOTAL_INCREASING_SYSVAR)
                     else SensorStateClass.MEASUREMENT
                 )
             if unit := hm_sysvar_entity.unit:
