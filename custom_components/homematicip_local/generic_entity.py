@@ -67,6 +67,19 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
+        if (
+            isinstance(self._hm_entity, (GenericEntity, WrapperEntity))
+            and hasattr(self, "entity_description")
+            and hasattr(self.entity_description, "native_unit_of_measurement")
+            and self.entity_description.native_unit_of_measurement
+            != self._hm_entity.unit
+        ):
+            _LOGGER.info(
+                "Different unit for entity: %s: entity_description: %s vs device: %s",
+                self._hm_entity.full_name,
+                self.entity_description.native_unit_of_measurement,
+                self._hm_entity.unit,
+            )
 
     @property
     def available(self) -> bool:
