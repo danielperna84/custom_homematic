@@ -347,6 +347,8 @@ Events fired by this integration that can be consumed by users.
 This event type is used when a key is pressed on a device, 
 and can be used with device triggers in automation, so manual event listening is not necessary.
 
+In this context, the following must also be observed: [Events for Homematic(IP) devices](https://github.com/SukramJ/custom_homematic#events-for-homematicip-devices)
+
 The `PRESS*` parameters are evaluated for this event type in the backend.
 
 ### `homematic.device_availability`
