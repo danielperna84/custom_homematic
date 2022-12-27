@@ -339,6 +339,30 @@ This service is not needed to update entities in general, because 99,9% of the e
 
 Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
+## Events
+
+Events fired by this integration that can be consumed by users.
+
+### `homematic.keypress`
+This event type is used when a key is pressed on a device, 
+and can be used with device triggers in automation, so manual event listening is not necessary.
+
+The `PRESS*` parameters are evaluated for this event type in the backend.
+
+### `homematic.device_availability`
+This event type is used when a device is no longer available or is available again, 
+and can be used with the blueprint [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml).
+
+The `UNREACH` parameter is evaluated for this event type in the backend.
+
+
+### `homematic.device_error`
+This event type is used when a device is in an error state.
+A sample usage is shown in the blueprint [Show device errors](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_show_device_error.yaml).
+
+The `ERROR*` parameters are evaluated for this event type in the backend.
+
+
 ## Additional information
 
 ### What is the meaning of this persistant notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
