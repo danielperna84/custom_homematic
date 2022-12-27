@@ -19,6 +19,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
+from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
@@ -59,6 +60,7 @@ LENGTH_MICROMETER: Final = "\u00b5m"  # HmIP-SFD
 _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
+        device_class=NumberDeviceClass.FREQUENCY,
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
     ),
     ("LEVEL", "LEVEL_2"): HmNumberEntityDescription(
@@ -77,6 +79,11 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         multiplier=100,
         native_unit_of_measurement=PERCENTAGE,
         entity_registry_enabled_default=False,
+    ),
+    ("HMW-IO-12-Sw14-DR", "FREQUENCY"): HmNumberEntityDescription(
+        key="FREQUENCY",
+        icon="mdi:sine-wave",
+        native_unit_of_measurement="mHz",
     ),
 }
 
@@ -394,6 +401,11 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         multiplier=100,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
+    ),
+    ("HMW-IO-12-Sw14-DR", "FREQUENCY"): HmSensorEntityDescription(
+        key="FREQUENCY",
+        icon="mdi:sine-wave",
+        native_unit_of_measurement="mHz",
     ),
 }
 

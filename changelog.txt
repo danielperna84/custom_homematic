@@ -1,6 +1,7 @@
 Version 1.26.0 (2022-12-28)
-- Bump hahomematic to 2022.12.9
+- Bump hahomematic to 2022.12.10
   - Remove empty unit for numeric sysvars
+  - Fix native device units
 - Align custom_component to HA 2023.01
   - Align translations to new schema
   - Remove wrong device_classes

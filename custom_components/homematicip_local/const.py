@@ -2,58 +2,65 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from typing import Final
 
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
-DOMAIN = "homematicip_local"
-MANUFACTURER_EQ3 = "eQ-3"
-HMIP_LOCAL_MIN_VERSION = "2023.01.0.dev0"
-IDENTIFIER_SEPARATOR = "@"
+DOMAIN: Final = "homematicip_local"
+MANUFACTURER_EQ3: Final = "eQ-3"
+HMIP_LOCAL_MIN_VERSION: Final = "2023.01.0.dev0"
+IDENTIFIER_SEPARATOR: Final = "@"
 
-ATTR_INSTANCE_NAME = "instance_name"
-ATTR_PARAMSET = "paramset"
-ATTR_PARAMSET_KEY = "paramset_key"
-ATTR_PATH = "path"
-ATTR_RX_MODE = "rx_mode"
-ATTR_VALUE_TYPE = "value_type"
-ATTR_VALUE_STATE = "value_state"
+ATTR_INSTANCE_NAME: Final = "instance_name"
+ATTR_PARAMSET: Final = "paramset"
+ATTR_PARAMSET_KEY: Final = "paramset_key"
+ATTR_PATH: Final = "path"
+ATTR_RX_MODE: Final = "rx_mode"
+ATTR_VALUE_TYPE: Final = "value_type"
+ATTR_VALUE_STATE: Final = "value_state"
 
-ATTR_NAME = "name"
-ATTR_INTERFACE_ID = "interface_id"
-ATTR_ADDRESS = "address"
-ATTR_MODEL = "model"
-ATTR_FUNCTION = "function"
-ATTR_PARAMETER = "parameter"
-ATTR_ENTITY_TYPE = "entity_type"
+ATTR_NAME: Final = "name"
+ATTR_INTERFACE_ID: Final = "interface_id"
+ATTR_ADDRESS: Final = "address"
+ATTR_MODEL: Final = "model"
+ATTR_FUNCTION: Final = "function"
+ATTR_PARAMETER: Final = "parameter"
+ATTR_ENTITY_TYPE: Final = "entity_type"
 
-CONF_INTERFACE_ID = "interface_id"
-CONF_EVENT_TYPE = "event_type"
-CONF_SUBTYPE = "subtype"
+CONF_INTERFACE_ID: Final = "interface_id"
+CONF_EVENT_TYPE: Final = "event_type"
+CONF_SUBTYPE: Final = "subtype"
 
-DEFAULT_CALLBACK_PORT = "default_callback_port"
-CONTROL_UNITS = "control_units"
+DEFAULT_CALLBACK_PORT: Final = "default_callback_port"
+CONTROL_UNITS: Final = "control_units"
 
-EVENT_DEVICE_TYPE = "device_type"
-EVENT_DATA_ERROR = "error"
-EVENT_DATA_ERROR_NAME = "error_name"
-EVENT_DATA_ERROR_VALUE = "error_value"
-EVENT_DATA_IDENTIFIER = "identifier"
-EVENT_DATA_MESSAGE = "message"
-EVENT_DATA_TITLE = "title"
-EVENT_DATA_UNAVAILABLE = "unavailable"
+EVENT_DEVICE_TYPE: Final = "device_type"
+EVENT_DATA_ERROR: Final = "error"
+EVENT_DATA_ERROR_NAME: Final = "error_name"
+EVENT_DATA_ERROR_VALUE: Final = "error_value"
+EVENT_DATA_IDENTIFIER: Final = "identifier"
+EVENT_DATA_MESSAGE: Final = "message"
+EVENT_DATA_TITLE: Final = "title"
+EVENT_DATA_UNAVAILABLE: Final = "unavailable"
 
-SERVICE_PUT_PARAMSET = "put_paramset"
-SERVICE_SET_DEVICE_VALUE = "set_device_value"
-SERVICE_SET_INSTALL_MODE = "set_install_mode"
-SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
-SERVICE_VIRTUAL_KEY = "virtual_key"
+SERVICE_PUT_PARAMSET: Final = "put_paramset"
+SERVICE_SET_DEVICE_VALUE: Final = "set_device_value"
+SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
+SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
+SERVICE_VIRTUAL_KEY: Final = "virtual_key"
 
-SYSVAR_SCAN_INTERVAL = timedelta(seconds=30)
+SYSVAR_SCAN_INTERVAL: Final = timedelta(seconds=30)
 # only used for entities from MASTER paramset
-MASTER_SCAN_INTERVAL = timedelta(seconds=300)
+MASTER_SCAN_INTERVAL: Final = timedelta(seconds=300)
+
+TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
+    "svEnergyCounter_",
+    "svHmIPRainCounter_",
+    "svHmIPSunshineCounter_",
+)
 
 
 class HmEntityState(StrEnum):
@@ -84,4 +91,4 @@ def _get_hmip_local_platforms() -> list[str]:
     return hmip_local_platforms
 
 
-HMIP_LOCAL_PLATFORMS: list[str] = _get_hmip_local_platforms()
+HMIP_LOCAL_PLATFORMS: Final[list[str]] = _get_hmip_local_platforms()
