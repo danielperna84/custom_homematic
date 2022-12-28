@@ -1,7 +1,6 @@
 """Constants."""
 from __future__ import annotations
 
-from datetime import timedelta
 from typing import Final
 
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
@@ -19,6 +18,7 @@ ATTR_PARAMSET: Final = "paramset"
 ATTR_PARAMSET_KEY: Final = "paramset_key"
 ATTR_PATH: Final = "path"
 ATTR_RX_MODE: Final = "rx_mode"
+ATTR_SYSVAR_SCAN_ENABLED: Final = "sysvar_scan_enabled"
 ATTR_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 ATTR_VALUE_TYPE: Final = "value_type"
 ATTR_VALUE_STATE: Final = "value_state"

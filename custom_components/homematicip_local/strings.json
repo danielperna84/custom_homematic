@@ -14,6 +14,7 @@
           "tls": "use TLS",
           "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
+          "sysvar_scan_enabled": "enable Sysvar scan",
           "sysvar_scan_interval": "Sysvar/Program scan interval"
         }
       },
@@ -53,6 +54,7 @@
           "tls": "use TLS",
           "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
+          "sysvar_scan_enabled": "enable Sysvar scan",
           "sysvar_scan_interval": "Sysvar/Program scan interval"
         }
       },

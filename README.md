@@ -142,9 +142,14 @@ json_port:
   required: false
   description: Port used the access the JSON-RPC API.
   type: integer
+sysvar_scan_enabled:
+  required: true
+  description: Enable system variable/program scanning.
+  type: boolean
+  default: true
 sysvar_scan_interval:
   required: true
-  description: Interval in seconds between system variable/program scans. 0 means disabled. 
+  description: Interval in seconds between system variable/program scans. The minimum value is 5. 
                Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular. 
                Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended. 
   type: integer
