@@ -13,7 +13,8 @@
           "callback_port": "Callback XML-RPC Port",
           "tls": "verwende TLS",
           "verify_tls": "TLS Verbindung überprüfen",
-          "json_port": "JSON-RPC Port"
+          "json_port": "JSON-RPC Port",
+          "sysvar_scan_interval": "Sysvar/Program scan Interval"
         }
       },
       "interface": {
@@ -51,7 +52,8 @@
           "callback_port": "Callback XML-RPC Port",
           "tls": "verwende TLS",
           "verify_tls": "TLS Verbindung überprüfen",
-          "json_port": "JSON-RPC Port"
+          "json_port": "JSON-RPC Port",
+          "sysvar_scan_interval": "Sysvar/Program scan Interval"
         }
       },
       "interface": {

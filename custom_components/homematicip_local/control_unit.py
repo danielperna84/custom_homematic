@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from typing import Any, cast
 
@@ -64,7 +64,9 @@ from homeassistant.helpers.event import async_track_time_interval
 from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_PATH,
+    ATTR_SYSVAR_SCAN_INTERVAL,
     CONTROL_UNITS,
+    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_NAME,
@@ -78,7 +80,6 @@ from .const import (
     IDENTIFIER_SEPARATOR,
     MANUFACTURER_EQ3,
     MASTER_SCAN_INTERVAL,
-    SYSVAR_SCAN_INTERVAL,
 )
 from .helpers import (
     HmBaseEntity,
@@ -462,23 +463,29 @@ class ControlUnit(BaseControlUnit):
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
             if not self._scheduler and self.central.hub:
-                self._scheduler = HmScheduler(
-                    self._hass, control_unit=self, hm_hub=self.central.hub
+                sysvar_scan_interval = self._config_data.get(
+                    ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
                 )
-
-            new_hub_entities = args[0]
-            # Handle event of new hub entity creation in Homematic(IP) Local.
-            for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
-                new_hub_entities=new_hub_entities
-            ).items():
-                if hm_hub_entities and len(hm_hub_entities) > 0:
-                    async_dispatcher_send(
-                        self._hass,
-                        async_signal_new_hm_entity(
-                            entry_id=self._entry_id, platform=platform
-                        ),
-                        hm_hub_entities,
-                    )
+                self._scheduler = HmScheduler(
+                    self._hass,
+                    control_unit=self,
+                    hm_hub=self.central.hub,
+                    sysvar_scan_interval=sysvar_scan_interval,
+                )
+            if self._scheduler.sysvar_scan_enabled:
+                new_hub_entities = args[0]
+                # Handle event of new hub entity creation in Homematic(IP) Local.
+                for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
+                    new_hub_entities=new_hub_entities
+                ).items():
+                    if hm_hub_entities and len(hm_hub_entities) > 0:
+                        async_dispatcher_send(
+                            self._hass,
+                            async_signal_new_hm_entity(
+                                entry_id=self._entry_id, platform=platform
+                            ),
+                            hm_hub_entities,
+                        )
             return None
         elif src == HH_EVENT_NEW_DEVICES:
             # ignore
@@ -749,17 +756,30 @@ class HmScheduler:
     """The Homematic(IP) Local hub scheduler. (CCU/HomeGear)."""
 
     def __init__(
-        self, hass: HomeAssistant, control_unit: ControlUnit, hm_hub: HmHub
+        self,
+        hass: HomeAssistant,
+        control_unit: ControlUnit,
+        hm_hub: HmHub,
+        sysvar_scan_interval: int,
+        master_scan_interval: int = MASTER_SCAN_INTERVAL,
     ) -> None:
         """Initialize Homematic(IP) Local hub scheduler."""
         self.hass = hass
         self._control: ControlUnit = control_unit
         self._hm_hub: HmHub = hm_hub
-        self.remove_sysvar_listener: Callable | None = async_track_time_interval(
-            self.hass, self._async_fetch_data, SYSVAR_SCAN_INTERVAL
-        )
+        self.remove_sysvar_listener: Callable | None = None
+        # sysvar_scan_interval == 0 means sysvar scanning is disabled
+        self.sysvar_scan_enabled = sysvar_scan_interval > 0
+        if self.sysvar_scan_enabled:
+            self.remove_sysvar_listener = async_track_time_interval(
+                self.hass,
+                self._async_fetch_data,
+                timedelta(seconds=sysvar_scan_interval),
+            )
         self.remove_master_listener: Callable | None = async_track_time_interval(
-            self.hass, self._async_fetch_master_data, MASTER_SCAN_INTERVAL
+            self.hass,
+            self._async_fetch_master_data,
+            timedelta(seconds=master_scan_interval),
         )
 
     def de_init(self) -> None:
@@ -771,6 +791,12 @@ class HmScheduler:
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
+        if self.sysvar_scan_enabled is False:
+            _LOGGER.warning(
+                "Scheduled fetching of programs and sysvars for %s is disabled.",
+                self._control.central.name,
+            )
+            return None
         _LOGGER.debug(
             "Scheduled fetching of programs and sysvars for %s",
             self._control.central.name,
@@ -780,6 +806,12 @@ class HmScheduler:
 
     async def async_fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
+        if self.sysvar_scan_enabled is False:
+            _LOGGER.warning(
+                "Manually fetching of sysvars for %s is disabled.",
+                self._control.central.name,
+            )
+            return None
         _LOGGER.debug("Manually fetching of sysvars for %s", self._control.central.name)
         await self._hm_hub.fetch_sysvar_data()
 
