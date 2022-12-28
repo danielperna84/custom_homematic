@@ -1,7 +1,22 @@
 Version 1.26.0 (2022-12-28)
-- Bump hahomematic to 2022.12.10
+
+#This release requires HA >= 2023.01
+
+## Breaking changes
+- Rename climate presets from 'Profile *' to 'week_program_*':
+  HA now allows translations of custom preset modes. The internal preset mode has been renamed from 'Profile *' to 'week_program_*'.
+  If service climate.set_preset_mode was used with values like "Proflle 1", these automations and scripts need to be edited and use "week_program_1" instead.
+  This preset mode is now displayed as "WP 1" to better accommodate the available space in the UI.
+
+## New features
+- Make sysvar_scan_interval configurable
+  The integration can now be reconfigured to use a shorter or longer interval between sysvar scans. The sysvar scan can also be disabled, if not needed.
+
+## All changes:
+- Bump hahomematic to 2022.12.11
   - Remove empty unit for numeric sysvars
   - Fix native device units
+  - Rename climate presets from 'Profile *' to 'week_program_*'
 - Align custom_component to HA 2023.01
   - Align translations to new schema
   - Remove wrong device_classes

@@ -171,12 +171,12 @@
         "state_attributes": {
           "preset_mode": {
             "state": {
-              "Profile 1": "P1",
-              "Profile 2": "P2",
-              "Profile 3": "P3",
-              "Profile 4": "P4",
-              "Profile 5": "P5",
-              "Profile 6": "P6"
+              "week_program_1": "WP 1",
+              "week_program_2": "WP 2",
+              "week_program_3": "WP 3",
+              "week_program_4": "WP 4",
+              "week_program_5": "WP 5",
+              "week_program_6": "WP 6"
             }
           }
         }
