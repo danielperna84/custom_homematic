@@ -14,7 +14,8 @@
           "tls": "verwende TLS",
           "verify_tls": "TLS Verbindung überprüfen",
           "json_port": "JSON-RPC Port",
-          "sysvar_scan_interval": "Sysvar/Program scan Interval"
+          "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+          "sysvar_scan_interval": "Sysvar/Program Scan Interval"
         }
       },
       "interface": {
@@ -53,7 +54,8 @@
           "tls": "verwende TLS",
           "verify_tls": "TLS Verbindung überprüfen",
           "json_port": "JSON-RPC Port",
-          "sysvar_scan_interval": "Sysvar/Program scan Interval"
+          "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+          "sysvar_scan_interval": "Sysvar/Program Scan Interval"
         }
       },
       "interface": {

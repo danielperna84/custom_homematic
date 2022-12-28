@@ -64,6 +64,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from .const import (
     ATTR_INSTANCE_NAME,
     ATTR_PATH,
+    ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
     CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
@@ -463,16 +464,20 @@ class ControlUnit(BaseControlUnit):
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
             if not self._scheduler and self.central.hub:
-                sysvar_scan_interval = self._config_data.get(
+                sysvar_scan_enabled: bool = self._config_data.get(
+                    ATTR_SYSVAR_SCAN_ENABLED, True
+                )
+                sysvar_scan_interval: int = self._config_data.get(
                     ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
                 )
                 self._scheduler = HmScheduler(
                     self._hass,
                     control_unit=self,
                     hm_hub=self.central.hub,
+                    sysvar_scan_enabled=sysvar_scan_enabled,
                     sysvar_scan_interval=sysvar_scan_interval,
                 )
-            if self._scheduler.sysvar_scan_enabled:
+            if self._scheduler and self._scheduler.sysvar_scan_enabled:
                 new_hub_entities = args[0]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
                 for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
@@ -760,6 +765,7 @@ class HmScheduler:
         hass: HomeAssistant,
         control_unit: ControlUnit,
         hm_hub: HmHub,
+        sysvar_scan_enabled: bool,
         sysvar_scan_interval: int,
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
     ) -> None:
@@ -769,7 +775,7 @@ class HmScheduler:
         self._hm_hub: HmHub = hm_hub
         self.remove_sysvar_listener: Callable | None = None
         # sysvar_scan_interval == 0 means sysvar scanning is disabled
-        self.sysvar_scan_enabled = sysvar_scan_interval > 0
+        self.sysvar_scan_enabled = sysvar_scan_enabled
         if self.sysvar_scan_enabled:
             self.remove_sysvar_listener = async_track_time_interval(
                 self.hass,
@@ -793,7 +799,7 @@ class HmScheduler:
         """Fetch data from backend."""
         if self.sysvar_scan_enabled is False:
             _LOGGER.warning(
-                "Scheduled fetching of programs and sysvars for %s is disabled.",
+                "Scheduled fetching of programs and sysvars for %s is disabled",
                 self._control.central.name,
             )
             return None
@@ -808,7 +814,7 @@ class HmScheduler:
         """Fetch sysvars from backend."""
         if self.sysvar_scan_enabled is False:
             _LOGGER.warning(
-                "Manually fetching of sysvars for %s is disabled.",
+                "Manually fetching of sysvars for %s is disabled",
                 self._control.central.name,
             )
             return None
