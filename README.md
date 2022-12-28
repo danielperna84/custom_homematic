@@ -144,7 +144,9 @@ json_port:
   type: integer
 sysvar_scan_interval:
   required: true
-  description: Interval in seconds between system variable/program scans. 0 means disabled.
+  description: Interval in seconds between system variable/program scans. 0 means disabled. 
+               Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular. 
+               Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended. 
   type: integer
   default: 30
 ```
