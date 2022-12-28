@@ -19,6 +19,7 @@ ATTR_PARAMSET: Final = "paramset"
 ATTR_PARAMSET_KEY: Final = "paramset_key"
 ATTR_PATH: Final = "path"
 ATTR_RX_MODE: Final = "rx_mode"
+ATTR_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 ATTR_VALUE_TYPE: Final = "value_type"
 ATTR_VALUE_STATE: Final = "value_state"
 
@@ -52,9 +53,9 @@ SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
 SERVICE_VIRTUAL_KEY: Final = "virtual_key"
 
-SYSVAR_SCAN_INTERVAL: Final = timedelta(seconds=30)
+DEFAULT_SYSVAR_SCAN_INTERVAL: Final = 30
 # only used for entities from MASTER paramset
-MASTER_SCAN_INTERVAL: Final = timedelta(seconds=300)
+MASTER_SCAN_INTERVAL: Final = 300
 
 TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
     "svEnergyCounter_",
