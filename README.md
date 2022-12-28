@@ -142,6 +142,11 @@ json_port:
   required: false
   description: Port used the access the JSON-RPC API.
   type: integer
+sysvar_scan_interval:
+  required: true
+  description: Interval in seconds between system variable/program scans. 0 means disabled.
+  type: integer
+  default: 30
 ```
 
 #### Interface
