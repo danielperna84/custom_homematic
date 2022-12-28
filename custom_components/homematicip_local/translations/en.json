@@ -165,6 +165,22 @@
           "motor_tilt_error": "Motor tilt error"
         }
       }
+    },
+    "climate": {
+      "hmip_climate": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "week_program_1": "WP 1",
+              "week_program_2": "WP 2",
+              "week_program_3": "WP 3",
+              "week_program_4": "WP 4",
+              "week_program_5": "WP 5",
+              "week_program_6": "WP 6"
+            }
+          }
+        }
+      }
     }
   }
 }
