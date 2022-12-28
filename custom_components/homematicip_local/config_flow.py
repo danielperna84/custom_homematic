@@ -46,7 +46,7 @@ from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import ATTR_INSTANCE_NAME, ATTR_PATH, CONTROL_UNITS, DOMAIN
+from .const import ATTR_INSTANCE_NAME, ATTR_PATH, CONTROL_UNITS, DOMAIN, ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
 from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_serial
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,6 +81,9 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Optional(ATTR_CALLBACK_HOST): cv.string,
             vol.Optional(ATTR_CALLBACK_PORT): cv.port,
             vol.Optional(ATTR_JSON_PORT): cv.port,
+            vol.Required(
+                ATTR_SYSVAR_SCAN_INTERVAL, default=data.get(ATTR_SYSVAR_SCAN_INTERVAL) or DEFAULT_SYSVAR_SCAN_INTERVAL
+            ): cv.positive_int,
         }
     )
 
@@ -344,6 +347,7 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST),
         ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
         ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
+        ATTR_SYSVAR_SCAN_INTERVAL: user_input[ATTR_SYSVAR_SCAN_INTERVAL],
         ATTR_INTERFACE: {},
     }
 

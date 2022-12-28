@@ -462,10 +462,10 @@ class ControlUnit(BaseControlUnit):
                     )
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
-            sysvar_scan_interval = self._config_data.get(
-                ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
-            )
             if not self._scheduler and self.central.hub:
+                sysvar_scan_interval = self._config_data.get(
+                    ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+                )
                 self._scheduler = HmScheduler(
                     self._hass,
                     control_unit=self,
