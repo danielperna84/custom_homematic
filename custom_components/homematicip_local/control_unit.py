@@ -50,7 +50,6 @@ from hahomematic.const import (
 )
 from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity, GenericHubEntity
-from hahomematic.hub import HmHub
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_NAME
 from homeassistant.core import HomeAssistant, callback
@@ -253,7 +252,7 @@ class ControlUnit(BaseControlUnit):
             model="CU",
             name=self.central.name,
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=self.central.config.central_url,
+            configuration_url=self.central.central_url,
         )
 
     @callback
@@ -266,7 +265,7 @@ class ControlUnit(BaseControlUnit):
             )
             return
 
-        if not self._central.clients:
+        if not self._central.has_clients:
             _LOGGER.error(
                 "Cannot create ControlUnit %s virtual remote devices. No clients",
                 self._instance_name,
@@ -274,25 +273,24 @@ class ControlUnit(BaseControlUnit):
             return
 
         device_registry = dr.async_get(self._hass)
-        for client in self._central.clients.values():
-            if virtual_remote := client.get_virtual_remote():
-                device_registry.async_get_or_create(
-                    config_entry_id=self._entry_id,
-                    identifiers={
-                        (
-                            DOMAIN,
-                            f"{virtual_remote.device_address}"
-                            f"{IDENTIFIER_SEPARATOR}"
-                            f"{virtual_remote.interface_id}",
-                        )
-                    },
-                    manufacturer=MANUFACTURER_EQ3,
-                    name=virtual_remote.name,
-                    model=virtual_remote.device_type,
-                    sw_version=virtual_remote.firmware,
-                    # Link to the homematic control unit.
-                    via_device=cast(tuple[str, str], self._central.name),
-                )
+        for virtual_remote in self._central.get_virtual_remotes():
+            device_registry.async_get_or_create(
+                config_entry_id=self._entry_id,
+                identifiers={
+                    (
+                        DOMAIN,
+                        f"{virtual_remote.device_address}"
+                        f"{IDENTIFIER_SEPARATOR}"
+                        f"{virtual_remote.interface_id}",
+                    )
+                },
+                manufacturer=MANUFACTURER_EQ3,
+                name=virtual_remote.name,
+                model=virtual_remote.device_type,
+                sw_version=virtual_remote.firmware,
+                # Link to the homematic control unit.
+                via_device=cast(tuple[str, str], self._central.name),
+            )
 
     @callback
     def async_get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
@@ -351,22 +349,15 @@ class ControlUnit(BaseControlUnit):
         ]
 
         hm_hub_entities: list[GenericHubEntity] = []
-        if not self.central.hub:
-            _LOGGER.debug(
-                "async_get_new_hm_sysvar_entities_by_platform: "
-                "central.hub is not ready for %s",
-                self.central.name,
-            )
-            return []
 
-        for program_entity in self.central.hub.program_entities.values():
+        for program_entity in self.central.program_entities.values():
             if (
                 program_entity.unique_identifier not in active_unique_ids
                 and program_entity.platform == platform
             ):
                 hm_hub_entities.append(program_entity)
 
-        for sysvar_entity in self.central.hub.sysvar_entities.values():
+        for sysvar_entity in self.central.sysvar_entities.values():
             if (
                 sysvar_entity.unique_identifier not in active_unique_ids
                 and sysvar_entity.platform == platform
@@ -383,32 +374,14 @@ class ControlUnit(BaseControlUnit):
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_entities.values()
         ]
+        entities = self.central.get_entities_by_platform(platform=platform)
 
-        hm_entities: list[BaseEntity] = []
-        for entity in self.central.hm_entities.values():
-            if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
-                and entity.unique_identifier not in active_unique_ids
-                and entity.platform == platform
-            ):
-                hm_entities.append(entity)
+        new_entities: list[BaseEntity] = []
+        for entity in entities:
+            if entity.unique_identifier not in active_unique_ids:
+                new_entities.append(entity)
 
-        return hm_entities
-
-    @callback
-    def async_get_hm_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> list[BaseEntity]:
-        """Return all hm-entities by platform."""
-        hm_entities = []
-        for entity in self.central.hm_entities.values():
-            if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
-                and entity.platform == platform
-            ):
-                hm_entities.append(entity)
-
-        return hm_entities
+        return new_entities
 
     @callback
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
@@ -463,7 +436,7 @@ class ControlUnit(BaseControlUnit):
                     )
             self._async_add_virtual_remotes_to_device_registry()
         elif src == HH_EVENT_HUB_CREATED:
-            if not self._scheduler and self.central.hub:
+            if not self._scheduler:
                 sysvar_scan_enabled: bool = self._config_data.get(
                     ATTR_SYSVAR_SCAN_ENABLED, True
                 )
@@ -473,7 +446,6 @@ class ControlUnit(BaseControlUnit):
                 self._scheduler = HmScheduler(
                     self._hass,
                     control_unit=self,
-                    hm_hub=self.central.hub,
                     sysvar_scan_enabled=sysvar_scan_enabled,
                     sysvar_scan_interval=sysvar_scan_interval,
                 )
@@ -635,7 +607,9 @@ class ControlUnit(BaseControlUnit):
     @callback
     def _async_get_device(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
-        if (hm_device := self.central.hm_devices.get(device_address)) is None:
+        if (
+            hm_device := self.central.get_device(device_address=device_address)
+        ) is None:
             return None
         device_registry = dr.async_get(self._hass)
         return device_registry.async_get_device(
@@ -764,7 +738,6 @@ class HmScheduler:
         self,
         hass: HomeAssistant,
         control_unit: ControlUnit,
-        hm_hub: HmHub,
         sysvar_scan_enabled: bool,
         sysvar_scan_interval: int,
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
@@ -772,7 +745,7 @@ class HmScheduler:
         """Initialize Homematic(IP) Local hub scheduler."""
         self.hass = hass
         self._control: ControlUnit = control_unit
-        self._hm_hub: HmHub = hm_hub
+        self._central: CentralUnit = control_unit.central
         self.remove_sysvar_listener: Callable | None = None
         # sysvar_scan_interval == 0 means sysvar scanning is disabled
         self.sysvar_scan_enabled = sysvar_scan_enabled
@@ -800,36 +773,34 @@ class HmScheduler:
         if self.sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Scheduled fetching of programs and sysvars for %s is disabled",
-                self._control.central.name,
+                self._central.name,
             )
             return None
         _LOGGER.debug(
             "Scheduled fetching of programs and sysvars for %s",
-            self._control.central.name,
+            self._central.name,
         )
-        await self._hm_hub.fetch_sysvar_data()
-        await self._hm_hub.fetch_program_data()
+        await self._central.fetch_sysvar_data()
+        await self._central.fetch_program_data()
 
     async def async_fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
         if self.sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Manually fetching of sysvars for %s is disabled",
-                self._control.central.name,
+                self._central.name,
             )
             return None
-        _LOGGER.debug("Manually fetching of sysvars for %s", self._control.central.name)
-        await self._hm_hub.fetch_sysvar_data()
+        _LOGGER.debug("Manually fetching of sysvars for %s", self._central.name)
+        await self._central.fetch_sysvar_data()
 
     async def _async_fetch_master_data(self, now: datetime) -> None:
         """Fetch master entities from backend."""
         _LOGGER.debug(
             "Scheduled fetching of master entities for %s",
-            self._control.central.name,
+            self._central.name,
         )
-        await self._control.central.device_data.refresh_entity_data(
-            paramset_key=PARAMSET_KEY_MASTER
-        )
+        await self._central.refresh_entity_data(paramset_key=PARAMSET_KEY_MASTER)
 
 
 def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:
@@ -854,7 +825,7 @@ def get_cu_by_interface_id(
     """Get ControlUnit by interface_id."""
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if control_unit and control_unit.central.clients.get(interface_id):
+        if control_unit and control_unit.central.has_client(interface_id=interface_id):
             return control_unit
     return None
 
@@ -876,5 +847,5 @@ def get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     interface_id = data[1]
 
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.hm_devices.get(device_address)
+        return control_unit.central.get_device(device_address=device_address)
     return None

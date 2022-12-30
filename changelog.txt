@@ -13,10 +13,14 @@ Version 1.26.0 (2022-12-28)
   The integration can now be reconfigured to use a shorter or longer interval between sysvar scans. The sysvar scan can also be disabled, if not needed.
 
 ## All changes:
-- Bump hahomematic to 2022.12.11
+- Bump hahomematic to 2022.12.12
   - Remove empty unit for numeric sysvars
   - Fix native device units
   - Rename climate presets from 'Profile *' to 'week_program_*'
+  - Add un_ignore list to central config
+  - Fix entity_definition schema
+  - Rename cache_dict to persistant_cache
+  - Reduce access to internal complex objects for custom_component
 - Align custom_component to HA 2023.01
   - Align translations to new schema
   - Remove wrong device_classes
