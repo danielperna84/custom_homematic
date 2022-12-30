@@ -335,8 +335,7 @@ async def _async_service_set_variable_value(
     value = service.data[ATTR_VALUE]
 
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        if hub := control.central.hub:
-            await hub.set_system_variable(name=name, value=value)
+        await control.central.set_system_variable(name=name, value=value)
 
 
 async def _async_service_set_device_value(
@@ -551,7 +550,7 @@ def _get_entities_by_platform(
     hm_entities: list[BaseEntity] = []
     for control_unit in hass.data[DOMAIN][CONTROL_UNITS].values():
         hm_entities.extend(
-            control_unit.async_get_hm_entities_by_platform(platform=platform)
+            control_unit.central.get_entities_by_platform(platform=platform)
         )
     return hm_entities
 

@@ -59,9 +59,9 @@ async def async_get_triggers(
         if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
             continue
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if control_unit.central.clients.get(interface_id) is None:
+        if control_unit.central.has_client(interface_id=interface_id) is False:
             continue
-        if hm_device := control_unit.central.hm_devices.get(device_address):
+        if hm_device := control_unit.central.get_device(device_address=device_address):
             for action_event in hm_device.events.values():
                 if not isinstance(action_event, ClickEvent):
                     continue
