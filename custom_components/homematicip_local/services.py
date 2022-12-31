@@ -12,9 +12,7 @@ from hahomematic.const import (
     ATTR_PARAMETER,
     ATTR_VALUE,
     HmForcedDeviceAvailability,
-    HmPlatform,
 )
-from hahomematic.entity import BaseEntity, GenericEntity
 import voluptuous as vol
 
 from homeassistant.const import ATTR_MODE, ATTR_TIME
@@ -36,7 +34,7 @@ from .const import (
     DOMAIN,
 )
 from .control_unit import ControlUnit, get_cu_by_interface_id, get_device
-from .helpers import HmBaseEntity, get_device_address_at_interface_from_identifiers
+from .helpers import get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -531,39 +529,6 @@ def _get_interface_address(
 
     address = f"{device_address}:{channel}" if channel is not None else device_address
     return interface_id, address
-
-
-def _get_entity(hass: HomeAssistant, entity_id: str) -> HmBaseEntity | None:
-    """Return entity by given entity_id."""
-    control_unit: ControlUnit
-    for control_unit in hass.data[DOMAIN][CONTROL_UNITS].values():
-        if hm_entity := control_unit.async_get_hm_entity(entity_id=entity_id):
-            return hm_entity
-    return None
-
-
-def _get_entities_by_platform(
-    hass: HomeAssistant, platform: HmPlatform
-) -> list[BaseEntity]:
-    """Return entities by given platform."""
-    control_unit: ControlUnit
-    hm_entities: list[BaseEntity] = []
-    for control_unit in hass.data[DOMAIN][CONTROL_UNITS].values():
-        hm_entities.extend(
-            control_unit.central.get_entities_by_platform(platform=platform)
-        )
-    return hm_entities
-
-
-def _get_hm_entity(
-    hass: HomeAssistant, interface_id: str, channel_address: str, parameter: str
-) -> GenericEntity | None:
-    """Get homematic entity."""
-    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.get_generic_entity(
-            channel_address=channel_address, parameter=parameter
-        )
-    return None
 
 
 def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
