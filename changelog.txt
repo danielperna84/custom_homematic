@@ -1,6 +1,6 @@
-Version 1.26.0 (2022-12-28)
+Version 1.26.0 (2023-01-04)
 
-#This release requires HA >= 2023.01
+#This release requires HA >= 2023.1
 
 ## Breaking changes
 - Rename climate presets from 'Profile *' to 'week_program_*':
@@ -13,7 +13,7 @@ Version 1.26.0 (2022-12-28)
   The integration can now be reconfigured to use a shorter or longer interval between sysvar scans. The sysvar scan can also be disabled, if not needed.
 
 ## All changes:
-- Bump hahomematic to 2022.12.12
+- Bump hahomematic to 2023.1.0
   - Remove empty unit for numeric sysvars
   - Fix native device units
   - Rename climate presets from 'Profile *' to 'week_program_*'

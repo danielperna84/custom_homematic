@@ -348,23 +348,9 @@ class ControlUnit(BaseControlUnit):
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
 
-        hm_hub_entities: list[GenericHubEntity] = []
-
-        for program_entity in self.central.program_entities.values():
-            if (
-                program_entity.unique_identifier not in active_unique_ids
-                and program_entity.platform == platform
-            ):
-                hm_hub_entities.append(program_entity)
-
-        for sysvar_entity in self.central.sysvar_entities.values():
-            if (
-                sysvar_entity.unique_identifier not in active_unique_ids
-                and sysvar_entity.platform == platform
-            ):
-                hm_hub_entities.append(sysvar_entity)
-
-        return hm_hub_entities
+        return self.central.get_hub_entities_by_platform(
+            platform=platform, existing_unique_ids=active_unique_ids
+        )
 
     @callback
     def async_get_new_hm_entities_by_platform(
@@ -374,14 +360,9 @@ class ControlUnit(BaseControlUnit):
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_entities.values()
         ]
-        entities = self.central.get_entities_by_platform(platform=platform)
-
-        new_entities: list[BaseEntity] = []
-        for entity in entities:
-            if entity.unique_identifier not in active_unique_ids:
-                new_entities.append(entity)
-
-        return new_entities
+        return self.central.get_entities_by_platform(
+            platform=platform, existing_unique_ids=active_unique_ids
+        )
 
     @callback
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
