@@ -21,6 +21,10 @@ Version 1.26.0 (2023-01-04)
   - Fix entity_definition schema
   - Rename cache_dict to persistant_cache
   - Reduce access to internal complex objects for custom_component
+  - Allow to disable cache
+  - Allow to disable un_ignore load
+  - Add local client
+  - Move event() code to central_unit
 - Align custom_component to HA 2023.01
   - Align translations to new schema
   - Remove wrong device_classes

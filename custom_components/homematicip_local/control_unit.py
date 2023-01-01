@@ -161,7 +161,7 @@ class BaseControlUnit:
                     central_name=self._instance_name,
                     interface=interface_name,
                     port=interface[ATTR_PORT],
-                    path=interface.get(ATTR_PATH),
+                    remote_path=interface.get(ATTR_PATH),
                 )
             )
         # use last 10 chars of entry_id for central_id uniqueness
