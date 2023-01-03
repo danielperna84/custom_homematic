@@ -24,7 +24,9 @@ Version 1.26.0 (2023-01-04)
   - Allow to disable cache
   - Allow to disable un_ignore load
   - Add local client
+  - Use local client in tests
   - Move event() code to central_unit
+  - Move listDevices() code to central_unit
 - Align custom_component to HA 2023.01
   - Align translations to new schema
   - Remove wrong device_classes
