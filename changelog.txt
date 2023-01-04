@@ -1,17 +1,20 @@
-Version 1.26.0 (2023-01-04)
+Version 1.26.1 (2022-01-04)
+## Breaking changes
+## New features
+## All changes:
+- Bump hahomematic to 2023.1.1
+  - No longer create ClientSession in json_rpc_client for tests
 
+Version 1.26.0 (2023-01-02)
 #This release requires HA >= 2023.1
-
 ## Breaking changes
 - Rename climate presets from 'Profile *' to 'week_program_*':
   HA now allows translations of custom preset modes. The internal preset mode has been renamed from 'Profile *' to 'week_program_*'.
   If service climate.set_preset_mode was used with values like "Proflle 1", these automations and scripts need to be edited and use "week_program_1" instead.
   This preset mode is now displayed as "WP 1" to better accommodate the available space in the UI.
-
 ## New features
 - Make sysvar_scan_interval configurable
   The integration can now be reconfigured to use a shorter or longer interval between sysvar scans. The sysvar scan can also be disabled, if not needed.
-
 ## All changes:
 - Bump hahomematic to 2023.1.0
   - Remove empty unit for numeric sysvars
