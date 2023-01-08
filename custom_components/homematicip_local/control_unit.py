@@ -446,19 +446,8 @@ class ControlUnit(BaseControlUnit):
                         )
             return None
         elif src == HH_EVENT_NEW_DEVICES:
-            # ignore
             return None
         elif src == HH_EVENT_DELETE_DEVICES:
-            # Handle event of device removed in Homematic(IP) Local.
-            for address in args[1]:
-                # HA only needs channel_addresses
-                if ":" in address:
-                    continue
-                if entities := self._get_active_entities_by_device_address(
-                    device_address=address
-                ):
-                    for entity in entities:
-                        entity.remove_entity()
             return None
         elif src == HH_EVENT_ERROR:
             return None
