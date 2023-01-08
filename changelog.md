@@ -1,12 +1,20 @@
 # Version 1.26.1 (2022-01-04)
-### Breaking changes
 ### New features
+- Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
+
 ### All changes:
 - Bump hahomematic to 2023.1.1
   - No longer create ClientSession in json_rpc_client for tests
+  - Add backend tests
+  - Use mocked local client to check  method_calls
+  - Remove sleep after connection_checker stops
+  - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
+  - Simplify entity de-/registration
+  - Refactor add/delete device and add tests
+- Move delete device logic to central
 
 # Version 1.26.0 (2023-01-02)
-#This release requires HA >= 2023.1
+## This release requires HA >= 2023.1
 ### Breaking changes
 - Rename climate presets from 'Profile *' to 'week_program_*':
   HA now allows translations of custom preset modes. The internal preset mode has been renamed from 'Profile *' to 'week_program_*'.
