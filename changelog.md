@@ -1,4 +1,4 @@
-# Version 1.26.1 (2022-01-04)
+# Version 1.26.1 (2022-01-08)
 ### New features
 - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
 
