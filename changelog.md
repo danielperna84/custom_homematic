@@ -1,6 +1,7 @@
-# Version 1.26.1 (2022-01-08)
+# Version 1.26.1 (2022-01-09)
 ### New features
 - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
+- Use actions and buttons for device actions
 
 ### All changes:
 - Bump hahomematic to 2023.1.1
@@ -11,7 +12,10 @@
   - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
   - Simplify entity de-/registration
   - Refactor add/delete device and add tests
+  - Add un_ignore_list to test config
+  - Allow unignore for DEVICE_ERROR_EVENTS
 - Move delete device logic to central
+- Use actions and buttons for device actions
 
 # Version 1.26.0 (2023-01-02)
 ## This release requires HA >= 2023.1

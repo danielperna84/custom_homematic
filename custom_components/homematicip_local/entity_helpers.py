@@ -467,6 +467,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         device_class=BinarySensorDeviceClass.SAFETY,
         entity_registry_enabled_default=False,
     ),
+    "ERROR_JAMMED": BinarySensorEntityDescription(
+        key="ERROR_JAMMED",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_registry_enabled_default=False,
+    ),
     "HEATER_STATE": BinarySensorEntityDescription(
         key="HEATER_STATE",
         device_class=BinarySensorDeviceClass.HEAT,

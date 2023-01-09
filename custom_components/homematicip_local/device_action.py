@@ -5,6 +5,7 @@ from typing import Any
 
 from hahomematic.const import EVENT_PRESS_LONG, EVENT_PRESS_SHORT
 from hahomematic.generic_platforms.action import HmAction
+from hahomematic.generic_platforms.button import HmButton
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_TYPE
@@ -56,7 +57,7 @@ async def async_get_actions(
             continue
         if hm_device := control_unit.central.get_device(device_address=device_address):
             for entity in hm_device.generic_entities.values():
-                if not isinstance(entity, HmAction):
+                if not isinstance(entity, (HmAction, HmButton)):
                     continue
                 if entity.parameter not in ACTION_PARAMS:
                     continue
@@ -104,7 +105,7 @@ async def async_call_action_from_config(
             continue
         if hm_device := control_unit.central.get_device(device_address=device_address):
             for entity in hm_device.generic_entities.values():
-                if not isinstance(entity, HmAction):
+                if not isinstance(entity, (HmAction,HmButton)):
                     continue
                 if (
                     entity.parameter == action_type.upper()
