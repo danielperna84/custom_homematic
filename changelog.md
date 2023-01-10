@@ -1,10 +1,11 @@
 # Version 1.26.1 (2022-01-09)
 ### New features
 - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
+- Remove OPERATING_VOLTAGE from HmIP-BROLL, HmIP-FROLL
 - Use actions and buttons for device actions
 
 ### All changes:
-- Bump hahomematic to 2023.1.1
+- Bump hahomematic to 2023.1.2
   - No longer create ClientSession in json_rpc_client for tests
   - Add backend tests
   - Use mocked local client to check  method_calls
@@ -14,6 +15,9 @@
   - Refactor add/delete device and add tests
   - Add un_ignore_list to test config
   - Allow unignore for DEVICE_ERROR_EVENTS
+  - Remove OPERATING_VOLTAGE from HmIP-BROLL, HmIP-FROLL
+  - Remove loop from test signature
+  - Cleanup ignore/unignore handling and add tests
 - Move delete device logic to central
 - Use actions and buttons for device actions
 
