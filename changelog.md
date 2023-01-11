@@ -1,3 +1,11 @@
+# Version 1.26.2 (2022-01-12)
+### New features
+- 
+
+### All changes:
+- Bump hahomematic to 2023.1.3
+- 
+
 # Version 1.26.1 (2022-01-09)
 ### New features
 - Remove LOWBAT from HM-LC-Sw1-Pl, HM-LC-Sw2-FM
