@@ -64,6 +64,9 @@ TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
     "svHmIPSunshineCounter_",
 )
 
+# filter out event error parameters, that should not be displayed in logbook
+FILTER_ERROR_EVENT_PARAMETERS: Final[list[str]] = ["ERROR_CODE"]
+
 
 class HmEntityState(StrEnum):
     """Enum with homematic entity states."""
@@ -83,7 +86,7 @@ class HmEntityType(StrEnum):
 
 def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
-    platforms = [entry.value for entry in Platform]
+    platforms = list(Platform)
     hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:

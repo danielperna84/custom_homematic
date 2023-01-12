@@ -78,6 +78,7 @@ from .const import (
     EVENT_DATA_TITLE,
     EVENT_DATA_UNAVAILABLE,
     EVENT_DEVICE_TYPE,
+    FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
     IDENTIFIER_SEPARATOR,
     MANUFACTURER_EQ3,
@@ -525,6 +526,9 @@ class ControlUnit(BaseControlUnit):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     availability_event_data = {
                         ATTR_DEVICE_ID: device_id,
+                        ATTR_ADDRESS: event_data[ATTR_ADDRESS],
+                        ATTR_CHANNEL_NO: event_data[ATTR_CHANNEL_NO],
+                        ATTR_PARAMETER: event_data[ATTR_PARAMETER],
                         EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
                         EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
                         EVENT_DATA_TITLE: title,
@@ -538,6 +542,8 @@ class ControlUnit(BaseControlUnit):
                     )
             elif hm_event_type == HmEventType.DEVICE_ERROR:
                 error_parameter = event_data[ATTR_PARAMETER]
+                if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
+                    return None
                 error_parameter_display = error_parameter.replace("_", " ").title()
                 title = f"{DOMAIN.upper()} Device Error"
                 error_message: str = ""
