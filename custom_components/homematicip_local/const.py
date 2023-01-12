@@ -39,6 +39,7 @@ DEFAULT_CALLBACK_PORT: Final = "default_callback_port"
 CONTROL_UNITS: Final = "control_units"
 
 EVENT_DEVICE_TYPE: Final = "device_type"
+EVENT_ADDRESS = "address"
 EVENT_DATA_ERROR: Final = "error"
 EVENT_DATA_ERROR_NAME: Final = "error_name"
 EVENT_DATA_ERROR_VALUE: Final = "error_value"

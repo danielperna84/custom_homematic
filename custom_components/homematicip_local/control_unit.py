@@ -14,6 +14,7 @@ from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
+    ATTR_CHANNEL_NO,
     ATTR_DEVICE_TYPE,
     ATTR_HOST,
     ATTR_INTERFACE,
@@ -51,7 +52,7 @@ from hahomematic.const import (
 from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity, GenericHubEntity
 
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_NAME
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_NAME, CONF_TYPE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
@@ -65,6 +66,7 @@ from .const import (
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
+    CONF_SUBTYPE,
     CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
@@ -498,15 +500,23 @@ class ControlUnit(BaseControlUnit):
         else:
             device_address = event_data[ATTR_ADDRESS]
             name: str | None = None
+            device_id: str | None = None
             if device_entry := self._async_get_device(device_address=device_address):
-                event_data[ATTR_DEVICE_ID] = device_entry.id
                 name = device_entry.name_by_user or device_entry.name
-                event_data[ATTR_NAME] = name
+                device_id = device_entry.id
 
             if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
+                click_event_data = {
+                    ATTR_INTERFACE_ID: event_data[ATTR_INTERFACE_ID],
+                    ATTR_DEVICE_ID: device_id,
+                    ATTR_NAME: name,
+                    ATTR_ADDRESS: event_data[ATTR_ADDRESS],
+                    CONF_TYPE: event_data[ATTR_PARAMETER].lower(),
+                    CONF_SUBTYPE: event_data[ATTR_CHANNEL_NO],
+                }
                 self._hass.bus.fire(
                     event_type=hm_event_type.value,
-                    event_data=event_data,
+                    event_data=click_event_data,
                 )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[ATTR_PARAMETER]
@@ -514,7 +524,7 @@ class ControlUnit(BaseControlUnit):
                 if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     availability_event_data = {
-                        ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
+                        ATTR_DEVICE_ID: device_id,
                         EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
                         EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
                         EVENT_DATA_TITLE: title,
@@ -546,7 +556,10 @@ class ControlUnit(BaseControlUnit):
                         f"{error_parameter_display} {error_value}"
                     )
                 error_event_data = {
-                    ATTR_DEVICE_ID: event_data[ATTR_DEVICE_ID],
+                    ATTR_DEVICE_ID: device_id,
+                    ATTR_ADDRESS: event_data[ATTR_ADDRESS],
+                    ATTR_CHANNEL_NO: event_data[ATTR_CHANNEL_NO],
+                    ATTR_PARAMETER: event_data[ATTR_PARAMETER],
                     EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
                     EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
                     EVENT_DATA_TITLE: title,

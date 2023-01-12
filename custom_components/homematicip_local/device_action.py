@@ -105,7 +105,7 @@ async def async_call_action_from_config(
             continue
         if hm_device := control_unit.central.get_device(device_address=device_address):
             for entity in hm_device.generic_entities.values():
-                if not isinstance(entity, (HmAction,HmButton)):
+                if not isinstance(entity, (HmAction, HmButton)):
                     continue
                 if (
                     entity.parameter == action_type.upper()
