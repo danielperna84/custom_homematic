@@ -1,4 +1,4 @@
-# Version 1.26.2 (2022-01-12)
+# Version 1.26.2 (2022-01-13)
 ### New features
 - Add device availability and error to logbook
 
@@ -6,6 +6,8 @@
 - Bump hahomematic to 2023.1.3
   - Unifiy event parameters
   - Refactor entity.py for better event support
+  - Fix wrong warning after set_system_variable
+  - Add validation to event_data
 - Reassign event parameters in control_unit
 - Add device availability and error to logbook
 
