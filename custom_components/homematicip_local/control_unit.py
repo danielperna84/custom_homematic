@@ -14,8 +14,6 @@ from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
-    ATTR_CHANNEL_NO,
-    ATTR_DEVICE_TYPE,
     ATTR_HOST,
     ATTR_INTERFACE,
     ATTR_INTERFACE_ID,
@@ -52,7 +50,7 @@ from hahomematic.const import (
 from hahomematic.device import HmDevice
 from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity, GenericHubEntity
 
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_NAME, CONF_TYPE
+from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
@@ -62,22 +60,20 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
+    ATTR_DEVICE_NAME,
     ATTR_INSTANCE_NAME,
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
-    CONF_SUBTYPE,
     CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
     EVENT_DATA_ERROR,
-    EVENT_DATA_ERROR_NAME,
     EVENT_DATA_ERROR_VALUE,
     EVENT_DATA_IDENTIFIER,
     EVENT_DATA_MESSAGE,
     EVENT_DATA_TITLE,
     EVENT_DATA_UNAVAILABLE,
-    EVENT_DEVICE_TYPE,
     FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
     IDENTIFIER_SEPARATOR,
@@ -85,9 +81,14 @@ from .const import (
     MASTER_SCAN_INTERVAL,
 )
 from .helpers import (
+    HM_CLICK_EVENT_SCHEMA,
+    HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
+    HM_DEVICE_ERROR_EVENT_SCHEMA,
     HmBaseEntity,
     HmCallbackEntity,
+    cleanup_click_event_data,
     get_device_address_at_interface_from_identifiers,
+    is_valid_event,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -501,45 +502,40 @@ class ControlUnit(BaseControlUnit):
         else:
             device_address = event_data[ATTR_ADDRESS]
             name: str | None = None
-            device_id: str | None = None
             if device_entry := self._async_get_device(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
-                device_id = device_entry.id
-
-            if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
-                click_event_data = {
-                    ATTR_INTERFACE_ID: event_data[ATTR_INTERFACE_ID],
-                    ATTR_DEVICE_ID: device_id,
-                    ATTR_NAME: name,
-                    ATTR_ADDRESS: event_data[ATTR_ADDRESS],
-                    CONF_TYPE: event_data[ATTR_PARAMETER].lower(),
-                    CONF_SUBTYPE: event_data[ATTR_CHANNEL_NO],
-                }
-                self._hass.bus.fire(
-                    event_type=hm_event_type.value,
-                    event_data=click_event_data,
+                event_data.update(
+                    {ATTR_DEVICE_ID: device_entry.id, ATTR_DEVICE_NAME: name}
                 )
+            if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
+                event_data = cleanup_click_event_data(event_data=event_data)
+                if is_valid_event(event_data=event_data, schema=HM_CLICK_EVENT_SCHEMA):
+                    self._hass.bus.fire(
+                        event_type=hm_event_type.value,
+                        event_data=event_data,
+                    )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[ATTR_PARAMETER]
                 unavailable = event_data[ATTR_VALUE]
                 if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
-                    availability_event_data = {
-                        ATTR_DEVICE_ID: device_id,
-                        ATTR_ADDRESS: event_data[ATTR_ADDRESS],
-                        ATTR_CHANNEL_NO: event_data[ATTR_CHANNEL_NO],
-                        ATTR_PARAMETER: event_data[ATTR_PARAMETER],
-                        EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
-                        EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
-                        EVENT_DATA_TITLE: title,
-                        EVENT_DATA_MESSAGE: f"{name}/{device_address} "
-                        f"on interface {interface_id}",
-                        EVENT_DATA_UNAVAILABLE: unavailable,
-                    }
-                    self._hass.bus.fire(
-                        event_type=hm_event_type.value,
-                        event_data=availability_event_data,
+                    event_data.update(
+                        {
+                            EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
+                            EVENT_DATA_TITLE: title,
+                            EVENT_DATA_MESSAGE: f"{name}/{device_address} "
+                            f"on interface {interface_id}",
+                            EVENT_DATA_UNAVAILABLE: unavailable,
+                        }
                     )
+                    if is_valid_event(
+                        event_data=event_data,
+                        schema=HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
+                    ):
+                        self._hass.bus.fire(
+                            event_type=hm_event_type.value,
+                            event_data=event_data,
+                        )
             elif hm_event_type == HmEventType.DEVICE_ERROR:
                 error_parameter = event_data[ATTR_PARAMETER]
                 if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
@@ -561,23 +557,22 @@ class ControlUnit(BaseControlUnit):
                         f"{name}/{device_address} on interface {interface_id}: "
                         f"{error_parameter_display} {error_value}"
                     )
-                error_event_data = {
-                    ATTR_DEVICE_ID: device_id,
-                    ATTR_ADDRESS: event_data[ATTR_ADDRESS],
-                    ATTR_CHANNEL_NO: event_data[ATTR_CHANNEL_NO],
-                    ATTR_PARAMETER: event_data[ATTR_PARAMETER],
-                    EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
-                    EVENT_DEVICE_TYPE: event_data[ATTR_DEVICE_TYPE],
-                    EVENT_DATA_TITLE: title,
-                    EVENT_DATA_MESSAGE: error_message,
-                    EVENT_DATA_ERROR_NAME: error_parameter,
-                    EVENT_DATA_ERROR_VALUE: error_value,
-                    EVENT_DATA_ERROR: display_error,
-                }
-                self._hass.bus.fire(
-                    event_type=hm_event_type.value,
-                    event_data=error_event_data,
+                event_data.update(
+                    {
+                        EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
+                        EVENT_DATA_TITLE: title,
+                        EVENT_DATA_MESSAGE: error_message,
+                        EVENT_DATA_ERROR_VALUE: error_value,
+                        EVENT_DATA_ERROR: display_error,
+                    }
                 )
+                if is_valid_event(
+                    event_data=event_data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA
+                ):
+                    self._hass.bus.fire(
+                        event_type=hm_event_type.value,
+                        event_data=event_data,
+                    )
 
     @callback
     def _async_create_persistent_notification(

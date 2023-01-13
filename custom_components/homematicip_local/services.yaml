@@ -5,7 +5,7 @@ clear_cache:
   description: Clear the cache. Requires a restart.
   fields:
     entry_id:
-      name: Entity
+      name: Central
       description: Name(s) of homematic central to clear the cache.
       required: true
       selector:
@@ -41,7 +41,7 @@ fetch_system_variables:
   description: Fetch system variables from backend.
   fields:
     entry_id:
-      name: Entity
+      name: Central
       description: Name(s) of homematic central to fetch system variables from.
       required: true
       selector:
@@ -65,7 +65,7 @@ set_variable_value:
   description: Set the name of a node.
   fields:
     entry_id:
-      name: Entity
+      name: Central
       description: Name(s) of homematic central to set value.
       required: true
       selector:

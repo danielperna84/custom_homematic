@@ -4,20 +4,25 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from hahomematic.const import ATTR_ADDRESS, HmEventType
+from hahomematic.const import ATTR_PARAMETER, HmEventType
 
 from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
-from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
+from homeassistant.const import CONF_TYPE
 from homeassistant.core import Event, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
 
 from .const import (
+    ATTR_DEVICE_NAME,
     CONF_SUBTYPE,
     DOMAIN as HMIP_DOMAIN,
     EVENT_DATA_ERROR,
-    EVENT_DATA_ERROR_NAME,
     EVENT_DATA_ERROR_VALUE,
     EVENT_DATA_UNAVAILABLE,
+)
+from .helpers import (
+    HM_CLICK_EVENT_SCHEMA,
+    HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
+    HM_DEVICE_ERROR_EVENT_SCHEMA,
+    is_valid_event,
 )
 
 
@@ -27,32 +32,28 @@ def async_describe_events(
     async_describe_event: Callable[[str, str, Callable[[Event], dict[str, str]]], None],
 ) -> None:
     """Describe logbook events."""
-    device_registry = dr.async_get(hass)
-
-    def _get_device_name(event: Event) -> str:
-        """Get device name from registry."""
-        if device_entry := device_registry.async_get(
-            device_id=event.data[ATTR_DEVICE_ID]
-        ):
-            if device_name := device_entry.name_by_user or device_entry.name:
-                return device_name
-        return event.data[ATTR_ADDRESS]
 
     @callback
     def async_describe_homematic_click_event(event: Event) -> dict[str, str]:
         """Describe Homematic(IP) Local logbook click event."""
+        if not is_valid_event(event_data=event.data, schema=HM_CLICK_EVENT_SCHEMA):
+            return {}
         parameter = event.data[CONF_TYPE]
         channel_no = event.data[CONF_SUBTYPE]
 
         return {
-            LOGBOOK_ENTRY_NAME: _get_device_name(event=event),
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
             LOGBOOK_ENTRY_MESSAGE: f" fired event {parameter.upper()} on channel {channel_no}",
         }
 
     @callback
     def async_describe_homematic_device_error_event(event: Event) -> dict[str, str]:
         """Describe Homematic(IP) Local logbook device error event."""
-        error_name = event.data[EVENT_DATA_ERROR_NAME].replace("_", " ").title()
+        if not is_valid_event(
+            event_data=event.data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA
+        ):
+            return {}
+        error_name = event.data[ATTR_PARAMETER].replace("_", " ").title()
         error_value = event.data[EVENT_DATA_ERROR_VALUE]
         is_error = event.data[EVENT_DATA_ERROR]
         error_message = (
@@ -62,7 +63,7 @@ def async_describe_events(
         )
 
         return {
-            LOGBOOK_ENTRY_NAME: _get_device_name(event=event),
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
             LOGBOOK_ENTRY_MESSAGE: error_message,
         }
 
@@ -71,10 +72,14 @@ def async_describe_events(
         event: Event,
     ) -> dict[str, str]:
         """Describe Homematic(IP) Local logbook device availability event."""
+        if not is_valid_event(
+            event_data=event.data, schema=HM_DEVICE_AVAILABILITY_EVENT_SCHEMA
+        ):
+            return {}
         unavailable = event.data[EVENT_DATA_UNAVAILABLE]
 
         return {
-            LOGBOOK_ENTRY_NAME: _get_device_name(event=event),
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
             LOGBOOK_ENTRY_MESSAGE: "is not reachable"
             if unavailable
             else "is reachable again",
