@@ -5,20 +5,35 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
-from typing import TypeVar, Union
+import logging
+from typing import Any, TypeVar, Union
 
+from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE
 from hahomematic.entity import (
+    HM_EVENT_SCHEMA,
     CustomEntity,
     GenericEntity,
     GenericHubEntity,
     WrapperEntity,
 )
+import voluptuous as vol
 
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
+from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
 from homeassistant.helpers.typing import StateType
 
-from .const import IDENTIFIER_SEPARATOR
+from .const import (
+    ATTR_DEVICE_NAME,
+    CONF_SUBTYPE,
+    EVENT_DATA_ERROR,
+    EVENT_DATA_ERROR_VALUE,
+    EVENT_DATA_IDENTIFIER,
+    EVENT_DATA_MESSAGE,
+    EVENT_DATA_TITLE,
+    EVENT_DATA_UNAVAILABLE,
+    IDENTIFIER_SEPARATOR,
+)
 
 # Union for entity types used as base class for entities
 HmBaseEntity = Union[CustomEntity, GenericEntity, WrapperEntity]
@@ -28,6 +43,65 @@ HmCallbackEntity = (CustomEntity, GenericEntity, WrapperEntity)
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
 HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=GenericHubEntity)
+
+
+BASE_EVENT_SCHEMA = HM_EVENT_SCHEMA.extend(
+    {
+        vol.Required(ATTR_DEVICE_ID): str,
+        vol.Required(ATTR_DEVICE_NAME): str,
+    }
+)
+HM_CLICK_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+    {
+        vol.Required(CONF_TYPE): str,
+        vol.Required(CONF_SUBTYPE): int,
+        vol.Remove(ATTR_CHANNEL_NO): int,
+        vol.Remove(ATTR_PARAMETER): str,
+        vol.Remove(ATTR_VALUE): vol.Any(bool, int),
+    }
+)
+HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+    {
+        vol.Required(EVENT_DATA_IDENTIFIER): str,
+        vol.Required(EVENT_DATA_TITLE): str,
+        vol.Required(EVENT_DATA_MESSAGE): str,
+        vol.Required(EVENT_DATA_UNAVAILABLE): bool,
+    }
+)
+HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+    {
+        vol.Required(EVENT_DATA_IDENTIFIER): str,
+        vol.Required(EVENT_DATA_TITLE): str,
+        vol.Required(EVENT_DATA_MESSAGE): str,
+        vol.Required(EVENT_DATA_ERROR_VALUE): vol.Any(bool, int),
+        vol.Required(EVENT_DATA_ERROR): bool,
+    }
+)
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def cleanup_click_event_data(event_data: dict[str, Any]) -> dict[str, Any]:
+    """Cleanup the click_event."""
+    event_data.update(
+        {
+            CONF_TYPE: event_data[ATTR_PARAMETER].lower(),
+            CONF_SUBTYPE: event_data[ATTR_CHANNEL_NO],
+        }
+    )
+    del event_data[ATTR_PARAMETER]
+    del event_data[ATTR_CHANNEL_NO]
+    return event_data
+
+
+def is_valid_event(event_data: dict[str, Any], schema: vol.Schema) -> bool:
+    """Validate evenc_data against a given schema."""
+    try:
+        schema(event_data)
+        return True
+    except vol.Invalid as err:
+        _LOGGER.error("The EVENT could not be validated. %s, %s", err.path, err.msg)
+    return False
 
 
 def get_device_address_from_identifiers(

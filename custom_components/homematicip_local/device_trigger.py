@@ -22,7 +22,10 @@ from homeassistant.helpers.typing import ConfigType
 from . import DOMAIN
 from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
-from .helpers import get_device_address_at_interface_from_identifiers
+from .helpers import (
+    cleanup_click_event_data,
+    get_device_address_at_interface_from_identifiers,
+)
 
 TRIGGER_TYPES = {param.lower() for param in CLICK_EVENTS}
 
@@ -33,7 +36,8 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
         vol.Required(CONF_TYPE): vol.In(TRIGGER_TYPES),
         vol.Required(CONF_SUBTYPE): int,
         vol.Required(CONF_EVENT_TYPE): str,
-    }
+    },
+    extra=vol.REMOVE_EXTRA,
 )
 
 
@@ -75,7 +79,9 @@ async def async_get_triggers(
                     CONF_DEVICE_ID: device_id,
                     CONF_EVENT_TYPE: action_event.event_type.value,
                 }
-                trigger.update(action_event.get_event_data())
+                trigger.update(
+                    cleanup_click_event_data(event_data=action_event.get_event_data())
+                )
                 triggers.append(trigger)
 
     return triggers

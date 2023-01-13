@@ -23,13 +23,14 @@ ATTR_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 ATTR_VALUE_TYPE: Final = "value_type"
 ATTR_VALUE_STATE: Final = "value_state"
 
-ATTR_NAME: Final = "name"
-ATTR_INTERFACE_ID: Final = "interface_id"
 ATTR_ADDRESS: Final = "address"
-ATTR_MODEL: Final = "model"
-ATTR_FUNCTION: Final = "function"
-ATTR_PARAMETER: Final = "parameter"
+ATTR_DEVICE_NAME: Final = "device_name"
 ATTR_ENTITY_TYPE: Final = "entity_type"
+ATTR_FUNCTION: Final = "function"
+ATTR_INTERFACE_ID: Final = "interface_id"
+ATTR_MODEL: Final = "model"
+ATTR_NAME: Final = "name"
+ATTR_PARAMETER: Final = "parameter"
 
 CONF_INTERFACE_ID: Final = "interface_id"
 CONF_EVENT_TYPE: Final = "event_type"
@@ -38,10 +39,8 @@ CONF_SUBTYPE: Final = "subtype"
 DEFAULT_CALLBACK_PORT: Final = "default_callback_port"
 CONTROL_UNITS: Final = "control_units"
 
-EVENT_DEVICE_TYPE: Final = "device_type"
 EVENT_ADDRESS = "address"
 EVENT_DATA_ERROR: Final = "error"
-EVENT_DATA_ERROR_NAME: Final = "error_name"
 EVENT_DATA_ERROR_VALUE: Final = "error_value"
 EVENT_DATA_IDENTIFIER: Final = "identifier"
 EVENT_DATA_MESSAGE: Final = "message"
@@ -64,6 +63,9 @@ TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
     "svHmIPSunshineCounter_",
 )
 
+# filter out event error parameters, that should not be displayed in logbook
+FILTER_ERROR_EVENT_PARAMETERS: Final[list[str]] = ["ERROR_CODE"]
+
 
 class HmEntityState(StrEnum):
     """Enum with homematic entity states."""
@@ -83,7 +85,7 @@ class HmEntityType(StrEnum):
 
 def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
-    platforms = [entry.value for entry in Platform]
+    platforms = list(Platform)
     hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:
