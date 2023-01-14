@@ -33,7 +33,7 @@ from hahomematic.const import (
     HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_ERROR,
-    HH_EVENT_HUB_CREATED,
+    HH_EVENT_HUB_REFRESHED,
     HH_EVENT_LIST_DEVICES,
     HH_EVENT_NEW_DEVICES,
     HH_EVENT_RE_ADDED_DEVICE,
@@ -420,7 +420,7 @@ class ControlUnit(BaseControlUnit):
                         hm_entities,
                     )
             self._async_add_virtual_remotes_to_device_registry()
-        elif src == HH_EVENT_HUB_CREATED:
+        elif src == HH_EVENT_HUB_REFRESHED:
             if not self._scheduler:
                 sysvar_scan_enabled: bool = self._config_data.get(
                     ATTR_SYSVAR_SCAN_ENABLED, True

@@ -1,3 +1,14 @@
+# Version 1.26.3 (2022-01-15)
+### New features
+- 
+
+### All changes:
+- Bump hahomematic to 2023.1.4
+  - Remove obsolete parse_ccu_sys_var
+  - Add helper, central tests
+  - Add more tests and test based refactorings
+-
+
 # Version 1.26.2 (2022-01-13)
 ### New features
 - Add device availability and error to logbook
