@@ -1,3 +1,6 @@
+# Version 1.26.5 (2022-01-16)
+- Fix display of logbook events
+
 # Version 1.26.4 (2022-01-16)
 
 ### New features
