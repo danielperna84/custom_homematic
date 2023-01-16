@@ -11,7 +11,7 @@ from homeassistant.const import CONF_TYPE
 from homeassistant.core import Event, HomeAssistant, callback
 
 from .const import (
-    ATTR_DEVICE_NAME,
+    ATTR_NAME,
     CONF_SUBTYPE,
     DOMAIN as HMIP_DOMAIN,
     EVENT_DATA_ERROR,
@@ -42,7 +42,7 @@ def async_describe_events(
         channel_no = event.data[CONF_SUBTYPE]
 
         return {
-            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_NAME],
             LOGBOOK_ENTRY_MESSAGE: f" fired event {parameter.upper()} on channel {channel_no}",
         }
 
@@ -63,7 +63,7 @@ def async_describe_events(
         )
 
         return {
-            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_NAME],
             LOGBOOK_ENTRY_MESSAGE: error_message,
         }
 
@@ -79,7 +79,7 @@ def async_describe_events(
         unavailable = event.data[EVENT_DATA_UNAVAILABLE]
 
         return {
-            LOGBOOK_ENTRY_NAME: event.data[ATTR_DEVICE_NAME],
+            LOGBOOK_ENTRY_NAME: event.data[ATTR_NAME],
             LOGBOOK_ENTRY_MESSAGE: "is not reachable"
             if unavailable
             else "is reachable again",

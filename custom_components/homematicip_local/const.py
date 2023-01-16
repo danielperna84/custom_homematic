@@ -24,7 +24,6 @@ ATTR_VALUE_TYPE: Final = "value_type"
 ATTR_VALUE_STATE: Final = "value_state"
 
 ATTR_ADDRESS: Final = "address"
-ATTR_DEVICE_NAME: Final = "device_name"
 ATTR_ENTITY_TYPE: Final = "entity_type"
 ATTR_FUNCTION: Final = "function"
 ATTR_INTERFACE_ID: Final = "interface_id"
