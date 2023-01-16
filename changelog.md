@@ -7,6 +7,8 @@
   - Remove obsolete parse_ccu_sys_var
   - Add helper, central tests
   - Add more tests and test based refactorings
+  - Reduce backend calls and logging during lost connection
+  - Update color_conversion threshold by @guillempages
 -
 
 # Version 1.26.2 (2022-01-13)

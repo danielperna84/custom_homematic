@@ -189,7 +189,7 @@ class BaseControlUnit:
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
-        ).get_central()
+        ).create_central()
 
 
 class ControlUnit(BaseControlUnit):

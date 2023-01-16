@@ -58,7 +58,8 @@ HM_CLICK_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
         vol.Remove(ATTR_CHANNEL_NO): int,
         vol.Remove(ATTR_PARAMETER): str,
         vol.Remove(ATTR_VALUE): vol.Any(bool, int),
-    }, extra = vol.ALLOW_EXTRA
+    },
+    extra=vol.ALLOW_EXTRA,
 )
 HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
     {
@@ -66,7 +67,8 @@ HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
         vol.Required(EVENT_DATA_TITLE): str,
         vol.Required(EVENT_DATA_MESSAGE): str,
         vol.Required(EVENT_DATA_UNAVAILABLE): bool,
-    }, extra = vol.ALLOW_EXTRA
+    },
+    extra=vol.ALLOW_EXTRA,
 )
 HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
     {
@@ -75,7 +77,8 @@ HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
         vol.Required(EVENT_DATA_MESSAGE): str,
         vol.Required(EVENT_DATA_ERROR_VALUE): vol.Any(bool, int),
         vol.Required(EVENT_DATA_ERROR): bool,
-    }, extra = vol.ALLOW_EXTRA
+    },
+    extra=vol.ALLOW_EXTRA,
 )
 
 _LOGGER = logging.getLogger(__name__)
