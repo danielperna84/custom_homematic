@@ -24,7 +24,7 @@ from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
 from homeassistant.helpers.typing import StateType
 
 from .const import (
-    ATTR_DEVICE_NAME,
+    ATTR_NAME,
     CONF_SUBTYPE,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
@@ -48,7 +48,7 @@ HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=GenericHubEntity)
 BASE_EVENT_SCHEMA = HM_EVENT_SCHEMA.extend(
     {
         vol.Required(ATTR_DEVICE_ID): str,
-        vol.Required(ATTR_DEVICE_NAME): str,
+        vol.Required(ATTR_NAME): str,
     }
 )
 HM_CLICK_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
