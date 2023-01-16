@@ -60,8 +60,8 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
-    ATTR_DEVICE_NAME,
     ATTR_INSTANCE_NAME,
+    ATTR_NAME,
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
@@ -505,7 +505,7 @@ class ControlUnit(BaseControlUnit):
             if device_entry := self._async_get_device(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
                 event_data.update(
-                    {ATTR_DEVICE_ID: device_entry.id, ATTR_DEVICE_NAME: name}
+                    {ATTR_DEVICE_ID: device_entry.id, ATTR_NAME: name}
                 )
             if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
                 event_data = cleanup_click_event_data(event_data=event_data)
