@@ -1,6 +1,6 @@
-# Version 1.26.3 (2022-01-15)
+# Version 1.26.3 (2022-01-16)
 ### New features
-- 
+- Update color_conversion threshold (HmIP-BSL) by @guillempages
 
 ### All changes:
 - Bump hahomematic to 2023.1.4
@@ -9,7 +9,6 @@
   - Add more tests and test based refactorings
   - Reduce backend calls and logging during lost connection
   - Update color_conversion threshold by @guillempages
--
 
 # Version 1.26.2 (2022-01-13)
 ### New features
