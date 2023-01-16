@@ -10,6 +10,7 @@
   - Add more tests and test based refactorings
   - Reduce backend calls and logging during lost connection
   - Update color_conversion threshold by @guillempages
+- Fix name in homematic.key_press events
 
 # Version 1.26.2 (2022-01-13)
 ### New features
