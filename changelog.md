@@ -1,4 +1,5 @@
-# Version 1.26.3 (2022-01-16)
+# Version 1.26.4 (2022-01-16)
+
 ### New features
 - Update color_conversion threshold (HmIP-BSL) by @guillempages
 
