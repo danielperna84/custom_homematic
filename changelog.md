@@ -6,6 +6,7 @@
   - Remove LOWBAT from HM-LC-Sw1-DR
   - Sort lists in parameter_visibility.py
   - Replace custom entity config data structure by CustomConfig
+  - Allow multiple CustomConfigs for a hm device
 -
 
 # Version 1.26.5 (2022-01-16)
