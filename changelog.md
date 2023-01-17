@@ -1,3 +1,13 @@
+# Version 1.26.6 (2022-01-18)
+### New features
+
+### All changes:
+- Bump hahomematic to 2023.1.5
+  - Remove LOWBAT from HM-LC-Sw1-DR
+  - Sort lists in parameter_visibility.py
+  - Replace custom entity config data structure by CustomConfig
+-
+
 # Version 1.26.5 (2022-01-16)
 - Fix display of logbook events
 
