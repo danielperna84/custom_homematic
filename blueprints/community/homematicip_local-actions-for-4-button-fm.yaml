@@ -5,6 +5,7 @@ blueprint:
     to your configured minimum duration for long press. This can be configured in
     your CCU.
     by @andyboeh
+    v2022-12-05
   domain: automation
   source_url: https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community/homematicip_local-actions-for-4-button-fm.yaml
   input:
