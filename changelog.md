@@ -16,6 +16,7 @@
   - Add LED_STATUS to HM-OU-LED16
 - Fix: SysVars enabled (should be disabled) on initial setup
 - Add model and version to service information
+- Remove duplicate logbook entry for device_availability
 
 # Version 1.26.5 (2022-01-16)
 - Fix display of logbook events

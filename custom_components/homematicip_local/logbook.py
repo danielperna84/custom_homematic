@@ -67,24 +67,6 @@ def async_describe_events(
             LOGBOOK_ENTRY_MESSAGE: error_message,
         }
 
-    @callback
-    def async_describe_homematic_device_availability_event(
-        event: Event,
-    ) -> dict[str, str]:
-        """Describe Homematic(IP) Local logbook device availability event."""
-        if not is_valid_event(
-            event_data=event.data, schema=HM_DEVICE_AVAILABILITY_EVENT_SCHEMA
-        ):
-            return {}
-        unavailable = event.data[EVENT_DATA_UNAVAILABLE]
-
-        return {
-            LOGBOOK_ENTRY_NAME: event.data[ATTR_NAME],
-            LOGBOOK_ENTRY_MESSAGE: "is not reachable"
-            if unavailable
-            else "is reachable again",
-        }
-
     async_describe_event(
         HMIP_DOMAIN,
         HmEventType.KEYPRESS.value,
@@ -97,8 +79,3 @@ def async_describe_events(
         async_describe_homematic_device_error_event,
     )
 
-    async_describe_event(
-        HMIP_DOMAIN,
-        HmEventType.DEVICE_AVAILABILITY.value,
-        async_describe_homematic_device_availability_event,
-    )
