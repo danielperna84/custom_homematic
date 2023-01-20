@@ -7,7 +7,7 @@
   - Sort lists in parameter_visibility.py
   - Replace custom entity config data structure by CustomConfig
   - Allow multiple CustomConfigs for a hm device
--
+- Fix: SysVars enabled (should be disabled) on initial setup
 
 # Version 1.26.5 (2022-01-16)
 - Fix display of logbook events
