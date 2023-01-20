@@ -17,6 +17,7 @@
 - Fix: SysVars enabled (should be disabled) on initial setup
 - Add model and version to service information
 - Remove duplicate logbook entry for device_availability
+- Use old value of SYSVAR_SCAN_ENABLED in options flow
 
 # Version 1.26.5 (2022-01-16)
 - Fix display of logbook events

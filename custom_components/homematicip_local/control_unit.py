@@ -212,7 +212,11 @@ class ControlUnit(BaseControlUnit):
             self._central.callback_system_event = self._async_callback_system_event
             self._central.callback_ha_event = self._async_callback_ha_event
 
-        self._async_add_central_to_device_registry()
+    async def async_start_central(self) -> None:
+        """Start the central unit."""
+        if self._central:
+            await super().async_start_central()
+            self._async_add_central_to_device_registry()
 
     async def async_stop_central(self) -> None:
         """Stop the central unit."""
