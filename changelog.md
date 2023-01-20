@@ -1,4 +1,4 @@
-# Version 1.26.6 (2022-01-18)
+# Version 1.27.0 (2022-01-20)
 ### New features
 - Add LED_STATUS to HM-OU-LED16
 
