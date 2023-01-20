@@ -253,7 +253,8 @@ class ControlUnit(BaseControlUnit):
                 )
             },
             manufacturer=MANUFACTURER_EQ3,
-            model="CU",
+            model=self.central.model,
+            sw_version=self.central.version,
             name=self.central.name,
             entry_type=DeviceEntryType.SERVICE,
             configuration_url=self.central.central_url,

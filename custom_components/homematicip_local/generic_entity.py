@@ -263,15 +263,7 @@ class HaHomematicGenericHubEntity(Entity):
         self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         if entity_description := get_entity_description(hm_entity=hm_hub_entity):
             self.entity_description = entity_description
-            if entity_description.name is None:
-                self._attr_name = hm_hub_entity.name
-            if entity_description.entity_registry_enabled_default:
-                self._attr_entity_registry_enabled_default = (
-                    hm_hub_entity.enabled_default
-                )
-        else:
-            self._attr_name = hm_hub_entity.name
-            self._attr_entity_registry_enabled_default = hm_hub_entity.enabled_default
+        self._attr_name = hm_hub_entity.name
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property

@@ -1,5 +1,6 @@
 # Version 1.26.6 (2022-01-18)
 ### New features
+- Add LED_STATUS to HM-OU-LED16
 
 ### All changes:
 - Bump hahomematic to 2023.1.5
@@ -7,7 +8,14 @@
   - Sort lists in parameter_visibility.py
   - Replace custom entity config data structure by CustomConfig
   - Allow multiple CustomConfigs for a hm device
--
+  - Add ExtendedConfig to custom entities
+  - Cleanup test imports
+  - Increase the line length to 99
+  - Add ExtendedConfig and use for additional_entities
+  - Remove obsolete ED_ADDITIONAL_ENTITIES_BY_DEVICE_TYPE from entity_definition
+  - Add LED_STATUS to HM-OU-LED16
+- Fix: SysVars enabled (should be disabled) on initial setup
+- Add model and version to service information
 
 # Version 1.26.5 (2022-01-16)
 - Fix display of logbook events
