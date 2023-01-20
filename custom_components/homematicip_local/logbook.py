@@ -16,11 +16,9 @@ from .const import (
     DOMAIN as HMIP_DOMAIN,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
-    EVENT_DATA_UNAVAILABLE,
 )
 from .helpers import (
     HM_CLICK_EVENT_SCHEMA,
-    HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
     HM_DEVICE_ERROR_EVENT_SCHEMA,
     is_valid_event,
 )
@@ -78,4 +76,3 @@ def async_describe_events(
         HmEventType.DEVICE_ERROR.value,
         async_describe_homematic_device_error_event,
     )
-

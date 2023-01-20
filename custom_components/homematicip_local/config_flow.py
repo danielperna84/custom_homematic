@@ -80,23 +80,22 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(ATTR_HOST, default=data.get(ATTR_HOST)): cv.string,
             vol.Required(ATTR_USERNAME, default=data.get(ATTR_USERNAME)): cv.string,
             vol.Required(ATTR_PASSWORD, default=data.get(ATTR_PASSWORD)): cv.string,
+            vol.Required(ATTR_TLS, default=data.get(ATTR_TLS, DEFAULT_TLS)): cv.boolean,
             vol.Required(
-                ATTR_TLS, default=data.get(ATTR_TLS) or DEFAULT_TLS
-            ): cv.boolean,
-            vol.Required(
-                ATTR_VERIFY_TLS, default=data.get(ATTR_VERIFY_TLS) or False
+                ATTR_VERIFY_TLS, default=data.get(ATTR_VERIFY_TLS, False)
             ): cv.boolean,
             vol.Optional(ATTR_CALLBACK_HOST): cv.string,
             vol.Optional(ATTR_CALLBACK_PORT): cv.port,
             vol.Optional(ATTR_JSON_PORT): cv.port,
             vol.Required(
                 ATTR_SYSVAR_SCAN_ENABLED,
-                default=data.get(ATTR_SYSVAR_SCAN_ENABLED) or True,
+                default=data.get(ATTR_SYSVAR_SCAN_ENABLED, True),
             ): cv.boolean,
             vol.Required(
                 ATTR_SYSVAR_SCAN_INTERVAL,
-                default=data.get(ATTR_SYSVAR_SCAN_INTERVAL)
-                or DEFAULT_SYSVAR_SCAN_INTERVAL,
+                default=data.get(
+                    ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+                ),
             ): vol.All(vol.Coerce(int), vol.Range(min=5)),
         }
     )
