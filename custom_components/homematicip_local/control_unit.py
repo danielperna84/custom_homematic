@@ -817,10 +817,9 @@ def get_cu_by_interface_id(
     return None
 
 
-def get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+def get_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     """Return the homematic device."""
-    device_registry = dr.async_get(hass)
-    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
+    device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
     if not device_entry:
         return None
     if (
@@ -835,4 +834,13 @@ def get_device(hass: HomeAssistant, device_id: str) -> HmDevice | None:
 
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         return control_unit.central.get_device(device_address=device_address)
+    return None
+
+
+def get_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
+    """Return the homematic device."""
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
+        if hm_device := control_unit.central.get_device(device_address=device_address):
+            return hm_device
     return None

@@ -55,10 +55,17 @@ force_device_availability:
     device_id:
       name: Device
       description: Select a device
-      required: true
+      required: false
       selector:
         device:
           integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
 
 set_variable_value:
   name: Set variable value
@@ -93,10 +100,17 @@ set_device_value:
     device_id:
       name: Device
       description: Select a device
-      required: true
+      required: false
       selector:
         device:
           integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
     channel:
       name: Channel
       description: Channel for calling a parameter.
@@ -229,10 +243,17 @@ put_paramset:
     device_id:
       name: Device
       description: Select a device
-      required: true
+      required: false
       selector:
         device:
           integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
     channel:
       name: Channel
       description: Channel for calling a paramset.
