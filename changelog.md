@@ -1,14 +1,15 @@
 # Version 1.27.1 (2022-01-XX)
 ### New features
-- Add additional parameter device_address to services
+- Add additional parameter `device_address` to services
 
 ### All changes:
 - Bump hahomematic to 2023.1.6
   - Add a new custom entity type for windows drive
-- Add additional parameter device_address to services:
-  - force_device_availability
-  - set_device_value
-  - put_paramset
+- Add additional parameter `device_address` to services:
+  - `force_device_availability`
+  - `set_device_value`
+  - `put_paramset`
+- Deprecate service `set_device_value_raw`. Will be removed with HA 2023-03. Seitch to service `set_device_value` instead.
 
 # Version 1.27.0 (2022-01-20)
 ### New features
