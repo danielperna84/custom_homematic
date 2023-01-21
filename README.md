@@ -462,10 +462,13 @@ To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall 
 3. Click the plus icon below `Condition: If...` and press the button `Device selection`
 4. Select one of the device's channels you need (1-2 / 1-6 for WRC2 / WRC6 and 2-3 for SPDR)
 5. Select short or long key press
-6. Save the program with the `OK` button
-7. Trigger the program by pressing the button as configured in step 5. Your device might indicate success via a green LED or similar. When you select the device in `Status and control` > `Devices` on the CCU, the `Last Modified` field should no longer be empty
-8. When your channel is working now, you can edit it to select the other channels one by one
-9. At the end, you can delete this program from the CCU
+6. Repeat Steps 3 - 5 to add all needed channels (the logic AND / OR is irrelevant) 
+7. Save the program with the `OK` button
+8. Trigger the program by pressing the button as configured in step 5. Your device might indicate success via a green LED or similar. When you select the device in `Status and control` > `Devices` on the CCU, the `Last Modified` field should no longer be empty
+8. When your channels are working now, you can set the program to "inactive". Don't delete the program!
+
+Hint: To deactivate the event for one channel, remove that channel from the programm
+Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.     
 
 ## Examples in YAML
 
