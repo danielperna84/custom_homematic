@@ -455,7 +455,7 @@ data:
 
 ### Events for Homematic(IP) devices
 
-To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall switch) or SPDR (passage sensor) or the KRC4 (key ring remote control) or HM-PBI-4-FM (radio button interface) you have to temporary create an empty program for each channel in the CCU:
+To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall switch) or SPDR (passage sensor) or the KRC4 (key ring remote control) or HM-PBI-4-FM (radio button interface) you have to create a program in the CCU:
 
 1. In the menu of your CCU's admin panel go to `Programs and connections` > `Programs & CCU connection`
 2. Go to `New` in the footer menu
