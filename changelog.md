@@ -1,3 +1,11 @@
+# Version 1.27.1 (2022-01-XX)
+### New features
+- 
+
+### All changes:
+- Bump hahomematic to 2023.1.6
+ - Also negative values mean closed for covers
+
 # Version 1.27.0 (2022-01-20)
 ### New features
 - Add LED_STATUS to HM-OU-LED16
