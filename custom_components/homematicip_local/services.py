@@ -13,9 +13,10 @@ from hahomematic.const import (
     ATTR_VALUE,
     HmForcedDeviceAvailability,
 )
+from hahomematic.device import HmDevice
 import voluptuous as vol
 
-from homeassistant.const import ATTR_MODE, ATTR_TIME
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
@@ -33,14 +34,19 @@ from .const import (
     CONTROL_UNITS,
     DOMAIN,
 )
-from .control_unit import ControlUnit, get_cu_by_interface_id, get_device
+from .control_unit import (
+    ControlUnit,
+    get_cu_by_interface_id,
+    get_device_by_address,
+    get_device_by_id,
+)
 from .helpers import get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
 ATTR_CHANNEL = "channel"
 ATTR_ENTRY_ID = "entry_id"
-ATTR_DEVICE_ID = "device_id"
+ATTR_DEVICE_ADDRESS = "device_address"
 DEFAULT_CHANNEL = 1
 
 SERVICE_CLEAR_CACHE = "clear_cache"
@@ -67,6 +73,15 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_SET_VARIABLE_VALUE,
 ]
 
+
+BASE_SCHEMA_DEVICE = vol.Schema(
+    {
+        vol.Optional(ATTR_DEVICE_ID): cv.string,
+        vol.Optional(ATTR_DEVICE_ADDRESS): cv.string,
+    }
+)
+
+
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
     {
         vol.Required(ATTR_ENTRY_ID): cv.string,
@@ -91,10 +106,10 @@ SCHEMA_SERVICE_FETCH_SYSTEM_VARIABLES = vol.Schema(
     }
 )
 
-SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.Schema(
-    {
-        vol.Required(ATTR_DEVICE_ID): cv.string,
-    }
+SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.All(
+    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE,
 )
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
@@ -114,17 +129,20 @@ SCHEMA_SERVICE_SET_INSTALL_MODE = vol.Schema(
     }
 )
 
-SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.Schema(
-    {
-        vol.Required(ATTR_DEVICE_ID): cv.string,
-        vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
-        vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
-        vol.Required(ATTR_VALUE): cv.match_all,
-        vol.Optional(ATTR_VALUE_TYPE): vol.In(
-            ["boolean", "dateTime.iso8601", "double", "int", "string"]
-        ),
-        vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
-    }
+SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
+    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE.extend(
+        {
+            vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
+            vol.Required(ATTR_VALUE): cv.match_all,
+            vol.Optional(ATTR_VALUE_TYPE): vol.In(
+                ["boolean", "dateTime.iso8601", "double", "int", "string"]
+            ),
+            vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
+        }
+    ),
 )
 
 SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW = vol.Schema(
@@ -140,14 +158,17 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW = vol.Schema(
     }
 )
 
-SCHEMA_SERVICE_PUT_PARAMSET = vol.Schema(
-    {
-        vol.Required(ATTR_DEVICE_ID): cv.string,
-        vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
-        vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
-        vol.Required(ATTR_PARAMSET): dict,
-        vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
-    }
+SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
+    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE.extend(
+        {
+            vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
+            vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+            vol.Required(ATTR_PARAMSET): dict,
+            vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
+        }
+    ),
 )
 
 
@@ -294,9 +315,7 @@ async def _async_service_export_device_definition(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
-    device_id = service.data[ATTR_DEVICE_ID]
-
-    if hm_device := get_device(hass=hass, device_id=device_id):
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.export_device_definition()
 
         _LOGGER.debug(
@@ -310,13 +329,10 @@ async def _async_service_force_device_availability(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to force device availability on a Homematic(IP) Local devices."""
-    device_id = service.data[ATTR_DEVICE_ID]
-
-    if hm_device := get_device(hass=hass, device_id=device_id):
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         hm_device.set_forced_availability(
             forced_availability=HmForcedDeviceAvailability.FORCE_TRUE
         )
-
         _LOGGER.debug(
             "Called force_device_availability: %s, %s",
             hm_device.name,
@@ -340,38 +356,33 @@ async def _async_service_set_device_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
-    device_id = service.data[ATTR_DEVICE_ID]
-    channel = service.data[ATTR_CHANNEL]
+    channel_no = service.data[ATTR_CHANNEL]
     parameter = service.data[ATTR_PARAMETER]
     value = service.data[ATTR_VALUE]
     value_type = service.data.get(ATTR_VALUE_TYPE)
     rx_mode = service.data.get(ATTR_RX_MODE)
 
-    if (
-        address_data := _get_interface_address(
-            hass=hass, device_id=device_id, channel=channel
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+        await _call_set_device_value(
+            hass=hass,
+            interface_id=hm_device.interface_id,
+            channel_address=f"{hm_device.device_address}:{channel_no}",
+            parameter=parameter,
+            value=value,
+            value_type=value_type,
+            rx_mode=rx_mode,
         )
-    ) is None:
-        return None
-
-    interface_id: str = address_data[0]
-    channel_address: str = address_data[1]
-
-    await _call_set_device_value(
-        hass=hass,
-        interface_id=interface_id,
-        channel_address=channel_address,
-        parameter=parameter,
-        value=value,
-        value_type=value_type,
-        rx_mode=rx_mode,
-    )
 
 
 async def _async_service_set_device_value_raw(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
+    _LOGGER.warning(
+        "The service %s is deprecated in favor of service %s"
+        " Service calls will still work for now but the service will be removed in"
+        " HA 2023-03", SERVICE_SET_DEVICE_VALUE_RAW, SERVICE_SET_DEVICE_VALUE
+    )
     interface_id = service.data[ATTR_INTERFACE_ID]
     channel_address = service.data[ATTR_ADDRESS]
     parameter = service.data[ATTR_PARAMETER]
@@ -470,8 +481,7 @@ async def _async_service_put_paramset(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call the putParamset method on a Homematic(IP) Local connection."""
-    device_id = service.data[ATTR_DEVICE_ID]
-    channel = service.data.get(ATTR_CHANNEL)
+    channel_no = service.data.get(ATTR_CHANNEL)
     paramset_key = service.data[ATTR_PARAMSET_KEY]
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
@@ -479,26 +489,17 @@ async def _async_service_put_paramset(
     paramset = dict(service.data[ATTR_PARAMSET])
     rx_mode = service.data.get(ATTR_RX_MODE)
 
-    if (
-        address_data := _get_interface_address(
-            hass=hass, device_id=device_id, channel=channel
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+        interface_id = hm_device.interface_id
+        address = f"{hm_device.device_address}:{channel_no}"
+        _LOGGER.debug(
+            "Calling putParamset: %s, %s, %s, %s, %s",
+            interface_id,
+            address,
+            paramset_key,
+            paramset,
+            rx_mode,
         )
-    ) is None:
-        return None
-
-    interface_id: str = address_data[0]
-    address: str = address_data[1]
-
-    _LOGGER.debug(
-        "Calling putParamset: %s, %s, %s, %s, %s",
-        interface_id,
-        address,
-        paramset_key,
-        paramset,
-        rx_mode,
-    )
-
-    if interface_id and address:
         if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
             await control_unit.central.put_paramset(
                 interface_id=interface_id,
@@ -538,3 +539,16 @@ def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
         _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
         return None
     return control_unit
+
+
+def _get_hm_device_by_service_data(
+    hass: HomeAssistant, service: ServiceCall
+) -> HmDevice | None:
+    """Service to force device availability on a Homematic(IP) Local devices."""
+    hm_device: HmDevice | None = None
+    if device_id := service.data.get(ATTR_DEVICE_ID):
+        hm_device = get_device_by_id(hass=hass, device_id=device_id)
+    elif device_address := service.data.get(ATTR_DEVICE_ADDRESS):
+        hm_device = get_device_by_address(hass=hass, device_address=device_address)
+
+    return hm_device

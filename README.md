@@ -312,6 +312,7 @@ Call to `putParamset` in the XML-RPC interface.
 Set a device parameter via the XML-RPC interface. Preferred when using the UI. Works with device selection.
 
 ### `homematicip_local.set_device_value_raw`
+_DEPRECATED_: Service will be removed with HA 2023-03. Use service `homematicip_local.set_device_value` instead.
 
 Set a device parameter via the XML-RPC interface. Works with channel address.
 
