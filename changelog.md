@@ -5,6 +5,7 @@
 ### All changes:
 - Bump hahomematic to 2023.1.6
   - Add a new custom entity type for windows drive
+  - Return True if sending service calls succeed
 - Add additional parameter `device_address` to services:
   - `force_device_availability`
   - `set_device_value`
