@@ -3,9 +3,10 @@
 - Add additional parameter `device_address` to services
 
 ### All changes:
-- Bump hahomematic to 2023.1.6
+- Bump hahomematic to 2023.1.7
   - Add a new custom entity type for windows drive
   - Return True if sending service calls succeed
+  - Aggregate calls to backend
 - Add additional parameter `device_address` to services:
   - `force_device_availability`
   - `set_device_value`
