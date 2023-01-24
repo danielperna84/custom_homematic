@@ -7,11 +7,13 @@
   - Add a new custom entity type for windows drive
   - Return True if sending service calls succeed
   - Aggregate calls to backend
+  - Fix HmIP-MOD-TM: inverted direction
 - Add additional parameter `device_address` to services:
   - `force_device_availability`
   - `set_device_value`
   - `put_paramset`
 - Deprecate service `set_device_value_raw`. Will be removed with HA 2023-03. Seitch to service `set_device_value` instead.
+- Follow garage changes from backend
 
 # Version 1.27.0 (2022-01-20)
 ### New features
