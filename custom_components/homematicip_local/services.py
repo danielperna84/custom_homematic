@@ -381,7 +381,9 @@ async def _async_service_set_device_value_raw(
     _LOGGER.warning(
         "The service %s is deprecated in favor of service %s"
         " Service calls will still work for now but the service will be removed in"
-        " HA 2023-03", SERVICE_SET_DEVICE_VALUE_RAW, SERVICE_SET_DEVICE_VALUE
+        " HA 2023-03",
+        SERVICE_SET_DEVICE_VALUE_RAW,
+        SERVICE_SET_DEVICE_VALUE,
     )
     interface_id = service.data[ATTR_INTERFACE_ID]
     channel_address = service.data[ATTR_ADDRESS]

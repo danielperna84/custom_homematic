@@ -5,7 +5,7 @@ import logging
 from typing import Any, TypeVar, Union
 
 from hahomematic.const import HmPlatform
-from hahomematic.custom_platforms.cover import CeBlind, CeCover, CeGarage, CeIpBlind
+from hahomematic.custom_platforms.cover import BaseGarage, CeBlind, CeCover, CeIpBlind
 
 from homeassistant.components.cover import (
     ATTR_CURRENT_POSITION,
@@ -26,7 +26,7 @@ from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-HmBaseCoverEntity = Union[CeCover, CeGarage]
+HmBaseCoverEntity = Union[CeCover, BaseGarage]
 HmGenericCover = TypeVar("HmGenericCover", bound=HmBaseCoverEntity)
 
 
@@ -56,7 +56,7 @@ async def async_setup_entry(
                 entities.append(HaHomematicBlind(control_unit, hm_entity))
             elif isinstance(hm_entity, CeCover):
                 entities.append(HaHomematicCover(control_unit, hm_entity))
-            elif isinstance(hm_entity, CeGarage):
+            elif isinstance(hm_entity, BaseGarage):
                 entities.append(HaHomematicGarage(control_unit, hm_entity))
 
         if entities:
@@ -167,5 +167,5 @@ class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
         await self._hm_entity.stop_cover_tilt()
 
 
-class HaHomematicGarage(HaHomematicBaseCover[CeGarage]):
+class HaHomematicGarage(HaHomematicBaseCover[BaseGarage]):
     """Representation of the HomematicIP garage entity."""
