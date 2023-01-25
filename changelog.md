@@ -1,3 +1,11 @@
+# Version 1.27.2 (2022-01-XX)
+### New features
+- 
+
+### All changes:
+- Bump hahomematic to 2023.1.8
+- 
+
 # Version 1.27.1 (2022-01-XX)
 ### New features
 - Add additional parameter `device_address` to services
