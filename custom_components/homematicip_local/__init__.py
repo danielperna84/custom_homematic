@@ -51,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         default_port=default_callback_port,
     ).async_get_control_unit()
     hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id] = control
-    hass.config_entries.async_setup_platforms(config_entry, HMIP_LOCAL_PLATFORMS)
+    await hass.config_entries.async_forward_entry_setups(config_entry, HMIP_LOCAL_PLATFORMS)
     await control.async_start_central()
     await async_setup_services(hass)
 
