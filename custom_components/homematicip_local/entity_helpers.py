@@ -108,6 +108,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "CONCENTRATION": HmSensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
+        native_precision=0,
         device_class=SensorDeviceClass.CO2,
         state_class=SensorStateClass.MEASUREMENT,
     ),
