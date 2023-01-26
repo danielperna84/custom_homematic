@@ -163,7 +163,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
-        device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     ("HUMIDITY", "ACTUAL_HUMIDITY"): HmSensorEntityDescription(
