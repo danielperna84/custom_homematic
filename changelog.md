@@ -1,6 +1,4 @@
 # Version 1.28.0 (2022-01-XX)
-### New features:
--
 
 ### All changes:
 - Bump hahomematic to 2023.1.8
@@ -16,8 +14,8 @@
 - Remove device class `GAS` from GAS_POWER (limitation of HA)
 - Replace `async_setup_platforms` by `async_forward_entry_setups` in `__init__.py`
 - Fix put_paramset for HM MASTER paramset
-- 
-# Version 1.27.1 (2022-01-24)
+
+# Version 1.27.1 (2022-01-XX)
 ### New features
 - Add additional parameter `device_address` to services
 
