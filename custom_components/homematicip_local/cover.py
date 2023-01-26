@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
 from hahomematic.custom_platforms.cover import BaseGarage, CeBlind, CeCover, CeIpBlind
@@ -26,7 +26,7 @@ from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-HmBaseCoverEntity = Union[CeCover, BaseGarage]
+HmBaseCoverEntity = CeCover | BaseGarage
 HmGenericCover = TypeVar("HmGenericCover", bound=HmBaseCoverEntity)
 
 
@@ -136,7 +136,7 @@ class HaHomematicCover(HaHomematicBaseCover[CeCover]):
     """Representation of the HomematicIP cover entity."""
 
 
-class HaHomematicBlind(HaHomematicBaseCover[Union[CeBlind, CeIpBlind]]):
+class HaHomematicBlind(HaHomematicBaseCover[CeBlind | CeIpBlind]):
     """Representation of the HomematicIP blind entity."""
 
     @property

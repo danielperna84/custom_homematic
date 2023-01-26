@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Union
+from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.custom_platforms.switch import CeSwitch
@@ -99,7 +99,7 @@ async def async_setup_entry(
 
 
 class HaHomematicSwitch(
-    HaHomematicGenericRestoreEntity[Union[CeSwitch, HmSwitch]], SwitchEntity
+    HaHomematicGenericRestoreEntity[CeSwitch | HmSwitch], SwitchEntity
 ):
     """Representation of the HomematicIP switch entity."""
 
