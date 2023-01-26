@@ -493,7 +493,11 @@ async def _async_service_put_paramset(
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         interface_id = hm_device.interface_id
-        address = f"{hm_device.device_address}:{channel_no}"
+        address = (
+            hm_device.device_address
+            if channel_no is None
+            else f"{hm_device.device_address}:{channel_no}"
+        )
         _LOGGER.debug(
             "Calling putParamset: %s, %s, %s, %s, %s",
             interface_id,
@@ -550,7 +554,21 @@ def _get_hm_device_by_service_data(
     hm_device: HmDevice | None = None
     if device_id := service.data.get(ATTR_DEVICE_ID):
         hm_device = get_device_by_id(hass=hass, device_id=device_id)
+        if not hm_device:
+            _LOGGER.warning(
+                "No device found by device_id %s for service %s.%s",
+                device_id,
+                service.domain,
+                service.service,
+            )
     elif device_address := service.data.get(ATTR_DEVICE_ADDRESS):
         hm_device = get_device_by_address(hass=hass, device_address=device_address)
+        if not hm_device:
+            _LOGGER.warning(
+                "No device found by device_address %s for service %s.%s",
+                device_address,
+                service.domain,
+                service.service,
+            )
 
     return hm_device
