@@ -8,6 +8,7 @@
   - Remove to int converter for HmIP-SCTH230 `CONCENTRATION`
 - Add `native_precision` (=0) for `CONCENTRATION`
 - Remove old-style union syntax
+- Limit services to own integration
 
 # Version 1.27.2 (2022-01-26)
 ### All changes:

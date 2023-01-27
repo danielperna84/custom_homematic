@@ -289,6 +289,7 @@ enable_away_mode_by_calendar:
   target:
     entity:
       domain: climate
+      integration: homematicip_local
   fields:
     start:
       name: Start time
@@ -322,6 +323,7 @@ enable_away_mode_by_duration:
   target:
     entity:
       domain: climate
+      integration: homematicip_local
   fields:
     hours:
       name: Hours
@@ -352,12 +354,14 @@ disable_away_mode:
   target:
     entity:
       domain: climate
+      integration: homematicip_local
 
 turn_on_siren:
   description: Turn siren on.
   target:
     entity:
       domain: siren
+      integration: homematicip_local
   fields:
     tone:
       description: The tone to emit when turning the siren on.
@@ -383,6 +387,7 @@ light_set_on_time:
   target:
     entity:
       domain: light
+      integration: homematicip_local
   fields:
     on_time:
       name: On Time
@@ -400,6 +405,7 @@ switch_set_on_time:
   target:
     entity:
       domain: switch
+      integration: homematicip_local
   fields:
     on_time:
       name: On Time
