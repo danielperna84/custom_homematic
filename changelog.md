@@ -4,10 +4,12 @@
 - Bump hahomematic to 2023.1.8
   - Remove `VALVE_STATE` from HmIPW-FALMOT-C12
   - Remove support for python 3.9
-  - Remove old-style union syntax
+  - Replace old-style union syntax
   - Remove to int converter for HmIP-SCTH230 `CONCENTRATION`
+  - Remove set_value, put_paramset from central
+  - Remove put_paramset from custom_entity
 - Add `native_precision` (=0) for `CONCENTRATION`
-- Remove old-style union syntax
+- Replace old-style union syntax
 - Limit services to own integration
 
 # Version 1.27.2 (2022-01-26)
