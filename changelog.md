@@ -1,4 +1,18 @@
-# Version 1.27.2 (2022-01-XX)
+# Version 1.28.0 (2022-02-01)
+
+### All changes:
+- Bump hahomematic to 2023.1.8
+  - Remove `VALVE_STATE` from HmIPW-FALMOT-C12
+  - Remove support for python 3.9
+  - Replace old-style union syntax
+  - Remove to int converter for HmIP-SCTH230 `CONCENTRATION`
+  - Remove set_value, put_paramset from central
+  - Remove put_paramset from custom_entity
+- Add `native_precision` (=0) for `CONCENTRATION`
+- Replace old-style union syntax
+- Limit services to own integration
+
+# Version 1.27.2 (2022-01-26)
 ### All changes:
 - Remove device class `GAS` from GAS_POWER (limitation of HA)
 - Replace `async_setup_platforms` by `async_forward_entry_setups` in `__init__.py`

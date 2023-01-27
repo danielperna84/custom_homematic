@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import Any
 
 from hahomematic.const import (
     ATTR_ADDRESS,
@@ -11,9 +10,11 @@ from hahomematic.const import (
     ATTR_NAME,
     ATTR_PARAMETER,
     ATTR_VALUE,
+    PARAMSET_KEY_VALUES,
     HmForcedDeviceAvailability,
 )
 from hahomematic.device import HmDevice
+from hahomematic.helpers import to_bool
 import voluptuous as vol
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
@@ -357,21 +358,11 @@ async def _async_service_set_device_value(
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
     channel_no = service.data[ATTR_CHANNEL]
-    parameter = service.data[ATTR_PARAMETER]
-    value = service.data[ATTR_VALUE]
-    value_type = service.data.get(ATTR_VALUE_TYPE)
-    rx_mode = service.data.get(ATTR_RX_MODE)
-
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
-        await _call_set_device_value(
-            hass=hass,
-            interface_id=hm_device.interface_id,
-            channel_address=f"{hm_device.device_address}:{channel_no}",
-            parameter=parameter,
-            value=value,
-            value_type=value_type,
-            rx_mode=rx_mode,
-        )
+    await _call_set_device_value(
+        hass=hass,
+        channel_no=channel_no,
+        service=service,
+    )
 
 
 async def _async_service_set_device_value_raw(
@@ -385,34 +376,27 @@ async def _async_service_set_device_value_raw(
         SERVICE_SET_DEVICE_VALUE_RAW,
         SERVICE_SET_DEVICE_VALUE,
     )
-    interface_id = service.data[ATTR_INTERFACE_ID]
-    channel_address = service.data[ATTR_ADDRESS]
-    parameter = service.data[ATTR_PARAMETER]
-    value = service.data[ATTR_VALUE]
-    value_type = service.data.get(ATTR_VALUE_TYPE)
-    rx_mode = service.data.get(ATTR_RX_MODE)
+    device_address, channel_no = service.data[ATTR_ADDRESS].split(":")
+    new_service_data = dict(service.data)
+    new_service_data["device_address"] = device_address
+    service.data = new_service_data  # type: ignore[assignment]
 
     await _call_set_device_value(
         hass=hass,
-        interface_id=interface_id,
-        channel_address=channel_address,
-        parameter=parameter,
-        value=value,
-        value_type=value_type,
-        rx_mode=rx_mode,
+        channel_no=channel_no,
+        service=service,
     )
 
 
 async def _call_set_device_value(
-    hass: HomeAssistant,
-    interface_id: str,
-    channel_address: str,
-    parameter: str,
-    value: Any,
-    value_type: str | None,
-    rx_mode: str | None = None,
-) -> None:
+    hass: HomeAssistant, channel_no: int, service: ServiceCall
+) -> bool:
     """Call the set_value on the backend."""
+
+    parameter = service.data[ATTR_PARAMETER]
+    value = service.data[ATTR_VALUE]
+    value_type = service.data.get(ATTR_VALUE_TYPE)
+    rx_mode = service.data.get(ATTR_RX_MODE)
     if value_type:
         # Convert value into correct XML-RPC Type.
         # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
@@ -421,31 +405,22 @@ async def _call_set_device_value(
         elif value_type == "double":
             value = float(value)
         elif value_type == "boolean":
-            value = bool(value)
+            value = to_bool(value)
         elif value_type == "dateTime.iso8601":
             value = datetime.strptime(value, "%Y%m%dT%H:%M:%S")
         else:
             # Default is 'string'
             value = str(value)
 
-    _LOGGER.debug(
-        "Calling setValue: %s, %s, %s, %s, %s",
-        interface_id,
-        channel_address,
-        parameter,
-        value,
-        rx_mode,
-    )
-
-    if interface_id and channel_address:
-        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-            await control_unit.central.set_value(
-                interface_id=interface_id,
-                channel_address=channel_address,
-                parameter=parameter,
-                value=value,
-                rx_mode=rx_mode,
-            )
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+        return await hm_device.client.set_value(
+            channel_address=f"{hm_device.device_address}:{channel_no}",
+            paramset_key=PARAMSET_KEY_VALUES,
+            parameter=parameter,
+            value=value,
+            rx_mode=rx_mode,
+        )
+    return False
 
 
 async def _async_service_set_install_mode(
@@ -488,32 +463,21 @@ async def _async_service_put_paramset(
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
-    paramset = dict(service.data[ATTR_PARAMSET])
+    value = dict(service.data[ATTR_PARAMSET])
     rx_mode = service.data.get(ATTR_RX_MODE)
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
-        interface_id = hm_device.interface_id
         address = (
-            hm_device.device_address
-            if channel_no is None
-            else f"{hm_device.device_address}:{channel_no}"
+            f"{hm_device.device_address}:{channel_no}"
+            if channel_no
+            else hm_device.device_address
         )
-        _LOGGER.debug(
-            "Calling putParamset: %s, %s, %s, %s, %s",
-            interface_id,
-            address,
-            paramset_key,
-            paramset,
-            rx_mode,
+        await hm_device.client.put_paramset(
+            address=address,
+            paramset_key=paramset_key,
+            value=value,
+            rx_mode=rx_mode,
         )
-        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-            await control_unit.central.put_paramset(
-                interface_id=interface_id,
-                address=address,
-                paramset_key=paramset_key,
-                value=paramset,
-                rx_mode=rx_mode,
-            )
 
 
 def _get_interface_address(
