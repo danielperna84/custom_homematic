@@ -1,4 +1,4 @@
-# Version 1.28.0 (2022-01-XX)
+# Version 1.28.0 (2022-02-01)
 
 ### All changes:
 - Bump hahomematic to 2023.1.8
