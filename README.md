@@ -75,7 +75,9 @@ This integration always passes credentials to the HomeMatic hub when connecting.
 For CCU and decendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
  
 The account used for communication is required to have admin privileges on your HomeMatic hub.
-It is imporant to note though, that special characters (like `#`) within your credentials may break the possibility to authenticate. 
+It is imporant to note though, that special characters within your credentials may break the possibility to authenticate. 
+Allowed characters for a CCU password are: `A-Z`, `a-z`, `0-9`, and `.!$():;#-`.
+The CCU WebUI also supports `ÄäÖöÜüß`, but these characters are not supported by the XmlRPC servers.
 
 If you are using Homegear and have not set up authentication, please enter dummy-data to complete the configuration flow.
 
