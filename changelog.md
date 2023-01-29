@@ -2,12 +2,16 @@
 
 ### All changes:
 - Bump hahomematic to 2023.1.8
+  - Ensure the signal handler gets called at most once by @mtdcr
+  - Fix stop central, if another central is active on the same XmlRPC server
+  - JsonRpcAioHttpClient: Allow empty password by @mtdcr
   - Remove `VALVE_STATE` from HmIPW-FALMOT-C12
-  - Remove support for python 3.9
-  - Replace old-style union syntax
-  - Remove to int converter for HmIP-SCTH230 `CONCENTRATION`
-  - Remove set_value, put_paramset from central
   - Remove put_paramset from custom_entity
+  - Remove set_value, put_paramset from central
+  - Remove support for python 3.9
+  - Remove to int converter for HmIP-SCTH230 `CONCENTRATION`
+  - Replace old-style union syntax
+  - Validate password with regex (warning only!)
 - Add `native_precision` (=0) for `CONCENTRATION`
 - Replace old-style union syntax
 - Limit services to own integration
