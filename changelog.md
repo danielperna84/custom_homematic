@@ -13,8 +13,9 @@
   - Replace old-style union syntax
   - Validate password with regex (warning only!)
 - Add `native_precision` (=0) for `CONCENTRATION`
-- Replace old-style union syntax
+- Check password on config flow validation
 - Limit services to own integration
+- Replace old-style union syntax
 
 # Version 1.27.2 (2022-01-26)
 ### All changes:

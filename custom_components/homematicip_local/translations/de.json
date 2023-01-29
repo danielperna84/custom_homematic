@@ -36,6 +36,7 @@
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_auth": "Ung\u00fcltige Authentifizierung",
+      "invalid_password": "Ung\u00fcltiges Passwort",
       "unknown": "Unerwarteter Fehler"
     },
     "abort": {
@@ -76,6 +77,7 @@
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_auth": "Ung\u00fcltige Authentifizierung",
+      "invalid_password": "Ung\u00fcltiges Passwort",
       "unknown": "Unerwarteter Fehler"
     },
     "abort": {
