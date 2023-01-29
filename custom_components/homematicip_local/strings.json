@@ -36,6 +36,7 @@
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_auth": "Invalid authentication",
+      "invalid_password": "Invalid password",
       "unknown": "Unexpected error"
     },
     "abort": {
@@ -76,6 +77,7 @@
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_auth": "Invalid authentication",
+      "invalid_password": "Invalid password",
       "unknown": "Unexpected error"
     },
     "abort": {

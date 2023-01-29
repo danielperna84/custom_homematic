@@ -36,6 +36,7 @@
     "error": {
       "cannot_connect": "Kon niet verbinden",
       "invalid_auth": "Ongeldige authenticatie",
+      "invalid_password": "Ongeldige password",
       "unknown": "Onverwachte fout"
     },
     "abort": {
@@ -76,6 +77,7 @@
     "error": {
       "cannot_connect": "Kon niet verbinden",
       "invalid_auth": "Ongeldige authenticatie",
+      "invalid_password": "Ongeldige password",
       "unknown": "Onverwachte fout"
     },
     "abort": {

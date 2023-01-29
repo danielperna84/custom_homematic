@@ -33,6 +33,7 @@ from hahomematic.const import (
     IF_VIRTUAL_DEVICES_TLS_PORT,
 )
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
+from hahomematic.helpers import check_password
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
@@ -166,10 +167,12 @@ async def _async_validate_config_and_get_serial(
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     try:
+        if not check_password(control_config.data.get(ATTR_PASSWORD)):
+            raise InvalidPassword()
         return await validate_config_and_get_serial(control_config=control_config)
-    except AuthFailure as auf:
-        _LOGGER.warning(auf)
-        raise InvalidAuth from auf
+    except AuthFailure as auth:
+        _LOGGER.warning(auth)
+        raise InvalidAuth from auth
     except NoConnection as noc:
         _LOGGER.warning(noc)
         raise CannotConnect from noc
@@ -228,6 +231,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = "cannot_connect"
         except InvalidAuth:
             errors["base"] = "invalid_auth"
+        except InvalidPassword:
+            errors["base"] = "invalid_password"
         else:
             return self.async_create_entry(
                 title=self.data[ATTR_INSTANCE_NAME], data=self.data
@@ -316,6 +321,8 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             errors["base"] = "cannot_connect"
         except InvalidAuth:
             errors["base"] = "invalid_auth"
+        except InvalidPassword:
+            errors["base"] = "invalid_password"
         except Exception:  # pylint: disable=broad-except
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
@@ -345,6 +352,10 @@ class CannotConnect(HomeAssistantError):
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
+
+
+class InvalidPassword(HomeAssistantError):
+    """Error to indicate there is invalid password."""
 
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
