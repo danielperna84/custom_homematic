@@ -166,19 +166,9 @@ async def _async_validate_config_and_get_serial(
 ) -> str | None:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
-    try:
-        if not check_password(control_config.data.get(ATTR_PASSWORD)):
-            raise InvalidPassword()
-        return await validate_config_and_get_serial(control_config=control_config)
-    except AuthFailure as auth:
-        _LOGGER.warning(auth)
-        raise InvalidAuth from auth
-    except NoConnection as noc:
-        _LOGGER.warning(noc)
-        raise CannotConnect from noc
-    except NoClients as nocl:
-        _LOGGER.warning(nocl)
-        raise CannotConnect from nocl
+    if not check_password(control_config.data.get(ATTR_PASSWORD)):
+        raise InvalidPassword()
+    return await validate_config_and_get_serial(control_config=control_config)
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -227,9 +217,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             serial = await _async_validate_config_and_get_serial(self.hass, self.data)
             await self.async_set_unique_id(serial)
             self._abort_if_unique_id_configured()
-        except CannotConnect:
+        except (NoClients, NoConnection):
             errors["base"] = "cannot_connect"
-        except InvalidAuth:
+        except AuthFailure:
             errors["base"] = "invalid_auth"
         except InvalidPassword:
             errors["base"] = "invalid_password"
@@ -317,9 +307,9 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
 
         try:
             serial = await _async_validate_config_and_get_serial(self.hass, self.data)
-        except CannotConnect:
+        except (NoClients, NoConnection):
             errors["base"] = "cannot_connect"
-        except InvalidAuth:
+        except AuthFailure:
             errors["base"] = "invalid_auth"
         except InvalidPassword:
             errors["base"] = "invalid_password"
@@ -344,14 +334,6 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             self.config_entry.entry_id
         ]
         return control_unit
-
-
-class CannotConnect(HomeAssistantError):
-    """Error to indicate we cannot connect."""
-
-
-class InvalidAuth(HomeAssistantError):
-    """Error to indicate there is invalid auth."""
 
 
 class InvalidPassword(HomeAssistantError):
