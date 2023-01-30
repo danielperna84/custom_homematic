@@ -672,13 +672,6 @@ class ControlUnitTemp(BaseControlUnit):
         await self.central.clear_all()
         await super().async_stop_central()
 
-    async def async_validate_config_and_get_serial(self) -> str | None:
-        """Validate the control configuration."""
-        central = await self._async_create_central()
-        serial = await central.validate_config_and_get_serial()
-        await central.stop()
-        return serial
-
 
 class ControlConfig:
     """Config for a ControlUnit."""
@@ -798,7 +791,7 @@ def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:
 async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
     """Validate the control configuration."""
     control_unit = await control_config.async_get_control_unit_temp()
-    return await control_unit.async_validate_config_and_get_serial()
+    return await control_unit.central.validate_config_and_get_serial()
 
 
 def get_storage_folder(hass: HomeAssistant) -> str:

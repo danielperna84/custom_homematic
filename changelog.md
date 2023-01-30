@@ -16,6 +16,7 @@
 - Check password on config flow validation
 - Limit services to own integration
 - Replace old-style union syntax
+- Use exception types from backend
 
 # Version 1.27.2 (2022-01-26)
 ### All changes:
