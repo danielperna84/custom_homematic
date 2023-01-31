@@ -30,15 +30,8 @@ from hahomematic.const import (
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
     EVENT_UN_REACH,
-    HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
-    HH_EVENT_ERROR,
     HH_EVENT_HUB_REFRESHED,
-    HH_EVENT_LIST_DEVICES,
-    HH_EVENT_NEW_DEVICES,
-    HH_EVENT_RE_ADDED_DEVICE,
-    HH_EVENT_REPLACE_DEVICE,
-    HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PARAMSET_KEY_MASTER,
     PORT_ANY,
@@ -396,16 +389,16 @@ class ControlUnit(BaseControlUnit):
         del self._active_hm_hub_entities[entity_id]
 
     @callback
-    def _async_callback_system_event(self, src: str, *args: Any) -> None:
+    def _async_callback_system_event(self, name: str, **kwargs: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
-            src,
+            name,
             self._instance_name,
         )
 
-        if src == HH_EVENT_DEVICES_CREATED:
-            new_devices = args[0]
+        if name == HH_EVENT_DEVICES_CREATED:
+            new_devices = kwargs["new_devices"]
             new_entities = []
             for device in new_devices:
                 new_entities.extend(device.generic_entities.values())
@@ -425,7 +418,7 @@ class ControlUnit(BaseControlUnit):
                         hm_entities,
                     )
             self._async_add_virtual_remotes_to_device_registry()
-        elif src == HH_EVENT_HUB_REFRESHED:
+        elif name == HH_EVENT_HUB_REFRESHED:
             if not self._scheduler:
                 sysvar_scan_enabled: bool = self._config_data.get(
                     ATTR_SYSVAR_SCAN_ENABLED, True
@@ -440,7 +433,7 @@ class ControlUnit(BaseControlUnit):
                     sysvar_scan_interval=sysvar_scan_interval,
                 )
             if self._scheduler and self._scheduler.sysvar_scan_enabled:
-                new_hub_entities = args[0]
+                new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
                 for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
                     new_hub_entities=new_hub_entities
@@ -454,20 +447,7 @@ class ControlUnit(BaseControlUnit):
                             hm_hub_entities,
                         )
             return None
-        elif src == HH_EVENT_NEW_DEVICES:
-            return None
-        elif src == HH_EVENT_DELETE_DEVICES:
-            return None
-        elif src == HH_EVENT_ERROR:
-            return None
-        elif src == HH_EVENT_LIST_DEVICES:
-            return None
-        elif src == HH_EVENT_RE_ADDED_DEVICE:
-            return None
-        elif src == HH_EVENT_REPLACE_DEVICE:
-            return None
-        elif src == HH_EVENT_UPDATE_DEVICE:
-            return None
+        return None
 
     @callback
     def _async_callback_ha_event(

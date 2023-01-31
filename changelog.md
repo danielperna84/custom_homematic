@@ -2,10 +2,12 @@
 
 ### All changes:
 - Bump hahomematic to 2023.2.0
+  - Log validation exceptions in central
+  - Add typing to decorators
+- Bump hahomematic to 2023.1.8
   - Ensure the signal handler gets called at most once by @mtdcr
   - Fix stop central, if another central is active on the same XmlRPC server
   - JsonRpcAioHttpClient: Allow empty password by @mtdcr
-  - Log validation exceptions in central
   - Remove `VALVE_STATE` from HmIPW-FALMOT-C12
   - Remove put_paramset from custom_entity
   - Remove set_value, put_paramset from central
@@ -18,6 +20,7 @@
 - Limit services to own integration
 - Replace old-style union syntax
 - Use exception types from backend
+- Use kwargs in callbacks
 
 # Version 1.27.2 (2022-01-26)
 ### All changes:
