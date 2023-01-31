@@ -1,6 +1,8 @@
 # Version 1.28.0 (2022-02-01)
 
 ### All changes:
+- Bump hahomematic to 2023.2.1
+  - Separate check for parameter is un_ignored based on if it should be hidden or not
 - Bump hahomematic to 2023.2.0
   - Log validation exceptions in central
   - Add typing to decorators
