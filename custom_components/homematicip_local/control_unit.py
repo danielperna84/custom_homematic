@@ -30,15 +30,8 @@ from hahomematic.const import (
     AVAILABLE_HM_PLATFORMS,
     EVENT_STICKY_UN_REACH,
     EVENT_UN_REACH,
-    HH_EVENT_DELETE_DEVICES,
     HH_EVENT_DEVICES_CREATED,
-    HH_EVENT_ERROR,
     HH_EVENT_HUB_REFRESHED,
-    HH_EVENT_LIST_DEVICES,
-    HH_EVENT_NEW_DEVICES,
-    HH_EVENT_RE_ADDED_DEVICE,
-    HH_EVENT_REPLACE_DEVICE,
-    HH_EVENT_UPDATE_DEVICE,
     IP_ANY_V4,
     PARAMSET_KEY_MASTER,
     PORT_ANY,
@@ -454,20 +447,7 @@ class ControlUnit(BaseControlUnit):
                             hm_hub_entities,
                         )
             return None
-        elif name == HH_EVENT_NEW_DEVICES:
-            return None
-        elif name == HH_EVENT_DELETE_DEVICES:
-            return None
-        elif name == HH_EVENT_ERROR:
-            return None
-        elif name == HH_EVENT_LIST_DEVICES:
-            return None
-        elif name == HH_EVENT_RE_ADDED_DEVICE:
-            return None
-        elif name == HH_EVENT_REPLACE_DEVICE:
-            return None
-        elif name == HH_EVENT_UPDATE_DEVICE:
-            return None
+        return None
 
     @callback
     def _async_callback_ha_event(
