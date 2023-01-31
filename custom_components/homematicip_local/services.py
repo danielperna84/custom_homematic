@@ -504,7 +504,7 @@ def _get_interface_address(
 
 def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
     """Get ControlUnit by entry_id."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS].get(entry_id)
+    control_unit: ControlUnit | None = hass.data[DOMAIN][CONTROL_UNITS].get(entry_id)
     if control_unit is None:
         _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
         return None
