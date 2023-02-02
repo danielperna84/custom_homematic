@@ -469,7 +469,7 @@ async def _async_service_put_paramset(
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         address = (
             f"{hm_device.device_address}:{channel_no}"
-            if channel_no
+            if channel_no is not None
             else hm_device.device_address
         )
         await hm_device.client.put_paramset(
