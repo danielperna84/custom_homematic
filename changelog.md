@@ -3,6 +3,7 @@
 ### All changes:
 - Bump hahomematic to 2023.2.2
   - 
+- Fix channel  no 0 not working for put_paramset
 
 # Version 1.28.0 (2022-02-01)
 

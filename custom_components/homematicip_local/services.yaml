@@ -260,7 +260,7 @@ put_paramset:
       required: false
       selector:
         number:
-          min: 1
+          min: 0
           max: 99
     paramset_key:
       name: Paramset key
