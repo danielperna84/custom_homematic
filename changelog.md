@@ -2,7 +2,9 @@
 
 ### All changes:
 - Bump hahomematic to 2023.2.2
-  - 
+  - Add comments to parameter_visibility
+  - Use put_paramset only when there is more than one parameter to send
+  - Use only one implementation for garage doors (HO/TM)
 - Fix channel 0 not working for put_paramset
 
 # Version 1.28.0 (2022-02-01)
