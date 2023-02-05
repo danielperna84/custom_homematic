@@ -3,8 +3,20 @@
 ### All changes:
 - Bump hahomematic to 2023.2.2
   - Add comments to parameter_visibility
-  - Use put_paramset only when there is more than one parameter to send
+  - Use `put_paramset` only when there is more than one parameter to sent
   - Use only one implementation for garage doors (HO/TM)
+  - Avoid backend calls if value/state doesn't change
+    - If an entity (e.g. `switch`) has only **one** parameter that represents its state, then a call to the backend will be made, 
+      if the parameter value sent is not identical to the current state.
+    - If an entity (e.g. `cover`, `climate`, `light`) has **multiple** parameters that represent its state, then a call to the backend will be made, 
+      if one of these parameter values sent is not identical to its current state.
+    - Not covered by this approach:
+      - platforms: lock and siren.
+      - services: `stop_cover`, `stop_cover_tilt`, `enable_away_mode_*`, `disable_away_mode`, `set_on_time_value`
+      - system variables
+  - Add virtual channels for HmIP cover/blind:
+    - Channel no as examples from HmIP-BROLL. The implementation of the first actor channel (4) remains unchanged, which means that this channel (4) shows the correct cover position from sensor channel (3). 
+      The other actor channels (5+6) are generated as initially deactivated and only use the cover position from their own channel after activation.
 - Fix channel 0 not working for put_paramset
 
 # Version 1.28.0 (2022-02-01)
