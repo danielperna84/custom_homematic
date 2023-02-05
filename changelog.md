@@ -1,9 +1,9 @@
-# Version 1.28.1 (2022-02-05)
+# Version 1.29.0 (2022-02-06)
 ### New features
 - Add virtual channels for HmIP cover/blind
-- 
+
 ### All changes:
-- Bump hahomematic to 2023.2.3
+- Bump hahomematic to 2023.2.5
   - Add comments to parameter_visibility
   - Use `put_paramset` only when there is more than one parameter to sent
   - Use only one implementation for garage doors (HO/TM)
