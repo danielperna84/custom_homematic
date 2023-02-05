@@ -1,5 +1,7 @@
 # Version 1.28.1 (2022-02-XX)
-
+### New features
+- Add virtual channels for HmIP cover/blind
+- 
 ### All changes:
 - Bump hahomematic to 2023.2.2
   - Add comments to parameter_visibility
