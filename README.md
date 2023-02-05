@@ -402,8 +402,19 @@ If you want to know how assured the displayed value is, there is an attribute `v
 - `not valid` there is no value. The state of the entity is `unknown`.
 - `restored` the value has been restored from the last saved state after an HA restart
 - `uncertain` the value could not be updated from the CCU after restarting the CCU, and no events were received either.
-- 
+
 If you want to be sure that the state of the entity is as consistent as possible, you should also check the `value_state` attribute for `valid`.
+
+### Sending state changes to backend
+We try to avoid backend calls if value/state doesn't change:
+- If an entity (e.g. `switch`) has only **one** parameter that represents its state, then a call to the backend will be made, 
+  if the parameter value sent is not identical to the current state.
+- If an entity (e.g. `cover`, `climate`, `light`) has **multiple** parameters that represent its state, then a call to the backend will be made, 
+  if one of these parameter values sent is not identical to its current state.
+- Not covered by this approach:
+  - platforms: lock and siren.
+  - services: `stop_cover`, `stop_cover_tilt`, `enable_away_mode_*`, `disable_away_mode`, `set_on_time_value`
+  - system variables
 
 ### Rename of device/channel in CCU not reflected in Home Assistant
 
