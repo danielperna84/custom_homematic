@@ -5,7 +5,7 @@ import logging
 from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
-from hahomematic.custom_platforms.cover import CeGarage, CeBlind, CeCover, CeIpBlind
+from hahomematic.custom_platforms.cover import CeBlind, CeCover, CeGarage, CeIpBlind
 
 from homeassistant.components.cover import (
     ATTR_CURRENT_POSITION,
