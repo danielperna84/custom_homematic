@@ -1,3 +1,12 @@
+# Version 1.30.0 (2022-02-07)
+### New features
+
+### All changes:
+- Bump hahomematic to 2023.2.6
+  - Add missing bind_collector
+  - Add more `Final` typing
+  - Add option to collector to disable put_paramset
+
 # Version 1.29.0 (2022-02-06)
 ### New features
 - Add virtual channels for HmIP cover/blind
