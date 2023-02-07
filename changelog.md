@@ -1,3 +1,11 @@
+# Version 1.30.1 (2022-02-08)
+### New features
+
+### All changes:
+- Bump hahomematic to 2023.2.7
+  - Disable validation of state change for action and button
+  - Check if entity is writable on send
+
 # Version 1.30.0 (2022-02-07)
 ### New features
 
