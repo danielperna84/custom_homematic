@@ -73,7 +73,10 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
 _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
-    (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmNumberEntityDescription(
+    (
+        ("HmIP-eTRV", "HmIP-HEATING"),
+        "LEVEL",
+    ): HmNumberEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         multiplier=100,
@@ -394,7 +397,10 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon="mdi:lock-alert",
         translation_key="sec_key_error",
     ),
-    (("HmIP-eTRV", "HmIP-HEATING"), "LEVEL",): HmSensorEntityDescription(
+    (
+        ("HmIP-eTRV", "HmIP-HEATING"),
+        "LEVEL",
+    ): HmSensorEntityDescription(
         key="LEVEL",
         icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
@@ -525,7 +531,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
-    (("HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"), "STATE",): BinarySensorEntityDescription(
+    (
+        ("HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"),
+        "STATE",
+    ): BinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),

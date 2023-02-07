@@ -139,7 +139,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (TYPE_FLOAT, TYPE_INTEGER)
                 and self._multiplier != 1
             ):
-                return self._hm_entity.value * self._multiplier
+                return self._hm_entity.value * self._multiplier  # type: ignore[no-any-return]
             # Strings and enums with custom device class must be lowercase
             # to be translatable.
             if (
@@ -147,10 +147,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self.translation_key is not None
                 and self._hm_entity.hmtype in (TYPE_ENUM, TYPE_STRING)
             ):
-                return self._hm_entity.value.lower()
+                return self._hm_entity.value.lower()  # type: ignore[no-any-return]
             return self._hm_entity.value
         if self.is_restored:
-            return self._restored_native_value
+            return self._restored_native_value  # type: ignore[no-any-return]
         return None
 
     @property

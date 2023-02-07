@@ -138,7 +138,10 @@ class HaHomematicSwitch(
 
     async def async_set_on_time(self, on_time: float) -> None:
         """Set the on time of the light."""
-        await self._hm_entity.set_on_time_value(on_time=on_time)
+        if isinstance(self._hm_entity, CeSwitch):
+            self._hm_entity.set_on_time(on_time=on_time)
+        if isinstance(self._hm_entity, HmSwitch):
+            await self._hm_entity.set_on_time(on_time=on_time)
 
 
 class HaHomematicSysvarSwitch(
