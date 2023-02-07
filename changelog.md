@@ -6,6 +6,8 @@
   - Add missing bind_collector
   - Add more `Final` typing
   - Add option to collector to disable put_paramset
+  - Add on_time Mixin to temporary store on_time
+- Align to backend lib
 
 # Version 1.29.0 (2022-02-06)
 ### New features

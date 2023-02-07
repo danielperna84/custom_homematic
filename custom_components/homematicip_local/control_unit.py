@@ -406,7 +406,7 @@ class ControlUnit(BaseControlUnit):
                 new_entities.extend(device.custom_entities.values())
 
             # Handle event of new device creation in Homematic(IP) Local.
-            for (platform, hm_entities) in self.async_get_new_hm_entities(
+            for platform, hm_entities in self.async_get_new_hm_entities(
                 new_entities=new_entities
             ).items():
                 if hm_entities and len(hm_entities) > 0:
@@ -435,7 +435,7 @@ class ControlUnit(BaseControlUnit):
             if self._scheduler and self._scheduler.sysvar_scan_enabled:
                 new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
-                for (platform, hm_hub_entities) in self.async_get_new_hm_hub_entities(
+                for platform, hm_hub_entities in self.async_get_new_hm_hub_entities(
                     new_hub_entities=new_hub_entities
                 ).items():
                     if hm_hub_entities and len(hm_hub_entities) > 0:

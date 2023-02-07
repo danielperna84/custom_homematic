@@ -232,6 +232,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
             hm_kwargs[HM_ARG_RAMP_TIME] = ramp_time
         await self._hm_entity.turn_off(**hm_kwargs)
 
-    async def async_set_on_time(self, on_time: float) -> None:
+    @callback
+    def async_set_on_time(self, on_time: float) -> None:
         """Set the on time of the light."""
-        await self._hm_entity.set_on_time_value(on_time=on_time)
+        self._hm_entity.set_on_time(on_time=on_time)
