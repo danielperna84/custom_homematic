@@ -1,3 +1,10 @@
+# Version 1.30.2 (2022-02-09)
+### New features
+
+### All changes:
+-Add device_class to doorbell if binary behavior is set
+
+
 # Version 1.30.1 (2022-02-08)
 ### New features
 
