@@ -6,7 +6,8 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.custom_platforms.switch import CeSwitch
-from hahomematic.generic_platforms.switch import HmSwitch, HmSysvarSwitch
+from hahomematic.generic_platforms.switch import HmSwitch
+from hahomematic.hub_platforms.switch import HmSysvarSwitch
 import voluptuous as vol
 
 from homeassistant.components.switch import SwitchEntity

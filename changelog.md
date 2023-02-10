@@ -1,8 +1,14 @@
-# Version 1.30.2 (2022-02-09)
+# Version 1.30.2 (2022-02-10)
 ### New features
 
 ### All changes:
--Add device_class to doorbell if binary behavior is set
+- Bump hahomematic to 2023.2.8
+  - Add project setup script
+  - Add entity_data event
+  - Add payload mixin
+  - Cleanup packages
+- Add device_class to doorbell if binary behavior is set
+- Align packages to backend lib
 
 
 # Version 1.30.1 (2022-02-08)

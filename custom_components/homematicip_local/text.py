@@ -5,7 +5,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.generic_platforms.text import HmSysvarText, HmText
+from hahomematic.generic_platforms.text import HmText
+from hahomematic.hub_platforms.text import HmSysvarText
 
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry

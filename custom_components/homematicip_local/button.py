@@ -5,7 +5,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.generic_platforms.button import HmButton, HmProgramButton
+from hahomematic.generic_platforms.button import HmButton
+from hahomematic.hub_platforms.button import HmProgramButton
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
