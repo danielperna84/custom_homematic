@@ -5,13 +5,10 @@ import logging
 from typing import Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.entity import (
-    CustomEntity,
-    GenericEntity,
-    GenericHubEntity,
-    WrapperEntity,
-)
+from hahomematic.custom_platforms.entity import CustomEntity
+from hahomematic.generic_platforms.entity import GenericEntity, WrapperEntity
 from hahomematic.helpers import element_matches_key
+from hahomematic.hub_platforms.entity import GenericHubEntity
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -530,6 +527,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
+    ("HmIP-DSD-PCB", "STATE"): BinarySensorEntityDescription(
+        key="STATE",
+        device_class=BinarySensorDeviceClass.OCCUPANCY,
+    ),
     (
         ("HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"),
         "STATE",

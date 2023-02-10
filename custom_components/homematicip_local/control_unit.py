@@ -40,8 +40,11 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
+from hahomematic.custom_platforms.entity import CustomEntity
 from hahomematic.device import HmDevice
-from hahomematic.entity import BaseEntity, CustomEntity, GenericEntity, GenericHubEntity
+from hahomematic.entity import BaseEntity
+from hahomematic.generic_platforms.entity import GenericEntity
+from hahomematic.hub_platforms.entity import GenericHubEntity
 
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
@@ -124,8 +127,7 @@ class BaseControlUnit:
 
     @callback
     def stop_central(self, *args: Any) -> None:
-        """
-        Wrap the call to async_stop.
+        """Wrap the call to async_stop.
 
         Used as an argument to EventBus.async_listen_once.
         """

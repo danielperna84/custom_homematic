@@ -5,7 +5,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.generic_platforms.select import HmSelect, HmSysvarSelect
+from hahomematic.generic_platforms.select import HmSelect
+from hahomematic.hub_platforms.select import HmSysvarSelect
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry

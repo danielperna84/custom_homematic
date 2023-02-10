@@ -16,7 +16,8 @@ from hahomematic.const import (
     TYPE_STRING,
     HmPlatform,
 )
-from hahomematic.generic_platforms.sensor import HmSensor, HmSysvarSensor
+from hahomematic.generic_platforms.sensor import HmSensor
+from hahomematic.hub_platforms.sensor import HmSysvarSensor
 
 from homeassistant.components.sensor import (
     RestoreSensor,

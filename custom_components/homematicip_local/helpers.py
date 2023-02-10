@@ -9,13 +9,10 @@ import logging
 from typing import Any, TypeVar
 
 from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE
-from hahomematic.entity import (
-    HM_EVENT_SCHEMA,
-    CustomEntity,
-    GenericEntity,
-    GenericHubEntity,
-    WrapperEntity,
-)
+from hahomematic.custom_platforms.entity import CustomEntity
+from hahomematic.entity import HM_EVENT_SCHEMA
+from hahomematic.generic_platforms.entity import GenericEntity, WrapperEntity
+from hahomematic.hub_platforms.entity import GenericHubEntity
 import voluptuous as vol
 
 from homeassistant.components.number import NumberEntityDescription
