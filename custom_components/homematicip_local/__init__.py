@@ -5,7 +5,7 @@ import logging
 
 from awesomeversion import AwesomeVersion
 from hahomematic.central_unit import cleanup_cache_dirs
-from hahomematic.helpers import find_free_port
+from hahomematic.support import find_free_port
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION_STR

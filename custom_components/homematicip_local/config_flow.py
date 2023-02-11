@@ -33,7 +33,7 @@ from hahomematic.const import (
     IF_VIRTUAL_DEVICES_TLS_PORT,
 )
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
-from hahomematic.helpers import check_password
+from hahomematic.support import check_password
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
