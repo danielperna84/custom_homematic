@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.custom_platforms.light import (
+from hahomematic.platforms.custom.light import (
     HM_ARG_COLOR_TEMP,
     HM_ARG_EFFECT,
     HM_ARG_HS_COLOR,

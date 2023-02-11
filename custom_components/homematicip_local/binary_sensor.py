@@ -5,8 +5,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.generic_platforms.binary_sensor import HmBinarySensor
-from hahomematic.hub_platforms.binary_sensor import HmSysvarBinarySensor
+from hahomematic.platforms.generic.binary_sensor import HmBinarySensor
+from hahomematic.platforms.hub.binary_sensor import HmSysvarBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry

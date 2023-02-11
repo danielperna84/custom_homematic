@@ -5,10 +5,10 @@ import logging
 from typing import Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.custom_platforms.entity import CustomEntity
-from hahomematic.generic_platforms.entity import GenericEntity, WrapperEntity
 from hahomematic.helpers import element_matches_key
-from hahomematic.hub_platforms.entity import GenericHubEntity
+from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.hub.entity import GenericHubEntity
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,

@@ -6,7 +6,7 @@
   - Add project setup script
   - Add entity_data event
   - Add payload mixin
-  - Cleanup packages
+  - Cleanup module dependencies
 - Add device_class to doorbell if binary behavior is set
 - Align packages to backend lib
 

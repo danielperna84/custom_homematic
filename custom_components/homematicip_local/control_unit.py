@@ -40,11 +40,11 @@ from hahomematic.const import (
     HmInterfaceEventType,
     HmPlatform,
 )
-from hahomematic.custom_platforms.entity import CustomEntity
-from hahomematic.device import HmDevice
-from hahomematic.entity import BaseEntity
-from hahomematic.generic_platforms.entity import GenericEntity
-from hahomematic.hub_platforms.entity import GenericHubEntity
+from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.device import HmDevice
+from hahomematic.platforms.entity import BaseEntity
+from hahomematic.platforms.generic.entity import GenericEntity
+from hahomematic.platforms.hub.entity import GenericHubEntity
 
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
