@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.custom_platforms.siren import (
+from hahomematic.platforms.custom.siren import (
     DISABLE_ACOUSTIC_SIGNAL,
     DISABLE_OPTICAL_SIGNAL,
     BaseSiren,

@@ -5,10 +5,10 @@ import logging
 from typing import Any, Generic, cast
 
 from hahomematic.const import HmCallSource
-from hahomematic.custom_platforms.entity import CustomEntity
-from hahomematic.entity import CallbackEntity
-from hahomematic.generic_platforms.entity import GenericEntity, WrapperEntity
-from hahomematic.hub_platforms.entity import GenericHubEntity, GenericSystemVariable
+from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.entity import CallbackEntity
+from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
 
 from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er

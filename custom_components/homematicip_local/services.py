@@ -13,8 +13,8 @@ from hahomematic.const import (
     PARAMSET_KEY_VALUES,
     HmForcedDeviceAvailability,
 )
-from hahomematic.device import HmDevice
 from hahomematic.helpers import to_bool
+from hahomematic.platforms.device import HmDevice
 import voluptuous as vol
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME

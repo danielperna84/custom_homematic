@@ -1,4 +1,4 @@
-# Version 1.30.2 (2022-02-10)
+# Version 1.30.2 (2022-02-11)
 ### New features
 
 ### All changes:
@@ -6,7 +6,7 @@
   - Add project setup script
   - Add entity_data event
   - Add payload mixin
-  - Cleanup packages
+  - Cleanup module dependencies
 - Add device_class to doorbell if binary behavior is set
 - Align packages to backend lib
 

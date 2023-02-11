@@ -4,8 +4,8 @@ from __future__ import annotations
 from typing import Any
 
 from hahomematic.const import EVENT_PRESS_LONG, EVENT_PRESS_SHORT
-from hahomematic.generic_platforms.action import HmAction
-from hahomematic.generic_platforms.button import HmButton
+from hahomematic.platforms.generic.action import HmAction
+from hahomematic.platforms.generic.button import HmButton
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_TYPE
