@@ -7,6 +7,9 @@
   - Add entity_data event
   - Add payload mixin
   - Cleanup module dependencies
+  - Use cache decorators for some high-traffic methods
+  - Allow that channel_no could be None
+  - Add and use get_channel_address
 - Add device_class to doorbell if binary behavior is set
 - Align packages to backend lib
 
