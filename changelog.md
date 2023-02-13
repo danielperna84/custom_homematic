@@ -10,9 +10,10 @@
   - Use cache decorators for some high-traffic methods
   - Allow that channel_no could be None
   - Add and use get_channel_address
+  - Add HmIP-SWSD as siren
 - Add device_class to doorbell if binary behavior is set
 - Align packages to backend lib
-
+- Align to siren backend changes
 
 # Version 1.30.1 (2022-02-08)
 ### New features
