@@ -2,6 +2,10 @@
 ### New features
 
 ### All changes:
+- Bump hahomematic to 2023.2.9
+  - Fix property types
+  - Ensure modules for platforms are loaded
+  - Use local dicts for device lists
 - Bump hahomematic to 2023.2.8
   - Add project setup script
   - Add entity_data event
