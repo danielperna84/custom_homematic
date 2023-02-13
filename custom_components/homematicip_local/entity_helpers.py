@@ -19,6 +19,7 @@ from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescript
 from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
+from homeassistant.components.siren import SirenEntityDescription
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
@@ -598,6 +599,13 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
+_SIREN_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+    "HmIP-SWSD": SirenEntityDescription(
+        key="SWSD",
+        entity_registry_enabled_default=False,
+    ),
+}
+
 _SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
     "HmIP-PS": SwitchEntityDescription(
         key="OUTLET",
@@ -623,6 +631,7 @@ _ENTITY_DESCRIPTION_BY_DEVICE: dict[
     HmPlatform, dict[str | tuple[str, ...], EntityDescription]
 ] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
+    HmPlatform.SIREN: _SIREN_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 

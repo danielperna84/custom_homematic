@@ -9,7 +9,7 @@ from typing import Any, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
-from hahomematic.config import CHECK_INTERVAL
+from hahomematic.config import CALLBACK_WARN_INTERVAL
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
@@ -484,7 +484,7 @@ class ControlUnit(BaseControlUnit):
                         identifier=f"callback-{interface_id}",
                         title=title,
                         message=f"No callback events received for interface "
-                        f"{interface_id} {CHECK_INTERVAL}s.",
+                        f"{interface_id} {CALLBACK_WARN_INTERVAL}s.",
                     )
         else:
             device_address = event_data[ATTR_ADDRESS]

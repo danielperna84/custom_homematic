@@ -6,9 +6,11 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.siren import (
-    DISABLE_ACOUSTIC_SIGNAL,
-    DISABLE_OPTICAL_SIGNAL,
+    HM_ARG_ACOUSTIC_ALARM,
+    HM_ARG_DURATION,
+    HM_ARG_OPTICAL_ALARM,
     BaseSiren,
+    CeIpSiren,
 )
 import voluptuous as vol
 
@@ -56,7 +58,8 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSiren(control_unit, hm_entity))
+            if isinstance(hm_entity, CeIpSiren):
+                entities.append(HaHomematicSiren(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
@@ -84,12 +87,19 @@ async def async_setup_entry(
 class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
     """Representation of the HomematicIP siren entity."""
 
-    _attr_supported_features = (
-        SirenEntityFeature.TONES
-        | SirenEntityFeature.DURATION
-        | SirenEntityFeature.TURN_OFF
-        | SirenEntityFeature.TURN_ON
-    )
+    _attr_supported_features = SirenEntityFeature.TURN_OFF | SirenEntityFeature.TURN_ON
+
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: BaseSiren,
+    ) -> None:
+        """Initialize the siren entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        if hm_entity.supports_tones:
+            self._attr_supported_features |= SirenEntityFeature.TONES
+        if hm_entity.supports_duration:
+            self._attr_supported_features |= SirenEntityFeature.DURATION
 
     @property
     def is_on(self) -> bool | None:
@@ -116,27 +126,14 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
-        acoustic_alarm = kwargs.get(ATTR_TONE, DISABLE_ACOUSTIC_SIGNAL)
-        if not self.available_tones or acoustic_alarm not in self.available_tones:
-            raise ValueError(
-                f"Invalid tone specified "
-                f"for entity {self.entity_id}: {acoustic_alarm}, "
-                "check the available_tones attribute for valid tones to pass in"
-            )
-        optical_alarm = kwargs.get(ATTR_LIGHT, DISABLE_OPTICAL_SIGNAL)
-        if not self.available_lights or optical_alarm not in self.available_lights:
-            raise ValueError(
-                f"Invalid light specified "
-                f"for entity {self.entity_id}: {optical_alarm}, "
-                "check the available_lights attribute for valid tones to pass in"
-            )
-
-        duration = kwargs.get(ATTR_DURATION, 60)
-        await self._hm_entity.turn_on(
-            acoustic_alarm=acoustic_alarm,
-            optical_alarm=optical_alarm,
-            duration=duration,
-        )
+        hm_kwargs: dict[str, Any] = {}
+        if tone := kwargs.get(ATTR_TONE):
+            hm_kwargs[HM_ARG_ACOUSTIC_ALARM] = tone
+        if light := kwargs.get(ATTR_LIGHT):
+            hm_kwargs[HM_ARG_OPTICAL_ALARM] = light
+        if duration := kwargs.get(ATTR_DURATION):
+            hm_kwargs[HM_ARG_DURATION] = duration
+        await self._hm_entity.turn_on(**hm_kwargs)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the device off."""
