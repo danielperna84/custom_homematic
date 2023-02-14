@@ -651,7 +651,7 @@ class ControlUnitTemp(BaseControlUnit):
 
     async def async_stop_central(self) -> None:
         """Stop the control unit."""
-        await self.central.clear_all()
+        await self.central.clear_all_caches()
         await super().async_stop_central()
 
 
@@ -762,7 +762,9 @@ class HmScheduler:
             "Scheduled fetching of master entities for %s",
             self._central.name,
         )
-        await self._central.refresh_entity_data(paramset_key=PARAMSET_KEY_MASTER)
+        await self._central.load_and_refresh_entity_data(
+            paramset_key=PARAMSET_KEY_MASTER
+        )
 
 
 def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:
