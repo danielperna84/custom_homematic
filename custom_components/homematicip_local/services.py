@@ -57,7 +57,6 @@ SERVICE_FETCH_SYSTEM_VARIABLES = "fetch_system_variables"
 SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
-SERVICE_SET_DEVICE_VALUE_RAW = "set_device_value_raw"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
 
@@ -69,7 +68,6 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
-    SERVICE_SET_DEVICE_VALUE_RAW,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
 ]
@@ -146,19 +144,6 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
     ),
 )
 
-SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW = vol.Schema(
-    {
-        vol.Required(ATTR_INTERFACE_ID): cv.string,
-        vol.Required(ATTR_ADDRESS): cv.string,
-        vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
-        vol.Required(ATTR_VALUE): cv.match_all,
-        vol.Optional(ATTR_VALUE_TYPE): vol.In(
-            ["boolean", "dateTime.iso8601", "double", "int", "string"]
-        ),
-        vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
-    }
-)
-
 SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
     cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
@@ -197,8 +182,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_install_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_DEVICE_VALUE:
             await _async_service_set_device_value(hass=hass, service=service)
-        elif service_name == SERVICE_SET_DEVICE_VALUE_RAW:
-            await _async_service_set_device_value_raw(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
 
@@ -254,13 +237,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_SET_DEVICE_VALUE,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_SET_DEVICE_VALUE,
-    )
-
-    hass.services.async_register(
-        domain=DOMAIN,
-        service=SERVICE_SET_DEVICE_VALUE_RAW,
-        service_func=async_call_hmip_local_service,
-        schema=SCHEMA_SERVICE_SET_DEVICE_VALUE_RAW,
     )
 
     async_register_admin_service(
@@ -363,29 +339,6 @@ async def _async_service_set_device_value(
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
     channel_no = service.data[ATTR_CHANNEL]
-    await _call_set_device_value(
-        hass=hass,
-        channel_no=channel_no,
-        service=service,
-    )
-
-
-async def _async_service_set_device_value_raw(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
-    """Service to call setValue method for Homematic(IP) Local devices."""
-    _LOGGER.warning(
-        "The service %s is deprecated in favor of service %s"
-        " Service calls will still work for now but the service will be removed in"
-        " HA 2023-03",
-        SERVICE_SET_DEVICE_VALUE_RAW,
-        SERVICE_SET_DEVICE_VALUE,
-    )
-    device_address, channel_no = service.data[ATTR_ADDRESS].split(":")
-    new_service_data = dict(service.data)
-    new_service_data["device_address"] = device_address
-    service.data = new_service_data  # type: ignore[assignment]
-
     await _call_set_device_value(
         hass=hass,
         channel_no=channel_no,
