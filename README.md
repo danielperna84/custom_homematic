@@ -377,13 +377,13 @@ The `ERROR*` parameters are evaluated for this event type in the backend.
 
 ## Additional information
 
-### What is the meaning of this persistant notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
+### What is the meaning of this persistent notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
 This integration does not fetch new updates from the CCU, it **receives** state changes and new values for devices from the CCU by the XmlRPC server.
 
 Therefor the integration checks if this mechanism works:
 
-Regardless of regular device updates, HA checks the availability of the CCU with a `PING` every 15 seconds, and expects a `PONG` event as a response on the XMLRPC server.
-This persistent notification is only displayed in HA if the received PONG events and the device updates are missing for 5 minutes, but it also disappears again as soon as events are received again.
+Regardless of regular device updates, HA checks the availability of the CCU with a `PING` every **15 seconds**, and expects a `PONG` event as a response on the XMLRPC server.
+This persistent notification is only displayed in HA if the received PONG events and the device updates are missing for **10 minutes**, but it also disappears again as soon as events are received again.
 
 So the message means there is a problem in the communication from the CCU to HA that was **identified** by the integration but not **caused**.
 
@@ -561,7 +561,7 @@ The following blueprints can be used to simplify the usage of HomeMatic and Home
 - [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for two button remote like HmIP-KRCA.
 - [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for two button remote like HmIP-WRC6.
 - [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml): Support for two button remote like HmIP-RC8.
-- [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml): Enable persistant notifications about unavailable devices.
+- [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml): Enable persistent notifications about unavailable devices.
 - [Reactivate device by type](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_by_type.yaml). Reactivate unavailable devices by device type.
 - [Reactivate every device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_full.yaml). Reactivate all unavailable devices. NOT recommended. Usage of `by device type` or `single device` should be preferred.
 - [Reactivate single device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_single_device.yaml) Reactivate a single unavailable device.
