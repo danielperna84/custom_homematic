@@ -1,4 +1,4 @@
-# Version 1.31.0 (2022-02-13)
+# Version 1.31.0 (2022-02-18)
 ### New features
 
 ### All changes:
@@ -6,6 +6,10 @@
   - Fix property types
   - Ensure modules for platforms are loaded
   - Use local dicts for device lists
+  - Clear central data cache if identified as outdated
+  - Avoid redundant cache loads within init phase
+  - Extract value preparation from send_value
+  - Differentiate between input and default parameter type
 - Bump hahomematic to 2023.2.8
   - Add project setup script
   - Add entity_data event
