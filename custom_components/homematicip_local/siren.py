@@ -5,13 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.siren import (
-    HM_ARG_ACOUSTIC_ALARM,
-    HM_ARG_DURATION,
-    HM_ARG_OPTICAL_ALARM,
-    BaseSiren,
-    CeIpSiren,
-)
+from hahomematic.platforms.custom.siren import BaseSiren, CeIpSiren, HmSirenArgs
 import voluptuous as vol
 
 from homeassistant.components.siren import (
@@ -126,13 +120,13 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the device on."""
-        hm_kwargs: dict[str, Any] = {}
+        hm_kwargs = HmSirenArgs()
         if tone := kwargs.get(ATTR_TONE):
-            hm_kwargs[HM_ARG_ACOUSTIC_ALARM] = tone
+            hm_kwargs["acoustic_alarm"] = tone
         if light := kwargs.get(ATTR_LIGHT):
-            hm_kwargs[HM_ARG_OPTICAL_ALARM] = light
+            hm_kwargs["optical_alarm"] = light
         if duration := kwargs.get(ATTR_DURATION):
-            hm_kwargs[HM_ARG_DURATION] = duration
+            hm_kwargs["duration"] = duration
         await self._hm_entity.turn_on(**hm_kwargs)
 
     async def async_turn_off(self, **kwargs: Any) -> None:

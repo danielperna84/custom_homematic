@@ -6,13 +6,10 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.light import (
-    HM_ARG_COLOR_TEMP,
-    HM_ARG_EFFECT,
-    HM_ARG_HS_COLOR,
-    HM_ARG_RAMP_TIME,
     BaseHmLight,
     CeDimmer,
     CeIpFixedColorLight,
+    HmLightArgs,
 )
 import voluptuous as vol
 
@@ -206,21 +203,21 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
-        hm_kwargs: dict[str, Any] = {}
+        hm_kwargs = HmLightArgs()
         # Use hs_color from kwargs, if not applicable use current hs_color.
         if color_temp := kwargs.get(ATTR_COLOR_TEMP, self.color_temp):
-            hm_kwargs[HM_ARG_COLOR_TEMP] = color_temp
+            hm_kwargs["color_temp"] = color_temp
         if hs_color := kwargs.get(ATTR_HS_COLOR, self.hs_color):
-            hm_kwargs[HM_ARG_HS_COLOR] = hs_color
+            hm_kwargs["hs_color"] = hs_color
         # Use brightness from kwargs, if not applicable use current brightness.
         if brightness := kwargs.get(ATTR_BRIGHTNESS, self.brightness) or 255:
-            hm_kwargs[ATTR_BRIGHTNESS] = brightness
+            hm_kwargs["brightness"] = brightness
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
-            hm_kwargs[HM_ARG_RAMP_TIME] = ramp_time
+            hm_kwargs["ramp_time"] = ramp_time
         # Use effect from kwargs
         if effect := kwargs.get(ATTR_EFFECT):
-            hm_kwargs[HM_ARG_EFFECT] = effect
+            hm_kwargs["effect"] = effect
 
         await self._hm_entity.turn_on(**hm_kwargs)
 
@@ -229,7 +226,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         hm_kwargs: dict[str, Any] = {}
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
-            hm_kwargs[HM_ARG_RAMP_TIME] = ramp_time
+            hm_kwargs["ramp_time"] = ramp_time
         await self._hm_entity.turn_off(**hm_kwargs)
 
     @callback
