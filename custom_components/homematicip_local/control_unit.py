@@ -177,10 +177,10 @@ class BaseControlUnit:
             client_session=aiohttp_client.async_get_clientsession(self._hass),
             json_port=self._config_data[ATTR_JSON_PORT],
             callback_host=self._config_data.get(ATTR_CALLBACK_HOST)
-            if not self._config_data.get(ATTR_CALLBACK_HOST) == IP_ANY_V4
+            if self._config_data.get(ATTR_CALLBACK_HOST) != IP_ANY_V4
             else None,
             callback_port=self._config_data.get(ATTR_CALLBACK_PORT)
-            if not self._config_data.get(ATTR_CALLBACK_PORT) == PORT_ANY
+            if self._config_data.get(ATTR_CALLBACK_PORT) != PORT_ANY
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
@@ -787,7 +787,7 @@ def get_cu_by_interface_id(
     hass: HomeAssistant, interface_id: str
 ) -> ControlUnit | None:
     """Get ControlUnit by interface_id."""
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit and control_unit.central.has_client(interface_id=interface_id):
             return control_unit
@@ -816,7 +816,7 @@ def get_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
 
 def get_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
     """Return the homematic device."""
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS].keys():
+    for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if hm_device := control_unit.central.get_device(device_address=device_address):
             return hm_device

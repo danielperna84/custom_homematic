@@ -10,6 +10,8 @@
   - Avoid redundant cache loads within init phase
   - Extract value preparation from send_value
   - Differentiate between input and default parameter type
+  - Fix asyncio-dangling-task (RUF006)
+- Add typed dict for light and siren
 - Bump hahomematic to 2023.2.8
   - Add project setup script
   - Add entity_data event
@@ -22,6 +24,7 @@
 - Add device_class to doorbell if binary behavior is set
 - Align packages to backend lib
 - Align to siren backend changes
+- Used typed dicts for light and siren
 
 # Version 1.30.2 (2022-02-08)
 ### All changes:
