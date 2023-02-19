@@ -43,7 +43,7 @@ from hahomematic.const import (
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import BaseEntity
-from hahomematic.platforms.generic.entity import GenericEntity
+from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 
 from homeassistant.const import ATTR_DEVICE_ID
@@ -81,7 +81,6 @@ from .helpers import (
     HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
     HM_DEVICE_ERROR_EVENT_SCHEMA,
     HmBaseEntity,
-    HmCallbackEntity,
     cleanup_click_event_data,
     get_device_address_at_interface_from_identifiers,
     is_valid_event,
@@ -628,7 +627,7 @@ class ControlUnit(BaseControlUnit):
         entities: list[HmBaseEntity] = []
         for entity in self._active_hm_entities.values():
             if (
-                isinstance(entity, HmCallbackEntity)
+                isinstance(entity, (CustomEntity, GenericEntity, WrapperEntity))
                 and device_address == entity.device.device_address
             ):
                 entities.append(entity)

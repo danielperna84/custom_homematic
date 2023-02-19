@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
 import logging
-from typing import Any, TypeVar
+from typing import Any, TypeAlias, TypeVar
 
 from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -33,9 +33,7 @@ from .const import (
 )
 
 # Union for entity types used as base class for entities
-HmBaseEntity = CustomEntity | GenericEntity | WrapperEntity
-# Entities that support callbacks from backend
-HmCallbackEntity = (CustomEntity, GenericEntity, WrapperEntity)
+HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
