@@ -99,7 +99,7 @@
   },
   "entity": {
     "sensor": {
-      "srh": {
+      "srh__state": {
         "state": {
           "closed": "Geschlossen",
           "tilted": "Gekippt",
@@ -121,7 +121,7 @@
           "secondary_alarm": "Sekundär-Alarm"
         }
       },
-      "sec_key_error": {
+      "sec_key__error": {
         "state": {
           "no_error": "Kein Fehler",
           "clutch_failure": "Einkuppeln fehlgeschlagen",
@@ -144,7 +144,7 @@
           "undefined": "Nicht definiert"
         }
       },
-      "sec_direction": {
+      "sec__direction": {
         "state": {
           "none": "",
           "up": "Schließend",
@@ -152,7 +152,7 @@
           "undefined": "Nicht definiert"
         }
       },
-      "sec_win_status": {
+      "sec_win__status": {
         "state": {
           "trickle_charge": "Erhaltungsladung",
           "charge": "Ladend",
@@ -160,7 +160,7 @@
           "state_unknown": "Zustand unbekannt"
         }
       },
-      "sec_win_error": {
+      "sec_win__error": {
         "state": {
           "no_error": "Kein Fehler",
           "motor_turn_error": "Fehler Drehantrieb",

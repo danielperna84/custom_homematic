@@ -2,6 +2,7 @@
 from typing import Any
 from unittest.mock import patch
 
+from hahomematic.exceptions import AuthFailure, NoConnection
 from homeassistant import config_entries
 from homeassistant.components.homematicip_local.config_flow import (
     ATTR_BIDCOS_RF_ENABLED,
@@ -19,8 +20,6 @@ from homeassistant.components.homematicip_local.config_flow import (
     IF_HMIP_RF_NAME,
     IF_BIDCOS_WIRED_NAME,
     IF_VIRTUAL_DEVICES_NAME,
-    CannotConnect,
-    InvalidAuth,
 )
 from homeassistant.components.homematicip_local.const import DOMAIN
 from homeassistant.core import HomeAssistant
@@ -158,7 +157,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
 
     with patch(
         "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
-        side_effect=InvalidAuth,
+        side_effect=AuthFailure,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -204,7 +203,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
 
     with patch(
         "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
-        side_effect=CannotConnect,
+        side_effect=NoConnection,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,

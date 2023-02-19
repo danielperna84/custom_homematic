@@ -25,6 +25,7 @@
 - Align packages to backend lib
 - Align to siren backend changes
 - Used typed dicts for light and siren
+- Update translation keys
 
 # Version 1.30.2 (2022-02-08)
 ### All changes:
