@@ -362,13 +362,13 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
-        translation_key="srh",
+        translation_key="srh__state",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:battery-50",
-        translation_key="sec_win_status",
+        translation_key="sec_win__status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
@@ -380,19 +380,19 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         key="SEC-WIN_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_win_error",
+        translation_key="sec_win__error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec_direction",
+        translation_key="sec__direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_key_error",
+        translation_key="sec_key__error",
     ),
     (
         ("HmIP-eTRV", "HmIP-HEATING"),
