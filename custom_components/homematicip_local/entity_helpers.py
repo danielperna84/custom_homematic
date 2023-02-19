@@ -374,7 +374,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         key="SEC-WIN_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec_direction",
+        translation_key="sec__direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
