@@ -12,6 +12,7 @@
   - Use sets for central callbacks
 
 - Enable HmIP-SMSD as siren
+- Add pre-commit checks and cleanup repo
 
 # Version 1.31.0 (2022-02-18)
 
