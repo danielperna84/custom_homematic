@@ -1,6 +1,7 @@
 blueprint:
   name: Actions for 12-Button Homematic(IP) device
-  description: When a button is pressed, the defined actions will be executed. Please
+  description:
+    When a button is pressed, the defined actions will be executed. Please
     keep in mind, that long-press actions might be executed multiple times, according
     to your configured minimum duration for long press. This can be configured in
     your CCU. Tested with HB-RC-12-EP-C. Should work with other device too.
@@ -161,132 +162,156 @@ blueprint:
       selector:
         action: {}
 trigger:
-- platform: event
-  event_type: homematic.keypress
-  event_data:
-    device_id: !input remote
+  - platform: event
+    event_type: homematic.keypress
+    event_data:
+      device_id: !input remote
 condition: []
 action:
-- choose:
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        1 }}'
-    sequence: !input action_1_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        1 }}'
-    sequence: !input action_1_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        2 }}'
-    sequence: !input action_2_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        2 }}'
-    sequence: !input action_2_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        3 }}'
-    sequence: !input action_3_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        3 }}'
-    sequence: !input action_3_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        4 }}'
-    sequence: !input action_4_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        4 }}'
-    sequence: !input action_4_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        5 }}'
-    sequence: !input action_5_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        5 }}'
-    sequence: !input action_5_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        6 }}'
-    sequence: !input action_6_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        6 }}'
-    sequence: !input action_6_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        7 }}'
-    sequence: !input action_7_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        7 }}'
-    sequence: !input action_7_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        8 }}'
-    sequence: !input action_8_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        8 }}'
-    sequence: !input action_8_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        9 }}'
-    sequence: !input action_9_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        9 }}'
-    sequence: !input action_9_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        10 }}'
-    sequence: !input action_10_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        10 }}'
-    sequence: !input action_10_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        11 }}'
-    sequence: !input action_11_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        11 }}'
-    sequence: !input action_11_long
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_short'' and trigger.event.data.subtype  ==
-        12 }}'
-    sequence: !input action_12_short
-  - conditions:
-    - condition: template
-      value_template: '{{ trigger.event.data.type  == ''press_long'' and trigger.event.data.subtype  ==
-        12 }}'
-    sequence: !input action_12_long
+  - choose:
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              1 }}"
+        sequence: !input action_1_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              1 }}"
+        sequence: !input action_1_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              2 }}"
+        sequence: !input action_2_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              2 }}"
+        sequence: !input action_2_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              3 }}"
+        sequence: !input action_3_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              3 }}"
+        sequence: !input action_3_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              4 }}"
+        sequence: !input action_4_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              4 }}"
+        sequence: !input action_4_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              5 }}"
+        sequence: !input action_5_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              5 }}"
+        sequence: !input action_5_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              6 }}"
+        sequence: !input action_6_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              6 }}"
+        sequence: !input action_6_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              7 }}"
+        sequence: !input action_7_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              7 }}"
+        sequence: !input action_7_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              8 }}"
+        sequence: !input action_8_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              8 }}"
+        sequence: !input action_8_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              9 }}"
+        sequence: !input action_9_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              9 }}"
+        sequence: !input action_9_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              10 }}"
+        sequence: !input action_10_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              10 }}"
+        sequence: !input action_10_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              11 }}"
+        sequence: !input action_11_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              11 }}"
+        sequence: !input action_11_long
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_short' and trigger.event.data.subtype  ==
+              12 }}"
+        sequence: !input action_12_short
+      - conditions:
+          - condition: template
+            value_template:
+              "{{ trigger.event.data.type  == 'press_long' and trigger.event.data.subtype  ==
+              12 }}"
+        sequence: !input action_12_long
 mode: parallel
 max: 10

@@ -88,12 +88,16 @@ class HaHomematicText(HaHomematicGenericRestoreEntity[HmText], TextEntity):
         """Return the value reported by the text."""
         if self._hm_entity.is_valid:
             return self._hm_entity.value
-        if self.is_restored and self._restored_state:
-            if (restored_state := self._restored_state.state) not in (
+        if (
+            self.is_restored
+            and self._restored_state
+            and (restored_state := self._restored_state.state)
+            not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
-            ):
-                return restored_state
+            )
+        ):
+            return restored_state
         return None
 
     async def async_set_value(self, value: str) -> None:

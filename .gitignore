@@ -11,3 +11,5 @@
 # Tox stuff, lint
 /.tox/
 /.pylint.d/
+
+/venv

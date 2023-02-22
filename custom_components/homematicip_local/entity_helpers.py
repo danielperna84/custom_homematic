@@ -705,13 +705,17 @@ def get_entity_description(
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
             return entity_desc
 
-        if hm_entity.platform == HmPlatform.SENSOR and hm_entity.unit:
-            if entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit):
-                return entity_desc
-
-    if isinstance(hm_entity, CustomEntity):
-        if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
+        if (
+            hm_entity.platform == HmPlatform.SENSOR
+            and hm_entity.unit
+            and (entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit))
+        ):
             return entity_desc
+
+    if isinstance(hm_entity, CustomEntity) and (
+        entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity)
+    ):
+        return entity_desc
 
     return _DEFAULT_DESCRIPTION.get(hm_entity.platform)
 

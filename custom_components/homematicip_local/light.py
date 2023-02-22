@@ -111,14 +111,13 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         attributes = super().extra_state_attributes
-        if isinstance(self._hm_entity, CeDimmer):
-            if (
-                self._hm_entity.channel_brightness
-                and self._hm_entity.brightness != self._hm_entity.channel_brightness
-            ):
-                attributes[ATTR_CHANNEL_LEVEL] = (
-                    self._hm_entity.channel_brightness / 255 * 100
-                )
+        if isinstance(self._hm_entity, CeDimmer) and (
+            self._hm_entity.channel_brightness
+            and self._hm_entity.brightness != self._hm_entity.channel_brightness
+        ):
+            attributes[ATTR_CHANNEL_LEVEL] = (
+                self._hm_entity.channel_brightness / 255 * 100
+            )
         if isinstance(self._hm_entity, CeIpFixedColorLight):
             attributes[ATTR_COLOR] = self._hm_entity.color_name
             if (
@@ -156,12 +155,16 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return true if dimmer is on."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_on is True
-        if self.is_restored and self._restored_state:
-            if (restored_state := self._restored_state.state) not in (
+        if (
+            self.is_restored
+            and self._restored_state
+            and (restored_state := self._restored_state.state)
+            not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
-            ):
-                return restored_state == STATE_ON
+            )
+        ):
+            return restored_state == STATE_ON
         return None
 
     @property

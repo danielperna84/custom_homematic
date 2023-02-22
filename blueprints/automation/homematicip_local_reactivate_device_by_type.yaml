@@ -16,13 +16,13 @@ mode: restart
 max_exceeded: silent
 
 trigger:
-- platform: event
-  event_type: homematic.device_availability
-  event_data:
-    device_type: !input device_type
-    unavailable: true
+  - platform: event
+    event_type: homematic.device_availability
+    event_data:
+      device_type: !input device_type
+      unavailable: true
 
 action:
-- service: homematicip_local.force_device_availability
-  data:
-    device_id: "{{ trigger.event.data.device_id }}"
+  - service: homematicip_local.force_device_availability
+    data:
+      device_id: "{{ trigger.event.data.device_id }}"

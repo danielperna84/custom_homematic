@@ -300,16 +300,21 @@ async def _async_service_delete_device(
     interface_id: str = address_data[0]
     device_address: str = address_data[1]
 
-    if interface_id and device_address:
-        if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-            await control_unit.central.delete_device(
-                interface_id=interface_id, device_address=device_address
-            )
-            _LOGGER.debug(
-                "Called delete_device: %s, %s",
-                interface_id,
-                device_address,
-            )
+    if (
+        interface_id
+        and device_address
+        and (
+            control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id)
+        )
+    ):
+        await control_unit.central.delete_device(
+            interface_id=interface_id, device_address=device_address
+        )
+        _LOGGER.debug(
+            "Called delete_device: %s, %s",
+            interface_id,
+            device_address,
+        )
 
 
 async def _async_service_export_device_definition(

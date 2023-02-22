@@ -127,7 +127,8 @@ class BaseControlUnit:
 
     @callback
     def stop_central(self, *args: Any) -> None:
-        """Wrap the call to async_stop.
+        """
+        Wrap the call to async_stop.
 
         Used as an argument to EventBus.async_listen_once.
         """
@@ -202,8 +203,12 @@ class ControlUnit(BaseControlUnit):
     async def async_start_central(self) -> None:
         """Start the central unit."""
         if self._central:
-            self._central.register_system_event_callback(callback_handler=self._async_callback_system_event)
-            self._central.register_ha_event_callback(callback_handler=self._async_callback_ha_event)
+            self._central.register_system_event_callback(
+                callback_handler=self._async_callback_system_event
+            )
+            self._central.register_ha_event_callback(
+                callback_handler=self._async_callback_ha_event
+            )
             await super().async_start_central()
             self._async_add_central_to_device_registry()
 
@@ -212,8 +217,12 @@ class ControlUnit(BaseControlUnit):
         if self._scheduler:
             self._scheduler.de_init()
         if self._central:
-            self._central.unregister_system_event_callback(callback_handler=self._async_callback_system_event)
-            self._central.unregister_ha_event_callback(callback_handler=self._async_callback_ha_event)
+            self._central.unregister_system_event_callback(
+                callback_handler=self._async_callback_system_event
+            )
+            self._central.unregister_ha_event_callback(
+                callback_handler=self._async_callback_ha_event
+            )
 
         await super().async_stop_central()
 
@@ -400,9 +409,7 @@ class ControlUnit(BaseControlUnit):
             new_devices = kwargs["new_devices"]
             new_entities = []
             for device in new_devices:
-                new_entities.extend(device.generic_entities.values())
-                new_entities.extend(device.wrapper_entities.values())
-                new_entities.extend(device.custom_entities.values())
+                new_entities.extend(device.get_all_entities())
 
             # Handle event of new device creation in Homematic(IP) Local.
             for platform, hm_entities in self.async_get_new_hm_entities(
