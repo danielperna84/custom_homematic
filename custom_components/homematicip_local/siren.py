@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.siren import BaseSiren, CeIpSiren, HmSirenArgs
+from hahomematic.platforms.custom.siren import BaseSiren, HmSirenArgs
 import voluptuous as vol
 
 from homeassistant.components.siren import (
@@ -52,8 +52,7 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            if isinstance(hm_entity, CeIpSiren):
-                entities.append(HaHomematicSiren(control_unit, hm_entity))
+            entities.append(HaHomematicSiren(control_unit, hm_entity))
 
         if entities:
             async_add_entities(entities)
