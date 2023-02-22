@@ -139,11 +139,11 @@ set_device_value:
       selector:
         select:
           options:
-            - 'boolean'
-            - 'dateTime.iso8601'
-            - 'double'
-            - 'int'
-            - 'string'
+            - "boolean"
+            - "dateTime.iso8601"
+            - "double"
+            - "int"
+            - "string"
     rx_mode:
       name: RX mode
       description: The receive mode used.
@@ -189,11 +189,11 @@ set_device_value_raw:
       selector:
         select:
           options:
-            - 'boolean'
-            - 'dateTime.iso8601'
-            - 'double'
-            - 'int'
-            - 'string'
+            - "boolean"
+            - "dateTime.iso8601"
+            - "double"
+            - "int"
+            - "string"
     rx_mode:
       name: RX mode
       description: The receive mode used.
@@ -417,5 +417,3 @@ switch_set_on_time:
           max: 8580000
           unit_of_measurement: seconds
           mode: box
-
-

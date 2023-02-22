@@ -39,8 +39,7 @@
       "invalid_password": "Invalid password",
       "unknown": "Unexpected error"
     },
-    "abort": {
-    }
+    "abort": {}
   },
   "options": {
     "step": {
@@ -80,8 +79,7 @@
       "invalid_password": "Invalid password",
       "unknown": "Unexpected error"
     },
-    "abort": {
-    }
+    "abort": {}
   },
   "device_automation": {
     "trigger_type": {

@@ -3,13 +3,14 @@ from typing import Any
 from unittest.mock import patch
 
 from hahomematic.exceptions import AuthFailure, NoConnection
+
 from homeassistant import config_entries
 from homeassistant.components.homematicip_local.config_flow import (
     ATTR_BIDCOS_RF_ENABLED,
     ATTR_BIDCOS_RF_PORT,
+    ATTR_BIDCOS_WIRED_ENABLED,
     ATTR_HMIP_RF_ENABLED,
     ATTR_HOST,
-    ATTR_BIDCOS_WIRED_ENABLED,
     ATTR_INSTANCE_NAME,
     ATTR_PASSWORD,
     ATTR_PORT,
@@ -17,8 +18,8 @@ from homeassistant.components.homematicip_local.config_flow import (
     ATTR_USERNAME,
     ATTR_VIRTUAL_DEVICES_ENABLED,
     IF_BIDCOS_RF_NAME,
-    IF_HMIP_RF_NAME,
     IF_BIDCOS_WIRED_NAME,
+    IF_HMIP_RF_NAME,
     IF_VIRTUAL_DEVICES_NAME,
 )
 from homeassistant.components.homematicip_local.const import DOMAIN
@@ -124,7 +125,7 @@ async def async_check_form(
         assert result2["handler"] == DOMAIN
         assert result2["step_id"] == "interface"
 
-        flow = next(
+        next(
             flow
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
@@ -177,7 +178,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
         assert result2["handler"] == DOMAIN
         assert result2["step_id"] == "interface"
 
-        flow = next(
+        next(
             flow
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
@@ -223,7 +224,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
         assert result2["handler"] == DOMAIN
         assert result2["step_id"] == "interface"
 
-        flow = next(
+        next(
             flow
             for flow in hass.config_entries.flow.async_progress()
             if flow["flow_id"] == result["flow_id"]
