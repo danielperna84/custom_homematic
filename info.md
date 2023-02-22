@@ -3,6 +3,7 @@ Custom Component [Homematic(IP) Local](https://github.com/danielperna84/custom_h
 This is a custom component to integrate [HA Homematic](https://github.com/danielperna84/hahomematic) into [Home Assistant](https://www.home-assistant.io).
 
 Provides the following:
+
 - ConfigFlow incl. reconfiguration of existing installation.
 - Device Discovery (Detect CCUs in the local Network)
 - Device Trigger (PRESS_XXX Events are selectable in automations)
@@ -31,6 +32,7 @@ Provides the following:
 - Display functions(Gewerke) in entity attributes
 
 Entity Support
+
 - Binary_Sensor
 - Button
 - Climate

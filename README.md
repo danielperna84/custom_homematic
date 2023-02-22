@@ -1,4 +1,5 @@
 # custom_homematic
+
 Custom Home Assistant Component for HomeMatic and HomematicIP
 
 [Installation](https://github.com/danielperna84/custom_homematic/wiki/Installation)
@@ -9,15 +10,16 @@ Custom Home Assistant Component for HomeMatic and HomematicIP
 Please support the community by adding more valuable information to the wiki.
 
 # ISSUES and DISCUSSIONS
+
 Please report issues in [hahomamatic repo](https://github.com/danielperna84/hahomematic/issues).
 New discussions can be started and found in [hahomamatic repo](https://github.com/danielperna84/hahomematic/discussions).
-Feature requests can be added as a discussion too. 
+Feature requests can be added as a discussion too.
 A good practice is to search in issues and discussions before starting a new one.
 
 # Homematic(IP) Local (documentation)
 
-The [HomeMatic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.). 
-It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit. 
+The [HomeMatic](https://www.homematic.com/) integration provides bi-directional communication with your HomeMatic hub (CCU, Homegear etc.).
+It uses an XML-RPC connection to set values on devices and subscribes to receive events the devices and the CCU emit.
 You can configure this integration multiple times if you want to integrate multiple HomeMatic hubs into Home Assistant.  
 If you are using Homegear with paired [Intertechno](https://intertechno.at/) devices, uni-directional communication is possible as well.
 
@@ -27,14 +29,15 @@ Support for CUxD is not possible due to a missing Python library for BinRPC.
 
 ## Device support
 
-HomeMatic and HomematicIP devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant. 
-However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about. 
-It may become relevant though if new hardware becomes available. 
-In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity. 
+HomeMatic and HomematicIP devices are integrated by automatically detecting the available parameters, for which suitable entities will be added to the corresponding device-object within Home Assistant.
+However, for more complex devices (thermostats, some cover-devices and more) we perform a custom mapping to better represent the devices features. This is an internal detail you usually don't have to care about.
+It may become relevant though if new hardware becomes available.
+In such a case the automatic mode will be active. Therefore f.ex. a new thermostat-model might not include the `climate` entity.
 In such a case you may report the missing customization in the [hahomematic](https://github.com/danielperna84/hahomematic) repository.
 Please report missing devices **after** you installed the integration and ensured it is missing or faulty.
 
 ### Deactivated Entities
+
 A lot of additional entities were initially created _deactivated_ and can be _activated_, if necessary, in the `advanced settings` of the entity.
 
 ## Requirements
@@ -42,6 +45,7 @@ A lot of additional entities were initially created _deactivated_ and can be _ac
 ### Hardware
 
 This integration can be used with any CCU-compatible HomeMatic hub that exposes the required XML-RPC interface. This includes:
+
 - CCU2/3
 - RaspberryMatic
 - Debmatic
@@ -71,11 +75,11 @@ If running HA on docker it is recommended to use `network_mode: host`, or specif
 
 ### Authentication
 
-This integration always passes credentials to the HomeMatic hub when connecting. 
+This integration always passes credentials to the HomeMatic hub when connecting.
 For CCU and decendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
- 
+
 The account used for communication is required to have admin privileges on your HomeMatic hub.
-It is imporant to note though, that special characters within your credentials may break the possibility to authenticate. 
+It is imporant to note though, that special characters within your credentials may break the possibility to authenticate.
 Allowed characters for a CCU password are: `A-Z`, `a-z`, `0-9`, and `.!$():;#-`.
 The CCU WebUI also supports `ÄäÖöÜüß`, but these characters are not supported by the XmlRPC servers.
 
@@ -86,6 +90,7 @@ If you are using Homegear and have not set up authentication, please enter dummy
 Adding Homematic(IP) Local to you Home Assistant instance can be done via the user interface, by using this My button: [ADD INTEGRATION](https://my.home-assistant.io/redirect/config_flow_start?domain=homematicip_local)
 
 ## Manual configuration steps
+
 - Browse to your Home Assistant instance.
 - In the sidebar click on [Configuration](https://my.home-assistant.io/redirect/config)
 - From the configuration menu select: [Integrations](https://my.home-assistant.io/redirect/integrations)
@@ -97,7 +102,7 @@ Adding Homematic(IP) Local to you Home Assistant instance can be done via the us
 
 The integration supports auto-discovery for the CCU and compatible hubs like RaspberryMatic. The Home Assistant User Interface will notify you about the integrationg being available for setup. It will pre-fill the instance-name and IP address of your Homematic hub. If you have already set up the integration manually, you can either click the _Ignore_ button or re-configure your existing instance to let Home Assistant know the existing instance is the one it has detected. After re-configuring your instance a HA restart is required.
 
-Autodiscovery uses the last 10-digits of your rf-module's serial to uniquely identify your CCU, but there are rare cases, where the CCU API and the UPNP-Message contains/returns different values. In these cases, where the auto-discovered instance does not disappear after a HA restart, just click on the _Ignore_ button. 
+Autodiscovery uses the last 10-digits of your rf-module's serial to uniquely identify your CCU, but there are rare cases, where the CCU API and the UPNP-Message contains/returns different values. In these cases, where the auto-discovered instance does not disappear after a HA restart, just click on the _Ignore_ button.
 Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 
 ### Configuration Variables
@@ -107,8 +112,9 @@ Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 ```yaml
 instance_name:
   required: true
-  description: Name to identify your HomeMatic hub. This has to be unique for each configured hub. Allowed characters are a-z and 0-9. 
-               If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.
+  description:
+    Name to identify your HomeMatic hub. This has to be unique for each configured hub. Allowed characters are a-z and 0-9.
+    If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.
   type: string
 host:
   required: true
@@ -151,9 +157,10 @@ sysvar_scan_enabled:
   default: true
 sysvar_scan_interval:
   required: true
-  description: Interval in seconds between system variable/program scans. The minimum value is 5. 
-               Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular. 
-               Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended. 
+  description:
+    Interval in seconds between system variable/program scans. The minimum value is 5.
+    Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular.
+    Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended.
   type: integer
   default: 30
 ```
@@ -228,6 +235,7 @@ System variables are fetched every 30 seconds from backend (CCU/Homegear) and be
 System variables are initially created as **[deactived](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
 
 The types of system variables in the CCU are:
+
 - character string (Zeichenkette)
 - list of values (Werteliste)
 - number (Zahl)
@@ -244,16 +252,17 @@ When using Homegear system variables are handled like the DEFAULT.
 ### This is how entities are created from system variables:
 
 - all **character strings** are created as `sensor` entity. Don't tag **character strings** with `hahm`.
-- DEFAULT: system variables that do **not** have the  **marker** `hahm` in description:
+- DEFAULT: system variables that do **not** have the **marker** `hahm` in description:
   - value list, number --> `sensor` entity
   - alert, logic value --> `binary_sensor` entity
-- EXTENDED: system variables that do have the  **marker** `hahm` in description:
+- EXTENDED: system variables that do have the **marker** `hahm` in description:
   - value lists --> `select` entity
   - number --> `number` entity
   - alarm, logic value —> `switch` entity
   - character string —> `text` entity (>= HA 2022.12)
 
 Using `select`, `number`, `switch` and `text` results in the following advantages:
+
 - System variables can be changed directly in the UI without additional logic.
 - The general services for `select`, `number`, `switch` and `text` can be used.
 - The service `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
@@ -285,7 +294,8 @@ Enable the away mode immediately, and specify the end time by setting a duration
 
 ### `homematicip_local.export_device_definition`
 
-Exports a device definition (2 files) to 
+Exports a device definition (2 files) to
+
 - 'Your home-assistant config directory'/homematicip_local/export_device_descriptions/{device_type}.json
 - 'Your home-assistant config directory'/homematicip_local/export_paramset_descriptions/{device_type}.json
 
@@ -302,7 +312,7 @@ Using this service too often could have a negative effect on the stability of yo
 Reactivate a device in Home Assistant that has been made unavailable by an UNREACH event from CCU.
 This service will only override the availability status of a device and all its dependant entities. There is no communication to the backend to enforce a reactivation!
 
-This is not a solution for communication problems with homematic devices. 
+This is not a solution for communication problems with homematic devices.
 Use this only to reactivate devices with flaky communication to gain control again.
 
 ### `homematicip_local.put_paramset`
@@ -324,6 +334,7 @@ Set the value of a variable on your HomeMatic hub.
 Value lists accept the 0-based list position or the value as input.
 
 For booleans the following values can be used:
+
 - 'true', 'on', '1', 1 -> True
 - 'false', 'off', '0', 0 -> False
 
@@ -345,7 +356,7 @@ Use 0 to reset the on time.
 
 Update the value of an entity (only required for edge cases). An entity can be updated at most every 60 seconds.
 
-This service is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this service, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices). 
+This service is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this service, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices).
 
 Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
@@ -354,7 +365,8 @@ Attention: This service gets the value for the entity via a 'getValue' from the 
 Events fired by this integration that can be consumed by users.
 
 ### `homematic.keypress`
-This event type is used when a key is pressed on a device, 
+
+This event type is used when a key is pressed on a device,
 and can be used with device triggers in automation, so manual event listening is not necessary.
 
 In this context, the following must also be observed: [Events for Homematic(IP) devices](https://github.com/SukramJ/custom_homematic#events-for-homematicip-devices)
@@ -362,22 +374,23 @@ In this context, the following must also be observed: [Events for Homematic(IP) 
 The `PRESS*` parameters are evaluated for this event type in the backend.
 
 ### `homematic.device_availability`
-This event type is used when a device is no longer available or is available again, 
+
+This event type is used when a device is no longer available or is available again,
 and can be used with the blueprint [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml).
 
 The `UNREACH` parameter is evaluated for this event type in the backend.
 
-
 ### `homematic.device_error`
+
 This event type is used when a device is in an error state.
 A sample usage is shown in the blueprint [Show device errors](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_show_device_error.yaml).
 
 The `ERROR*` parameters are evaluated for this event type in the backend.
 
-
 ## Additional information
 
 ### What is the meaning of this persistent notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
+
 This integration does not fetch new updates from the CCU, it **receives** state changes and new values for devices from the CCU by the XmlRPC server.
 
 Therefor the integration checks if this mechanism works:
@@ -406,10 +419,12 @@ If you want to know how assured the displayed value is, there is an attribute `v
 If you want to be sure that the state of the entity is as consistent as possible, you should also check the `value_state` attribute for `valid`.
 
 ### Sending state changes to backend
+
 We try to avoid backend calls if value/state doesn't change:
-- If an entity (e.g. `switch`) has only **one** parameter that represents its state, then a call to the backend will be made, 
+
+- If an entity (e.g. `switch`) has only **one** parameter that represents its state, then a call to the backend will be made,
   if the parameter value sent is not identical to the current state.
-- If an entity (e.g. `cover`, `climate`, `light`) has **multiple** parameters that represent its state, then a call to the backend will be made, 
+- If an entity (e.g. `cover`, `climate`, `light`) has **multiple** parameters that represent its state, then a call to the backend will be made,
   if one of these parameter values sent is not identical to its current state.
 - Not covered by this approach:
   - platforms: lock and siren.
@@ -437,14 +452,15 @@ BUT remember: Some paramters are already created as entities, but are **[deactiv
 Devices with buttons (e.g. HM-Sen-MDIR-WM55 and other remote controls) may not be fully visible in the UI. This is intended, as buttons don't have a persistent state. An example: The HM-Sen-MDIR-WM55 motion detector will expose entities for motion detection and brightness (among other entities), but none for the two internal buttons. To use these buttons within automations, you can select the device as the trigger-type, and then select the specific trigger (_Button "1" pressed_ etc.).
 
 ### Fixing RSSI values
+
 See this [explanation](https://github.com/danielperna84/hahomematic/blob/devel/docs/rssi_fix.md) how the RSSI values are fixed.
 
 ### Changing the default platform for some parameters
 
-#### HmIP-eTRv* / LEVEL, number to sensor entity
+#### HmIP-eTRv\* / LEVEL, number to sensor entity
 
-The `LEVEL` parameter of the HmIP-eTRV can be written, i.e. this parameter is created as a __number__ entity and the valve can be moved to any position.
-However, this __manual position__ is reversed shortly thereafter by the device's internal control logic, causing the valve to return to its original position almost immediately. Since the internal control logic of the device can neither be bypassed nor deactivated, manual control of the valve opening degree is not useful. The `LEVEL` parameter is therefore created as a sensor, and thus also supports long-term statistics.
+The `LEVEL` parameter of the HmIP-eTRV can be written, i.e. this parameter is created as a **number** entity and the valve can be moved to any position.
+However, this **manual position** is reversed shortly thereafter by the device's internal control logic, causing the valve to return to its original position almost immediately. Since the internal control logic of the device can neither be bypassed nor deactivated, manual control of the valve opening degree is not useful. The `LEVEL` parameter is therefore created as a sensor, and thus also supports long-term statistics.
 
 If you need the `LEVEL` parameter as number entity, then this can be done by using the [unignore](https://github.com/danielperna84/custom_homematic#unignore-device-parameters) feature by adding LEVEL to the file.
 
@@ -457,7 +473,7 @@ service: homematicip_local.set_device_value
 data:
   device_id: abcdefg...
   parameter: PRESS_SHORT
-  value: 'true'
+  value: "true"
   value_type: boolean
   channel: 3
 ```
@@ -471,60 +487,60 @@ To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall 
 3. Click the plus icon below `Condition: If...` and press the button `Device selection`
 4. Select one of the device's channels you need (1-2 / 1-6 for WRC2 / WRC6 and 2-3 for SPDR)
 5. Select short or long key press
-6. Repeat Steps 3 - 5 to add all needed channels (the logic AND / OR is irrelevant) 
+6. Repeat Steps 3 - 5 to add all needed channels (the logic AND / OR is irrelevant)
 7. Save the program with the `OK` button
 8. Trigger the program by pressing the button as configured in step 5. Your device might indicate success via a green LED or similar. When you select the device in `Status and control` > `Devices` on the CCU, the `Last Modified` field should no longer be empty
-8. When your channels are working now, you can set the program to "inactive". Don't delete the program!
+9. When your channels are working now, you can set the program to "inactive". Don't delete the program!
 
 Hint: To deactivate the event for one channel, remove that channel from the programm
-Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.     
+Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.
 
 ## Examples in YAML
 
 Set boolean variable to true:
 
 ```yaml
-...
+---
 action:
   service: homematicip_local.set_variable_value
   data:
     entity_id: sesnsor.ccu2
     name: Variablename
-    value: '3'
+    value: "3"
 ```
 
 Manually turn on a switch actor:
 
 ```yaml
-...
+---
 action:
   service: homematicip_local.set_device_value
   data:
     device_id: abcdefg...
     channel: 1
     parameter: STATE
-    value: 'true'
+    value: "true"
     value_type: boolean
 ```
 
 Manually set temperature on thermostat:
 
 ```yaml
-...
+---
 action:
   service: homematicip_local.set_device_value
   data:
     device_id: abcdefg...
     channel: 4
     parameter: SET_TEMPERATURE
-    value: '23.0'
+    value: "23.0"
     value_type: double
 ```
 
 Set the week program of a wall thermostat:
 
 ```yaml
-...
+---
 action:
   service: homematicip_local.put_paramset
   data:
@@ -537,7 +553,7 @@ action:
 Set the week program of a wall thermostat with explicit `rx_mode` (BidCos-RF only):
 
 ```yaml
-...
+---
 action:
   service: homematicip_local.put_paramset
   data:
@@ -557,6 +573,7 @@ BidCos-RF devices have an optional parameter for put_paramset which defines the 
 ## Available Blueprints
 
 The following blueprints can be used to simplify the usage of HomeMatic and HomematicIP device:
+
 - [Support for 2-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-2-button.yaml): Support for two button remote like HmIP-WRC2.
 - [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for two button remote like HmIP-KRCA.
 - [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for two button remote like HmIP-WRC6.
@@ -568,6 +585,7 @@ The following blueprints can be used to simplify the usage of HomeMatic and Home
 - [Show device errors](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_show_device_error.yaml) Show all error eventy emitted by a device. This is an unfiltered blueprint. More filters should be added to the trigger.
 
 Feel free to contribute:
+
 - [Community blueprints](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/community)
 
 These blueprints on my own system and share them with you, but I don't want to investigate in blueprints for devices, that I don't own!

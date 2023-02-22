@@ -9,24 +9,24 @@ mode: restart
 max_exceeded: silent
 
 trigger:
-- platform: event
-  event_type: homematic.device_availability
+  - platform: event
+    event_type: homematic.device_availability
 
 action:
   - choose:
-    - conditions:
-      - condition: template
-        value_template: '{{trigger.event.data.unavailable == true }}'
-      sequence:
-        - service: persistent_notification.create
-          data:
-            notification_id: "{{ trigger.event.data.identifier }}"
-            title:  "{{ trigger.event.data.title }}"
-            message: "{{ trigger.event.data.message }}"
-    - conditions:
-      - condition: template
-        value_template: '{{trigger.event.data.unavailable == false }}'
-      sequence:
-        - service: persistent_notification.dismiss
-          data:
-            notification_id: "{{ trigger.event.data.identifier }}"
+      - conditions:
+          - condition: template
+            value_template: "{{trigger.event.data.unavailable == true }}"
+        sequence:
+          - service: persistent_notification.create
+            data:
+              notification_id: "{{ trigger.event.data.identifier }}"
+              title: "{{ trigger.event.data.title }}"
+              message: "{{ trigger.event.data.message }}"
+      - conditions:
+          - condition: template
+            value_template: "{{trigger.event.data.unavailable == false }}"
+        sequence:
+          - service: persistent_notification.dismiss
+            data:
+              notification_id: "{{ trigger.event.data.identifier }}"
