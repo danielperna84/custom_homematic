@@ -1,3 +1,10 @@
+# Version 1.32.0 (2022-02-23)
+### New features
+
+### All changes:
+- Bump hahomematic to 2023.2.10
+  - Use sets for central callbacks
+
 # Version 1.31.0 (2022-02-18)
 ### New features
 
