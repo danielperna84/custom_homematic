@@ -28,7 +28,7 @@ Provides the following:
 - Assign area in HA, if room in CCU is used.
   This works, if a homematic device is assigned to a single room in CCU. Multiple channels can be assigned to the same room.
   If the device is assigned to multiple rooms, or nothing is set, then the area in HA will stay empty.
-  This has no effect on existing area assignements.
+  This has no effect on existing area assignments.
 - Display functions(Gewerke) in entity attributes
 
 Entity Support

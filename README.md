@@ -6,7 +6,7 @@ Custom Home Assistant Component for HomeMatic and HomematicIP
 
 [State of the integration](https://github.com/danielperna84/custom_homematic/blob/devel/info.md)
 
-[Wiki with addional information](https://github.com/danielperna84/hahomematic/wiki)
+[Wiki with additional information](https://github.com/danielperna84/hahomematic/wiki)
 Please support the community by adding more valuable information to the wiki.
 
 # ISSUES and DISCUSSIONS
@@ -76,7 +76,7 @@ If running HA on docker it is recommended to use `network_mode: host`, or specif
 ### Authentication
 
 This integration always passes credentials to the HomeMatic hub when connecting.
-For CCU and decendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
+For CCU and descendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
 
 The account used for communication is required to have admin privileges on your HomeMatic hub.
 It is imporant to note though, that special characters within your credentials may break the possibility to authenticate.
@@ -130,7 +130,7 @@ password:
   type: string
 tls:
   required: true
-  description: Enable TLS encryption. This wil change the default for json_port from 80 to 443.
+  description: Enable TLS encryption. This will change the default for json_port from 80 to 443.
   type: boolean
   default: false
 verify_tls:
@@ -232,7 +232,7 @@ These two options are required for _special_ network environments. If for exampl
 
 System variables are fetched every 30 seconds from backend (CCU/Homegear) and belong to a device of type CCU. You could also click on service on the integration's overview in HA.
 
-System variables are initially created as **[deactived](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
+System variables are initially created as **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
 
 The types of system variables in the CCU are:
 
@@ -310,7 +310,7 @@ Using this service too often could have a negative effect on the stability of yo
 ### `homematicip_local.force_device_availability`
 
 Reactivate a device in Home Assistant that has been made unavailable by an UNREACH event from CCU.
-This service will only override the availability status of a device and all its dependant entities. There is no communication to the backend to enforce a reactivation!
+This service will only override the availability status of a device and all its dependent entities. There is no communication to the backend to enforce a reactivation!
 
 This is not a solution for communication problems with homematic devices.
 Use this only to reactivate devices with flaky communication to gain control again.
@@ -393,7 +393,7 @@ The `ERROR*` parameters are evaluated for this event type in the backend.
 
 This integration does not fetch new updates from the CCU, it **receives** state changes and new values for devices from the CCU by the XmlRPC server.
 
-Therefor the integration checks if this mechanism works:
+Therefore the integration checks if this mechanism works:
 
 Regardless of regular device updates, HA checks the availability of the CCU with a `PING` every **15 seconds**, and expects a `PONG` event as a response on the XMLRPC server.
 This persistent notification is only displayed in HA if the received PONG events and the device updates are missing for **10 minutes**, but it also disappears again as soon as events are received again.
@@ -439,13 +439,13 @@ Option 2: Reload the Integration or restart HA, that will reload the names from 
 
 Option 3: Use the service homematicip_local.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
 
-Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installes systems)
+Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installs systems)
 
 ### Unignore device parameters
 
 Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
 
-BUT remember: Some paramters are already created as entities, but are **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)**.
+BUT remember: Some parameters are already created as entities, but are **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)**.
 
 ### Devices with buttons
 
@@ -492,7 +492,7 @@ To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall 
 8. Trigger the program by pressing the button as configured in step 5. Your device might indicate success via a green LED or similar. When you select the device in `Status and control` > `Devices` on the CCU, the `Last Modified` field should no longer be empty
 9. When your channels are working now, you can set the program to "inactive". Don't delete the program!
 
-Hint: To deactivate the event for one channel, remove that channel from the programm
+Hint: To deactivate the event for one channel, remove that channel from the program
 Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.
 
 ## Examples in YAML
