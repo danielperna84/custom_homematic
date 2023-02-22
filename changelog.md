@@ -51,7 +51,7 @@
 - Remove `native_precision` for Concentration of HmIP-SCTH230
 
 This change is necessary because `native_precision` has been swapped for `suggested_display_precision` without a deprecation period in the HA core. Before switching to HA 2023.3, **all** CC users who use version 1.28.0 (or greater) must therefore update.
-Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.3
+Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023.3
 
 # Version 1.30.1 (2022-02-08)
 
@@ -210,7 +210,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 ### All changes:
 
 - Bump hahomematic to 2023.1.3
-  - Unifiy event parameters
+  - Unify event parameters
   - Refactor entity.py for better event support
   - Fix wrong warning after set_system_variable
   - Add validation to event_data
@@ -642,7 +642,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 
 - Bump hahomematic to 2022.7.9
   - Remove state_uncertain from default attributes
-- Make entity state restoreable after HA restart
+- Make entity state restorable after HA restart
 - Do not use CALLBACK_HOST for XmRPCServer
 
 # Version 1.11.1 (2022-07-13)
@@ -701,7 +701,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 
 - Bump hahomematic to 1.9.2
   - Use CHANNEL_OPERATION_MODE for devices with MULTI_MODE_INPUT_TRANSMITTER, KEY_TRANSCEIVER channels
-  - Readd HmIPW-FIO6 to custom device handling
+  - Re-add HmIPW-FIO6 to custom device handling
 - Disable device trigger based on event usage
 
 # Version 1.9.0 (2022-06-29)
@@ -715,7 +715,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 
 - Bump hahomematic to 1.8.6
   - Code cleanup
-- Fix sysvar creation for delayed plattform setups on some environments
+- Fix sysvar creation for delayed platform setups on some environments
 
 # Version 1.8.5 (2022-06-05)
 
@@ -899,7 +899,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
   - Migrate device_info to dataclass
   - Add rega script (provided by @baxxy13) to get serial from CCU
 - Add Entity_Description to BATTERY_STATE
-- Make device_info more independant from backend
+- Make device_info more independent from backend
 - Clean up cache dirs on instance removal
 
 # Version 1.0.5 (2022-04-07)
@@ -986,7 +986,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 
 - Bump hahomematic to 0.37.5
   - Send event if interface is not available
-  - Dont't block available interfaces, if another interface is no available
+  - Don't block available interfaces, if another interface is no available
 
 # Version 0.37.2 (2022-03-17)
 
@@ -1545,11 +1545,11 @@ Rounding support for Concentration of HmIP-SCTH230 will be readded with HA 2023.
 - Move parameters in internal config
 - Fix #80 broken config_flow
 
-Versiom 0.1.2 (2021-12-21)
+Version 0.1.2 (2021-12-21)
 
 - Refactor device_info and identifier handling
 
-Versiom 0.1.1 (2021-12-21)
+Version 0.1.1 (2021-12-21)
 
 - Rename async methods and @callback methods to async\_\*
 - Update device identifier with interface_id

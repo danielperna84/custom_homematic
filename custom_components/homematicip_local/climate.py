@@ -199,12 +199,16 @@ class HaHomematicClimate(
             if self._hm_entity.hvac_mode in HM_TO_HA_HVAC_MODE:
                 return HM_TO_HA_HVAC_MODE[self._hm_entity.hvac_mode]
             return HVACMode.OFF
-        if self.is_restored and self._restored_state:
-            if (restored_state := self._restored_state.state) not in (
+        if (
+            self.is_restored
+            and self._restored_state
+            and (restored_state := self._restored_state.state)
+            not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
-            ):
-                return HVACMode(value=restored_state)
+            )
+        ):
+            return HVACMode(value=restored_state)
         return None
 
     @property
@@ -229,11 +233,12 @@ class HaHomematicClimate(
     @property
     def preset_mode(self) -> str | None:
         """Return the current preset mode."""
-        if self._hm_entity.is_valid:
-            if self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES or str(
-                self._hm_entity.preset_mode
-            ).startswith(HM_PRESET_MODE_PREFIX):
-                return self._hm_entity.preset_mode
+        if (
+            self._hm_entity.is_valid
+            and self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES
+            or str(self._hm_entity.preset_mode).startswith(HM_PRESET_MODE_PREFIX)
+        ):
+            return self._hm_entity.preset_mode
         if self.is_restored and self._restored_state:
             return self._restored_state.attributes.get(ATTR_PRESET_MODE)
         return None

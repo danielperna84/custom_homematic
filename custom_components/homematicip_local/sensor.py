@@ -182,9 +182,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
     async def async_added_to_hass(self) -> None:
         """Check, if state needs to be restored."""
         await super().async_added_to_hass()
-        if not self._hm_entity.is_valid:
-            if restored_sensor_data := await self.async_get_last_sensor_data():
-                self._restored_native_value = restored_sensor_data.native_value
+        if not self._hm_entity.is_valid and (
+            restored_sensor_data := await self.async_get_last_sensor_data()
+        ):
+            self._restored_native_value = restored_sensor_data.native_value
 
 
 class HaHomematicSysvarSensor(

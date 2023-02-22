@@ -39,8 +39,7 @@
       "invalid_password": "Ongeldige password",
       "unknown": "Onverwachte fout"
     },
-    "abort": {
-    }
+    "abort": {}
   },
   "options": {
     "step": {
@@ -80,8 +79,7 @@
       "invalid_password": "Ongeldige password",
       "unknown": "Onverwachte fout"
     },
-    "abort": {
-    }
+    "abort": {}
   },
   "device_automation": {
     "trigger_type": {

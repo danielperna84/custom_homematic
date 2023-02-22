@@ -155,12 +155,16 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         """Return true if dimmer is on."""
         if self._hm_entity.is_valid:
             return self._hm_entity.is_on is True
-        if self.is_restored and self._restored_state:
-            if (restored_state := self._restored_state.state) not in (
+        if (
+            self.is_restored
+            and self._restored_state
+            and (restored_state := self._restored_state.state)
+            not in (
                 STATE_UNKNOWN,
                 STATE_UNAVAILABLE,
-            ):
-                return restored_state == STATE_ON
+            )
+        ):
+            return restored_state == STATE_ON
         return None
 
     @property
