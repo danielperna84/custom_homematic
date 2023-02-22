@@ -1,5 +1,9 @@
 # Version 1.32.0 (2022-02-23)
 
+## Breaking change
+
+-Remove `set_device_value_raw`: use `set_device_value_raw` instead (See changelog release 1.27.1)
+
 ### New features
 
 - Enable HmIP-SMSD as siren
@@ -13,6 +17,7 @@
 
 - Enable HmIP-SMSD as siren
 - Add pre-commit checks and cleanup repo
+- Remove set_device_value_raw
 
 # Version 1.31.0 (2022-02-18)
 
