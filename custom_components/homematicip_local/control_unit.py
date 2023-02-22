@@ -199,17 +199,11 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_hub_entities: dict[str, GenericHubEntity] = {}
         self._scheduler: HmScheduler | None = None
 
-    async def async_init_central(self) -> None:
-        """Start the central unit."""
-        await super().async_init_central()
-        # register callback
-        if self._central:
-            self._central.callback_system_event = self._async_callback_system_event
-            self._central.callback_ha_event = self._async_callback_ha_event
-
     async def async_start_central(self) -> None:
         """Start the central unit."""
         if self._central:
+            self._central.register_system_event_callback(callback_handler=self._async_callback_system_event)
+            self._central.register_ha_event_callback(callback_handler=self._async_callback_ha_event)
             await super().async_start_central()
             self._async_add_central_to_device_registry()
 
@@ -217,6 +211,9 @@ class ControlUnit(BaseControlUnit):
         """Stop the central unit."""
         if self._scheduler:
             self._scheduler.de_init()
+        if self._central:
+            self._central.unregister_system_event_callback(callback_handler=self._async_callback_system_event)
+            self._central.unregister_ha_event_callback(callback_handler=self._async_callback_ha_event)
 
         await super().async_stop_central()
 
