@@ -400,9 +400,7 @@ class ControlUnit(BaseControlUnit):
             new_devices = kwargs["new_devices"]
             new_entities = []
             for device in new_devices:
-                new_entities.extend(device.generic_entities.values())
-                new_entities.extend(device.wrapper_entities.values())
-                new_entities.extend(device.custom_entities.values())
+                new_entities.extend(device.get_all_entities())
 
             # Handle event of new device creation in Homematic(IP) Local.
             for platform, hm_entities in self.async_get_new_hm_entities(
