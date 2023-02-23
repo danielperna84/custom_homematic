@@ -1,9 +1,15 @@
 {
   "domain": "homematicip_local",
   "name": "Homematic(IP) Local",
+  "codeowners": ["@danielperna84", "@SukramJ"],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/danielperna84/custom_homematic",
+  "homekit": {},
+  "integration_type": "hub",
+  "iot_class": "local_push",
   "issue_tracker": "https://github.com/danielperna84/hahomematic/issues",
+  "loggers": ["hahomematic"],
   "requirements": ["hahomematic==2023.2.10"],
   "ssdp": [
     {
@@ -11,12 +17,6 @@
       "manufacturerURL": "http://www.homematic.com"
     }
   ],
-  "zeroconf": [],
-  "homekit": {},
-  "dependencies": [],
-  "codeowners": ["@danielperna84", "@SukramJ"],
-  "iot_class": "local_push",
-  "loggers": ["hahomematic"],
   "version": "1.32.0",
-  "integration_type": "hub"
+  "zeroconf": []
 }
