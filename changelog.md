@@ -7,13 +7,13 @@
 ### New features
 
 - Enable HmIP-SMSD as siren
--
 
 ### All changes:
 
 - Bump hahomematic to 2023.2.10
 
   - Use sets for central callbacks
+  - Add get_all_entities for device
 
 - Enable HmIP-SMSD as siren
 - Add pre-commit checks and cleanup repo
