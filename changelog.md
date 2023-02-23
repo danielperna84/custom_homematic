@@ -2,7 +2,7 @@
 
 ## Breaking change
 
--Remove `set_device_value_raw`: use `set_device_value_raw` instead (See changelog release 1.27.1)
+-Remove `set_device_value_raw`: use `set_device_value` instead (See changelog release 1.27.1)
 
 ### New features
 
