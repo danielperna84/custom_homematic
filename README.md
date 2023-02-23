@@ -130,7 +130,8 @@ password:
   type: string
 tls:
   required: true
-  description: Enable TLS encryption. This will change the default for json_port from 80 to 443.
+  description: Enable TLS encryption. This will change the default for json_port from 80 to 443. 
+               TLS must be enabled, if http to https forwarding is enabled in the CCU.
   type: boolean
   default: false
 verify_tls:
