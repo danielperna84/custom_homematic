@@ -1,3 +1,11 @@
+# Version 1.33.0 (2022-02-23)
+
+### New features
+
+### All changes:
+
+- Bump hahomematic to 2023.2.11
+
 # Version 1.32.0 (2022-02-23)
 
 ## Breaking change
