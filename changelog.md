@@ -1,3 +1,12 @@
+# Version 1.33.0 (2022-02-26)
+
+### All changes:
+
+- Bump hahomematic to 2023.2.11
+  - Update ruff, fix comments
+  - Switch to orjson
+  - Fix climate: compare set temperature to target temperature
+
 # Version 1.32.0 (2022-02-23)
 
 ## Breaking change
