@@ -1,3 +1,12 @@
+# Version 1.33.1 (2022.03.02)
+
+### All changes:
+
+- Bump hahomematic to 2023.3.0
+  - Update ruff, adjust module aliases
+- Fix import
+- Update minimum required version
+
 # Version 1.33.0 (2022-02-26)
 
 ### All changes:
