@@ -1,9 +1,10 @@
-# Version 1.33.1 (2022.03.02)
+# Version 1.33.1 (2022-03-03)
 
 ### All changes:
 
 - Bump hahomematic to 2023.3.0
   - Update ruff, adjust module aliases
+  - Fix spamming CCU logs with errors (#981)
 - Fix import
 - Update minimum required version
 
