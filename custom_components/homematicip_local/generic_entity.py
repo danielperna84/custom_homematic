@@ -64,7 +64,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
-            isinstance(self._hm_entity, (GenericEntity, WrapperEntity))
+            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
             and hasattr(self, "entity_description")
             and hasattr(self.entity_description, "native_unit_of_measurement")
             and self.entity_description.native_unit_of_measurement
@@ -112,7 +112,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             ATTR_ADDRESS: self._hm_entity.channel_address,
             ATTR_MODEL: self._hm_entity.device.device_type,
         }
-        if isinstance(self._hm_entity, (GenericEntity, WrapperEntity)):
+        if isinstance(self._hm_entity, GenericEntity | WrapperEntity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value
             attributes[ATTR_PARAMETER] = self._hm_entity.parameter
             attributes[ATTR_FUNCTION] = self._hm_entity.function
@@ -121,7 +121,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.CUSTOM.value
 
         if (
-            isinstance(self._hm_entity, (GenericEntity, WrapperEntity))
+            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
             and self._hm_entity.is_readable
         ) or isinstance(self._hm_entity, CustomEntity):
             if self._hm_entity.is_valid:
@@ -147,7 +147,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
         # Init value of entity.
-        if isinstance(self._hm_entity, (GenericEntity, CustomEntity, WrapperEntity)):
+        if isinstance(self._hm_entity, GenericEntity | CustomEntity | WrapperEntity):
             await self._hm_entity.load_entity_value(call_source=HmCallSource.HA_INIT)
         if (
             isinstance(self._hm_entity, GenericEntity)
@@ -177,7 +177,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
-        if isinstance(self._hm_entity, (GenericEntity, CustomEntity)):
+        if isinstance(self._hm_entity, GenericEntity | CustomEntity):
             await self._hm_entity.load_entity_value(
                 call_source=HmCallSource.MANUAL_OR_SCHEDULED
             )

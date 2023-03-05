@@ -697,7 +697,7 @@ def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""
-    if isinstance(hm_entity, (GenericEntity, WrapperEntity)):
+    if isinstance(hm_entity, GenericEntity | WrapperEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
         ):

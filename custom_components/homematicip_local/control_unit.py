@@ -616,7 +616,7 @@ class ControlUnit(BaseControlUnit):
                 platform_stats[platform] = 0
             counter = platform_stats[platform]
             platform_stats[platform] = counter + 1
-            if isinstance(entity, (CustomEntity, GenericEntity)):
+            if isinstance(entity, CustomEntity | GenericEntity):
                 device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
 
@@ -627,7 +627,7 @@ class ControlUnit(BaseControlUnit):
         entities: list[HmBaseEntity] = []
         for entity in self._active_hm_entities.values():
             if (
-                isinstance(entity, (CustomEntity, GenericEntity, WrapperEntity))
+                isinstance(entity, CustomEntity | GenericEntity | WrapperEntity)
                 and device_address == entity.device.device_address
             ):
                 entities.append(entity)
