@@ -1,3 +1,14 @@
+# Version 1.33.2 (2022-03-06)
+
+### All changes:
+
+- Bump hahomematic to 2023.3.1
+  - Add name to tasks
+  - Update ruff, fix files
+  - Improve typing
+- Fix import
+- Update minimum required version
+
 # Version 1.33.1 (2022-03-03)
 
 ### All changes:
