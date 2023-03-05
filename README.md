@@ -238,11 +238,11 @@ System variables are initially created as **[deactivated](https://github.com/dan
 
 The types of system variables in the CCU are:
 
-- character string (Zeichenkette)
-- list of values (Werteliste)
-- number (Zahl)
-- logic value (Logikwert)
-- alert (Alarm)
+- _character string_ (Zeichenkette)
+- _list of values_ (Werteliste)
+- _number_ (Zahl)
+- _logic value_ (Logikwert)
+- _alert_ (Alarm)
 
 System variables have a description that can be added in the CCU's UI.
 If you add the marker `hahm` to the description extended features for this system variable can be used in HA.
@@ -253,15 +253,14 @@ When using Homegear system variables are handled like the DEFAULT.
 
 ### This is how entities are created from system variables:
 
-- all **character strings** are created as `sensor` entity. Don't tag **character strings** with `hahm`.
 - DEFAULT: system variables that do **not** have the **marker** `hahm` in description:
-  - value list, number --> `sensor` entity
-  - alert, logic value --> `binary_sensor` entity
+  - _character string_, _list of values_, _number_ --> `sensor` entity
+  - _alert_, _logic value_ --> `binary_sensor` entity
 - EXTENDED: system variables that do have the **marker** `hahm` in description:
-  - value lists --> `select` entity
-  - number --> `number` entity
-  - alarm, logic value —> `switch` entity
-  - character string —> `text` entity (>= HA 2022.12)
+  - _list of values_ --> `select` entity
+  - _number_ --> `number` entity
+  - _alarm_, _logic value_ —> `switch` entity
+  - _character string_ —> `text` entity
 
 Using `select`, `number`, `switch` and `text` results in the following advantages:
 
