@@ -4,10 +4,15 @@
 
 - Bump hahomematic to 2023.3.1
   - Add name to tasks
-  - Update ruff, fix files
   - Improve typing
-- Fix import
+  - Move callback calls into exception block
+  - Remove avoidable usage of deepcopy
+  - Add dependabot
+  - Update requirements
+  - Drop pyupgrade, autoflake, flake8 in favor of ruff
+  - Refactor cover, add set_combined_position
 - Update minimum required version
+- Add service "set cover combined position"
 
 # Version 1.33.1 (2022-03-03)
 

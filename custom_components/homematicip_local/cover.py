@@ -6,6 +6,7 @@ from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.cover import CeBlind, CeCover, CeGarage, CeIpBlind
+import voluptuous as vol
 
 from homeassistant.components.cover import (
     ATTR_CURRENT_POSITION,
@@ -17,6 +18,7 @@ from homeassistant.components.cover import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -28,6 +30,8 @@ _LOGGER = logging.getLogger(__name__)
 
 HmBaseCoverEntity = CeCover | CeGarage
 HmGenericCover = TypeVar("HmGenericCover", bound=HmBaseCoverEntity)
+
+SERVICE_SET_COVER_COMBINED_POSITION = "set_cover_combined_position"
 
 
 async def async_setup_entry(
@@ -74,6 +78,21 @@ async def async_setup_entry(
         control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.COVER)
     )
 
+    platform = entity_platform.async_get_current_platform()
+
+    platform.async_register_entity_service(
+        SERVICE_SET_COVER_COMBINED_POSITION,
+        {
+            vol.Required(ATTR_POSITION): vol.All(
+                vol.Coerce(int), vol.Range(min=0, max=100)
+            ),
+            vol.Required(ATTR_TILT_POSITION): vol.All(
+                vol.Coerce(int), vol.Range(min=0, max=100)
+            ),
+        },
+        "async_set_cover_combined_position",
+    )
+
 
 class HaHomematicBaseCover(
     HaHomematicGenericRestoreEntity[HmGenericCover], CoverEntity
@@ -84,7 +103,7 @@ class HaHomematicBaseCover(
     def current_cover_position(self) -> int | None:
         """Return current position of cover."""
         if self._hm_entity.is_valid:
-            return self._hm_entity.current_cover_position
+            return self._hm_entity.current_position
         if self.is_restored and self._restored_state:
             return self._restored_state.attributes.get(ATTR_CURRENT_POSITION)
         return None
@@ -121,19 +140,19 @@ class HaHomematicBaseCover(
         # Hm cover is closed:1 -> open:0
         if ATTR_POSITION in kwargs:
             position = float(kwargs[ATTR_POSITION])
-            await self._hm_entity.set_cover_position(position)
+            await self._hm_entity.set_position(position=position)
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
-        await self._hm_entity.open_cover()
+        await self._hm_entity.open()
 
     async def async_close_cover(self, **kwargs: Any) -> None:
         """Close the cover."""
-        await self._hm_entity.close_cover()
+        await self._hm_entity.close()
 
     async def async_stop_cover(self, **kwargs: Any) -> None:
         """Stop the device if in motion."""
-        await self._hm_entity.stop_cover()
+        await self._hm_entity.stop()
 
 
 class HaHomematicCover(HaHomematicBaseCover[CeCover]):
@@ -147,7 +166,7 @@ class HaHomematicBlind(HaHomematicBaseCover[CeBlind | CeIpBlind]):
     def current_cover_tilt_position(self) -> int | None:
         """Return current tilt position of cover."""
         if self._hm_entity.is_valid:
-            return self._hm_entity.current_cover_tilt_position
+            return self._hm_entity.current_tilt_position
         if self.is_restored and self._restored_state:
             return self._restored_state.attributes.get(ATTR_CURRENT_TILT_POSITION)
         return None
@@ -155,20 +174,28 @@ class HaHomematicBlind(HaHomematicBaseCover[CeBlind | CeIpBlind]):
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
         """Move the cover to a specific tilt position."""
         if ATTR_TILT_POSITION in kwargs:
-            position = float(kwargs[ATTR_TILT_POSITION])
-            await self._hm_entity.set_cover_tilt_position(position)
+            tilt_position = float(kwargs[ATTR_TILT_POSITION])
+            await self._hm_entity.set_tilt_position(tilt_position=tilt_position)
+
+    async def async_set_cover_combined_position(
+        self, position: float, tilt_position: float
+    ) -> None:
+        """Move the cover to a specific position incl. tilt."""
+        await self._hm_entity.set_combined_position(
+            position=position, tilt_position=tilt_position
+        )
 
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:
         """Open the tilt."""
-        await self._hm_entity.open_cover_tilt()
+        await self._hm_entity.open_tilt()
 
     async def async_close_cover_tilt(self, **kwargs: Any) -> None:
         """Close the tilt."""
-        await self._hm_entity.close_cover_tilt()
+        await self._hm_entity.close_tilt()
 
     async def async_stop_cover_tilt(self, **kwargs: Any) -> None:
         """Stop the device if in motion."""
-        await self._hm_entity.stop_cover_tilt()
+        await self._hm_entity.stop_tilt()
 
 
 class HaHomematicGarage(HaHomematicBaseCover[CeGarage]):
