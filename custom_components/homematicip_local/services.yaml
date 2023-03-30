@@ -332,7 +332,7 @@ turn_on_siren:
       selector:
         text:
 light_set_on_time:
-  name: light on time
+  name: Set light on time
   description: Set on time for a light entity. Must be followed by a light.turn_on.
   target:
     entity:
@@ -350,7 +350,7 @@ light_set_on_time:
           unit_of_measurement: seconds
           mode: box
 switch_set_on_time:
-  name: switch on time
+  name: Set switch on time
   description: Set on time for a switch entity. Must be followed by a switch.turn_on.
   target:
     entity:
@@ -367,3 +367,30 @@ switch_set_on_time:
           max: 8580000
           unit_of_measurement: seconds
           mode: box
+set_cover_combined_position:
+  name: Set cover combined position
+  description: Move a blind to a specific position and tilt position.
+  target:
+    entity:
+      domain: cover
+      integration: homematicip_local
+      device_class: blind
+  fields:
+    position:
+      name: Position
+      description: Position of the cover.
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    tilt_position:
+      name: Tilt position
+      description: Tilt position of the cover.
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"

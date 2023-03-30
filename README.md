@@ -320,6 +320,10 @@ Use this only to reactivate devices with flaky communication to gain control aga
 
 Call to `putParamset` in the XML-RPC interface.
 
+### `homematicip_local.set_cover_combined_position`
+
+Move a blind to a specific position and tilt position.
+
 ### `homematicip_local.set_device_value`
 
 Set a device parameter via the XML-RPC interface. Preferred when using the UI. Works with device selection.
