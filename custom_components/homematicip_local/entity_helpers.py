@@ -1,6 +1,7 @@
 """Support for Homematic(IP) Local sensors."""
 from __future__ import annotations
 
+from copy import copy
 import logging
 from typing import Final
 
@@ -516,6 +517,9 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
+    "STATE": BinarySensorEntityDescription(
+        key="STATE",
+    ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
@@ -626,6 +630,9 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),
+    "STATE": SwitchEntityDescription(
+        key="STATE",
+    ),
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE: dict[
@@ -701,15 +708,19 @@ def get_entity_description(
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
         ):
+            if entity_desc.translation_key is None:
+                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
+            if entity_desc.translation_key is None:
+                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if (
             hm_entity.platform == HmPlatform.SENSOR
             and hm_entity.unit
-            and (entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit))
+            and (entity_desc := copy(_SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit)))
         ):
             return entity_desc
 
@@ -718,7 +729,7 @@ def get_entity_description(
     ):
         return entity_desc
 
-    return _DEFAULT_DESCRIPTION.get(hm_entity.platform)
+    return copy(_DEFAULT_DESCRIPTION.get(hm_entity.platform))
 
 
 def _get_entity_description_by_device_type_and_param(
@@ -735,7 +746,7 @@ def _get_entity_description_by_device_type_and_param(
                     compare_with=hm_entity.device.device_type,
                 )
             ):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 
@@ -748,7 +759,7 @@ def _get_entity_description_by_param(
     ):
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 
@@ -764,7 +775,7 @@ def _get_entity_description_by_device_type(
                 search_elements=devices,
                 compare_with=hm_entity.device.device_type,
             ):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 

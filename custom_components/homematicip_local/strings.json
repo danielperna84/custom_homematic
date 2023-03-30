@@ -96,74 +96,80 @@
     }
   },
   "entity": {
-    "sensor": {
-      "srh__state": {
-        "state": {
-          "closed": "Closed",
-          "tilted": "Tilted",
-          "open": "Open"
-        }
+    "binary_sensor": {
+      "alarmstate": {
+        "name": "Alarmstate"
       },
-      "lock_state": {
-        "state": {
-          "unknown": "Unknown",
-          "locked": "Locked",
-          "unlocked": "Unlocked"
-        }
+      "acoustic_alarm_active": {
+        "name": "Acoustic Alarm Active"
       },
-      "smoke_detector_alarm_status": {
-        "state": {
-          "idle_off": "Idle off",
-          "primary_alarm": "Primary alarm",
-          "intrusion_alarm": "Intrusion alarm",
-          "secondary_alarm": "Secondary alarm"
-        }
+      "burst_limit_warning": {
+        "name": "Burst Limit Warning"
       },
-      "sec_key__error": {
-        "state": {
-          "no_error": "No error",
-          "clutch_failure": "Clutch failure",
-          "motor_aborted": "Motor aborted"
-        }
+      "dutycycle": {
+        "name": "Duty Cycle"
       },
-      "door_state": {
-        "state": {
-          "closed": "Closed",
-          "open": "Open",
-          "ventilation_position": "Ventilation position",
-          "position_unknown": "Position unknown"
-        }
+      "duty_cycle": {
+        "name": "Duty Cycle"
       },
-      "direction": {
-        "state": {
-          "none": "",
-          "up": "Up",
-          "down": "Down",
-          "undefined": "Undefined"
-        }
+      "dew_point_alarm": {
+        "name": "Dew Point Alarm"
       },
-      "sec__direction": {
-        "state": {
-          "none": "",
-          "up": "Closing",
-          "down": "Opening",
-          "undefined": "Undefined"
-        }
+      "emergency_operation": {
+        "name": "Emergency Operation"
       },
-      "sec_win__status": {
-        "state": {
-          "trickle_charge": "Trickle charge",
-          "charge": "Charge",
-          "discharge": "Discharge",
-          "state_unknown": "State unknown"
-        }
+      "error_jammed": {
+        "name": "Error Jammed"
       },
-      "sec_win__error": {
-        "state": {
-          "no_error": "No error",
-          "motor_turn_error": "Motor turn error",
-          "motor_tilt_error": "Motor tilt error"
-        }
+      "heater_state": {
+        "name": "Heater State"
+      },
+      "lowbat": {
+        "name": "Battery"
+      },
+      "low_bat": {
+        "name": "Battery"
+      },
+      "lowbat_sensor": {
+        "name": "Battery"
+      },
+      "moisture_detected": {
+        "name": "Moisture Detected"
+      },
+      "motion": {
+        "name": "Motion"
+      },
+      "optical_alarm_active": {
+        "name": "Optical Alarm Active"
+      },
+      "presence_detection_state": {
+        "name": "Presence Detection State"
+      },
+      "process": {
+        "name": "Process"
+      },
+      "working": {
+        "name": "Working"
+      },
+      "raining": {
+        "name": "Raining"
+      },
+      "sabotage": {
+        "name": "Sabotage"
+      },
+      "waterlevel_detected": {
+        "name": "Waterlevel Detected"
+      },
+      "window_state": {
+        "name": "Window State"
+      },
+      "state": {
+        "name": "State"
+      }
+    },
+    "button": {
+      "reset_motion": {
+        "name": "Reset Motion"
       }
     },
     "climate": {
@@ -180,6 +186,281 @@
             }
           }
         }
+      }
+    },
+    "number": {
+      "frequency": {
+        "name": "Frequency"
+      },
+      "level": {
+        "name": "Level"
+      },
+      "level_2": {
+        "name": "Level 2"
+      }
+    },
+    "sensor": {
+      "air_pressure": {
+        "name": "Air Pressure"
+      },
+      "brightness": {
+        "name": "Brightness"
+      },
+      "carrier_sense_level": {
+        "name": "Carrier Sense Level"
+      },
+      "concentration": {
+        "name": "Concentration"
+      },
+      "current": {
+        "name": "Current"
+      },
+      "activity_state": {
+        "name": "Activity State"
+      },
+      "direction": {
+        "name": "Direction",
+        "state": {
+          "none": "",
+          "up": "Up",
+          "down": "Down",
+          "undefined": "Undefined"
+        }
+      },
+      "door_state": {
+        "name": "Door State",
+        "state": {
+          "closed": "Closed",
+          "open": "Open",
+          "ventilation_position": "Ventilation position",
+          "position_unknown": "Position unknown"
+        }
+      },
+      "duty_cycle_level": {
+        "name": "Duty Cycle Level"
+      },
+      "energy_counter": {
+        "name": "Energy Counter"
+      },
+      "filling_level": {
+        "name": "Filling Level"
+      },
+      "frequency": {
+        "name": "Frequency"
+      },
+      "gas_energy_counter": {
+        "name": "Gas Energy Counter"
+      },
+      "gas_power": {
+        "name": "Gas Power"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "actual_humidity": {
+        "name": "Actual Humidity"
+      },
+      "iec_energy_counter": {
+        "name": "IEC Energy Counter"
+      },
+      "iec_power": {
+        "name": "IEC Power"
+      },
+      "illumination": {
+        "name": "Illumination"
+      },
+      "average_illumination": {
+        "name": "Average Illumination"
+      },
+      "current_illumination": {
+        "name": "Current Illumination"
+      },
+      "highest_illumination": {
+        "name": "Highest Illumination"
+      },
+      "lowest_illumination": {
+        "name": "Lowest Illumination"
+      },
+      "lux": {
+        "name": "Lux"
+      },
+      "ip_address": {
+        "name": "Ip Address"
+      },
+      "level": {
+        "name": "Level"
+      },
+      "level_2": {
+        "name": "Level 2"
+      },
+      "lock_state": {
+        "name": "Lock State",
+        "state": {
+          "unknown": "Unknown",
+          "locked": "Locked",
+          "unlocked": "Unlocked"
+        }
+      },
+      "mass_concentration_pm_1": {
+        "name": "Mass Concentration PM 1"
+      },
+      "mass_concentration_pm_1_24h_average": {
+        "name": "Mass Concentration PM 1 24h Average"
+      },
+      "mass_concentration_pm_10": {
+        "name": "Mass Concentration PM 10"
+      },
+      "mass_concentration_pm_10_24h_average": {
+        "name": "Mass Concentration PM 10 24h Average"
+      },
+      "mass_concentration_pm_2_5": {
+        "name": "Mass Concentration PM 2.5"
+      },
+      "mass_concentration_pm_2_5_24h_average": {
+        "name": "Mass Concentration PM 2.5 24h Average"
+      },
+      "number_concentration_pm_1": {
+        "name": "Number Concentration PM 1"
+      },
+      "number_concentration_pm_10": {
+        "name": "Number Concentration PM 10"
+      },
+      "number_concentration_pm_2_5": {
+        "name": "Number Concentration PM 2.5"
+      },
+      "typical_particle_size": {
+        "name": "Typical Particle Size"
+      },
+      "battery_state": {
+        "name": "Battery State"
+      },
+      "operating_voltage": {
+        "name": "Operating Voltage"
+      },
+      "power": {
+        "name": "Power"
+      },
+      "rain_counter": {
+        "name": "Rain Counter"
+      },
+      "rssi_device": {
+        "name": "RSSI Device"
+      },
+      "rssi_peer": {
+        "name": "RSSI Peer"
+      },
+      "actual_temperature": {
+        "name": "Actual Temperature"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "dewpoint": {
+        "name": "Dewpoint"
+      },
+      "smoke_detector_alarm_status": {
+        "name": "Smoke Detector Alarm Status",
+        "state": {
+          "idle_off": "Idle off",
+          "primary_alarm": "Primary alarm",
+          "intrusion_alarm": "Intrusion alarm",
+          "secondary_alarm": "Secondary alarm"
+        }
+      },
+      "sunshineduration": {
+        "name": "Sunshineduration"
+      },
+      "value": {
+        "name": "Value"
+      },
+      "valve_state": {
+        "name": "Valve State"
+      },
+      "vapor_concentration": {
+        "name": "Vapor Concentration"
+      },
+      "voltage": {
+        "name": "Voltage"
+      },
+      "wind_dir": {
+        "name": "Wind Dir"
+      },
+      "wind_dir_range": {
+        "name": "Wind Dir Range"
+      },
+      "wind_direction": {
+        "name": "Wind Direction"
+      },
+      "wind_direction_range": {
+        "name": "Wind Direction Range"
+      },
+      "wind_speed": {
+        "name": "Wind Speed"
+      },
+      "state": {
+        "name": "State"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "error": {
+        "name": "Error"
+      },
+      "srh__state": {
+        "name": "State",
+        "state": {
+          "closed": "Closed",
+          "tilted": "Tilted",
+          "open": "Open"
+        }
+      },
+      "sec_key__error": {
+        "name": "Error",
+        "state": {
+          "no_error": "No error",
+          "clutch_failure": "Clutch failure",
+          "motor_aborted": "Motor aborted"
+        }
+      },
+      "sec__direction": {
+        "name": "Direction",
+        "state": {
+          "none": "",
+          "up": "Closing",
+          "down": "Opening",
+          "undefined": "Undefined"
+        }
+      },
+      "sec_win__status": {
+        "name": "Status",
+        "state": {
+          "trickle_charge": "Trickle charge",
+          "charge": "Charge",
+          "discharge": "Discharge",
+          "state_unknown": "State unknown"
+        }
+      },
+      "sec_win__error": {
+        "name": "Error",
+        "state": {
+          "no_error": "No error",
+          "motor_turn_error": "Motor turn error",
+          "motor_tilt_error": "Motor tilt error"
+        }
+      }
+    },
+    "switch": {
+      "inhibit": {
+        "name": "Inhibit"
+      },
+      "motion_detection_active": {
+        "name": "Motion Detection Active"
+      },
+      "presence_detection_active": {
+        "name": "Presence Detection Active"
+      },
+      "state": {
+        "name": "State"
       }
     }
   }

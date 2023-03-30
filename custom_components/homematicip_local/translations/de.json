@@ -96,74 +96,80 @@
     }
   },
   "entity": {
-    "sensor": {
-      "srh__state": {
-        "state": {
-          "closed": "Geschlossen",
-          "tilted": "Gekippt",
-          "open": "Offen"
-        }
+    "binary_sensor": {
+      "alarmstate": {
+        "name": "Alarmzustand"
       },
-      "lock_state": {
-        "state": {
-          "unknown": "Unbekannt",
-          "locked": "Verriegelt",
-          "unlocked": "Unverriegelt"
-        }
+      "acoustic_alarm_active": {
+        "name": "Akustischer Alarm aktiv"
       },
-      "smoke_detector_alarm_status": {
-        "state": {
-          "idle_off": "Untätig",
-          "primary_alarm": "Primär-Alarm",
-          "intrusion_alarm": "Einbruch-Alarm",
-          "secondary_alarm": "Sekundär-Alarm"
-        }
+      "burst_limit_warning": {
+        "name": "Burst-Limit-Warnung"
       },
-      "sec_key__error": {
-        "state": {
-          "no_error": "Kein Fehler",
-          "clutch_failure": "Einkuppeln fehlgeschlagen",
-          "motor_aborted": "Motorlauf abgebrochen"
-        }
+      "dutycycle": {
+        "name": "Duty Cycle"
       },
-      "door_state": {
-        "state": {
-          "closed": "Geschlossen",
-          "open": "Offen",
-          "ventilation_position": "Belüftung",
-          "position_unknown": "Position unbekannt"
-        }
+      "duty_cycle": {
+        "name": "Duty Cycle"
       },
-      "direction": {
-        "state": {
-          "none": "",
-          "up": "Hoch",
-          "down": "Runter",
-          "undefined": "Nicht definiert"
-        }
+      "dew_point_alarm": {
+        "name": "Taupunktalarm"
       },
-      "sec__direction": {
-        "state": {
-          "none": "",
-          "up": "Schließend",
-          "down": "Öffnend",
-          "undefined": "Nicht definiert"
-        }
+      "emergency_operation": {
+        "name": "Notfallbetrieb"
       },
-      "sec_win__status": {
-        "state": {
-          "trickle_charge": "Erhaltungsladung",
-          "charge": "Ladend",
-          "discharge": "Versorgung durch Akku",
-          "state_unknown": "Zustand unbekannt"
-        }
+      "error_jammed": {
+        "name": "Blockiert"
       },
-      "sec_win__error": {
-        "state": {
-          "no_error": "Kein Fehler",
-          "motor_turn_error": "Fehler Drehantrieb",
-          "motor_tilt_error": "Fehler Kippantrieb"
-        }
+      "heater_state": {
+        "name": "Heizungszustand"
+      },
+      "lowbat": {
+        "name": "Batterie"
+      },
+      "low_bat": {
+        "name": "Batterie"
+      },
+      "lowbat_sensor": {
+        "name": "Batterie"
+      },
+      "moisture_detected": {
+        "name": "Feuchtigkeit erkannt"
+      },
+      "motion": {
+        "name": "Bewegung"
+      },
+      "optical_alarm_active": {
+        "name": "Optischer Alarm aktiv"
+      },
+      "presence_detection_state": {
+        "name": "Anwesenheitserkennungsstatus"
+      },
+      "process": {
+        "name": "Arbeitet"
+      },
+      "working": {
+        "name": "Arbeitez"
+      },
+      "raining": {
+        "name": "Regen"
+      },
+      "sabotage": {
+        "name": "Sabotage"
+      },
+      "waterlevel_detected": {
+        "name": "Wasserstand erkannt"
+      },
+      "window_state": {
+        "name": "Fensterzustand"
+      },
+      "state": {
+        "name": "Zustand"
+      }
+    },
+    "button": {
+      "reset_motion": {
+        "name": "Bewegung zurücksetzen"
       }
     },
     "climate": {
@@ -180,6 +186,281 @@
             }
           }
         }
+      }
+    },
+    "number": {
+      "frequency": {
+        "name": "Frequenz"
+      },
+      "level": {
+        "name": "Level"
+      },
+      "level_2": {
+        "name": "Level 2"
+      }
+    },
+    "sensor": {
+      "air_pressure": {
+        "name": "Luftdruck"
+      },
+      "brightness": {
+        "name": "Helligkeit"
+      },
+      "carrier_sense_level": {
+        "name": "Carrier Sense Level"
+      },
+      "concentration": {
+        "name": "Konzentration"
+      },
+      "current": {
+        "name": "Strom"
+      },
+      "activity_state": {
+        "name": "Aktivitätszustand"
+      },
+      "direction": {
+        "name": "Richtung",
+        "state": {
+          "none": "",
+          "up": "Hoch",
+          "down": "Runter",
+          "undefined": "Nicht definiert"
+        }
+      },
+      "door_state": {
+        "name": "Türzustand",
+        "state": {
+          "closed": "Geschlossen",
+          "open": "Offen",
+          "ventilation_position": "Belüftung",
+          "position_unknown": "Position unbekannt"
+        }
+      },
+      "duty_cycle_level": {
+        "name": "Duty Cycle Level"
+      },
+      "energy_counter": {
+        "name": "Energiezähler"
+      },
+      "filling_level": {
+        "name": "Füllstand"
+      },
+      "frequency": {
+        "name": "Frequenz"
+      },
+      "gas_energy_counter": {
+        "name": "Gas-Energiezähler"
+      },
+      "gas_power": {
+        "name": "Gas-Leistung"
+      },
+      "humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "actual_humidity": {
+        "name": "Aktuelle Luftfeuchtigkeit"
+      },
+      "iec_energy_counter": {
+        "name": "IEC Energiezähler"
+      },
+      "iec_power": {
+        "name": "IEC Leistung"
+      },
+      "illumination": {
+        "name": "Beleuchtung"
+      },
+      "average_illumination": {
+        "name": "Durchschnittliche Beleuchtung"
+      },
+      "current_illumination": {
+        "name": "Aktuelle Beleuchtung"
+      },
+      "highest_illumination": {
+        "name": "Höchste Beleuchtung"
+      },
+      "lowest_illumination": {
+        "name": "Niedrigste Beleuchtung"
+      },
+      "lux": {
+        "name": "Lux"
+      },
+      "ip_address": {
+        "name": "IP Addresse"
+      },
+      "level": {
+        "name": "Level"
+      },
+      "level_2": {
+        "name": "Level 2"
+      },
+      "lock_state": {
+        "name": "Schliesszustand",
+        "state": {
+          "unknown": "Unbekannt",
+          "locked": "Verriegelt",
+          "unlocked": "Unverriegelt"
+        }
+      },
+      "mass_concentration_pm_1": {
+        "name": "Masse-Konzentration PM 1"
+      },
+      "mass_concentration_pm_1_24h_average": {
+        "name": "Masse-Konzentration PM 1 24h Durchschnitt"
+      },
+      "mass_concentration_pm_10": {
+        "name": "Masse-Konzentration PM 10"
+      },
+      "mass_concentration_pm_10_24h_average": {
+        "name": "Masse-Konzentration PM 10 24h Durchschnitt"
+      },
+      "mass_concentration_pm_2_5": {
+        "name": "Masse-Konzentration PM 2.5"
+      },
+      "mass_concentration_pm_2_5_24h_average": {
+        "name": "Masse-Konzentration PM 2.5 24h Durchschnitt"
+      },
+      "number_concentration_pm_1": {
+        "name": "Numerische Konzentration PM 1"
+      },
+      "number_concentration_pm_10": {
+        "name": "Numerische Konzentration PM 10"
+      },
+      "number_concentration_pm_2_5": {
+        "name": "Numerische Konzentration PM 2.5"
+      },
+      "typical_particle_size": {
+        "name": "Tyische Partikelgröße"
+      },
+      "battery_state": {
+        "name": "Batteriezustand"
+      },
+      "operating_voltage": {
+        "name": "Betriebsspannung"
+      },
+      "power": {
+        "name": "Leistung"
+      },
+      "rain_counter": {
+        "name": "Regenzähler"
+      },
+      "rssi_device": {
+        "name": "RSSI Device"
+      },
+      "rssi_peer": {
+        "name": "RSSI Peer"
+      },
+      "actual_temperature": {
+        "name": "Aktuelle Temperatur"
+      },
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "dewpoint": {
+        "name": "Taupunkt"
+      },
+      "smoke_detector_alarm_status": {
+        "name": "Rauchmelder-Alarmstatus",
+        "state": {
+          "idle_off": "Untätig",
+          "primary_alarm": "Primär-Alarm",
+          "intrusion_alarm": "Einbruch-Alarm",
+          "secondary_alarm": "Sekundär-Alarm"
+        }
+      },
+      "sunshineduration": {
+        "name": "Sonnenscheindauer"
+      },
+      "value": {
+        "name": "Wert"
+      },
+      "valve_state": {
+        "name": "Ventilzustand"
+      },
+      "vapor_concentration": {
+        "name": "Dampfkonzentration"
+      },
+      "voltage": {
+        "name": "Spannung"
+      },
+      "wind_dir": {
+        "name": "Windrichtung"
+      },
+      "wind_dir_range": {
+        "name": "Windrichtungsbereich"
+      },
+      "wind_direction": {
+        "name": "Windrichtung"
+      },
+      "wind_direction_range": {
+        "name": "Windrichtungsbereich"
+      },
+      "wind_speed": {
+        "name": "Windgeschwindigkeit"
+      },
+      "state": {
+        "name": "Zustand"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "error": {
+        "name": "Fehler"
+      },
+      "srh__state": {
+        "name": "Zustand",
+        "state": {
+          "closed": "Geschlossen",
+          "tilted": "Gekippt",
+          "open": "Offen"
+        }
+      },
+      "sec_key__error": {
+        "name": "Fehler",
+        "state": {
+          "no_error": "Kein Fehler",
+          "clutch_failure": "Einkuppeln fehlgeschlagen",
+          "motor_aborted": "Motorlauf abgebrochen"
+        }
+      },
+      "sec__direction": {
+        "name": "Richtung",
+        "state": {
+          "none": "",
+          "up": "Schließend",
+          "down": "Öffnend",
+          "undefined": "Nicht definiert"
+        }
+      },
+      "sec_win__status": {
+        "name": "Zustand",
+        "state": {
+          "trickle_charge": "Erhaltungsladung",
+          "charge": "Ladend",
+          "discharge": "Versorgung durch Akku",
+          "state_unknown": "Zustand unbekannt"
+        }
+      },
+      "sec_win__error": {
+        "name": "Fehler",
+        "state": {
+          "no_error": "Kein Fehler",
+          "motor_turn_error": "Fehler Drehantrieb",
+          "motor_tilt_error": "Fehler Kippantrieb"
+        }
+      }
+    },
+    "switch": {
+      "inhibit": {
+        "name": "Sperre"
+      },
+      "motion_detection_active": {
+        "name": "Bewegungserkennung aktiv"
+      },
+      "presence_detection_active": {
+        "name": "Anwesenheitserkennung aktiv"
+      },
+      "state": {
+        "name": "Zustand"
       }
     }
   }
