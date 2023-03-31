@@ -1,6 +1,7 @@
 """Support for Homematic(IP) Local sensors."""
 from __future__ import annotations
 
+from copy import copy
 import logging
 from typing import Final
 
@@ -363,37 +364,37 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
-        translation_key="srh__state",
+        translation_key="srh_state",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:battery-50",
-        translation_key="sec_win__status",
+        translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec__direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_win__error",
+        translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec__direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_key__error",
+        translation_key="sec_key_error",
     ),
     (
         ("HmIP-eTRV", "HmIP-HEATING"),
@@ -456,7 +457,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     ),
     ("DUTYCYCLE", "DUTY_CYCLE"): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
-        name="Duty Cycle",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
@@ -482,7 +482,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     ),
     ("LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"): BinarySensorEntityDescription(
         key="LOW_BAT",
-        name="Low Battery",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -497,6 +496,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     "OPTICAL_ALARM_ACTIVE": BinarySensorEntityDescription(
         key="OPTICAL_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
+    ),
+    "POWER_MAINS_FAILURE": BinarySensorEntityDescription(
+        key="POWER_MAINS_FAILURE",
+        device_class=BinarySensorDeviceClass.POWER,
     ),
     "PRESENCE_DETECTION_STATE": BinarySensorEntityDescription(
         key="PRESENCE_DETECTION_STATE",
@@ -515,6 +518,9 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         device_class=BinarySensorDeviceClass.TAMPER,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
+    ),
+    "STATE": BinarySensorEntityDescription(
+        key="STATE",
     ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
@@ -575,6 +581,11 @@ _BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),
+    "RESET_PRESENCE": ButtonEntityDescription(
+        key="RESET_PRESENCE",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+    ),
 }
 
 _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
@@ -625,6 +636,9 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         device_class=SwitchDeviceClass.SWITCH,
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
+    ),
+    "STATE": SwitchEntityDescription(
+        key="STATE",
     ),
 }
 
@@ -680,12 +694,12 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
 }
 
 
-def __get_entity_description(
+def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""
-    if entity_desc := get_entity_description(hm_entity=hm_entity):
-        if entity_desc.name is None:
+    if entity_desc := _get_entity_description(hm_entity=hm_entity):
+        if entity_desc.name is None and entity_desc.translation_key is None:
             entity_desc.name = hm_entity.name
         if entity_desc.entity_registry_enabled_default:
             entity_desc.entity_registry_enabled_default = hm_entity.enabled_default
@@ -693,7 +707,7 @@ def __get_entity_description(
     return None
 
 
-def get_entity_description(
+def _get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""
@@ -701,15 +715,19 @@ def get_entity_description(
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
         ):
+            if entity_desc.translation_key is None:
+                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
+            if entity_desc.translation_key is None:
+                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if (
             hm_entity.platform == HmPlatform.SENSOR
             and hm_entity.unit
-            and (entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit))
+            and (entity_desc := copy(_SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit)))
         ):
             return entity_desc
 
@@ -718,7 +736,7 @@ def get_entity_description(
     ):
         return entity_desc
 
-    return _DEFAULT_DESCRIPTION.get(hm_entity.platform)
+    return copy(_DEFAULT_DESCRIPTION.get(hm_entity.platform))
 
 
 def _get_entity_description_by_device_type_and_param(
@@ -735,7 +753,7 @@ def _get_entity_description_by_device_type_and_param(
                     compare_with=hm_entity.device.device_type,
                 )
             ):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 
@@ -748,7 +766,7 @@ def _get_entity_description_by_param(
     ):
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 
@@ -764,7 +782,7 @@ def _get_entity_description_by_device_type(
                 search_elements=devices,
                 compare_with=hm_entity.device.device_type,
             ):
-                return entity_desc
+                return copy(entity_desc)
     return None
 
 

@@ -13,6 +13,7 @@
   - Refactor cover, add set_combined_position
 - Update minimum required version
 - Add service "set cover combined position"
+- Add name translation
 
 # Version 1.33.1 (2022-03-03)
 
