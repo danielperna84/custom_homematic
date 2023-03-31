@@ -364,37 +364,37 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon_fn=lambda value: "mdi:window-open"
         if value in ("open", "tilted")
         else "mdi:window-closed",
-        translation_key="srh__state",
+        translation_key="srh_state",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:battery-50",
-        translation_key="sec_win__status",
+        translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec__direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_win__error",
+        translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:arrow-up-down",
-        translation_key="sec__direction",
+        translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         device_class=SensorDeviceClass.ENUM,
         icon="mdi:lock-alert",
-        translation_key="sec_key__error",
+        translation_key="sec_key_error",
     ),
     (
         ("HmIP-eTRV", "HmIP-HEATING"),
@@ -497,6 +497,10 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         key="OPTICAL_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
+    "POWER_MAINS_FAILURE": BinarySensorEntityDescription(
+        key="POWER_MAINS_FAILURE",
+        device_class=BinarySensorDeviceClass.POWER,
+    ),
     "PRESENCE_DETECTION_STATE": BinarySensorEntityDescription(
         key="PRESENCE_DETECTION_STATE",
         device_class=BinarySensorDeviceClass.PRESENCE,
@@ -574,6 +578,11 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 _BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
     "RESET_MOTION": ButtonEntityDescription(
         key="RESET_MOTION",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+    ),
+    "RESET_PRESENCE": ButtonEntityDescription(
+        key="RESET_PRESENCE",
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),

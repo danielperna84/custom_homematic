@@ -142,14 +142,17 @@
       "optical_alarm_active": {
         "name": "Optischer Alarm aktiv"
       },
+      "power_mains_failure": {
+        "name": "Stromnetzausfall"
+      },
       "presence_detection_state": {
-        "name": "Anwesenheitserkennungsstatus"
+        "name": "Anwesenheit"
       },
       "process": {
         "name": "Arbeitet"
       },
       "working": {
-        "name": "Arbeitez"
+        "name": "Arbeitet"
       },
       "raining": {
         "name": "Regen"
@@ -170,6 +173,9 @@
     "button": {
       "reset_motion": {
         "name": "Bewegung zurücksetzen"
+      },
+      "reset_presence": {
+        "name": "Anwesenheit zurücksetzen"
       }
     },
     "climate": {
@@ -267,19 +273,19 @@
         "name": "IEC Leistung"
       },
       "illumination": {
-        "name": "Beleuchtung"
+        "name": "Beleuchtungsstärke"
       },
       "average_illumination": {
-        "name": "Durchschnittliche Beleuchtung"
+        "name": "Durchschnittliche Beleuchtungsstärke"
       },
       "current_illumination": {
-        "name": "Aktuelle Beleuchtung"
+        "name": "Aktuelle Beleuchtungsstärke"
       },
       "highest_illumination": {
-        "name": "Höchste Beleuchtung"
+        "name": "Höchste Beleuchtungsstärke"
       },
       "lowest_illumination": {
-        "name": "Niedrigste Beleuchtung"
+        "name": "Niedrigste Beleuchtungsstärke"
       },
       "lux": {
         "name": "Lux"
@@ -406,7 +412,7 @@
       "error": {
         "name": "Fehler"
       },
-      "srh__state": {
+      "srh_state": {
         "name": "Zustand",
         "state": {
           "closed": "Geschlossen",
@@ -414,7 +420,7 @@
           "open": "Offen"
         }
       },
-      "sec_key__error": {
+      "sec_key_error": {
         "name": "Fehler",
         "state": {
           "no_error": "Kein Fehler",
@@ -422,7 +428,7 @@
           "motor_aborted": "Motorlauf abgebrochen"
         }
       },
-      "sec__direction": {
+      "sec_direction": {
         "name": "Richtung",
         "state": {
           "none": "",
@@ -431,7 +437,7 @@
           "undefined": "Nicht definiert"
         }
       },
-      "sec_win__status": {
+      "sec_win_status": {
         "name": "Zustand",
         "state": {
           "trickle_charge": "Erhaltungsladung",
@@ -440,7 +446,7 @@
           "state_unknown": "Zustand unbekannt"
         }
       },
-      "sec_win__error": {
+      "sec_win_error": {
         "name": "Fehler",
         "state": {
           "no_error": "Kein Fehler",

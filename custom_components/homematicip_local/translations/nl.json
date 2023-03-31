@@ -93,7 +93,7 @@
   },
   "entity": {
     "sensor": {
-      "srh__state": {
+      "srh_state": {
         "state": {
           "closed": "Gesloten",
           "tilted": "Gekanteld",
@@ -115,7 +115,7 @@
           "secondary_alarm": "Secundair Alarm"
         }
       },
-      "sec_key__error": {
+      "sec_key_error": {
         "state": {
           "no_error": "No error",
           "clutch_failure": "Clutch failure",
@@ -138,7 +138,7 @@
           "undefined": "Undefined"
         }
       },
-      "sec__direction": {
+      "sec_direction": {
         "state": {
           "none": "",
           "up": "Closing",
@@ -146,7 +146,7 @@
           "undefined": "Undefined"
         }
       },
-      "sec_win__status": {
+      "sec_win_status": {
         "state": {
           "trickle_charge": "Trickle charge",
           "charge": "Charge",
@@ -154,7 +154,7 @@
           "state_unknown": "State unknown"
         }
       },
-      "sec_win__error": {
+      "sec_win_error": {
         "state": {
           "no_error": "No error",
           "motor_turn_error": "Motor turn error",

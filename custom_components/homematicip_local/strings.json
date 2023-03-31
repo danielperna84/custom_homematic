@@ -142,6 +142,9 @@
       "optical_alarm_active": {
         "name": "Optical Alarm Active"
       },
+      "power_mains_failure": {
+        "name": "Power Mains Failure"
+      },
       "presence_detection_state": {
         "name": "Presence Detection State"
       },
@@ -170,6 +173,9 @@
     "button": {
       "reset_motion": {
         "name": "Reset Motion"
+      },
+      "reset_presence": {
+        "name": "Reset Presence"
       }
     },
     "climate": {
@@ -406,7 +412,7 @@
       "error": {
         "name": "Error"
       },
-      "srh__state": {
+      "srh_state": {
         "name": "State",
         "state": {
           "closed": "Closed",
@@ -414,7 +420,7 @@
           "open": "Open"
         }
       },
-      "sec_key__error": {
+      "sec_key_error": {
         "name": "Error",
         "state": {
           "no_error": "No error",
@@ -422,7 +428,7 @@
           "motor_aborted": "Motor aborted"
         }
       },
-      "sec__direction": {
+      "sec_direction": {
         "name": "Direction",
         "state": {
           "none": "",
@@ -431,7 +437,7 @@
           "undefined": "Undefined"
         }
       },
-      "sec_win__status": {
+      "sec_win_status": {
         "name": "Status",
         "state": {
           "trickle_charge": "Trickle charge",
@@ -440,7 +446,7 @@
           "state_unknown": "State unknown"
         }
       },
-      "sec_win__error": {
+      "sec_win_error": {
         "name": "Error",
         "state": {
           "no_error": "No error",
