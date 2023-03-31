@@ -457,7 +457,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     ),
     ("DUTYCYCLE", "DUTY_CYCLE"): BinarySensorEntityDescription(
         key="DUTY_CYCLE",
-        name="Duty Cycle",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
@@ -483,7 +482,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     ),
     ("LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"): BinarySensorEntityDescription(
         key="LOW_BAT",
-        name="Low Battery",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -687,12 +685,12 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
 }
 
 
-def __get_entity_description(
+def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""
-    if entity_desc := get_entity_description(hm_entity=hm_entity):
-        if entity_desc.name is None:
+    if entity_desc := _get_entity_description(hm_entity=hm_entity):
+        if entity_desc.name is None and entity_desc.translation_key is None:
             entity_desc.name = hm_entity.name
         if entity_desc.entity_registry_enabled_default:
             entity_desc.entity_registry_enabled_default = hm_entity.enabled_default
@@ -700,7 +698,7 @@ def __get_entity_description(
     return None
 
 
-def get_entity_description(
+def _get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""

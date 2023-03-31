@@ -54,13 +54,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
         if entity_description := get_entity_description(hm_entity=hm_entity):
             self.entity_description = entity_description
-            if (
-                entity_description.name is None
-                and entity_description.translation_key is None
-            ):
-                self._attr_name = hm_entity.name
-            if entity_description.entity_registry_enabled_default:
-                self._attr_entity_registry_enabled_default = hm_entity.enabled_default
         else:
             self._attr_name = hm_entity.name
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
