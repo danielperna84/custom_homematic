@@ -54,14 +54,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
 
         if entity_description := get_entity_description(hm_entity=hm_entity):
+            self.entity_description = entity_description
             if entity_description.entity_registry_enabled_default:
                 entity_description.entity_registry_enabled_default = (
                     hm_entity.enabled_default
                 )
-            self.entity_description = entity_description
-        elif isinstance(self._hm_entity, CustomEntity):
-            self._attr_name = hm_entity.name
-            self._attr_entity_registry_enabled_default = hm_entity.enabled_default
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
@@ -140,16 +137,17 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def name(self) -> str | None:
         """Return the name of the entity."""
+        entity_name = self._hm_entity.name
         name = super().name
         if (
             isinstance(self._hm_entity, GenericEntity | WrapperEntity)
-            and self._hm_entity.name
+            and entity_name
             and name is not None
         ):
-            return self._hm_entity.name.replace(
+            return entity_name.replace(
                 self._hm_entity.parameter.replace("_", " ").title(), name
             )
-        return self._hm_entity.name
+        return entity_name
 
     @property
     def translation_key(self) -> str | None:
