@@ -20,6 +20,7 @@ Provides the following:
   - Disable climate away mode
   - Export device definition (Can be used to support integration of new devices)
   - Light on time (Set on time for a light entity. Must be followed by a light.turn_on)
+  - Move a blind to a specific position **and** tilt position.
   - Switch on time (Set on time for a switch entity. Must be followed by a switch.turn_on.)
   - Delete Device (Deletes a device from HA, but not from CCU). Can be used, if a device has been renamed in CCU.
   - Clear Cache (Clears the cache for a central unit from Home Assistant. Requires a restart)

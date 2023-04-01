@@ -519,9 +519,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    "STATE": BinarySensorEntityDescription(
-        key="STATE",
-    ),
     "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
@@ -637,9 +634,6 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),
-    "STATE": SwitchEntityDescription(
-        key="STATE",
-    ),
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE: dict[
@@ -715,13 +709,9 @@ def _get_entity_description(
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
         ):
-            if entity_desc.translation_key is None:
-                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
-            if entity_desc.translation_key is None:
-                entity_desc.translation_key = hm_entity.parameter.lower()
             return entity_desc
 
         if (
