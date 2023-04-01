@@ -149,9 +149,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return the translation key to translate the entity's states."""
         if translation_key := super().translation_key:
             return translation_key
-        if hasattr(self, "_hm_entity") and isinstance(
-            self._hm_entity, GenericEntity | WrapperEntity
-        ):
+        if isinstance(self._hm_entity, GenericEntity | WrapperEntity):
             return self._hm_entity.parameter.lower()
         return None
 
