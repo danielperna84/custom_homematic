@@ -106,6 +106,9 @@
       "burst_limit_warning": {
         "name": "Burst-Limit-Warnung"
       },
+      "current_passage_direction": {
+        "name": "Aktuelle Durchgangsrichtung"
+      },
       "dutycycle": {
         "name": "Duty Cycle"
       },
@@ -123,6 +126,9 @@
       },
       "heater_state": {
         "name": "Heizungszustand"
+      },
+      "last_passage_direction": {
+        "name": "Letzte Durchgangsrichtung"
       },
       "lowbat": {
         "name": "Batterie"
@@ -342,6 +348,9 @@
       },
       "operating_voltage": {
         "name": "Betriebsspannung"
+      },
+      "passage_counter_value": {
+        "name": "Durchgangszählerwert"
       },
       "power": {
         "name": "Leistung"

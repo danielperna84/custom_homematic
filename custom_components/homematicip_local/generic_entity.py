@@ -55,7 +55,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         if entity_description := get_entity_description(hm_entity=hm_entity):
             self.entity_description = entity_description
         else:
-            self._attr_name = hm_entity.name
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
@@ -135,12 +134,23 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return the name of the entity."""
         if (
             isinstance(self._hm_entity, GenericEntity | WrapperEntity)
-            and self._attr_name is None
+            and self._hm_entity.name
         ):
             return self._hm_entity.name.replace(
-                self._hm_entity.parameter.replace("_", " ").title(), super().name
+                self._hm_entity.parameter.replace("_", " ").title(), super().name or ""
             )
         return super().name
+
+    @property
+    def translation_key(self) -> str | None:
+        """Return the translation key to translate the entity's states."""
+        if translation_key := super().translation_key:
+            return translation_key
+        if hasattr(self, "_hm_entity") and isinstance(
+            self._hm_entity, GenericEntity | WrapperEntity
+        ):
+            return self._hm_entity.parameter.lower()
+        return None
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
