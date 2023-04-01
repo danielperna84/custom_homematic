@@ -692,19 +692,6 @@ def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description for platform."""
-    if entity_desc := _get_entity_description(hm_entity=hm_entity):
-        if entity_desc.name is None and entity_desc.translation_key is None:
-            entity_desc.name = hm_entity.name
-        if entity_desc.entity_registry_enabled_default:
-            entity_desc.entity_registry_enabled_default = hm_entity.enabled_default
-        return entity_desc
-    return None
-
-
-def _get_entity_description(
-    hm_entity: HmGenericEntity | GenericHubEntity,
-) -> EntityDescription | None:
-    """Get the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity | WrapperEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
