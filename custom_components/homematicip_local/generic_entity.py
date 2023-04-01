@@ -133,7 +133,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def name(self) -> str | None:
         """Return the name of the entity."""
-        if isinstance(self._hm_entity, GenericEntity | WrapperEntity):
+        if (
+            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
+            and self._attr_name is None
+        ):
             return self._hm_entity.name.replace(
                 self._hm_entity.parameter.replace("_", " ").title(), super().name
             )
