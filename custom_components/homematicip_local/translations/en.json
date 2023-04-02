@@ -127,7 +127,7 @@
         "name": "Sabotage"
       },
       "state": {
-        "name": "State"
+        "name": ""
       },
       "waterlevel_detected": {
         "name": "Waterlevel Detected"
@@ -362,7 +362,7 @@
         }
       },
       "sec_win_status": {
-        "name": "Status",
+        "name": "",
         "state": {
           "charge": "Charge",
           "discharge": "Discharge",
@@ -380,7 +380,7 @@
         }
       },
       "srh_state": {
-        "name": "State",
+        "name": "",
         "state": {
           "closed": "Closed",
           "open": "Open",
@@ -388,10 +388,10 @@
         }
       },
       "state": {
-        "name": "State"
+        "name": ""
       },
       "status": {
-        "name": "Status"
+        "name": ""
       },
       "sunshineduration": {
         "name": "Sunshineduration"
@@ -441,7 +441,7 @@
         "name": "Presence Detection Active"
       },
       "state": {
-        "name": "State"
+        "name": ""
       }
     }
   },

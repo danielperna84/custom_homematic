@@ -127,7 +127,7 @@
         "name": "Sabotage"
       },
       "state": {
-        "name": "Zustand"
+        "name": ""
       },
       "waterlevel_detected": {
         "name": "Wasserstand erkannt"
@@ -362,7 +362,7 @@
         }
       },
       "sec_win_status": {
-        "name": "Zustand",
+        "name": "",
         "state": {
           "charge": "Ladend",
           "discharge": "Versorgung durch Akku",
@@ -380,7 +380,7 @@
         }
       },
       "srh_state": {
-        "name": "Zustand",
+        "name": "",
         "state": {
           "closed": "Geschlossen",
           "open": "Offen",
@@ -388,10 +388,10 @@
         }
       },
       "state": {
-        "name": "Zustand"
+        "name": ""
       },
       "status": {
-        "name": "Status"
+        "name": ""
       },
       "sunshineduration": {
         "name": "Sonnenscheindauer"
@@ -441,7 +441,7 @@
         "name": "Anwesenheitserkennung aktiv"
       },
       "state": {
-        "name": "Zustand"
+        "name": ""
       }
     }
   },
