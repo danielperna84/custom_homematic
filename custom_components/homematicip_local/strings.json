@@ -1,107 +1,67 @@
 {
   "config": {
+    "abort": {},
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "invalid_password": "Invalid password",
+      "unknown": "Unexpected error"
+    },
     "flow_title": "{name}/{host}",
     "step": {
       "central": {
-        "description": "Please fill the required fields.",
         "data": {
+          "callback_host": "Callback Hostname/IP-Address",
+          "callback_port": "Callback XML-RPC Port",
+          "host": "CCU Hostname/IP-Address",
           "instance_name": "Integration instance name",
-          "host": "CCU Hostname/IP-Address",
-          "username": "CCU Username",
-          "password": "CCU Password",
-          "callback_host": "Callback Hostname/IP-Address",
-          "callback_port": "Callback XML-RPC Port",
-          "tls": "use TLS",
-          "verify_tls": "verify TLS connection",
           "json_port": "JSON-RPC Port",
+          "password": "CCU Password",
           "sysvar_scan_enabled": "enable Sysvar scan",
-          "sysvar_scan_interval": "Sysvar/Program scan interval"
-        }
+          "sysvar_scan_interval": "Sysvar/Program scan interval",
+          "tls": "use TLS",
+          "username": "CCU Username",
+          "verify_tls": "verify TLS connection"
+        },
+        "description": "Please fill the required fields."
       },
       "interface": {
-        "description": "Configure the interfaces to CCU",
         "data": {
-          "hmip_rf_enabled": "enable Homematic IP",
-          "hmip_rf_port": "HmIP-RF Port",
           "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
           "bidcos_rf_port": "HM-RF Port",
-          "virtual_devices_enabled": "enable Groups (Heating-Group)",
-          "virtual_devices_port": "Groups Port",
-          "virtual_devices_path": "Groups Path",
           "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port"
-        }
-      }
-    },
-    "error": {
-      "cannot_connect": "Failed to connect",
-      "invalid_auth": "Invalid authentication",
-      "invalid_password": "Invalid password",
-      "unknown": "Unexpected error"
-    },
-    "abort": {}
-  },
-  "options": {
-    "step": {
-      "central": {
-        "description": "Re-Configure the CCU",
-        "data": {
-          "host": "CCU Hostname/IP-Address",
-          "username": "CCU Username",
-          "password": "CCU Password",
-          "callback_host": "Callback Hostname/IP-Address",
-          "callback_port": "Callback XML-RPC Port",
-          "tls": "use TLS",
-          "verify_tls": "verify TLS connection",
-          "json_port": "JSON-RPC Port",
-          "sysvar_scan_enabled": "enable Sysvar scan",
-          "sysvar_scan_interval": "Sysvar/Program scan interval"
-        }
-      },
-      "interface": {
-        "description": "Re-Configure the interfaces to CCU",
-        "data": {
+          "bidcos_wired_port": "BidCos-Wired Port",
           "hmip_rf_enabled": "enable Homematic IP",
           "hmip_rf_port": "HmIP-RF Port",
-          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "enable Groups (Heating-Group)",
-          "virtual_devices_port": "Groups Port",
           "virtual_devices_path": "Groups Path",
-          "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port"
-        }
+          "virtual_devices_port": "Groups Port"
+        },
+        "description": "Configure the interfaces to CCU"
       }
-    },
-    "error": {
-      "cannot_connect": "Failed to connect",
-      "invalid_auth": "Invalid authentication",
-      "invalid_password": "Invalid password",
-      "unknown": "Unexpected error"
-    },
-    "abort": {}
+    }
   },
   "device_automation": {
+    "action_type": {
+      "press_long": "Long press Button \"{subtype}\"",
+      "press_short": "Short press Button \"{subtype}\""
+    },
     "trigger_type": {
       "press": "Button \"{subtype}\" pressed",
-      "press_short": "Button \"{subtype}\" pressed",
-      "press_long": "Button \"{subtype}\" long pressed",
       "press_cont": "Button \"{subtype}\" continuously pressed",
+      "press_long": "Button \"{subtype}\" long pressed",
       "press_long_release": "Button \"{subtype}\" long press released",
-      "press_long_start": "Button \"{subtype}\" started long press"
-    },
-    "action_type": {
-      "press_short": "Short press Button \"{subtype}\"",
-      "press_long": "Long press Button \"{subtype}\""
+      "press_long_start": "Button \"{subtype}\" started long press",
+      "press_short": "Button \"{subtype}\" pressed"
     }
   },
   "entity": {
     "binary_sensor": {
-      "alarmstate": {
-        "name": "Alarmstate"
-      },
       "acoustic_alarm_active": {
         "name": "Acoustic Alarm Active"
+      },
+      "alarmstate": {
+        "name": "Alarmstate"
       },
       "burst_limit_warning": {
         "name": "Burst Limit Warning"
@@ -109,14 +69,14 @@
       "current_passage_direction": {
         "name": "Current Passage Direction"
       },
-      "dutycycle": {
-        "name": "Duty Cycle"
+      "dew_point_alarm": {
+        "name": "Dew Point Alarm"
       },
       "duty_cycle": {
         "name": "Duty Cycle"
       },
-      "dew_point_alarm": {
-        "name": "Dew Point Alarm"
+      "dutycycle": {
+        "name": "Duty Cycle"
       },
       "emergency_operation": {
         "name": "Emergency Operation"
@@ -130,10 +90,10 @@
       "last_passage_direction": {
         "name": "Last Passage Direction"
       },
-      "lowbat": {
+      "low_bat": {
         "name": "Battery"
       },
-      "low_bat": {
+      "lowbat": {
         "name": "Battery"
       },
       "lowbat_sensor": {
@@ -157,14 +117,14 @@
       "process": {
         "name": "Process"
       },
-      "working": {
-        "name": "Working"
-      },
       "raining": {
         "name": "Raining"
       },
       "sabotage": {
         "name": "Sabotage"
+      },
+      "state": {
+        "name": "State"
       },
       "waterlevel_detected": {
         "name": "Waterlevel Detected"
@@ -172,8 +132,8 @@
       "window_state": {
         "name": "Window State"
       },
-      "state": {
-        "name": "State"
+      "working": {
+        "name": "Working"
       }
     },
     "button": {
@@ -212,8 +172,23 @@
       }
     },
     "sensor": {
+      "activity_state": {
+        "name": "Activity State"
+      },
+      "actual_humidity": {
+        "name": "Actual Humidity"
+      },
+      "actual_temperature": {
+        "name": "Actual Temperature"
+      },
       "air_pressure": {
         "name": "Air Pressure"
+      },
+      "average_illumination": {
+        "name": "Average Illumination"
+      },
+      "battery_state": {
+        "name": "Battery State"
       },
       "brightness": {
         "name": "Brightness"
@@ -221,22 +196,28 @@
       "carrier_sense_level": {
         "name": "Carrier Sense Level"
       },
+      "color": {
+        "name": "Color"
+      },
       "concentration": {
         "name": "Concentration"
       },
       "current": {
         "name": "Current"
       },
-      "activity_state": {
-        "name": "Activity State"
+      "current_illumination": {
+        "name": "Current Illumination"
+      },
+      "dewpoint": {
+        "name": "Dewpoint"
       },
       "direction": {
         "name": "Direction",
         "state": {
-          "none": "",
-          "up": "Up",
           "down": "Down",
-          "undefined": "Undefined"
+          "none": "",
+          "undefined": "Undefined",
+          "up": "Up"
         }
       },
       "door_state": {
@@ -244,8 +225,8 @@
         "state": {
           "closed": "Closed",
           "open": "Open",
-          "ventilation_position": "Ventilation position",
-          "position_unknown": "Position unknown"
+          "position_unknown": "Position unknown",
+          "ventilation_position": "Ventilation position"
         }
       },
       "duty_cycle_level": {
@@ -253,6 +234,9 @@
       },
       "energy_counter": {
         "name": "Energy Counter"
+      },
+      "error": {
+        "name": "Error"
       },
       "filling_level": {
         "name": "Filling Level"
@@ -266,11 +250,11 @@
       "gas_power": {
         "name": "Gas Power"
       },
+      "highest_illumination": {
+        "name": "Highest Illumination"
+      },
       "humidity": {
         "name": "Humidity"
-      },
-      "actual_humidity": {
-        "name": "Actual Humidity"
       },
       "iec_energy_counter": {
         "name": "IEC Energy Counter"
@@ -280,21 +264,6 @@
       },
       "illumination": {
         "name": "Illumination"
-      },
-      "average_illumination": {
-        "name": "Average Illumination"
-      },
-      "current_illumination": {
-        "name": "Current Illumination"
-      },
-      "highest_illumination": {
-        "name": "Highest Illumination"
-      },
-      "lowest_illumination": {
-        "name": "Lowest Illumination"
-      },
-      "lux": {
-        "name": "Lux"
       },
       "ip_address": {
         "name": "Ip Address"
@@ -308,22 +277,28 @@
       "lock_state": {
         "name": "Lock State",
         "state": {
-          "unknown": "Unknown",
           "locked": "Locked",
+          "unknown": "Unknown",
           "unlocked": "Unlocked"
         }
       },
+      "lowest_illumination": {
+        "name": "Lowest Illumination"
+      },
+      "lux": {
+        "name": "Lux"
+      },
       "mass_concentration_pm_1": {
         "name": "Mass Concentration PM 1"
-      },
-      "mass_concentration_pm_1_24h_average": {
-        "name": "Mass Concentration PM 1 24h Average"
       },
       "mass_concentration_pm_10": {
         "name": "Mass Concentration PM 10"
       },
       "mass_concentration_pm_10_24h_average": {
         "name": "Mass Concentration PM 10 24h Average"
+      },
+      "mass_concentration_pm_1_24h_average": {
+        "name": "Mass Concentration PM 1 24h Average"
       },
       "mass_concentration_pm_2_5": {
         "name": "Mass Concentration PM 2.5"
@@ -339,12 +314,6 @@
       },
       "number_concentration_pm_2_5": {
         "name": "Number Concentration PM 2.5"
-      },
-      "typical_particle_size": {
-        "name": "Typical Particle Size"
-      },
-      "battery_state": {
-        "name": "Battery State"
       },
       "operating_voltage": {
         "name": "Operating Voltage"
@@ -364,26 +333,71 @@
       "rssi_peer": {
         "name": "RSSI Peer"
       },
-      "actual_temperature": {
-        "name": "Actual Temperature"
+      "sec_direction": {
+        "name": "Direction",
+        "state": {
+          "down": "Opening",
+          "none": "",
+          "undefined": "Undefined",
+          "up": "Closing"
+        }
       },
-      "temperature": {
-        "name": "Temperature"
+      "sec_key_error": {
+        "name": "Error",
+        "state": {
+          "clutch_failure": "Clutch failure",
+          "motor_aborted": "Motor aborted",
+          "no_error": "No error"
+        }
       },
-      "dewpoint": {
-        "name": "Dewpoint"
+      "sec_win_error": {
+        "name": "Error",
+        "state": {
+          "motor_tilt_error": "Motor tilt error",
+          "motor_turn_error": "Motor turn error",
+          "no_error": "No error"
+        }
+      },
+      "sec_win_status": {
+        "name": "Status",
+        "state": {
+          "charge": "Charge",
+          "discharge": "Discharge",
+          "state_unknown": "State unknown",
+          "trickle_charge": "Trickle charge"
+        }
       },
       "smoke_detector_alarm_status": {
         "name": "Smoke Detector Alarm Status",
         "state": {
           "idle_off": "Idle off",
-          "primary_alarm": "Primary alarm",
           "intrusion_alarm": "Intrusion alarm",
+          "primary_alarm": "Primary alarm",
           "secondary_alarm": "Secondary alarm"
         }
       },
+      "srh_state": {
+        "name": "State",
+        "state": {
+          "closed": "Closed",
+          "open": "Open",
+          "tilted": "Tilted"
+        }
+      },
+      "state": {
+        "name": "State"
+      },
+      "status": {
+        "name": "Status"
+      },
       "sunshineduration": {
         "name": "Sunshineduration"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "typical_particle_size": {
+        "name": "Typical Particle Size"
       },
       "value": {
         "name": "Value"
@@ -411,57 +425,6 @@
       },
       "wind_speed": {
         "name": "Wind Speed"
-      },
-      "state": {
-        "name": "State"
-      },
-      "status": {
-        "name": "Status"
-      },
-      "error": {
-        "name": "Error"
-      },
-      "srh_state": {
-        "name": "State",
-        "state": {
-          "closed": "Closed",
-          "tilted": "Tilted",
-          "open": "Open"
-        }
-      },
-      "sec_key_error": {
-        "name": "Error",
-        "state": {
-          "no_error": "No error",
-          "clutch_failure": "Clutch failure",
-          "motor_aborted": "Motor aborted"
-        }
-      },
-      "sec_direction": {
-        "name": "Direction",
-        "state": {
-          "none": "",
-          "up": "Closing",
-          "down": "Opening",
-          "undefined": "Undefined"
-        }
-      },
-      "sec_win_status": {
-        "name": "Status",
-        "state": {
-          "trickle_charge": "Trickle charge",
-          "charge": "Charge",
-          "discharge": "Discharge",
-          "state_unknown": "State unknown"
-        }
-      },
-      "sec_win_error": {
-        "name": "Error",
-        "state": {
-          "no_error": "No error",
-          "motor_turn_error": "Motor turn error",
-          "motor_tilt_error": "Motor tilt error"
-        }
       }
     },
     "switch": {
@@ -476,6 +439,46 @@
       },
       "state": {
         "name": "State"
+      }
+    }
+  },
+  "options": {
+    "abort": {},
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "invalid_password": "Invalid password",
+      "unknown": "Unexpected error"
+    },
+    "step": {
+      "central": {
+        "data": {
+          "callback_host": "Callback Hostname/IP-Address",
+          "callback_port": "Callback XML-RPC Port",
+          "host": "CCU Hostname/IP-Address",
+          "json_port": "JSON-RPC Port",
+          "password": "CCU Password",
+          "sysvar_scan_enabled": "enable Sysvar scan",
+          "sysvar_scan_interval": "Sysvar/Program scan interval",
+          "tls": "use TLS",
+          "username": "CCU Username",
+          "verify_tls": "verify TLS connection"
+        },
+        "description": "Re-Configure the CCU"
+      },
+      "interface": {
+        "data": {
+          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
+          "bidcos_rf_port": "HM-RF Port",
+          "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
+          "bidcos_wired_port": "BidCos-Wired Port",
+          "hmip_rf_enabled": "enable Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "virtual_devices_enabled": "enable Groups (Heating-Group)",
+          "virtual_devices_path": "Groups Path",
+          "virtual_devices_port": "Groups Port"
+        },
+        "description": "Re-Configure the interfaces to CCU"
       }
     }
   }
