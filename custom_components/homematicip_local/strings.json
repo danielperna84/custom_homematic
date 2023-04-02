@@ -67,7 +67,7 @@
         "name": "Burst Limit Warning"
       },
       "current_passage_direction": {
-        "name": "Current Passage Direction"
+        "name": "Passage Direction"
       },
       "dew_point_alarm": {
         "name": "Dew Point Alarm"
@@ -86,6 +86,9 @@
       },
       "heater_state": {
         "name": "Heater State"
+      },
+      "humidity_alarm": {
+        "name": "Humidity Alarm"
       },
       "last_passage_direction": {
         "name": "Last Passage Direction"
@@ -176,10 +179,10 @@
         "name": "Activity State"
       },
       "actual_humidity": {
-        "name": "Actual Humidity"
+        "name": "Humidity"
       },
       "actual_temperature": {
-        "name": "Actual Temperature"
+        "name": "Temperature"
       },
       "air_pressure": {
         "name": "Air Pressure"
@@ -206,7 +209,7 @@
         "name": "Current"
       },
       "current_illumination": {
-        "name": "Current Illumination"
+        "name": "Illumination"
       },
       "dewpoint": {
         "name": "Dewpoint"

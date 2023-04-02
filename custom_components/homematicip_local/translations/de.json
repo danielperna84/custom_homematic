@@ -67,7 +67,7 @@
         "name": "Burst-Limit-Warnung"
       },
       "current_passage_direction": {
-        "name": "Aktuelle Durchgangsrichtung"
+        "name": "Durchgangsrichtung"
       },
       "dew_point_alarm": {
         "name": "Taupunktalarm"
@@ -86,6 +86,9 @@
       },
       "heater_state": {
         "name": "Heizungszustand"
+      },
+      "humidity_alarm": {
+        "name": "Feuchtigkeitsalarm"
       },
       "last_passage_direction": {
         "name": "Letzte Durchgangsrichtung"
@@ -176,10 +179,10 @@
         "name": "Aktivitätszustand"
       },
       "actual_humidity": {
-        "name": "Aktuelle Luftfeuchtigkeit"
+        "name": "Luftfeuchtigkeit"
       },
       "actual_temperature": {
-        "name": "Aktuelle Temperatur"
+        "name": "Temperatur"
       },
       "air_pressure": {
         "name": "Luftdruck"
@@ -206,7 +209,7 @@
         "name": "Strom"
       },
       "current_illumination": {
-        "name": "Aktuelle Beleuchtungsstärke"
+        "name": "Beleuchtungsstärke"
       },
       "dewpoint": {
         "name": "Taupunkt"
