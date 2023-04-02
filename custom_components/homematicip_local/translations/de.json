@@ -1,122 +1,82 @@
 {
   "config": {
+    "abort": {},
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Ung\u00fcltige Authentifizierung",
+      "invalid_password": "Ung\u00fcltiges Passwort",
+      "unknown": "Unerwarteter Fehler"
+    },
     "flow_title": "{name}/{host}",
     "step": {
       "central": {
-        "description": "Bitte Pflichtfelder ausfüllen",
         "data": {
+          "callback_host": "Callback Hostname/IP-Adresse",
+          "callback_port": "Callback XML-RPC Port",
+          "host": "CCU Hostname/IP-Adresse",
           "instance_name": "Instanzname der Integration",
-          "host": "CCU Hostname/IP-Adresse",
-          "username": "CCU Benutzername",
-          "password": "CCU Passwort",
-          "callback_host": "Callback Hostname/IP-Adresse",
-          "callback_port": "Callback XML-RPC Port",
-          "tls": "verwende TLS",
-          "verify_tls": "TLS Verbindung überprüfen",
           "json_port": "JSON-RPC Port",
+          "password": "CCU Passwort",
           "sysvar_scan_enabled": "aktiviere Sysvar Scan",
-          "sysvar_scan_interval": "Sysvar/Program Scan Interval"
-        }
+          "sysvar_scan_interval": "Sysvar/Program Scan Interval",
+          "tls": "verwende TLS",
+          "username": "CCU Benutzername",
+          "verify_tls": "TLS Verbindung überprüfen"
+        },
+        "description": "Bitte Pflichtfelder ausfüllen"
       },
       "interface": {
-        "description": "Konfiguration der CCU Schnittstellen",
         "data": {
-          "hmip_rf_enabled": "aktiviere Homematic IP",
-          "hmip_rf_port": "HmIP-RF Port",
           "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
           "bidcos_rf_port": "HM-RF Port",
-          "virtual_devices_enabled": "aktiviere Heizgruppen",
-          "virtual_devices_port": "Gruppen Port",
-          "virtual_devices_path": "Gruppen Path",
           "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port"
-        }
-      }
-    },
-    "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "invalid_auth": "Ung\u00fcltige Authentifizierung",
-      "invalid_password": "Ung\u00fcltiges Passwort",
-      "unknown": "Unerwarteter Fehler"
-    },
-    "abort": {}
-  },
-  "options": {
-    "step": {
-      "central": {
-        "description": "Neu-Konfiguration der CCU",
-        "data": {
-          "host": "CCU Hostname/IP-Adresse",
-          "username": "CCU Benutzername",
-          "password": "CCU Passwort",
-          "callback_host": "Callback Hostname/IP-Adresse",
-          "callback_port": "Callback XML-RPC Port",
-          "tls": "verwende TLS",
-          "verify_tls": "TLS Verbindung überprüfen",
-          "json_port": "JSON-RPC Port",
-          "sysvar_scan_enabled": "aktiviere Sysvar Scan",
-          "sysvar_scan_interval": "Sysvar/Program Scan Interval"
-        }
-      },
-      "interface": {
-        "description": "Neu-Konfiguration der CCU Schnittstellen",
-        "data": {
+          "bidcos_wired_port": "BidCos-Wired Port",
           "hmip_rf_enabled": "aktiviere Homematic IP",
           "hmip_rf_port": "HmIP-RF Port",
-          "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
-          "bidcos_rf_port": "HM-RF Port",
           "virtual_devices_enabled": "aktiviere Heizgruppen",
-          "virtual_devices_port": "Gruppen Port",
           "virtual_devices_path": "Gruppen Path",
-          "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port"
-        }
+          "virtual_devices_port": "Gruppen Port"
+        },
+        "description": "Konfiguration der CCU Schnittstellen"
       }
-    },
-    "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "invalid_auth": "Ung\u00fcltige Authentifizierung",
-      "invalid_password": "Ung\u00fcltiges Passwort",
-      "unknown": "Unerwarteter Fehler"
-    },
-    "abort": {}
+    }
   },
   "device_automation": {
+    "action_type": {
+      "press_long": "Langer Tastendruck auf Taster \"{subtype}\"",
+      "press_short": "Kurzer Tastendruck auf Taster \"{subtype}\""
+    },
     "trigger_type": {
       "press": "Taster \"{subtype}\" wurde gedrückt",
-      "press_short": "Taster \"{subtype}\" wurde gedrückt",
-      "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
       "press_cont": "Taster \"{subtype}\" wird dauerhaft gedrückt",
+      "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
       "press_long_release": "Taster \"{subtype}\" wurde nach langem Tastendruck los gelassen",
-      "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet"
-    },
-    "action_type": {
-      "press_short": "Kurzer Tastendruck auf Taster \"{subtype}\"",
-      "press_long": "Langer Tastendruck auf Taster \"{subtype}\""
+      "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet",
+      "press_short": "Taster \"{subtype}\" wurde gedrückt"
     }
   },
   "entity": {
     "binary_sensor": {
-      "alarmstate": {
-        "name": "Alarmzustand"
-      },
       "acoustic_alarm_active": {
         "name": "Akustischer Alarm aktiv"
+      },
+      "alarmstate": {
+        "name": "Alarmzustand"
       },
       "burst_limit_warning": {
         "name": "Burst-Limit-Warnung"
       },
       "current_passage_direction": {
-        "name": "Aktuelle Durchgangsrichtung"
+        "name": "Durchgangsrichtung"
       },
-      "dutycycle": {
-        "name": "Duty Cycle"
+      "dew_point_alarm": {
+        "name": "Taupunktalarm"
       },
       "duty_cycle": {
         "name": "Duty Cycle"
       },
-      "dew_point_alarm": {
-        "name": "Taupunktalarm"
+      "dutycycle": {
+        "name": "Duty Cycle"
       },
       "emergency_operation": {
         "name": "Notfallbetrieb"
@@ -127,13 +87,16 @@
       "heater_state": {
         "name": "Heizungszustand"
       },
+      "humidity_alarm": {
+        "name": "Feuchtigkeitsalarm"
+      },
       "last_passage_direction": {
         "name": "Letzte Durchgangsrichtung"
       },
-      "lowbat": {
+      "low_bat": {
         "name": "Batterie"
       },
-      "low_bat": {
+      "lowbat": {
         "name": "Batterie"
       },
       "lowbat_sensor": {
@@ -157,14 +120,14 @@
       "process": {
         "name": "Arbeitet"
       },
-      "working": {
-        "name": "Arbeitet"
-      },
       "raining": {
         "name": "Regen"
       },
       "sabotage": {
         "name": "Sabotage"
+      },
+      "state": {
+        "name": ""
       },
       "waterlevel_detected": {
         "name": "Wasserstand erkannt"
@@ -172,8 +135,8 @@
       "window_state": {
         "name": "Fensterzustand"
       },
-      "state": {
-        "name": "Zustand"
+      "working": {
+        "name": "Arbeitet"
       }
     },
     "button": {
@@ -212,8 +175,23 @@
       }
     },
     "sensor": {
+      "activity_state": {
+        "name": "Aktivitätszustand"
+      },
+      "actual_humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "actual_temperature": {
+        "name": "Temperatur"
+      },
       "air_pressure": {
         "name": "Luftdruck"
+      },
+      "average_illumination": {
+        "name": "Durchschnittliche Beleuchtungsstärke"
+      },
+      "battery_state": {
+        "name": "Batteriezustand"
       },
       "brightness": {
         "name": "Helligkeit"
@@ -221,22 +199,28 @@
       "carrier_sense_level": {
         "name": "Carrier Sense Level"
       },
+      "color": {
+        "name": "Farbe"
+      },
       "concentration": {
         "name": "Konzentration"
       },
       "current": {
         "name": "Strom"
       },
-      "activity_state": {
-        "name": "Aktivitätszustand"
+      "current_illumination": {
+        "name": "Beleuchtungsstärke"
+      },
+      "dewpoint": {
+        "name": "Taupunkt"
       },
       "direction": {
         "name": "Richtung",
         "state": {
-          "none": "",
-          "up": "Hoch",
           "down": "Runter",
-          "undefined": "Nicht definiert"
+          "none": "",
+          "undefined": "Nicht definiert",
+          "up": "Hoch"
         }
       },
       "door_state": {
@@ -244,8 +228,8 @@
         "state": {
           "closed": "Geschlossen",
           "open": "Offen",
-          "ventilation_position": "Belüftung",
-          "position_unknown": "Position unbekannt"
+          "position_unknown": "Position unbekannt",
+          "ventilation_position": "Belüftung"
         }
       },
       "duty_cycle_level": {
@@ -253,6 +237,9 @@
       },
       "energy_counter": {
         "name": "Energiezähler"
+      },
+      "error": {
+        "name": "Fehler"
       },
       "filling_level": {
         "name": "Füllstand"
@@ -266,11 +253,11 @@
       "gas_power": {
         "name": "Gas-Leistung"
       },
+      "highest_illumination": {
+        "name": "Höchste Beleuchtungsstärke"
+      },
       "humidity": {
         "name": "Luftfeuchtigkeit"
-      },
-      "actual_humidity": {
-        "name": "Aktuelle Luftfeuchtigkeit"
       },
       "iec_energy_counter": {
         "name": "IEC Energiezähler"
@@ -280,21 +267,6 @@
       },
       "illumination": {
         "name": "Beleuchtungsstärke"
-      },
-      "average_illumination": {
-        "name": "Durchschnittliche Beleuchtungsstärke"
-      },
-      "current_illumination": {
-        "name": "Aktuelle Beleuchtungsstärke"
-      },
-      "highest_illumination": {
-        "name": "Höchste Beleuchtungsstärke"
-      },
-      "lowest_illumination": {
-        "name": "Niedrigste Beleuchtungsstärke"
-      },
-      "lux": {
-        "name": "Lux"
       },
       "ip_address": {
         "name": "IP Adresse"
@@ -308,22 +280,28 @@
       "lock_state": {
         "name": "Schliesszustand",
         "state": {
-          "unknown": "Unbekannt",
           "locked": "Verriegelt",
+          "unknown": "Unbekannt",
           "unlocked": "Unverriegelt"
         }
       },
+      "lowest_illumination": {
+        "name": "Niedrigste Beleuchtungsstärke"
+      },
+      "lux": {
+        "name": "Lux"
+      },
       "mass_concentration_pm_1": {
         "name": "Masse-Konzentration PM 1"
-      },
-      "mass_concentration_pm_1_24h_average": {
-        "name": "Masse-Konzentration PM 1 24h Durchschnitt"
       },
       "mass_concentration_pm_10": {
         "name": "Masse-Konzentration PM 10"
       },
       "mass_concentration_pm_10_24h_average": {
         "name": "Masse-Konzentration PM 10 24h Durchschnitt"
+      },
+      "mass_concentration_pm_1_24h_average": {
+        "name": "Masse-Konzentration PM 1 24h Durchschnitt"
       },
       "mass_concentration_pm_2_5": {
         "name": "Masse-Konzentration PM 2.5"
@@ -339,12 +317,6 @@
       },
       "number_concentration_pm_2_5": {
         "name": "Numerische Konzentration PM 2.5"
-      },
-      "typical_particle_size": {
-        "name": "Tyische Partikelgröße"
-      },
-      "battery_state": {
-        "name": "Batteriezustand"
       },
       "operating_voltage": {
         "name": "Betriebsspannung"
@@ -364,26 +336,71 @@
       "rssi_peer": {
         "name": "RSSI Peer"
       },
-      "actual_temperature": {
-        "name": "Aktuelle Temperatur"
+      "sec_direction": {
+        "name": "Richtung",
+        "state": {
+          "down": "Öffnend",
+          "none": "",
+          "undefined": "Nicht definiert",
+          "up": "Schließend"
+        }
       },
-      "temperature": {
-        "name": "Temperatur"
+      "sec_key_error": {
+        "name": "Fehler",
+        "state": {
+          "clutch_failure": "Einkuppeln fehlgeschlagen",
+          "motor_aborted": "Motorlauf abgebrochen",
+          "no_error": "Kein Fehler"
+        }
       },
-      "dewpoint": {
-        "name": "Taupunkt"
+      "sec_win_error": {
+        "name": "Fehler",
+        "state": {
+          "motor_tilt_error": "Fehler Kippantrieb",
+          "motor_turn_error": "Fehler Drehantrieb",
+          "no_error": "Kein Fehler"
+        }
+      },
+      "sec_win_status": {
+        "name": "",
+        "state": {
+          "charge": "Ladend",
+          "discharge": "Versorgung durch Akku",
+          "state_unknown": "Zustand unbekannt",
+          "trickle_charge": "Erhaltungsladung"
+        }
       },
       "smoke_detector_alarm_status": {
         "name": "Rauchmelder-Alarmstatus",
         "state": {
           "idle_off": "Untätig",
-          "primary_alarm": "Primär-Alarm",
           "intrusion_alarm": "Einbruch-Alarm",
+          "primary_alarm": "Primär-Alarm",
           "secondary_alarm": "Sekundär-Alarm"
         }
       },
+      "srh_state": {
+        "name": "",
+        "state": {
+          "closed": "Geschlossen",
+          "open": "Offen",
+          "tilted": "Gekippt"
+        }
+      },
+      "state": {
+        "name": ""
+      },
+      "status": {
+        "name": ""
+      },
       "sunshineduration": {
         "name": "Sonnenscheindauer"
+      },
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "typical_particle_size": {
+        "name": "Tyische Partikelgröße"
       },
       "value": {
         "name": "Wert"
@@ -411,57 +428,6 @@
       },
       "wind_speed": {
         "name": "Windgeschwindigkeit"
-      },
-      "state": {
-        "name": "Zustand"
-      },
-      "status": {
-        "name": "Status"
-      },
-      "error": {
-        "name": "Fehler"
-      },
-      "srh_state": {
-        "name": "Zustand",
-        "state": {
-          "closed": "Geschlossen",
-          "tilted": "Gekippt",
-          "open": "Offen"
-        }
-      },
-      "sec_key_error": {
-        "name": "Fehler",
-        "state": {
-          "no_error": "Kein Fehler",
-          "clutch_failure": "Einkuppeln fehlgeschlagen",
-          "motor_aborted": "Motorlauf abgebrochen"
-        }
-      },
-      "sec_direction": {
-        "name": "Richtung",
-        "state": {
-          "none": "",
-          "up": "Schließend",
-          "down": "Öffnend",
-          "undefined": "Nicht definiert"
-        }
-      },
-      "sec_win_status": {
-        "name": "Zustand",
-        "state": {
-          "trickle_charge": "Erhaltungsladung",
-          "charge": "Ladend",
-          "discharge": "Versorgung durch Akku",
-          "state_unknown": "Zustand unbekannt"
-        }
-      },
-      "sec_win_error": {
-        "name": "Fehler",
-        "state": {
-          "no_error": "Kein Fehler",
-          "motor_turn_error": "Fehler Drehantrieb",
-          "motor_tilt_error": "Fehler Kippantrieb"
-        }
       }
     },
     "switch": {
@@ -475,7 +441,47 @@
         "name": "Anwesenheitserkennung aktiv"
       },
       "state": {
-        "name": "Zustand"
+        "name": ""
+      }
+    }
+  },
+  "options": {
+    "abort": {},
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Ung\u00fcltige Authentifizierung",
+      "invalid_password": "Ung\u00fcltiges Passwort",
+      "unknown": "Unerwarteter Fehler"
+    },
+    "step": {
+      "central": {
+        "data": {
+          "callback_host": "Callback Hostname/IP-Adresse",
+          "callback_port": "Callback XML-RPC Port",
+          "host": "CCU Hostname/IP-Adresse",
+          "json_port": "JSON-RPC Port",
+          "password": "CCU Passwort",
+          "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+          "sysvar_scan_interval": "Sysvar/Program Scan Interval",
+          "tls": "verwende TLS",
+          "username": "CCU Benutzername",
+          "verify_tls": "TLS Verbindung überprüfen"
+        },
+        "description": "Neu-Konfiguration der CCU"
+      },
+      "interface": {
+        "data": {
+          "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
+          "bidcos_rf_port": "HM-RF Port",
+          "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
+          "bidcos_wired_port": "BidCos-Wired Port",
+          "hmip_rf_enabled": "aktiviere Homematic IP",
+          "hmip_rf_port": "HmIP-RF Port",
+          "virtual_devices_enabled": "aktiviere Heizgruppen",
+          "virtual_devices_path": "Gruppen Path",
+          "virtual_devices_port": "Gruppen Port"
+        },
+        "description": "Neu-Konfiguration der CCU Schnittstellen"
       }
     }
   }
