@@ -35,7 +35,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicButton(control_unit, hm_entity))
+            entities.append(
+                HaHomematicButton(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -46,7 +51,11 @@ async def async_setup_entry(
         entities: list[HaHomematicProgramButton] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicProgramButton(control_unit, hm_entity))
+            entities.append(
+                HaHomematicProgramButton(
+                    control_unit=control_unit, hm_program_button=hm_entity
+                )
+            )
 
         if entities:
             async_add_entities(entities)

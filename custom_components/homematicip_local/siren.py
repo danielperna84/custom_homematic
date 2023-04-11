@@ -52,7 +52,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSiren(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSiren(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -88,7 +93,10 @@ class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):
         hm_entity: BaseSiren,
     ) -> None:
         """Initialize the siren entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        super().__init__(
+            control_unit=control_unit,
+            hm_entity=hm_entity,
+        )
         if hm_entity.supports_tones:
             self._attr_supported_features |= SirenEntityFeature.TONES
         if hm_entity.supports_duration:

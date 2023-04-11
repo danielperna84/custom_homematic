@@ -94,7 +94,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicClimate(control_unit, hm_entity))
+            entities.append(
+                HaHomematicClimate(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -154,7 +159,10 @@ class HaHomematicClimate(
         hm_entity: BaseClimateEntity,
     ) -> None:
         """Initialize the climate entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        super().__init__(
+            control_unit=control_unit,
+            hm_entity=hm_entity,
+        )
         self._attr_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_target_temperature_step = hm_entity.target_temperature_step
 

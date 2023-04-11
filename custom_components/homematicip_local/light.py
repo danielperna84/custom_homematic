@@ -60,7 +60,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicLight(control_unit, hm_entity))
+            entities.append(
+                HaHomematicLight(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)

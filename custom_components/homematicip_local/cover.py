@@ -53,15 +53,40 @@ async def async_setup_entry(
                     hm_entity.channel_operation_mode
                     and hm_entity.channel_operation_mode == "SHUTTER"
                 ):
-                    entities.append(HaHomematicCover(control_unit, hm_entity))
+                    entities.append(
+                        HaHomematicCover(
+                            control_unit=control_unit,
+                            hm_entity=hm_entity,
+                        )
+                    )
                 else:
-                    entities.append(HaHomematicBlind(control_unit, hm_entity))
+                    entities.append(
+                        HaHomematicBlind(
+                            control_unit=control_unit,
+                            hm_entity=hm_entity,
+                        )
+                    )
             elif isinstance(hm_entity, CeBlind):
-                entities.append(HaHomematicBlind(control_unit, hm_entity))
+                entities.append(
+                    HaHomematicBlind(
+                        control_unit=control_unit,
+                        hm_entity=hm_entity,
+                    )
+                )
             elif isinstance(hm_entity, CeCover):
-                entities.append(HaHomematicCover(control_unit, hm_entity))
+                entities.append(
+                    HaHomematicCover(
+                        control_unit=control_unit,
+                        hm_entity=hm_entity,
+                    )
+                )
             elif isinstance(hm_entity, CeGarage):
-                entities.append(HaHomematicGarage(control_unit, hm_entity))
+                entities.append(
+                    HaHomematicGarage(
+                        control_unit=control_unit,
+                        hm_entity=hm_entity,
+                    )
+                )
 
         if entities:
             async_add_entities(entities)

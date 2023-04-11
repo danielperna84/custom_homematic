@@ -39,7 +39,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSelect(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSelect(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -51,7 +56,11 @@ async def async_setup_entry(
         entities = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSysvarSelect(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSysvarSelect(
+                    control_unit=control_unit, hm_sysvar_entity=hm_entity
+                )
+            )
 
         if entities:
             async_add_entities(entities)
