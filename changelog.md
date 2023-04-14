@@ -1,6 +1,6 @@
 # Version 1.34.1 (2022-04-15)
 
-- Bump hahomematic to 2023.3.1
+- Bump hahomematic to 2023.4.0
   - Update requirements
   - Add log message to negative password check
 - Use positional args
