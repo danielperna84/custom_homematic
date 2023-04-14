@@ -7,7 +7,6 @@
 
 # Version 1.34.0 (2022-04-05)
 
-
 ### New features
 
 - Add service "set cover combined position"
