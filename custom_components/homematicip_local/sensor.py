@@ -59,7 +59,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSensor(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSensor(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -71,7 +76,11 @@ async def async_setup_entry(
         entities = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSysvarSensor(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSysvarSensor(
+                    control_unit=control_unit, hm_sysvar_entity=hm_entity
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -79,14 +88,18 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.SENSOR),
+            async_signal_new_hm_entity(
+                entry_id=config_entry.entry_id, platform=HmPlatform.SENSOR
+            ),
             async_add_sensor,
         )
     )
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.HUB_SENSOR),
+            async_signal_new_hm_entity(
+                entry_id=config_entry.entry_id, platform=HmPlatform.HUB_SENSOR
+            ),
             async_add_hub_sensor,
         )
     )
@@ -114,7 +127,10 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         hm_entity: HmSensor,
     ) -> None:
         """Initialize the sensor entity."""
-        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        super().__init__(
+            control_unit=control_unit,
+            hm_entity=hm_entity,
+        )
         self._multiplier: int = (
             self.entity_description.multiplier
             if hasattr(self, "entity_description")

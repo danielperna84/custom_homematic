@@ -39,7 +39,12 @@ async def async_setup_entry(
         entities: list[HaHomematicGenericRestoreEntity] = []
 
         for hm_entity in args:
-            entities.append(HaHomematicText(control_unit, hm_entity))
+            entities.append(
+                HaHomematicText(
+                    control_unit=control_unit,
+                    hm_entity=hm_entity,
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -51,7 +56,11 @@ async def async_setup_entry(
         entities = []
 
         for hm_entity in args:
-            entities.append(HaHomematicSysvarText(control_unit, hm_entity))
+            entities.append(
+                HaHomematicSysvarText(
+                    control_unit=control_unit, hm_sysvar_entity=hm_entity
+                )
+            )
 
         if entities:
             async_add_entities(entities)
@@ -59,14 +68,18 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.TEXT),
+            async_signal_new_hm_entity(
+                entry_id=config_entry.entry_id, platform=HmPlatform.TEXT
+            ),
             async_add_text,
         )
     )
     config_entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(config_entry.entry_id, HmPlatform.HUB_TEXT),
+            async_signal_new_hm_entity(
+                entry_id=config_entry.entry_id, platform=HmPlatform.HUB_TEXT
+            ),
             async_add_hub_text,
         )
     )
