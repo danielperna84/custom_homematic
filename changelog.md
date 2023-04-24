@@ -1,3 +1,9 @@
+# Version 1.34.2 (2022-04-24)
+
+- Bump hahomematic to 2023.4.2
+  - Update requirements
+  - Fix cover (HDM2) no longer working
+
 # Version 1.34.1 (2022-04-16)
 
 - Bump hahomematic to 2023.4.0
