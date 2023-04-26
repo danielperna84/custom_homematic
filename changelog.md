@@ -1,3 +1,9 @@
+# Version 1.35.0 (2022-04-27)
+
+- Bump hahomematic to 2023.4.3
+  - Update requirements
+  - Add HmIP-RGBW
+  
 # Version 1.34.2 (2022-04-24)
 
 - Bump hahomematic to 2023.4.2
