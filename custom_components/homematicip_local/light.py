@@ -143,11 +143,20 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         return attributes
 
     @property
-    def supported_color_modes(self) -> set[ColorMode] | None:
+    def supported_color_modes(self) -> set[ColorMode] | set[str] | None:
         """Flag supported color modes."""
-        if self.color_mode:
-            return {self.color_mode}
-        return None
+        supported_color_modes: set[ColorMode] = set()
+        if self._hm_entity.supports_hs_color:
+            supported_color_modes.add(ColorMode.HS)
+        if self._hm_entity.supports_color_temperature:
+            supported_color_modes.add(ColorMode.COLOR_TEMP)
+
+        if len(supported_color_modes) == 0 and self._hm_entity.supports_brightness:
+            supported_color_modes.add(ColorMode.BRIGHTNESS)
+        if len(supported_color_modes) == 0:
+            supported_color_modes.add(ColorMode.ONOFF)
+
+        return supported_color_modes
 
     @property
     def supported_features(self) -> LightEntityFeature:
