@@ -1,6 +1,6 @@
 # Version 1.35.0 (2022-04-28)
 
-- Bump hahomematic to 2023.4.4
+- Bump hahomematic to 2023.4.5
   - Update requirements
   - Add HmIP-RGBW
 - Fix supported_color_modes for light
