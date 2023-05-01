@@ -10,13 +10,13 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/danielperna84/hahomematic/issues",
   "loggers": ["hahomematic"],
-  "requirements": ["hahomematic==2023.4.5"],
+  "requirements": ["hahomematic==2023.5.0"],
   "ssdp": [
     {
       "manufacturer": "EQ3",
       "manufacturerURL": "http://www.homematic.com"
     }
   ],
-  "version": "1.35.0",
+  "version": "1.36.0",
   "zeroconf": []
 }

@@ -1,3 +1,8 @@
+# Version 1.36.0 (2022-05-01)
+
+- Bump hahomematic to 2023.5.0
+  - Remove unsupported on_time / refactor HmIP-RGBW
+
 # Version 1.35.0 (2022-04-28)
 
 - Bump hahomematic to 2023.4.5
