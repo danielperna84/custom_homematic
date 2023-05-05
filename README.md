@@ -447,6 +447,11 @@ Option 3: Use the service homematicip_local.delete_device. This deletes the devi
 
 Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installs systems)
 
+### Updated firmware version not refreshed in Home Assistant device info
+
+The device firmware version is part of the device description and cached permanently.
+To refresh the displayed firmware version you need to clear the cache by calling the service [clear_cache](https://github.com/danielperna84/custom_homematic#homematicip_localclear_cache) and restart HA afterwards.
+
 ### Unignore device parameters
 
 Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
