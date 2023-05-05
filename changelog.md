@@ -1,22 +1,22 @@
-# Version 1.36.0 (2022-05-01)
+# Version 1.36.0 (2023-05-01)
 
 - Bump hahomematic to 2023.5.0
   - Remove unsupported on_time / refactor HmIP-RGBW
 
-# Version 1.35.0 (2022-04-28)
+# Version 1.35.0 (2023-04-28)
 
 - Bump hahomematic to 2023.4.5
   - Update requirements
   - Add HmIP-RGBW
 - Fix supported_color_modes for light
 
-# Version 1.34.2 (2022-04-24)
+# Version 1.34.2 (2023-04-24)
 
 - Bump hahomematic to 2023.4.2
   - Update requirements
   - Fix cover (HDM2) no longer working
 
-# Version 1.34.1 (2022-04-16)
+# Version 1.34.1 (2023-04-16)
 
 - Bump hahomematic to 2023.4.0
   - Update requirements
@@ -24,7 +24,7 @@
 - Use positional args
 - Fix `Cannot parse hex-string value`
 
-# Version 1.34.0 (2022-04-05)
+# Version 1.34.0 (2023-04-05)
 
 ### New features
 
@@ -46,7 +46,7 @@
 - Add service "set cover combined position"
 - Add name translation
 
-# Version 1.33.1 (2022-03-03)
+# Version 1.33.1 (2023-03-03)
 
 ### All changes:
 
@@ -56,7 +56,7 @@
 - Fix import
 - Update minimum required version
 
-# Version 1.33.0 (2022-02-26)
+# Version 1.33.0 (2023-02-26)
 
 ### All changes:
 
@@ -65,7 +65,7 @@
   - Switch to orjson
   - Fix climate: compare set temperature to target temperature
 
-# Version 1.32.0 (2022-02-23)
+# Version 1.32.0 (2023-02-23)
 
 ## Breaking change
 
@@ -86,7 +86,7 @@
 - Add pre-commit checks and cleanup repo
 - Remove set_device_value_raw
 
-# Version 1.31.0 (2022-02-18)
+# Version 1.31.0 (2023-02-18)
 
 ### New features
 
@@ -117,7 +117,7 @@
 - Used typed dicts for light and siren
 - Update translation keys
 
-# Version 1.30.2 (2022-02-08)
+# Version 1.30.2 (2023-02-08)
 
 ### All changes:
 
@@ -126,7 +126,7 @@
 This change is necessary because `native_precision` has been swapped for `suggested_display_precision` without a deprecation period in the HA core. Before switching to HA 2023.3, **all** CC users who use version 1.28.0 (or greater) must therefore update.
 Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023.3
 
-# Version 1.30.1 (2022-02-08)
+# Version 1.30.1 (2023-02-08)
 
 ### New features
 
@@ -136,7 +136,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
   - Disable validation of state change for action and button
   - Check if entity is writable on send
 
-# Version 1.30.0 (2022-02-07)
+# Version 1.30.0 (2023-02-07)
 
 ### New features
 
@@ -149,7 +149,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
   - Add on_time Mixin to temporary store on_time
 - Align to backend lib
 
-# Version 1.29.0 (2022-02-06)
+# Version 1.29.0 (2023-02-06)
 
 ### New features
 
@@ -175,7 +175,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
       The other actor channels (5+6) are generated as initially deactivated and only use the cover position from their own channel after activation.
 - Fix channel 0 not working for put_paramset
 
-# Version 1.28.0 (2022-02-01)
+# Version 1.28.0 (2023-02-01)
 
 ### All changes:
 
@@ -202,7 +202,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 - Use exception types from backend
 - Use kwargs in callbacks
 
-# Version 1.27.2 (2022-01-26)
+# Version 1.27.2 (2023-01-26)
 
 ### All changes:
 
@@ -210,7 +210,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 - Replace `async_setup_platforms` by `async_forward_entry_setups` in `__init__.py`
 - Fix put_paramset for HM MASTER paramset
 
-# Version 1.27.1 (2022-01-XX)
+# Version 1.27.1 (2023-01-XX)
 
 ### New features
 
@@ -230,7 +230,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 - Deprecate service `set_device_value_raw`. Will be removed with HA 2023-03. Seitch to service `set_device_value` instead.
 - Follow garage changes from backend
 
-# Version 1.27.0 (2022-01-20)
+# Version 1.27.0 (2023-01-20)
 
 ### New features
 
@@ -254,11 +254,11 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 - Remove duplicate logbook entry for device_availability
 - Use old value of SYSVAR_SCAN_ENABLED in options flow
 
-# Version 1.26.5 (2022-01-16)
+# Version 1.26.5 (2023-01-16)
 
 - Fix display of logbook events
 
-# Version 1.26.4 (2022-01-16)
+# Version 1.26.4 (2023-01-16)
 
 ### New features
 
@@ -274,7 +274,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
   - Update color_conversion threshold by @guillempages
 - Fix name in homematic.key_press events
 
-# Version 1.26.2 (2022-01-13)
+# Version 1.26.2 (2023-01-13)
 
 ### New features
 
@@ -290,7 +290,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 - Reassign event parameters in control_unit
 - Add device availability and error to logbook
 
-# Version 1.26.1 (2022-01-09)
+# Version 1.26.1 (2023-01-09)
 
 ### New features
 
