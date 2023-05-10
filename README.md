@@ -76,7 +76,7 @@ If running HA on docker it is recommended to use `network_mode: host`, or specif
 ### Authentication
 
 This integration always passes credentials to the HomeMatic hub when connecting.
-For CCU and descendants (RaspberryMatic, debmatic) it is recommended to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
+For CCU and descendants (RaspberryMatic, debmatic) it is required to enable authentication for XmlRPC communication (Settings/Control panel/Security/Authentication). JsonRPC communication ia always authenticated.
 
 The account used for communication is required to have admin privileges on your HomeMatic hub.
 It is imporant to note though, that special characters within your credentials may break the possibility to authenticate.
