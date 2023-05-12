@@ -366,6 +366,10 @@ This service is not needed to update entities in general, because 99,9% of the e
 
 Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
+### `homeassistant.update_device_firmware_data`
+
+Update the firmware data for all devices.
+
 ## Events
 
 Events fired by this integration that can be consumed by users.
@@ -446,11 +450,6 @@ Option 2: Reload the Integration or restart HA, that will reload the names from 
 Option 3: Use the service homematicip_local.delete_device. This deletes the device from all caches, and from entity/device_registry. A reload on the integration, or a restart of HA will recreate the device and entities. The new name will be reflected also in the entity_id.
 
 Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installs systems)
-
-### Updated firmware version not refreshed in Home Assistant device info
-
-The device firmware version is part of the device description and cached permanently.
-To refresh the displayed firmware version you need to clear the cache by calling the service [clear_cache](https://github.com/danielperna84/custom_homematic#homematicip_localclear_cache) and restart HA afterwards.
 
 ### Unignore device parameters
 
