@@ -20,6 +20,7 @@ from .const import CONTROL_UNITS, DOMAIN, IDENTIFIER_SEPARATOR, MANUFACTURER_EQ3
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
+ATTR_FIRMWARE_UPDATE_STATE = "firmware_update_state"
 
 
 async def async_setup_entry(
@@ -112,7 +113,7 @@ class HaHomematicUpdate(UpdateEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         attributes: dict[str, Any] = {
-            "FirmwareUpdateState": self._hm_entity.firmware_update_state
+            ATTR_FIRMWARE_UPDATE_STATE: self._hm_entity.firmware_update_state
         }
 
         return attributes
