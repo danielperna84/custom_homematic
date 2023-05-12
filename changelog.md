@@ -4,6 +4,7 @@
   - Refactor device description cache handling
   - Add device firmware update handling
 - Add device firmware update entity
+- Add 'Update device firmware data' service
 
 # Version 1.36.0 (2023-05-01)
 

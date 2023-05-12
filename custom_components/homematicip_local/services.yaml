@@ -394,3 +394,14 @@ set_cover_combined_position:
           min: 0
           max: 100
           unit_of_measurement: "%"
+update_device_firmware_data:
+  name: Update device firmware data
+  description: Update device firmware data for all homematic data.
+  fields:
+    entry_id:
+      name: Central
+      description: Name(s) of homematic central to update the device firmware data for.
+      required: true
+      selector:
+        config_entry:
+          integration: homematicip_local
