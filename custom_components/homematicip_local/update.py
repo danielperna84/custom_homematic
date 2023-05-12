@@ -111,7 +111,9 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        attributes: dict[str, Any] = {}
+        attributes: dict[str, Any] = {
+            "FirmwareUpdateState": self._hm_entity.firmware_update_state
+        }
 
         return attributes
 
@@ -123,10 +125,9 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def in_progress(self) -> bool | int | None:
         """Update installation progress."""
-        return self._hm_entity.firmware_update_state in (
-            HmDeviceFirmwareState.PERFORMING_UPDATE,
-            HmDeviceFirmwareState.DELIVER_FIRMWARE_IMAGE,
-            HmDeviceFirmwareState.LIVE_DELIVER_FIRMWARE_IMAGE,
+        return self._hm_entity.firmware_update_state not in (
+            HmDeviceFirmwareState.UP_TO_DATE,
+            HmDeviceFirmwareState.READY_FOR_UPDATE,
         )
 
     @property
