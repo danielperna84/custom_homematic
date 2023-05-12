@@ -159,7 +159,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     ),
 )
 
-SCHEMA_UPDATE_DEVICE_FIRMWARE_DATA = vol.Schema(
+SCHEMA_SERVICE_UPDATE_DEVICE_FIRMWARE_DATA = vol.Schema(
     {
         vol.Required(ATTR_ENTRY_ID): cv.string,
     }
@@ -269,7 +269,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         domain=DOMAIN,
         service=SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
         service_func=async_call_hmip_local_service,
-        schema=SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
+        schema=SCHEMA_SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
     )
 
 

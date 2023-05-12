@@ -155,7 +155,7 @@ class HaHomematicUpdate(UpdateEntity):
         """Register callbacks and load initial data."""
 
         self._hm_entity.register_update_callback(
-            update_callback=self._async_device_changed98jj
+            update_callback=self._async_device_changed
         )
         self._hm_entity.register_remove_callback(
             remove_callback=self._async_device_removed
