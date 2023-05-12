@@ -45,6 +45,7 @@ from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import BaseEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
+from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
@@ -330,6 +331,22 @@ class ControlUnit(BaseControlUnit):
         return hm_entities
 
     @callback
+    def async_get_new_hm_update_entities(
+        self, new_update_entities: list[HmUpdate]
+    ) -> list[HmUpdate]:
+        """Return all hm-update-entities."""
+        active_unique_ids = [
+            entity.unique_identifier for entity in self._active_hm_entities.values()
+        ]
+        hm_update_entities: list[HmUpdate] = []
+
+        for update_entity in new_update_entities:
+            if update_entity.unique_identifier not in active_unique_ids:
+                hm_update_entities.append(update_entity)
+
+        return hm_update_entities
+
+    @callback
     def async_get_new_hm_hub_entities(
         self, new_hub_entities: list[GenericHubEntity]
     ) -> dict[HmPlatform, list[GenericHubEntity]]:
@@ -374,6 +391,18 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
+    def async_get_update_entities(self) -> list[HmUpdate]:
+        """Return all update entities."""
+        active_unique_ids = [
+            entity.unique_identifier for entity in self._active_hm_entities.values()
+        ]
+        return [
+            device.update_entity
+            for device in self.central.devices
+            if device.update_entity.unique_identifier not in active_unique_ids
+        ]
+
+    @callback
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
         """Add entity to active entities."""
         self._active_hm_entities[entity_id] = hm_entity
@@ -407,8 +436,10 @@ class ControlUnit(BaseControlUnit):
         if name == HH_EVENT_DEVICES_CREATED:
             new_devices = kwargs["new_devices"]
             new_entities = []
+            new_update_entities = []
             for device in new_devices:
                 new_entities.extend(device.get_all_entities())
+                new_update_entities.append(device.update_entity)
 
             # Handle event of new device creation in Homematic(IP) Local.
             for platform, hm_entities in self.async_get_new_hm_entities(
@@ -422,6 +453,16 @@ class ControlUnit(BaseControlUnit):
                         ),
                         hm_entities,
                     )
+            if hm_update_entities := self.async_get_new_hm_update_entities(
+                new_update_entities=new_update_entities
+            ):
+                async_dispatcher_send(
+                    self._hass,
+                    async_signal_new_hm_entity(
+                        entry_id=self._entry_id, platform=HmPlatform.UPDATE
+                    ),
+                    hm_update_entities,
+                )
             self._async_add_virtual_remotes_to_device_registry()
         elif name == HH_EVENT_HUB_REFRESHED:
             if not self._scheduler:

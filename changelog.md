@@ -1,3 +1,10 @@
+# Version 1.37.0 (2023-05-11)
+
+- Bump hahomematic to 2023.5.1
+  - Refactor device description cache handling
+  - Add device firmware update handling
+- Add device firmware update entity
+
 # Version 1.36.0 (2023-05-01)
 
 - Bump hahomematic to 2023.5.0
