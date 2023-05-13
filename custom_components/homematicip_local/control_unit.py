@@ -37,6 +37,7 @@ from hahomematic.const import (
     PORT_ANY,
     HmEntityUsage,
     HmEventType,
+    HmInterface,
     HmInterfaceEventType,
     HmPlatform,
 )
@@ -64,6 +65,7 @@ from .const import (
     ATTR_SYSVAR_SCAN_INTERVAL,
     CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEVICE_FIRMWARE_CHECK_INTERVAL,
     DOMAIN,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
@@ -159,7 +161,7 @@ class BaseControlUnit:
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
-                    interface=interface_name,
+                    interface=HmInterface(interface_name),
                     port=interface[ATTR_PORT],
                     remote_path=interface.get(ATTR_PATH),
                 )
@@ -747,6 +749,8 @@ class HmScheduler:
         sysvar_scan_enabled: bool,
         sysvar_scan_interval: int,
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
+        device_firmware_check_enabled: bool = True,
+        device_firmware_check_interval: int = DEVICE_FIRMWARE_CHECK_INTERVAL,
     ) -> None:
         """Initialize Homematic(IP) Local hub scheduler."""
         self.hass = hass
@@ -766,6 +770,13 @@ class HmScheduler:
             self._async_fetch_master_data,
             timedelta(seconds=master_scan_interval),
         )
+        self.device_firmware_check_enabled = device_firmware_check_enabled
+        if self.device_firmware_check_enabled:
+            self.remove_device_firmware_check_listener = async_track_time_interval(
+                self.hass,
+                self._async_fetch_device_firmware_update_data,
+                timedelta(seconds=device_firmware_check_interval),
+            )
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
@@ -773,6 +784,8 @@ class HmScheduler:
             self.remove_sysvar_listener()
         if self.remove_master_listener is not None:
             self.remove_master_listener()
+        if self.remove_device_firmware_check_listener is not None:
+            self.remove_device_firmware_check_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
@@ -809,6 +822,14 @@ class HmScheduler:
         await self._central.load_and_refresh_entity_data(
             paramset_key=PARAMSET_KEY_MASTER
         )
+
+    async def _async_fetch_device_firmware_update_data(self, now: datetime) -> None:
+        """Fetch device firmware update data from backend."""
+        _LOGGER.debug(
+            "Scheduled fetching of device firmware update data for %s",
+            self._central.name,
+        )
+        await self._central.refresh_firmware_data()
 
 
 def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:

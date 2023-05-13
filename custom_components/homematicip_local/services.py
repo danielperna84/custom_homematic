@@ -59,6 +59,7 @@ SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
 SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
+SERVICE_UPDATE_DEVICE_FIRMWARE_DATA = "update_device_firmware_data"
 
 HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
@@ -70,6 +71,7 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
+    SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
 ]
 
 
@@ -157,6 +159,12 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     ),
 )
 
+SCHEMA_SERVICE_UPDATE_DEVICE_FIRMWARE_DATA = vol.Schema(
+    {
+        vol.Required(ATTR_ENTRY_ID): cv.string,
+    }
+)
+
 
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Create the hahomematic services."""
@@ -184,6 +192,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_device_value(hass=hass, service=service)
         elif service_name == SERVICE_SET_VARIABLE_VALUE:
             await _async_service_set_variable_value(hass=hass, service=service)
+        elif service_name == SERVICE_UPDATE_DEVICE_FIRMWARE_DATA:
+            await _async_service_update_device_firmware_data(hass=hass, service=service)
 
     async_register_admin_service(
         hass=hass,
@@ -252,6 +262,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_PUT_PARAMSET,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_PUT_PARAMSET,
+    )
+
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
     )
 
 
@@ -436,6 +454,15 @@ async def _async_service_put_paramset(
             value=value,
             rx_mode=rx_mode,
         )
+
+
+async def _async_service_update_device_firmware_data(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to clear the cache."""
+    entry_id = service.data[ATTR_ENTRY_ID]
+    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+        await control.central.refresh_firmware_data()
 
 
 def _get_interface_address(

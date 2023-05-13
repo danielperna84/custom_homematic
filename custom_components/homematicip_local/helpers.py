@@ -13,7 +13,6 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_SCHEMA
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
-from hahomematic.platforms.update import HmUpdate
 import voluptuous as vol
 
 from homeassistant.components.number import NumberEntityDescription
@@ -34,7 +33,7 @@ from .const import (
 )
 
 # Union for entity types used as base class for entities
-HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity | HmUpdate
+HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
