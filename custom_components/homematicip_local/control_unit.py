@@ -37,6 +37,7 @@ from hahomematic.const import (
     PORT_ANY,
     HmEntityUsage,
     HmEventType,
+    HmInterface,
     HmInterfaceEventType,
     HmPlatform,
 )
@@ -159,7 +160,7 @@ class BaseControlUnit:
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
-                    interface=interface_name,
+                    interface=HmInterface(interface_name),
                     port=interface[ATTR_PORT],
                     remote_path=interface.get(ATTR_PATH),
                 )

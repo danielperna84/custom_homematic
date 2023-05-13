@@ -7,8 +7,7 @@ from typing import Any, cast
 from hahomematic.const import HmDeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
 
-from homeassistant.components.update import UpdateEntity
-from homeassistant.components.update.const import UpdateEntityFeature
+from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
