@@ -35,6 +35,7 @@ from hahomematic.const import (
     IP_ANY_V4,
     PARAMSET_KEY_MASTER,
     PORT_ANY,
+    HmDeviceFirmwareState,
     HmEntityUsage,
     HmEventType,
     HmInterface,
@@ -66,6 +67,8 @@ from .const import (
     CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DEVICE_FIRMWARE_CHECK_INTERVAL,
+    DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
+    DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     DOMAIN,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
@@ -198,6 +201,8 @@ class ControlUnit(BaseControlUnit):
         super().__init__(control_config=control_config)
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
+        # {entity_id, entity}
+        self._active_hm_update_entities: dict[str, HmUpdate] = {}
         # {entity_id, sysvar_entity}
         self._active_hm_hub_entities: dict[str, GenericHubEntity] = {}
         self._scheduler: HmScheduler | None = None
@@ -338,7 +343,8 @@ class ControlUnit(BaseControlUnit):
     ) -> list[HmUpdate]:
         """Return all hm-update-entities."""
         active_unique_ids = [
-            entity.unique_identifier for entity in self._active_hm_entities.values()
+            entity.unique_identifier
+            for entity in self._active_hm_update_entities.values()
         ]
         hm_update_entities: list[HmUpdate] = []
 
@@ -396,7 +402,8 @@ class ControlUnit(BaseControlUnit):
     def async_get_update_entities(self) -> list[HmUpdate]:
         """Return all update entities."""
         active_unique_ids = [
-            entity.unique_identifier for entity in self._active_hm_entities.values()
+            entity.unique_identifier
+            for entity in self._active_hm_update_entities.values()
         ]
         return [
             device.update_entity
@@ -408,6 +415,11 @@ class ControlUnit(BaseControlUnit):
     def async_add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
         """Add entity to active entities."""
         self._active_hm_entities[entity_id] = hm_entity
+
+    @callback
+    def async_add_hm_update_entity(self, entity_id: str, hm_entity: HmUpdate) -> None:
+        """Add entity to active update entities."""
+        self._active_hm_update_entities[entity_id] = hm_entity
 
     @callback
     def async_add_hm_hub_entity(
@@ -480,6 +492,7 @@ class ControlUnit(BaseControlUnit):
                     sysvar_scan_enabled=sysvar_scan_enabled,
                     sysvar_scan_interval=sysvar_scan_interval,
                 )
+                self._hass.create_task(target=self._scheduler.init())
             if self._scheduler and self._scheduler.sysvar_scan_enabled:
                 new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
@@ -751,6 +764,8 @@ class HmScheduler:
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
         device_firmware_check_enabled: bool = True,
         device_firmware_check_interval: int = DEVICE_FIRMWARE_CHECK_INTERVAL,
+        device_firmware_delivering_check_interval: int = DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
+        device_firmware_updating_check_interval: int = DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     ) -> None:
         """Initialize Homematic(IP) Local hub scheduler."""
         self.hass = hass
@@ -777,6 +792,24 @@ class HmScheduler:
                 self._async_fetch_device_firmware_update_data,
                 timedelta(seconds=device_firmware_check_interval),
             )
+            self.remove_device_firmware_delivering_check_listener = (
+                async_track_time_interval(
+                    self.hass,
+                    self._async_fetch_device_firmware_update_data_in_delivery,
+                    timedelta(seconds=device_firmware_delivering_check_interval),
+                )
+            )
+            self.remove_device_firmware_updating_check_listener = (
+                async_track_time_interval(
+                    self.hass,
+                    self._async_fetch_device_firmware_update_data_in_update,
+                    timedelta(seconds=device_firmware_updating_check_interval),
+                )
+            )
+
+    async def init(self) -> None:
+        """Execute the initial data refresh."""
+        await self._central.refresh_firmware_data()
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
@@ -786,6 +819,8 @@ class HmScheduler:
             self.remove_master_listener()
         if self.remove_device_firmware_check_listener is not None:
             self.remove_device_firmware_check_listener()
+        if self.remove_device_firmware_delivering_check_listener is not None:
+            self.remove_device_firmware_delivering_check_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
@@ -830,6 +865,37 @@ class HmScheduler:
             self._central.name,
         )
         await self._central.refresh_firmware_data()
+
+    async def _async_fetch_device_firmware_update_data_in_delivery(
+        self, now: datetime
+    ) -> None:
+        """Fetch device firmware update data from backend for delivering devices."""
+        _LOGGER.debug(
+            "Scheduled fetching of device firmware update data for delivering devices for %s",
+            self._central.name,
+        )
+        await self._central.refresh_firmware_data_by_state(
+            device_firmware_states=(
+                HmDeviceFirmwareState.DELIVER_FIRMWARE_IMAGE,
+                HmDeviceFirmwareState.LIVE_DELIVER_FIRMWARE_IMAGE,
+            )
+        )
+
+    async def _async_fetch_device_firmware_update_data_in_update(
+        self, now: datetime
+    ) -> None:
+        """Fetch device firmware update data from backend for updating devices."""
+        _LOGGER.debug(
+            "Scheduled fetching of device firmware update data for updating devices for %s",
+            self._central.name,
+        )
+        await self._central.refresh_firmware_data_by_state(
+            device_firmware_states=(
+                HmDeviceFirmwareState.READY_FOR_UPDATE,
+                HmDeviceFirmwareState.DO_UPDATE_PENDING,
+                HmDeviceFirmwareState.PERFORMING_UPDATE,
+            )
+        )
 
 
 def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:

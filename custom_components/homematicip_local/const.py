@@ -55,7 +55,10 @@ SERVICE_VIRTUAL_KEY: Final = "virtual_key"
 DEFAULT_SYSVAR_SCAN_INTERVAL: Final = 30
 # only used for entities from MASTER paramset
 MASTER_SCAN_INTERVAL: Final = 300
+
 DEVICE_FIRMWARE_CHECK_INTERVAL: Final = 21600  # 6h
+DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL: Final = 3600  # 1h
+DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL: Final = 300  # 5m
 
 TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
     "svEnergyCounter_",
