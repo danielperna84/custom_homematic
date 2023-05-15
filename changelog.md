@@ -1,4 +1,4 @@
-# Version 1.37.0 (2023-05-13)
+# Version 1.37.0 (2023-05-15)
 
 - Bump hahomematic to 2023.5.2
   - Refactor device description cache handling

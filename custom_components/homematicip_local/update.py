@@ -144,7 +144,7 @@ class HaHomematicUpdate(UpdateEntity):
         self, version: str | None, backup: bool, **kwargs: Any
     ) -> None:
         """Install an update."""
-        await self._hm_entity.update_firmware()
+        await self._hm_entity.update_firmware(refresh_after_update_intervals=(10, 60))
 
     async def async_update(self) -> None:
         """Update entity."""
