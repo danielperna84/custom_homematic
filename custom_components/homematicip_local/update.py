@@ -144,7 +144,7 @@ class HaHomematicUpdate(UpdateEntity):
         self, version: str | None, backup: bool, **kwargs: Any
     ) -> None:
         """Install an update."""
-        await self._hm_entity.update_firmware()
+        await self._hm_entity.update_firmware(refresh_after_update_intervals=(10, 60))
 
     async def async_update(self) -> None:
         """Update entity."""
@@ -159,7 +159,7 @@ class HaHomematicUpdate(UpdateEntity):
         self._hm_entity.register_remove_callback(
             remove_callback=self._async_device_removed
         )
-        self._cu.async_add_hm_entity(
+        self._cu.async_add_hm_update_entity(
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
 
