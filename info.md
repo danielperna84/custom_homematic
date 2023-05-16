@@ -11,6 +11,7 @@ Provides the following:
 - Entity state is restored after startup
 - Virtual Remotes can be triggered in HA automations or pressed by buttons
 - The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors/switch/select/number. Programs are displayed as buttons
+- Translation of entity names
 - Services:
   - Put paramset (Call to putParamset in the RPC XML interface)
   - Set device value (Set the value of a node)
@@ -25,6 +26,7 @@ Provides the following:
   - Delete Device (Deletes a device from HA, but not from CCU). Can be used, if a device has been renamed in CCU.
   - Clear Cache (Clears the cache for a central unit from Home Assistant. Requires a restart)
   - Turn on Siren (Turn siren on. Siren can be disabled by siren.turn_off. Useful helpers for siren can be found [here](https://github.com/danielperna84/hahomematic/blob/devel/docs/input_select_helper.md#siren)
+  - Update device firmware from HA
 - Supports TLS to CCU/Homegear for Json and XMLRPC
 - Assign area in HA, if room in CCU is used.
   This works, if a homematic device is assigned to a single room in CCU. Multiple channels can be assigned to the same room.
@@ -45,3 +47,4 @@ Entity Support
 - Sensor
 - Siren
 - Switch
+- Update
