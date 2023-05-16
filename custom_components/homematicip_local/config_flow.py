@@ -247,7 +247,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
         await self.async_set_unique_id(serial)
 
-        self._abort_if_unique_id_configured(updates={CONF_HOST: host})
+        self._abort_if_unique_id_configured()
 
         self.data = {ATTR_INSTANCE_NAME: instance_name, ATTR_HOST: host}
         self.context["title_placeholders"] = {CONF_NAME: instance_name, CONF_HOST: host}

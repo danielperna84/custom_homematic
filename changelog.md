@@ -6,6 +6,7 @@
 - Add device firmware update entity
 - Add 'Update device firmware data' service
 - Add 6h schedule for device firmware data refresh
+- Avoid overriding hostname by ssdp data
 
 # Version 1.36.0 (2023-05-01)
 
