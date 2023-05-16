@@ -368,7 +368,7 @@ Attention: This service gets the value for the entity via a 'getValue' from the 
 
 ### `homeassistant.update_device_firmware_data`
 
-Update the firmware data for all devices.
+Update the firmware data for all devices. For more information see [updating the firmware](https://github.com/danielperna84/custom_homematic#updating-the-firmware)
 
 ## Events
 
@@ -504,6 +504,20 @@ To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall 
 
 Hint: To deactivate the event for one channel, remove that channel from the program
 Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.
+
+## Updating a device firmware
+
+Homematic offers the possibility to update the device firmware. To do this, the firmware file must be uploaded in the CCU. The firmware is then transferred to the devices, which can take several hours or days per device. Update can then be clicked in the CCU and the device will update and reboot.
+
+To simplify this process, this integration offers update entities per device.
+
+- Since the CCU does not send any events for firmware updates, the current status of firmware updates is requested via regular queries. Since device updates are usually very rare and the transmission takes a long time, the query is only made every 6 hours.
+- Devices for which the firmware is currently being transferred or for which a transfer is pending are displayed in the update entity as `in process`/`installing`. This information can be delayed up to 6 hours in HA.
+- If devices whose firmware is currently being transferred were discovered via the update, their statuses are then queried every hour.
+- As soon as the firmware has been successfully transferred to the device, it can be updated on the device by clicking on `install`. This information can be delayed up to 1 hour in HA.
+- Depending on whether an update command can be transmitted immediately or with a delay, either the updated firmware version is displayed after a short delay, or `in process`/`installing` is displayed again because a command transmission is being waited for. This state is now updated every 5 minutes until the installation is finished.
+
+If shorter update cycles are desired, these can be triggered by the service `homeassistant.update_device_firmware_data`, but this might have a negative impact on you CCU!
 
 ## Examples in YAML
 
