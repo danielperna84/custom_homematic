@@ -125,15 +125,21 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def in_progress(self) -> bool | int | None:
         """Update installation progress."""
-        return self._hm_entity.firmware_update_state not in (
-            HmDeviceFirmwareState.UP_TO_DATE,
-            HmDeviceFirmwareState.READY_FOR_UPDATE,
+        return self._hm_entity.firmware_update_state in (
+            HmDeviceFirmwareState.DO_UPDATE_PENDING,
+            HmDeviceFirmwareState.PERFORMING_UPDATE,
         )
 
     @property
     def latest_version(self) -> str | None:
         """Latest version available for install."""
-        return self._hm_entity.available_firmware
+        if self._hm_entity.firmware_update_state in (
+            HmDeviceFirmwareState.READY_FOR_UPDATE,
+            HmDeviceFirmwareState.DO_UPDATE_PENDING,
+            HmDeviceFirmwareState.PERFORMING_UPDATE,
+        ):
+            return self._hm_entity.available_firmware
+        return None
 
     @property
     def name(self) -> str | None:
