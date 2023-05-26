@@ -1,3 +1,7 @@
+# Version 1.38.0 (2023-05-26)
+
+- Display updates only if update is ready for installation on device
+
 # Version 1.37.0 (2023-05-15)
 
 - Bump hahomematic to 2023.5.2

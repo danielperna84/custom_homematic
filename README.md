@@ -511,11 +511,9 @@ Homematic offers the possibility to update the device firmware. To do this, the 
 
 To simplify this process, this integration offers update entities per device.
 
-Initially, the firmware file must be uploaded via the CCU. A query of available firmware information from eq3 does not take place. All firmware information used is provided by the local CCU. Version 0.0.0 means no firmware information is available.
+Initially, the firmware file must be uploaded via the CCU. A query of available firmware information from eq3 does not take place. All firmware information used is provided by the local CCU.
 
 Since the CCU does not send any events for firmware updates, the current status of firmware updates is requested via regular queries. Since device updates are usually very rare and the transmission takes a long time, the query is only made every **6 hours**.
-
-Devices for which the firmware is currently being transferred or for which a transfer is pending are displayed in the update entity as `in process`/`installing`. This information can be delayed up to **6 hours** in HA.
 
 If devices whose firmware is currently being transferred were discovered via the update, their statuses are then queried **every hour**.
 
