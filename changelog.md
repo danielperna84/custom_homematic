@@ -1,4 +1,4 @@
-# Version 1.38.0 (2023-05-26)
+# Version 1.37.1 (2023-05-26)
 
 - Display updates only if update is ready for installation on device
 
