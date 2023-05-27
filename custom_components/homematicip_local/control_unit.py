@@ -408,7 +408,8 @@ class ControlUnit(BaseControlUnit):
         return [
             device.update_entity
             for device in self.central.devices
-            if device.update_entity.unique_identifier not in active_unique_ids
+            if device.update_entity
+            and device.update_entity.unique_identifier not in active_unique_ids
         ]
 
     @callback
@@ -453,7 +454,8 @@ class ControlUnit(BaseControlUnit):
             new_update_entities = []
             for device in new_devices:
                 new_entities.extend(device.get_all_entities())
-                new_update_entities.append(device.update_entity)
+                if device.update_entity:
+                    new_update_entities.append(device.update_entity)
 
             # Handle event of new device creation in Homematic(IP) Local.
             for platform, hm_entities in self.async_get_new_hm_entities(
