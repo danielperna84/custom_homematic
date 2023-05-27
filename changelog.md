@@ -1,3 +1,8 @@
+# Version 1.37.2 (2023-05-26)
+
+- Bump hahomematic to 2023.6.0
+  - Do not create update entities for virtual remotes
+
 # Version 1.37.1 (2023-05-26)
 
 - Display updates only if update is ready for installation on device
