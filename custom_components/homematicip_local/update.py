@@ -139,7 +139,11 @@ class HaHomematicUpdate(UpdateEntity):
             HmDeviceFirmwareState.PERFORMING_UPDATE,
         ):
             return self._hm_entity.available_firmware
-        return None
+        return (
+            self._hm_entity.available_firmware
+            if self._hm_entity.available_firmware
+            else self._hm_entity.firmware
+        )
 
     @property
     def name(self) -> str | None:
