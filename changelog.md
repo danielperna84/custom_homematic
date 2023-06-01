@@ -2,6 +2,7 @@
 
 - Bump hahomematic to 2023.6.0
   - Do not create update entities for virtual remotes
+- Fix latest version of update entity
 
 # Version 1.37.1 (2023-05-26)
 
