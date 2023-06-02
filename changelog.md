@@ -1,8 +1,11 @@
-# Version 1.37.2 (2023-05-26)
+# Version 1.37.2 (2023-06-02)
 
 - Bump hahomematic to 2023.6.0
+  - Update requirements
   - Do not create update entities for virtual remotes
+  - Cleanup FIX_UNIT_BY_PARAM
 - Fix latest version of update entity
+- Use VALVE_STATE entity description only for Bidcos devices
 
 # Version 1.37.1 (2023-05-26)
 
