@@ -315,12 +315,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         key="VALUE",
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    "VALVE_STATE": HmSensorEntityDescription(
-        key="VALVE_STATE",
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:pipe-valve",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
     "VAPOR_CONCENTRATION": HmSensorEntityDescription(
         key="VAPOR_CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_GRAMS_PER_CUBIC_METER,
@@ -411,6 +405,12 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         key="FREQUENCY",
         icon="mdi:sine-wave",
         native_unit_of_measurement="mHz",
+    ),
+    (("HM-CC-RT-DN" "HM-CC-VD"), "VALVE_STATE"): HmSensorEntityDescription(
+        key="VALVE_STATE",
+        native_unit_of_measurement=PERCENTAGE,
+        icon="mdi:pipe-valve",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
 }
 
