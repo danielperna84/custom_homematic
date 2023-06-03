@@ -1,4 +1,4 @@
-# Version 1.37.2 (2023-06-02)
+# Version 1.37.3 (2023-06-02)
 
 - Bump hahomematic to 2023.6.0
   - Update requirements
