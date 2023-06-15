@@ -1,3 +1,9 @@
+# Version 1.37.4 (2023-06-23)
+
+- Bump hahomematic to 2023.6.1
+  - Fix tunable white support for hmIP-RGBW
+  - Update requirements
+
 # Version 1.37.3 (2023-06-02)
 
 - Bump hahomematic to 2023.6.0
