@@ -2,7 +2,9 @@
 
 - Bump hahomematic to 2023.6.1
   - Fix tunable white support for hmIP-RGBW
+  - Avoid creating entities that are not usable in selected device operation mode for hmIP-RGBW
   - Update requirements
+- Add missing comma, to fix entity description
 
 # Version 1.37.3 (2023-06-02)
 
