@@ -406,7 +406,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
         icon="mdi:sine-wave",
         native_unit_of_measurement="mHz",
     ),
-    (("HM-CC-RT-DN" "HM-CC-VD"), "VALVE_STATE"): HmSensorEntityDescription(
+    (("HM-CC-RT-DN", "HM-CC-VD"), "VALVE_STATE"): HmSensorEntityDescription(
         key="VALVE_STATE",
         native_unit_of_measurement=PERCENTAGE,
         icon="mdi:pipe-valve",
