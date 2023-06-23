@@ -416,9 +416,8 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 
 _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     PERCENTAGE: HmSensorEntityDescription(
-        key="HUMIDITY",
+        key="PERCENTAGE",
         native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     UnitOfPressure.BAR: HmSensorEntityDescription(

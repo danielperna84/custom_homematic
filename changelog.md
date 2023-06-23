@@ -5,6 +5,7 @@
   - Avoid creating entities that are not usable in selected device operation mode for hmIP-RGBW
   - Update requirements
 - Add missing comma, to fix entity description
+- Remove device class from percentage entity description
 
 # Version 1.37.3 (2023-06-02)
 
