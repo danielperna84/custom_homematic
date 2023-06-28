@@ -1,3 +1,7 @@
+# Version 1.37.5 (2023-06-29)
+
+- Fix error with names before HA 2023.7
+
 # Version 1.37.4 (2023-06-23)
 
 - Bump hahomematic to 2023.6.1
