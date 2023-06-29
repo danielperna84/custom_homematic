@@ -63,6 +63,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
+        if (
+            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
+            and self.translation_key is None
+        ):
+            self._attr_translation_key = self._hm_entity.parameter.lower()
+
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
             isinstance(self._hm_entity, GenericEntity | WrapperEntity)
@@ -137,29 +143,40 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     @property
     def name(self) -> str | None:
-        """Return the name of the entity."""
+        """
+        Return the name of the entity.
+
+        A hm entity can consist of two parts. The first part is already defined by the user,
+        and the second part is the english named parameter that must be translated.
+        This translated parameter will be used in the combined name.
+        """
         entity_name = self._hm_entity.name
-        name = super().name
-        if (
-            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
-            and entity_name
-            and isinstance(name, str)
-        ):
-            return entity_name.replace(
-                self._hm_entity.parameter.replace("_", " ").title(), name
-            )
+
+        if isinstance(self._hm_entity, GenericEntity | WrapperEntity) and entity_name:
+            translated_name = super().name
+            if not isinstance(translated_name, str) and self._do_remove_name():
+                translated_name = ""
+            if isinstance(translated_name, str):
+                return entity_name.replace(
+                    self._hm_entity.parameter.replace("_", " ").title(), translated_name
+                )
         if entity_name == "":
             return None
         return entity_name
 
-    @property
-    def translation_key(self) -> str | None:
-        """Return the translation key to translate the entity's states."""
-        if translation_key := super().translation_key:
-            return translation_key
-        if isinstance(self._hm_entity, GenericEntity | WrapperEntity):
-            return self._hm_entity.parameter.lower()
-        return None
+    def _do_remove_name(self) -> bool:
+        """Check if entity name part should be removed."""
+        if (
+            hasattr(self, "platform")
+            and (
+                name := self.platform.platform_translations.get(
+                    self._name_translation_key
+                )
+            )
+            is not None
+        ):
+            return name == ""
+        return False
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
