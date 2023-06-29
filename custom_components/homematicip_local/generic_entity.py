@@ -59,7 +59,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 entity_description.entity_registry_enabled_default = (
                     hm_entity.enabled_default
                 )
-            entity_description.name = None
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
@@ -154,7 +153,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if isinstance(self._hm_entity, GenericEntity | WrapperEntity) and entity_name:
             translated_name = super().name
-            if not isinstance(translated_name, str) and self._do_remove_name():
+            if self._do_remove_name():
                 translated_name = ""
             if isinstance(translated_name, str):
                 return entity_name.replace(
@@ -165,18 +164,27 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return entity_name
 
     def _do_remove_name(self) -> bool:
-        """Check if entity name part should be removed."""
-        if (
-            hasattr(self, "platform")
-            and hasattr(self.platform, "platform_translations")
-            and (
-                name := self.platform.platform_translations.get(
-                    self._name_translation_key
+        """
+        Check if entity name part should be removed.
+
+        Here we use the HA translation support to identify if the translated name is ''
+        This is guarded against failure due to future HA api changes.
+        """
+        try:
+            if (
+                self._name_translation_key
+                and hasattr(self, "platform")
+                and hasattr(self.platform, "platform_translations")
+                and (
+                    name := self.platform.platform_translations.get(
+                        self._name_translation_key
+                    )
                 )
-            )
-            is not None
-        ):
-            return name == ""
+                is not None
+            ):
+                return bool(name == "")
+        except Exception:  # pylint: disable=broad-exception-caught
+            return False
         return False
 
     async def async_added_to_hass(self) -> None:
