@@ -662,7 +662,7 @@ _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
 }
 
 
-_DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
+_DEFAULT_PLATFORM_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
     HmPlatform.BUTTON: ButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
@@ -690,7 +690,22 @@ _DEFAULT_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
 def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
-    """Get the entity_description for platform."""
+    """Get the entity_description."""
+    if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
+        entity_desc.name = (
+            hm_entity.parameter.title()
+            if isinstance(hm_entity, GenericEntity | WrapperEntity)
+            else hm_entity.name
+        )
+        entity_desc.has_entity_name = True
+        return entity_desc
+    return None
+
+
+def _find_entity_description(
+    hm_entity: HmGenericEntity | GenericHubEntity,
+) -> EntityDescription | None:
+    """Find the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity | WrapperEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(
             hm_entity=hm_entity
@@ -703,7 +718,7 @@ def get_entity_description(
         if (
             hm_entity.platform == HmPlatform.SENSOR
             and hm_entity.unit
-            and (entity_desc := copy(_SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit)))
+            and (entity_desc := _SENSOR_DESCRIPTIONS_BY_UNIT.get(hm_entity.unit))
         ):
             return entity_desc
 
@@ -712,7 +727,7 @@ def get_entity_description(
     ):
         return entity_desc
 
-    return copy(_DEFAULT_DESCRIPTION.get(hm_entity.platform))
+    return _DEFAULT_PLATFORM_DESCRIPTION.get(hm_entity.platform)
 
 
 def _get_entity_description_by_device_type_and_param(
@@ -729,7 +744,7 @@ def _get_entity_description_by_device_type_and_param(
                     compare_with=hm_entity.device.device_type,
                 )
             ):
-                return copy(entity_desc)
+                return entity_desc
     return None
 
 
@@ -742,7 +757,7 @@ def _get_entity_description_by_param(
     ):
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
-                return copy(entity_desc)
+                return entity_desc
     return None
 
 
@@ -758,7 +773,7 @@ def _get_entity_description_by_device_type(
                 search_elements=devices,
                 compare_with=hm_entity.device.device_type,
             ):
-                return copy(entity_desc)
+                return entity_desc
     return None
 
 
