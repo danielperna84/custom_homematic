@@ -168,6 +168,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Check if entity name part should be removed."""
         if (
             hasattr(self, "platform")
+            and hasattr(self.platform, "platform_translations")
             and (
                 name := self.platform.platform_translations.get(
                     self._name_translation_key
