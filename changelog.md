@@ -1,3 +1,7 @@
+# Version 1.37.7 (2023-06-30)
+
+- Fix mypy
+
 # Version 1.37.6 (2023-06-29)
 
 - Fix error with names before HA 2023.7 pt2

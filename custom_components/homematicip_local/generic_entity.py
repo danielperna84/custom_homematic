@@ -167,7 +167,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     def _do_remove_name(self) -> bool:
         """Check if entity name part should be removed."""
         if (
-            hasattr(self, "platform")
+            self._name_translation_key
+            and hasattr(self, "platform")
             and hasattr(self.platform, "platform_translations")
             and (
                 name := self.platform.platform_translations.get(
@@ -176,7 +177,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             )
             is not None
         ):
-            return name == ""
+            return bool(name == "")
         return False
 
     async def async_added_to_hass(self) -> None:
