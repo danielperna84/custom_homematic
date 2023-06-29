@@ -165,19 +165,27 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return entity_name
 
     def _do_remove_name(self) -> bool:
-        """Check if entity name part should be removed."""
-        if (
-            self._name_translation_key
-            and hasattr(self, "platform")
-            and hasattr(self.platform, "platform_translations")
-            and (
-                name := self.platform.platform_translations.get(
-                    self._name_translation_key
+        """
+        Check if entity name part should be removed.
+
+        Here we use the HA translation support to identify if the translated name is ''
+        This is guarded against failure due to future HA api changes.
+        """
+        try:
+            if (
+                self._name_translation_key
+                and hasattr(self, "platform")
+                and hasattr(self.platform, "platform_translations")
+                and (
+                    name := self.platform.platform_translations.get(
+                        self._name_translation_key
+                    )
                 )
-            )
-            is not None
-        ):
-            return bool(name == "")
+                is not None
+            ):
+                return bool(name == "")
+        except Exception:  # pylint: disable=broad-exception-caught
+            return False
         return False
 
     async def async_added_to_hass(self) -> None:

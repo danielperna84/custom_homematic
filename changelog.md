@@ -1,6 +1,6 @@
 # Version 1.37.7 (2023-06-30)
 
-- Fix mypy
+- Guard against failure due to future HA api changes related to CC specific usage
 
 # Version 1.37.6 (2023-06-29)
 
