@@ -59,7 +59,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 entity_description.entity_registry_enabled_default = (
                     hm_entity.enabled_default
                 )
-            entity_description.name = None
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
 
@@ -154,7 +153,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if isinstance(self._hm_entity, GenericEntity | WrapperEntity) and entity_name:
             translated_name = super().name
-            if not isinstance(translated_name, str) and self._do_remove_name():
+            if self._do_remove_name():
                 translated_name = ""
             if isinstance(translated_name, str):
                 return entity_name.replace(
