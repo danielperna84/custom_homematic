@@ -86,6 +86,13 @@ class HmEntityType(StrEnum):
     CUSTOM = "custom"
 
 
+class HmTranslationSource(StrEnum):
+    """Enum to define the source of a translation."""
+
+    PARAMETER = "parameter"
+    DEVICE_CLASS = "device_class"
+
+
 def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)

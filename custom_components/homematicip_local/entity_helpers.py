@@ -11,11 +11,7 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.support import element_matches_key
 
-from homeassistant.components.binary_sensor import (
-    BinarySensorDeviceClass,
-    BinarySensorEntityDescription,
-)
-from homeassistant.components.button import ButtonEntityDescription
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.select import SelectEntityDescription
@@ -44,7 +40,10 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityDescription
 
+from .const import HmTranslationSource
 from .helpers import (
+    HmBinarySensorEntityDescription,
+    HmButtonEntityDescription,
     HmGenericEntity,
     HmNumberEntityDescription,
     HmSensorEntityDescription,
@@ -440,89 +439,90 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
 }
 
 _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
-    "ALARMSTATE": BinarySensorEntityDescription(
+    "ALARMSTATE": HmBinarySensorEntityDescription(
         key="ALARMSTATE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    "ACOUSTIC_ALARM_ACTIVE": BinarySensorEntityDescription(
+    "ACOUSTIC_ALARM_ACTIVE": HmBinarySensorEntityDescription(
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    "BURST_LIMIT_WARNING": BinarySensorEntityDescription(
+    "BURST_LIMIT_WARNING": HmBinarySensorEntityDescription(
         key="BURST_LIMIT_WARNING",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    ("DUTYCYCLE", "DUTY_CYCLE"): BinarySensorEntityDescription(
+    ("DUTYCYCLE", "DUTY_CYCLE"): HmBinarySensorEntityDescription(
         key="DUTY_CYCLE",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    "DEW_POINT_ALARM": BinarySensorEntityDescription(
+    "DEW_POINT_ALARM": HmBinarySensorEntityDescription(
         key="DEW_POINT_ALARM",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_registry_enabled_default=False,
     ),
-    "EMERGENCY_OPERATION": BinarySensorEntityDescription(
+    "EMERGENCY_OPERATION": HmBinarySensorEntityDescription(
         key="EMERGENCY_OPERATION",
         device_class=BinarySensorDeviceClass.SAFETY,
         entity_registry_enabled_default=False,
     ),
-    "ERROR_JAMMED": BinarySensorEntityDescription(
+    "ERROR_JAMMED": HmBinarySensorEntityDescription(
         key="ERROR_JAMMED",
         device_class=BinarySensorDeviceClass.PROBLEM,
         entity_registry_enabled_default=False,
     ),
-    "HEATER_STATE": BinarySensorEntityDescription(
+    "HEATER_STATE": HmBinarySensorEntityDescription(
         key="HEATER_STATE",
         device_class=BinarySensorDeviceClass.HEAT,
     ),
-    ("LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"): BinarySensorEntityDescription(
+    ("LOWBAT", "LOW_BAT", "LOWBAT_SENSOR"): HmBinarySensorEntityDescription(
         key="LOW_BAT",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "MOISTURE_DETECTED": BinarySensorEntityDescription(
+    "MOISTURE_DETECTED": HmBinarySensorEntityDescription(
         key="MOISTURE_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
-    "MOTION": BinarySensorEntityDescription(
+    "MOTION": HmBinarySensorEntityDescription(
         key="MOTION",
         device_class=BinarySensorDeviceClass.MOTION,
+        translation_source=HmTranslationSource.DEVICE_CLASS,
     ),
-    "OPTICAL_ALARM_ACTIVE": BinarySensorEntityDescription(
+    "OPTICAL_ALARM_ACTIVE": HmBinarySensorEntityDescription(
         key="OPTICAL_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
-    "POWER_MAINS_FAILURE": BinarySensorEntityDescription(
+    "POWER_MAINS_FAILURE": HmBinarySensorEntityDescription(
         key="POWER_MAINS_FAILURE",
         device_class=BinarySensorDeviceClass.POWER,
     ),
-    "PRESENCE_DETECTION_STATE": BinarySensorEntityDescription(
+    "PRESENCE_DETECTION_STATE": HmBinarySensorEntityDescription(
         key="PRESENCE_DETECTION_STATE",
         device_class=BinarySensorDeviceClass.PRESENCE,
     ),
-    ("PROCESS", "WORKING"): BinarySensorEntityDescription(
+    ("PROCESS", "WORKING"): HmBinarySensorEntityDescription(
         key="PROCESS",
         device_class=BinarySensorDeviceClass.RUNNING,
     ),
-    "RAINING": BinarySensorEntityDescription(
+    "RAINING": HmBinarySensorEntityDescription(
         key="RAINING",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
-    "SABOTAGE": BinarySensorEntityDescription(
+    "SABOTAGE": HmBinarySensorEntityDescription(
         key="SABOTAGE",
         device_class=BinarySensorDeviceClass.TAMPER,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    "WATERLEVEL_DETECTED": BinarySensorEntityDescription(
+    "WATERLEVEL_DETECTED": HmBinarySensorEntityDescription(
         key="WATERLEVEL_DETECTED",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
-    "WINDOW_STATE": BinarySensorEntityDescription(
+    "WINDOW_STATE": HmBinarySensorEntityDescription(
         key="WINDOW_STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
@@ -531,18 +531,18 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
 _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
-    ("HmIP-DSD-PCB", "STATE"): BinarySensorEntityDescription(
+    ("HmIP-DSD-PCB", "STATE"): HmBinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OCCUPANCY,
     ),
     (
         ("HmIP-SCI", "HmIP-FCI1", "HmIP-FCI6"),
         "STATE",
-    ): BinarySensorEntityDescription(
+    ): HmBinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.OPENING,
     ),
-    ("HM-Sec-SD", "STATE"): BinarySensorEntityDescription(
+    ("HM-Sec-SD", "STATE"): HmBinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.SMOKE,
     ),
@@ -556,15 +556,15 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
             "ZEL STG RM FFK",
         ),
         "STATE",
-    ): BinarySensorEntityDescription(
+    ): HmBinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.WINDOW,
     ),
-    ("HM-Sen-RD-O", "STATE"): BinarySensorEntityDescription(
+    ("HM-Sen-RD-O", "STATE"): HmBinarySensorEntityDescription(
         key="STATE",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
-    ("HM-Sec-Win", "WORKING"): BinarySensorEntityDescription(
+    ("HM-Sec-Win", "WORKING"): HmBinarySensorEntityDescription(
         key="WORKING",
         device_class=BinarySensorDeviceClass.RUNNING,
         entity_registry_enabled_default=False,
@@ -572,12 +572,12 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
 }
 
 _BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
-    "RESET_MOTION": ButtonEntityDescription(
+    "RESET_MOTION": HmButtonEntityDescription(
         key="RESET_MOTION",
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
     ),
-    "RESET_PRESENCE": ButtonEntityDescription(
+    "RESET_PRESENCE": HmButtonEntityDescription(
         key="RESET_PRESENCE",
         entity_category=EntityCategory.CONFIG,
         entity_registry_enabled_default=False,
@@ -663,7 +663,7 @@ _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
 
 
 _DEFAULT_PLATFORM_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
-    HmPlatform.BUTTON: ButtonEntityDescription(
+    HmPlatform.BUTTON: HmButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
@@ -675,7 +675,7 @@ _DEFAULT_PLATFORM_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
     HmPlatform.SELECT: SelectEntityDescription(
         key="select_default", entity_category=EntityCategory.CONFIG
     ),
-    HmPlatform.HUB_BUTTON: ButtonEntityDescription(
+    HmPlatform.HUB_BUTTON: HmButtonEntityDescription(
         key="hub_button_default",
         icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
@@ -692,13 +692,22 @@ def get_entity_description(
 ) -> EntityDescription | None:
     """Get the entity_description."""
     if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
-        entity_desc.name = (
-            hm_entity.parameter.title()
-            if isinstance(hm_entity, GenericEntity | WrapperEntity)
-            else hm_entity.name
-        )
+        if isinstance(hm_entity, GenericEntity | WrapperEntity):
+            if hasattr(entity_desc, "translation_source"):
+                if (
+                    entity_desc.translation_source == HmTranslationSource.PARAMETER
+                    and entity_desc.translation_key is None
+                ):
+                    entity_desc.translation_key = hm_entity.parameter.lower()
+            else:
+                entity_desc.translation_key = hm_entity.parameter.lower()
+            entity_desc.name = None
+        else:
+            entity_desc.name = hm_entity.name
+
         entity_desc.has_entity_name = True
         return entity_desc
+
     return None
 
 

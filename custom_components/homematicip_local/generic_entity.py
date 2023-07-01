@@ -61,26 +61,21 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 )
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
-
-        if (
-            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
-            and self.translation_key is None
-        ):
-            self._attr_translation_key = self._hm_entity.parameter.lower()
+            if isinstance(hm_entity, GenericEntity | WrapperEntity):
+                self._attr_translation_key = hm_entity.parameter.lower()
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
-            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
+            isinstance(hm_entity, GenericEntity | WrapperEntity)
             and hasattr(self, "entity_description")
             and hasattr(self.entity_description, "native_unit_of_measurement")
-            and self.entity_description.native_unit_of_measurement
-            != self._hm_entity.unit
+            and self.entity_description.native_unit_of_measurement != hm_entity.unit
         ):
             _LOGGER.info(
                 "Different unit for entity: %s: entity_description: %s vs device: %s",
-                self._hm_entity.full_name,
+                hm_entity.full_name,
                 self.entity_description.native_unit_of_measurement,
-                self._hm_entity.unit,
+                hm_entity.unit,
             )
 
     @property
