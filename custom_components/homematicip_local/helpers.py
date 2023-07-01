@@ -15,6 +15,8 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 import voluptuous as vol
 
+from homeassistant.components.binary_sensor import BinarySensorEntityDescription
+from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
@@ -30,6 +32,7 @@ from .const import (
     EVENT_DATA_TITLE,
     EVENT_DATA_UNAVAILABLE,
     IDENTIFIER_SEPARATOR,
+    HmTranslationSource,
 )
 
 # Union for entity types used as base class for entities
@@ -123,10 +126,25 @@ def get_device_address_at_interface_from_identifiers(
 
 
 @dataclass
+class HmBinarySensorEntityDescription(BinarySensorEntityDescription):
+    """Class describing Homematic(IP) Local binary sensor entities."""
+
+    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
+
+
+@dataclass
+class HmButtonEntityDescription(ButtonEntityDescription):
+    """Class describing Homematic(IP) Local button entities."""
+
+    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
+
+
+@dataclass
 class HmNumberEntityDescription(NumberEntityDescription):
     """Class describing Homematic(IP) Local number entities."""
 
     multiplier: int | None = None
+    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
 
 
 @dataclass
@@ -135,3 +153,4 @@ class HmSensorEntityDescription(SensorEntityDescription):
 
     multiplier: int | None = None
     icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
+    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
