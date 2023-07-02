@@ -41,10 +41,11 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.typing import UNDEFINED
 
-from .const import HmTranslationSource
+from .const import HmNameSource
 from .helpers import (
     HmBinarySensorEntityDescription,
     HmButtonEntityDescription,
+    HmEntityDescription,
     HmGenericEntity,
     HmNumberEntityDescription,
     HmSensorEntityDescription,
@@ -118,6 +119,12 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         key="CURRENT",
         native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "DEWPOINT": HmSensorEntityDescription(
+        key="DEWPOINT",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
@@ -491,7 +498,6 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     "MOTION": HmBinarySensorEntityDescription(
         key="MOTION",
         device_class=BinarySensorDeviceClass.MOTION,
-        translation_source=HmTranslationSource.DEVICE_CLASS,
     ),
     "OPTICAL_ALARM_ACTIVE": HmBinarySensorEntityDescription(
         key="OPTICAL_ALARM_ACTIVE",
@@ -695,19 +701,21 @@ def get_entity_description(
     if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
         if isinstance(hm_entity, GenericEntity | WrapperEntity):
             if (
-                hasattr(entity_desc, "translation_source")
+                isinstance(entity_desc, HmEntityDescription)
                 and entity_desc.translation_key is None
             ):
-                if entity_desc.translation_source == HmTranslationSource.PARAMETER:
+                if entity_desc.name_source == HmNameSource.PARAMETER:
                     entity_desc.translation_key = hm_entity.parameter.lower()
                     entity_desc.name = None
-                elif entity_desc.translation_source == HmTranslationSource.DEVICE_CLASS:
+                elif entity_desc.name_source == HmNameSource.DEVICE_CLASS:
                     entity_desc.translation_key = None
                     entity_desc.name = UNDEFINED
             else:
                 entity_desc.translation_key = hm_entity.parameter.lower()
                 entity_desc.name = None
         else:
+            # custom entities use the customizable name from the CCU WebUI,
+            # that does not need to be translated in HA
             entity_desc.name = hm_entity.name
 
         entity_desc.has_entity_name = True

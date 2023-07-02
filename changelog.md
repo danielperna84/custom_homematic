@@ -2,7 +2,6 @@
 
 - Guard against failure due to future HA api changes related to CC specific usage
 - Make entity name translation more verbose
-- Add UndefinedType to Name
 
 # Version 1.37.6 (2023-06-29)
 
