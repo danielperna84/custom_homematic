@@ -19,6 +19,7 @@
 
 - Guard against failure due to future HA api changes related to CC specific usage
 - Make entity name translation more verbose
+- Remove unused translations
 
 # Version 1.37.6 (2023-06-29)
 
