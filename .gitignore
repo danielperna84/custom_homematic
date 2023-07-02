@@ -13,3 +13,4 @@
 /.pylint.d/
 
 /venv
+/.idea/*
