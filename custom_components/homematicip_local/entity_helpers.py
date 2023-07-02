@@ -39,6 +39,7 @@ from homeassistant.const import (
     UnitOfVolume,
 )
 from homeassistant.helpers.entity import EntityDescription
+from homeassistant.helpers.typing import UNDEFINED
 
 from .const import HmTranslationSource
 from .helpers import (
@@ -693,15 +694,19 @@ def get_entity_description(
     """Get the entity_description."""
     if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
         if isinstance(hm_entity, GenericEntity | WrapperEntity):
-            if hasattr(entity_desc, "translation_source"):
-                if (
-                    entity_desc.translation_source == HmTranslationSource.PARAMETER
-                    and entity_desc.translation_key is None
-                ):
+            if (
+                hasattr(entity_desc, "translation_source")
+                and entity_desc.translation_key is None
+            ):
+                if entity_desc.translation_source == HmTranslationSource.PARAMETER:
                     entity_desc.translation_key = hm_entity.parameter.lower()
+                    entity_desc.name = None
+                elif entity_desc.translation_source == HmTranslationSource.DEVICE_CLASS:
+                    entity_desc.translation_key = None
+                    entity_desc.name = UNDEFINED
             else:
                 entity_desc.translation_key = hm_entity.parameter.lower()
-            entity_desc.name = None
+                entity_desc.name = None
         else:
             entity_desc.name = hm_entity.name
 
