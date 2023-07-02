@@ -86,11 +86,12 @@ class HmEntityType(StrEnum):
     CUSTOM = "custom"
 
 
-class HmTranslationSource(StrEnum):
+class HmNameSource(StrEnum):
     """Enum to define the source of a translation."""
 
-    PARAMETER = "parameter"
     DEVICE_CLASS = "device_class"
+    ENTITY_NAME = "entity_name"
+    PARAMETER = "parameter"
 
 
 def _get_hmip_local_platforms() -> list[str]:

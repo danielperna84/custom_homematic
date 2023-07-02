@@ -1,6 +1,7 @@
 """Helper."""
 from __future__ import annotations
 
+from abc import ABC
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -32,7 +33,7 @@ from .const import (
     EVENT_DATA_TITLE,
     EVENT_DATA_UNAVAILABLE,
     IDENTIFIER_SEPARATOR,
-    HmTranslationSource,
+    HmNameSource,
 )
 
 # Union for entity types used as base class for entities
@@ -126,31 +127,34 @@ def get_device_address_at_interface_from_identifiers(
 
 
 @dataclass
-class HmBinarySensorEntityDescription(BinarySensorEntityDescription):
+class HmEntityDescription(ABC):
+    """Base class describing Homematic(IP) Local entities."""
+
+    name_source: HmNameSource = HmNameSource.PARAMETER
+
+
+@dataclass
+class HmBinarySensorEntityDescription(
+    HmEntityDescription, BinarySensorEntityDescription
+):
     """Class describing Homematic(IP) Local binary sensor entities."""
 
-    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
-
 
 @dataclass
-class HmButtonEntityDescription(ButtonEntityDescription):
+class HmButtonEntityDescription(HmEntityDescription, ButtonEntityDescription):
     """Class describing Homematic(IP) Local button entities."""
 
-    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
-
 
 @dataclass
-class HmNumberEntityDescription(NumberEntityDescription):
+class HmNumberEntityDescription(HmEntityDescription, NumberEntityDescription):
     """Class describing Homematic(IP) Local number entities."""
 
     multiplier: int | None = None
-    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
 
 
 @dataclass
-class HmSensorEntityDescription(SensorEntityDescription):
+class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
     """Class describing Homematic(IP) Local sensor entities."""
 
     multiplier: int | None = None
     icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
-    translation_source: HmTranslationSource = HmTranslationSource.PARAMETER
