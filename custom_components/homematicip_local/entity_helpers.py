@@ -296,7 +296,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
     ),
-    ("ACTUAL_TEMPERATURE", "TEMPERATURE", "DEWPOINT"): HmSensorEntityDescription(
+    ("ACTUAL_TEMPERATURE", "TEMPERATURE"): HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
