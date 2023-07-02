@@ -1,7 +1,8 @@
-# Version 1.37.7 (2023-06-30)
+# Version 1.38.0 (2023-07-02)
 
 - Guard against failure due to future HA api changes related to CC specific usage
 - Make entity name translation more verbose
+- Add UndefinedType to Name
 
 # Version 1.37.6 (2023-06-29)
 

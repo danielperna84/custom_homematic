@@ -14,6 +14,7 @@ from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers.typing import UndefinedType
 
 from .const import (
     ATTR_ADDRESS,
@@ -136,7 +137,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return attributes
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> str | UndefinedType | None:
         """
         Return the name of the entity.
 
