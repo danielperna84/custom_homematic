@@ -1,3 +1,8 @@
+# Version 1.38.1 (2023-07-XX)
+
+- Bump hahomematic to 2023.7.0
+  - Project file maintenance
+
 # Version 1.38.0 (2023-07-02)
 
 - Guard against failure due to future HA api changes related to CC specific usage
