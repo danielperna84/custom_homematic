@@ -1,4 +1,4 @@
-# Version 1.38.1 (2023-07-XX)
+# Version 1.38.1 (2023-07-07)
 
 - Bump hahomematic to 2023.7.0
   - Project file maintenance
