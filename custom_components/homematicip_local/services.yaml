@@ -67,6 +67,93 @@ force_device_availability:
       selector:
         text:
 
+get_device_value:
+  name: Get device value
+  description: Get a device property on RPC XML interface.
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
+    channel:
+      name: Channel
+      description: Channel for calling a parameter.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 99
+    parameter:
+      name: Parameter
+      description: Parameter to get i.e STATE
+      required: true
+      example: STATE
+      selector:
+        text:
+
+get_paramset:
+  name: Get paramset
+  description: Call to getParamset in the RPC XML interface
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
+    channel:
+      name: Channel
+      description: Channel for calling a paramset.
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 99
+    paramset_key:
+      name: Paramset key
+      description: The paramset_key argument to getParamset
+      required: true
+      example: MASTER
+      selector:
+        text:
+
+get_variable_value:
+  name: get variable value
+  description: Set the name of a node.
+  fields:
+    entry_id:
+      name: Central
+      description: Name(s) of homematic central to get value.
+      required: true
+      selector:
+        config_entry:
+          integration: homematicip_local
+    name:
+      name: Name
+      description: Name of the variable to get.
+      required: true
+      example: "testvariable"
+      selector:
+        text:
+
 set_variable_value:
   name: Set variable value
   description: Set the name of a node.
