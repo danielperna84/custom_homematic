@@ -2,6 +2,7 @@
 
 - Bump hahomematic to 2023.7.0
   - Project file maintenance
+- Fix entity state translations
 
 # Version 1.38.0 (2023-07-02)
 

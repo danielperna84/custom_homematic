@@ -711,8 +711,10 @@ def get_entity_description(
                     entity_desc.translation_key = None
                     entity_desc.name = UNDEFINED
             else:
-                entity_desc.translation_key = hm_entity.parameter.lower()
+                if entity_desc.translation_key is None:
+                    entity_desc.translation_key = hm_entity.parameter.lower()
                 entity_desc.name = None
+
         else:
             # custom entities use the customizable name from the CCU WebUI,
             # that does not need to be translated in HA
