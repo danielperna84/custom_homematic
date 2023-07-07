@@ -67,9 +67,96 @@ force_device_availability:
       selector:
         text:
 
+get_device_value:
+  name: Get device value
+  description: Get a device value on RPC XML interface.
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
+    channel:
+      name: Channel
+      description: Channel for calling a parameter.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 99
+    parameter:
+      name: Parameter
+      description: Parameter to get i.e STATE
+      required: true
+      example: STATE
+      selector:
+        text:
+
+get_paramset:
+  name: Get paramset
+  description: Call to getParamset in the RPC XML interface
+  fields:
+    device_id:
+      name: Device
+      description: Select a device
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
+    device_address:
+      name: Device address
+      description: Enter a device address
+      example: "0008789453"
+      required: false
+      selector:
+        text:
+    channel:
+      name: Channel
+      description: Channel for calling a paramset.
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 99
+    paramset_key:
+      name: Paramset key
+      description: The paramset_key argument to getParamset
+      required: true
+      example: MASTER
+      selector:
+        text:
+
+get_variable_value:
+  name: Get variable value
+  description: Get the value of a variable.
+  fields:
+    entry_id:
+      name: Central
+      description: Name(s) of homematic central to get value from.
+      required: true
+      selector:
+        config_entry:
+          integration: homematicip_local
+    name:
+      name: Name
+      description: Name of the variable to get.
+      required: true
+      example: "testvariable"
+      selector:
+        text:
+
 set_variable_value:
   name: Set variable value
-  description: Set the name of a node.
+  description: Write a value to a variable.
   fields:
     entry_id:
       name: Central
@@ -95,7 +182,7 @@ set_variable_value:
 
 set_device_value:
   name: Set device value
-  description: Set a device property on RPC XML interface.
+  description: Get a device parameter via the XML-RPC interface.
   fields:
     device_id:
       name: Device
@@ -188,7 +275,7 @@ set_install_mode:
 
 put_paramset:
   name: Put paramset
-  description: Call to putParamset in the RPC XML interface
+  description: Call to putParamset on the RPC XML interface
   fields:
     device_id:
       name: Device

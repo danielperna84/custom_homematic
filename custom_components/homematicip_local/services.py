@@ -13,12 +13,19 @@ from hahomematic.const import (
     PARAMSET_KEY_VALUES,
     HmForcedDeviceAvailability,
 )
+from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
 import voluptuous as vol
 
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import (
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+)
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
@@ -55,6 +62,9 @@ SERVICE_DELETE_DEVICE = "delete_device"
 SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
 SERVICE_FETCH_SYSTEM_VARIABLES = "fetch_system_variables"
 SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
+SERVICE_GET_DEVICE_VALUE = "get_device_value"
+SERVICE_GET_PARAMSET = "get_paramset"
+SERVICE_GET_VARIABLE_VALUE = "get_variable_value"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
@@ -67,6 +77,9 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_FETCH_SYSTEM_VARIABLES,
     SERVICE_FORCE_DEVICE_AVAILABILITY,
+    SERVICE_GET_DEVICE_VALUE,
+    SERVICE_GET_PARAMSET,
+    SERVICE_GET_VARIABLE_VALUE,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
@@ -111,6 +124,35 @@ SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.All(
     cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
     cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE,
+)
+
+SCHEMA_SERVICE_GET_DEVICE_VALUE = vol.All(
+    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE.extend(
+        {
+            vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
+        }
+    ),
+)
+
+SCHEMA_SERVICE_GET_PARAMSET = vol.All(
+    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE.extend(
+        {
+            vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
+            vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+        }
+    ),
+)
+
+SCHEMA_SERVICE_GET_VARIABLE_VALUE = vol.Schema(
+    {
+        vol.Required(ATTR_ENTRY_ID): cv.string,
+        vol.Required(ATTR_NAME): cv.string,
+    }
 )
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
@@ -170,7 +212,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
     """Create the hahomematic services."""
 
     @verify_domain_control(hass, DOMAIN)
-    async def async_call_hmip_local_service(service: ServiceCall) -> None:
+    async def async_call_hmip_local_service(service: ServiceCall) -> ServiceResponse:
         """Call correct Homematic(IP) Local service."""
         service_name = service.service
 
@@ -184,6 +226,12 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_fetch_system_variables(hass=hass, service=service)
         elif service_name == SERVICE_FORCE_DEVICE_AVAILABILITY:
             await _async_service_force_device_availability(hass=hass, service=service)
+        elif service_name == SERVICE_GET_DEVICE_VALUE:
+            return await _async_service_get_device_value(hass=hass, service=service)
+        elif service_name == SERVICE_GET_PARAMSET:
+            return await _async_service_get_paramset(hass=hass, service=service)
+        elif service_name == SERVICE_GET_VARIABLE_VALUE:
+            return await _async_service_get_variable_value(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
@@ -194,6 +242,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_set_variable_value(hass=hass, service=service)
         elif service_name == SERVICE_UPDATE_DEVICE_FIRMWARE_DATA:
             await _async_service_update_device_firmware_data(hass=hass, service=service)
+        return None
 
     async_register_admin_service(
         hass=hass,
@@ -233,6 +282,30 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_FORCE_DEVICE_AVAILABILITY,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_GET_DEVICE_VALUE,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_GET_DEVICE_VALUE,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_GET_PARAMSET,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_GET_PARAMSET,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_GET_VARIABLE_VALUE,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_GET_VARIABLE_VALUE,
+        supports_response=SupportsResponse.OPTIONAL,
     )
 
     hass.services.async_register(
@@ -340,16 +413,70 @@ async def _async_service_force_device_availability(
         )
 
 
-async def _async_service_set_variable_value(
+async def _async_service_get_device_value(
     hass: HomeAssistant, service: ServiceCall
-) -> None:
-    """Service to call setValue method for Homematic(IP) Local system variable."""
+) -> ServiceResponse:
+    """Service to call getValue method for Homematic(IP) Local devices."""
+    channel_no = service.data[ATTR_CHANNEL]
+    parameter = service.data[ATTR_PARAMETER]
+
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+        try:
+            if (
+                value := await hm_device.client.get_value(
+                    channel_address=f"{hm_device.device_address}:{channel_no}",
+                    paramset_key=PARAMSET_KEY_VALUES,
+                    parameter=parameter,
+                )
+            ) is not None:
+                return {"result": value}
+        except ClientException as cex:
+            raise HomeAssistantError from cex
+    return None
+
+
+async def _async_service_get_paramset(
+    hass: HomeAssistant, service: ServiceCall
+) -> ServiceResponse:
+    """Service to call the getParamset method on a Homematic(IP) Local connection."""
+    channel_no = service.data.get(ATTR_CHANNEL)
+    paramset_key = service.data[ATTR_PARAMSET_KEY]
+
+    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+        address = (
+            f"{hm_device.device_address}:{channel_no}"
+            if channel_no is not None
+            else hm_device.device_address
+        )
+        try:
+            return dict(
+                await hm_device.client.get_paramset(
+                    address=address,
+                    paramset_key=paramset_key,
+                )
+            )
+        except ClientException as cex:
+            raise HomeAssistantError from cex
+
+    return None
+
+
+async def _async_service_get_variable_value(
+    hass: HomeAssistant, service: ServiceCall
+) -> ServiceResponse:
+    """Service to call getValue method for Homematic(IP) Local system variable."""
     entry_id = service.data[ATTR_ENTRY_ID]
     name = service.data[ATTR_NAME]
-    value = service.data[ATTR_VALUE]
 
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        await control.central.set_system_variable(name=name, value=value)
+        try:
+            if (
+                value := await control.central.get_system_variable(name=name)
+            ) is not None:
+                return {"result": value}
+        except ClientException as cex:
+            raise HomeAssistantError from cex
+    return None
 
 
 async def _async_service_set_device_value(
@@ -357,18 +484,6 @@ async def _async_service_set_device_value(
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
     channel_no = service.data[ATTR_CHANNEL]
-    await _call_set_device_value(
-        hass=hass,
-        channel_no=channel_no,
-        service=service,
-    )
-
-
-async def _call_set_device_value(
-    hass: HomeAssistant, channel_no: int, service: ServiceCall
-) -> bool:
-    """Call the set_value on the backend."""
-
     parameter = service.data[ATTR_PARAMETER]
     value = service.data[ATTR_VALUE]
     value_type = service.data.get(ATTR_VALUE_TYPE)
@@ -397,6 +512,18 @@ async def _call_set_device_value(
             rx_mode=rx_mode,
         )
     return False
+
+
+async def _async_service_set_variable_value(
+    hass: HomeAssistant, service: ServiceCall
+) -> None:
+    """Service to call setValue method for Homematic(IP) Local system variable."""
+    entry_id = service.data[ATTR_ENTRY_ID]
+    name = service.data[ATTR_NAME]
+    value = service.data[ATTR_VALUE]
+
+    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+        await control.central.set_system_variable(name=name, value=value)
 
 
 async def _async_service_set_install_mode(
