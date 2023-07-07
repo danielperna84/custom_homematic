@@ -69,7 +69,7 @@ force_device_availability:
 
 get_device_value:
   name: Get device value
-  description: Get a device property on RPC XML interface.
+  description: Get a device value on RPC XML interface.
   fields:
     device_id:
       name: Device
@@ -136,12 +136,12 @@ get_paramset:
         text:
 
 get_variable_value:
-  name: get variable value
-  description: Set the name of a node.
+  name: Get variable value
+  description: Get the value of a variable.
   fields:
     entry_id:
       name: Central
-      description: Name(s) of homematic central to get value.
+      description: Name(s) of homematic central to get value from.
       required: true
       selector:
         config_entry:
@@ -156,7 +156,7 @@ get_variable_value:
 
 set_variable_value:
   name: Set variable value
-  description: Set the name of a node.
+  description: Write a value to a variable.
   fields:
     entry_id:
       name: Central
@@ -182,7 +182,7 @@ set_variable_value:
 
 set_device_value:
   name: Set device value
-  description: Set a device property on RPC XML interface.
+  description: Set a device value on RPC XML interface.
   fields:
     device_id:
       name: Device
@@ -239,7 +239,7 @@ set_device_value:
         text:
 
 set_install_mode:
-  name: Set install mode
+  name: Set Install Mode
   description: Set a RPC XML interface into installation mode.
   fields:
     interface_id:
@@ -274,8 +274,8 @@ set_install_mode:
         text:
 
 put_paramset:
-  name: Put paramset
-  description: Call to putParamset in the RPC XML interface
+  name: Put ParamSet
+  description: Call to putParamset on the RPC XML interface
   fields:
     device_id:
       name: Device
