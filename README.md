@@ -317,9 +317,22 @@ This service will only override the availability status of a device and all its 
 This is not a solution for communication problems with homematic devices.
 Use this only to reactivate devices with flaky communication to gain control again.
 
+### `homematicip_local.get_device_value`
+
+Get a device parameter via the XML-RPC interface.
+
+### `homematicip_local.get_paramset`
+
+Call to `getParamset` on the XML-RPC interface.
+Returns a paramset
+
+### `homematicip_local.get_variable_value`
+
+Get the value of a variable.
+
 ### `homematicip_local.put_paramset`
 
-Call to `putParamset` in the XML-RPC interface.
+Call to `putParamset` on the XML-RPC interface.
 
 ### `homematicip_local.set_cover_combined_position`
 

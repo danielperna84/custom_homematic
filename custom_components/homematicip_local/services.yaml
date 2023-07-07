@@ -182,7 +182,7 @@ set_variable_value:
 
 set_device_value:
   name: Set device value
-  description: Set a device value on RPC XML interface.
+  description: Get a device parameter via the XML-RPC interface.
   fields:
     device_id:
       name: Device
@@ -239,7 +239,7 @@ set_device_value:
         text:
 
 set_install_mode:
-  name: Set Install Mode
+  name: Set install mode
   description: Set a RPC XML interface into installation mode.
   fields:
     interface_id:
@@ -274,7 +274,7 @@ set_install_mode:
         text:
 
 put_paramset:
-  name: Put ParamSet
+  name: Put paramset
   description: Call to putParamset on the RPC XML interface
   fields:
     device_id:
