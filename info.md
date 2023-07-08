@@ -13,9 +13,14 @@ Provides the following:
 - The Hub (CCU/Homegear) with all system variables displayed as sensors/binary_sensors/switch/select/number. Programs are displayed as buttons
 - Translation of entity names
 - Services:
+  <<<<<<< Updated upstream
   - Put paramset (Call to putParamset in the RPC XML interface)
   - Set device value (Set the value of a node)
-  - Set variable value (Set the value of a system variable)
+  - # Set variable value (Set the value of a system variable)
+  - Get/Put paramset (Call to getParamset/putParamset in the RPC XML interface)
+  - Get/Set device value
+  - Set variable value (Get/Set the value of a system variable)
+    > > > > > > > Stashed changes
   - Enable climate away mode by calendar (Dateformat: `2021-12-24 08:00`)
   - Enable climate away mode by duration
   - Disable climate away mode

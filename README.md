@@ -326,10 +326,6 @@ Get a device parameter via the XML-RPC interface.
 Call to `getParamset` on the XML-RPC interface.
 Returns a paramset
 
-### `homematicip_local.get_variable_value`
-
-Get the value of a variable.
-
 ### `homematicip_local.put_paramset`
 
 Call to `putParamset` on the XML-RPC interface.
