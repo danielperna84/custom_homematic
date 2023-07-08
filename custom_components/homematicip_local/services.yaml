@@ -135,25 +135,6 @@ get_paramset:
       selector:
         text:
 
-get_variable_value:
-  name: Get variable value
-  description: Get the value of a variable.
-  fields:
-    entry_id:
-      name: Central
-      description: Name(s) of homematic central to get value from.
-      required: true
-      selector:
-        config_entry:
-          integration: homematicip_local
-    name:
-      name: Name
-      description: Name of the variable to get.
-      required: true
-      example: "testvariable"
-      selector:
-        text:
-
 set_variable_value:
   name: Set variable value
   description: Write a value to a variable.

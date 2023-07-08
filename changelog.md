@@ -5,7 +5,6 @@
 - Add services that return data:
   - get_device_value
   - get_paramset
-  - get_variable_value
 - Fix entity state translations
 
 # Version 1.38.0 (2023-07-02)

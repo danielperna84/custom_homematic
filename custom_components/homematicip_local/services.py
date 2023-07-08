@@ -64,7 +64,6 @@ SERVICE_FETCH_SYSTEM_VARIABLES = "fetch_system_variables"
 SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
 SERVICE_GET_DEVICE_VALUE = "get_device_value"
 SERVICE_GET_PARAMSET = "get_paramset"
-SERVICE_GET_VARIABLE_VALUE = "get_variable_value"
 SERVICE_PUT_PARAMSET = "put_paramset"
 SERVICE_SET_DEVICE_VALUE = "set_device_value"
 SERVICE_SET_INSTALL_MODE = "set_install_mode"
@@ -79,7 +78,6 @@ HMIP_LOCAL_SERVICES = [
     SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_GET_DEVICE_VALUE,
     SERVICE_GET_PARAMSET,
-    SERVICE_GET_VARIABLE_VALUE,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
@@ -146,13 +144,6 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
             vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
         }
     ),
-)
-
-SCHEMA_SERVICE_GET_VARIABLE_VALUE = vol.Schema(
-    {
-        vol.Required(ATTR_ENTRY_ID): cv.string,
-        vol.Required(ATTR_NAME): cv.string,
-    }
 )
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
@@ -230,8 +221,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             return await _async_service_get_device_value(hass=hass, service=service)
         elif service_name == SERVICE_GET_PARAMSET:
             return await _async_service_get_paramset(hass=hass, service=service)
-        elif service_name == SERVICE_GET_VARIABLE_VALUE:
-            return await _async_service_get_variable_value(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
@@ -297,14 +286,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_GET_PARAMSET,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_GET_PARAMSET,
-        supports_response=SupportsResponse.OPTIONAL,
-    )
-
-    hass.services.async_register(
-        domain=DOMAIN,
-        service=SERVICE_GET_VARIABLE_VALUE,
-        service_func=async_call_hmip_local_service,
-        schema=SCHEMA_SERVICE_GET_VARIABLE_VALUE,
         supports_response=SupportsResponse.OPTIONAL,
     )
 
@@ -458,24 +439,6 @@ async def _async_service_get_paramset(
         except ClientException as cex:
             raise HomeAssistantError from cex
 
-    return None
-
-
-async def _async_service_get_variable_value(
-    hass: HomeAssistant, service: ServiceCall
-) -> ServiceResponse:
-    """Service to call getValue method for Homematic(IP) Local system variable."""
-    entry_id = service.data[ATTR_ENTRY_ID]
-    name = service.data[ATTR_NAME]
-
-    if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        try:
-            if (
-                value := await control.central.get_system_variable(name=name)
-            ) is not None:
-                return {"result": value}
-        except ClientException as cex:
-            raise HomeAssistantError from cex
     return None
 
 
