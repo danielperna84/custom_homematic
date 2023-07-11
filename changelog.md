@@ -1,3 +1,8 @@
+# Version 1.39.1 (2023-07-11)
+
+- Bump hahomematic to 2023.7.1
+  - Log an error about the ping/pong count mismatch
+
 # Version 1.39.0 (2023-07-07)
 
 - Bump hahomematic to 2023.7.0
