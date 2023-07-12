@@ -1,4 +1,8 @@
-# Version 1.39.1 (2023-07-11)
+# Version 1.39.2 (2023-07-12)
+
+- Use device class translations
+
+# Version 1.39.1 (2023-07-12)
 
 - Bump hahomematic to 2023.7.1
   - Log an error about the ping/pong count mismatch
@@ -19,7 +23,6 @@
 
 - Guard against failure due to future HA api changes related to CC specific usage
 - Make entity name translation more verbose
-- Remove unused translations
 
 # Version 1.37.6 (2023-06-29)
 
