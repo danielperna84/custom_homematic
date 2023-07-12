@@ -49,10 +49,12 @@
     "trigger_type": {
       "press": "Button \"{subtype}\" pressed",
       "press_cont": "Button \"{subtype}\" continuously pressed",
+      "press_lock": "Lock button \"{subtype}\" pressed",
       "press_long": "Button \"{subtype}\" long pressed",
       "press_long_release": "Button \"{subtype}\" long press released",
       "press_long_start": "Button \"{subtype}\" started long press",
-      "press_short": "Button \"{subtype}\" pressed"
+      "press_short": "Button \"{subtype}\" pressed",
+      "press_unlock": "Unlock button \"{subtype}\" pressed"
     }
   },
   "entity": {
@@ -63,8 +65,11 @@
       "alarmstate": {
         "name": "Alarmstate"
       },
-      "burst_limit_warning": {
-        "name": "Burst Limit Warning"
+      "blocked_permanent": {
+        "name": "Blocked permanent"
+      },
+      "blocked_temporary": {
+        "name": "Blocked temporary"
       },
       "current_passage_direction": {
         "name": "Passage Direction"
@@ -126,8 +131,35 @@
       "sabotage": {
         "name": "Sabotage"
       },
+      "sabotage_sticky": {
+        "name": "Sabotage sticky"
+      },
       "state": {
         "name": ""
+      },
+      "user_authorization_01": {
+        "name": "User authorization 1"
+      },
+      "user_authorization_02": {
+        "name": "User authorization 2"
+      },
+      "user_authorization_03": {
+        "name": "User authorization 3"
+      },
+      "user_authorization_04": {
+        "name": "User authorization 4"
+      },
+      "user_authorization_05": {
+        "name": "User authorization 5"
+      },
+      "user_authorization_06": {
+        "name": "User authorization 6"
+      },
+      "user_authorization_07": {
+        "name": "User authorization 7"
+      },
+      "user_authorization_08": {
+        "name": "User authorization 8"
       },
       "waterlevel_detected": {
         "name": "Waterlevel Detected"
@@ -198,6 +230,14 @@
       },
       "carrier_sense_level": {
         "name": "Carrier Sense Level"
+      },
+      "code_state": {
+        "name": "Code Status",
+        "state": {
+          "idle": "idle",
+          "known_code_id_received": "known code id received",
+          "unknown_code_detected": "unknown code detected"
+        }
       },
       "color": {
         "name": "Color"
