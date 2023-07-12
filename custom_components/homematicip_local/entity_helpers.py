@@ -63,6 +63,7 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         key="FREQUENCY",
         device_class=NumberDeviceClass.FREQUENCY,
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     ("LEVEL", "LEVEL_2"): HmNumberEntityDescription(
         key="LEVEL",
@@ -123,6 +124,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "DEWPOINT": HmSensorEntityDescription(
         key="DEWPOINT",
@@ -166,6 +168,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=UnitOfFrequency.HERTZ,
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "GAS_ENERGY_COUNTER": HmSensorEntityDescription(
         key="GAS_ENERGY_COUNTER",
@@ -183,6 +186,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.HUMIDITY,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "IEC_ENERGY_COUNTER": HmSensorEntityDescription(
         key="IEC_ENERGY_COUNTER",
@@ -285,6 +289,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=UnitOfPower.WATT,
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "RAIN_COUNTER": HmSensorEntityDescription(
         key="RAIN_COUNTER",
@@ -304,6 +309,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
@@ -335,6 +341,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     (
         "WIND_DIR",
@@ -353,6 +360,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         device_class=SensorDeviceClass.WIND_SPEED,
         icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
 }
 
@@ -443,12 +451,14 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
         native_unit_of_measurement=UnitOfPressure.BAR,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     UnitOfTemperature.CELSIUS: HmSensorEntityDescription(
         key="TEMPERATURE",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     CONCENTRATION_GRAMS_PER_CUBIC_METER: HmSensorEntityDescription(
         key="CONCENTRATION_GRAMS_PER_CUBIC_METER",
@@ -515,6 +525,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     "MOTION": HmBinarySensorEntityDescription(
         key="MOTION",
         device_class=BinarySensorDeviceClass.MOTION,
+        name_source=HmNameSource.DEVICE_CLASS,
     ),
     "OPTICAL_ALARM_ACTIVE": HmBinarySensorEntityDescription(
         key="OPTICAL_ALARM_ACTIVE",
