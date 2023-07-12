@@ -2,6 +2,8 @@
 
 - Bump hahomematic to 2023.7.1
   - Log an error about the ping/pong count mismatch
+- Bump hahomematic to 2023.7.2
+  - Add new Events PRESS_LOCK and PRESS_UNLOCK for HmIP-WKP
 
 # Version 1.39.0 (2023-07-07)
 

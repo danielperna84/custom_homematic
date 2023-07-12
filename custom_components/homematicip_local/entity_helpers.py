@@ -109,6 +109,9 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    "CODE_ID": HmSensorEntityDescription(
+        key="CODE_ID",
+    ),
     "CONCENTRATION": HmSensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
@@ -357,6 +360,14 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
     (
+        "HmIP-WKP",
+        "CODE_STATE",
+    ): HmSensorEntityDescription(
+        key="WKP_CODE_STATE",
+        device_class=SensorDeviceClass.ENUM,
+        translation_key="wkp_code_state",
+    ),
+    (
         ("HmIP-SRH", "HM-Sec-RHS", "HM-Sec-xx", "ZEL STG RM FDK"),
         "STATE",
     ): HmSensorEntityDescription(
@@ -455,6 +466,12 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         key="ACOUSTIC_ALARM_ACTIVE",
         device_class=BinarySensorDeviceClass.SAFETY,
     ),
+    ("BLOCKED_PERMANENT", "BLOCKED_TEMPORARY"): HmBinarySensorEntityDescription(
+        key="BLOCKED",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+    ),
     "BURST_LIMIT_WARNING": HmBinarySensorEntityDescription(
         key="BURST_LIMIT_WARNING",
         device_class=BinarySensorDeviceClass.PROBLEM,
@@ -519,7 +536,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
         key="RAINING",
         device_class=BinarySensorDeviceClass.MOISTURE,
     ),
-    "SABOTAGE": HmBinarySensorEntityDescription(
+    ("SABOTAGE", "SABOTAGE_STICKY"): HmBinarySensorEntityDescription(
         key="SABOTAGE",
         device_class=BinarySensorDeviceClass.TAMPER,
         entity_category=EntityCategory.DIAGNOSTIC,
