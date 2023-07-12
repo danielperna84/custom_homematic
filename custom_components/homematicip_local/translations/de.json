@@ -49,10 +49,12 @@
     "trigger_type": {
       "press": "Taster \"{subtype}\" wurde gedrückt",
       "press_cont": "Taster \"{subtype}\" wird dauerhaft gedrückt",
+      "press_lock": "Sperrtaster \"{subtype}\" wurde gedrückt",
       "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
       "press_long_release": "Taster \"{subtype}\" wurde nach langem Tastendruck los gelassen",
       "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet",
-      "press_short": "Taster \"{subtype}\" wurde gedrückt"
+      "press_short": "Taster \"{subtype}\" wurde gedrückt",
+      "press_unlock": "Entsperrtaster \"{subtype}\" wurde gedrückt"
     }
   },
   "entity": {
@@ -62,6 +64,12 @@
       },
       "alarmstate": {
         "name": "Alarmzustand"
+      },
+      "blocked_permanent": {
+        "name": "Dauerhaft gesperrt"
+      },
+      "blocked_temporary": {
+        "name": "Vorübergehend gesperrt"
       },
       "burst_limit_warning": {
         "name": "Burst-Limit-Warnung"
@@ -126,8 +134,35 @@
       "sabotage": {
         "name": "Sabotage"
       },
+      "sabotage_sticky": {
+        "name": "Sabotage festgesetzt"
+      },
       "state": {
         "name": ""
+      },
+      "user_authorization_01": {
+        "name": "Benutzerautorisierung 1"
+      },
+      "user_authorization_02": {
+        "name": "Benutzerautorisierung 2"
+      },
+      "user_authorization_03": {
+        "name": "Benutzerautorisierung 3"
+      },
+      "user_authorization_04": {
+        "name": "Benutzerautorisierung 4"
+      },
+      "user_authorization_05": {
+        "name": "Benutzerautorisierung 5"
+      },
+      "user_authorization_06": {
+        "name": "Benutzerautorisierung 6"
+      },
+      "user_authorization_07": {
+        "name": "Benutzerautorisierung 7"
+      },
+      "user_authorization_08": {
+        "name": "Benutzerautorisierung 8"
       },
       "waterlevel_detected": {
         "name": "Wasserstand erkannt"
@@ -428,6 +463,14 @@
       },
       "wind_speed": {
         "name": "Windgeschwindigkeit"
+      },
+      "wkp_code_state": {
+        "name": "Code Status",
+        "state": {
+          "idle": "Leerlauf",
+          "known_code_id_received": "Bekannte Code-ID erhalten",
+          "unknown_code_detected": "Unbekannter Code erkannt"
+        }
       }
     },
     "switch": {
