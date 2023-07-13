@@ -213,6 +213,12 @@
       "activity_state": {
         "name": "Aktivitätszustand"
       },
+      "actual_humidity": {
+        "name": "Luftfeuchtigkeit"
+      },
+      "actual_temperature": {
+        "name": "Temperatur"
+      },
       "air_pressure": {
         "name": "Luftdruck"
       },
@@ -233,6 +239,9 @@
       },
       "concentration": {
         "name": "Konzentration"
+      },
+      "current": {
+        "name": "Strom"
       },
       "current_illumination": {
         "name": "Beleuchtungsstärke"
@@ -281,6 +290,9 @@
       },
       "highest_illumination": {
         "name": "Höchste Beleuchtungsstärke"
+      },
+      "humidity": {
+        "name": "Luftfeuchtigkeit"
       },
       "iec_energy_counter": {
         "name": "IEC Energiezähler"
@@ -346,6 +358,9 @@
       },
       "passage_counter_value": {
         "name": "Durchgangszählerwert"
+      },
+      "power": {
+        "name": "Leistung"
       },
       "rain_counter": {
         "name": "Regenzähler"
@@ -416,6 +431,9 @@
       "sunshineduration": {
         "name": "Sonnenscheindauer"
       },
+      "temperature": {
+        "name": "Temperatur"
+      },
       "typical_particle_size": {
         "name": "Tyische Partikelgröße"
       },
@@ -428,6 +446,9 @@
       "vapor_concentration": {
         "name": "Dampfkonzentration"
       },
+      "voltage": {
+        "name": "Spannung"
+      },
       "wind_dir": {
         "name": "Windrichtung"
       },
@@ -439,6 +460,9 @@
       },
       "wind_direction_range": {
         "name": "Windrichtungsbereich"
+      },
+      "wind_speed": {
+        "name": "Windgeschwindigkeit"
       },
       "wkp_code_state": {
         "name": "Code Status",
