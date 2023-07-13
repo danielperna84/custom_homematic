@@ -1,5 +1,7 @@
-# Version 1.39.2 (2023-07-12)
+# Version 1.39.2 (2023-07-13)
 
+- Bump hahomematic to 2023.7.3
+  - Fire interface event about ping/pong mismatch
 - Use device class translations
 
 # Version 1.39.1 (2023-07-12)
