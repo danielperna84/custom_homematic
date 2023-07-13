@@ -467,14 +467,13 @@ async def _async_service_set_device_value(
             value = str(value)
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
-        return await hm_device.client.set_value(
+        await hm_device.client.set_value(
             channel_address=f"{hm_device.device_address}:{channel_no}",
             paramset_key=PARAMSET_KEY_VALUES,
             parameter=parameter,
             value=value,
             rx_mode=rx_mode,
         )
-    return False
 
 
 async def _async_service_set_variable_value(

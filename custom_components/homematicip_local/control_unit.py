@@ -9,7 +9,6 @@ from typing import Any, cast
 
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
-from hahomematic.config import CALLBACK_WARN_INTERVAL
 from hahomematic.const import (
     ATTR_ADDRESS,
     ATTR_CALLBACK_HOST,
@@ -18,6 +17,7 @@ from hahomematic.const import (
     ATTR_INTERFACE,
     ATTR_INTERFACE_ID,
     ATTR_JSON_PORT,
+    ATTR_MESSAGE,
     ATTR_PARAMETER,
     ATTR_PASSWORD,
     ATTR_PORT,
@@ -521,31 +521,31 @@ class ControlUnit(BaseControlUnit):
         interface_id = event_data[ATTR_INTERFACE_ID]
         if hm_event_type == HmEventType.INTERFACE:
             interface_event_type = event_data[ATTR_TYPE]
-            available = event_data[ATTR_VALUE]
-            if interface_event_type == HmInterfaceEventType.PROXY:
-                title = f"{DOMAIN.upper()}-Interface not reachable"
-                if available:
-                    self._async_dismiss_persistent_notification(
-                        identifier=f"proxy-{interface_id}"
-                    )
-                else:
-                    self._async_create_persistent_notification(
-                        identifier=f"proxy-{interface_id}",
-                        title=title,
-                        message=f"No connection to interface {interface_id}",
-                    )
+            identifier = f"{interface_event_type}-{interface_id}"
             if interface_event_type == HmInterfaceEventType.CALLBACK:
                 title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
-                if available:
-                    self._async_dismiss_persistent_notification(
-                        identifier=f"callback-{interface_id}"
-                    )
+                if event_data[ATTR_VALUE]:
+                    self._async_dismiss_persistent_notification(identifier=identifier)
                 else:
                     self._async_create_persistent_notification(
-                        identifier=f"callback-{interface_id}",
+                        identifier=identifier,
                         title=title,
-                        message=f"No callback events received for interface "
-                        f"{interface_id} {CALLBACK_WARN_INTERVAL}s.",
+                        message=event_data[ATTR_MESSAGE],
+                    )
+            elif interface_event_type == HmInterfaceEventType.PINGPONG:
+                self._async_create_persistent_notification(
+                    identifier=identifier,
+                    title=f"{DOMAIN.upper()}-Ping/Pong Mismatch on Interface",
+                    message=event_data[ATTR_MESSAGE],
+                )
+            elif interface_event_type == HmInterfaceEventType.PROXY:
+                if event_data[ATTR_VALUE]:
+                    self._async_dismiss_persistent_notification(identifier=identifier)
+                else:
+                    self._async_create_persistent_notification(
+                        identifier=identifier,
+                        title=f"{DOMAIN.upper()}-Interface not reachable",
+                        message=event_data[ATTR_MESSAGE],
                     )
         else:
             device_address = event_data[ATTR_ADDRESS]
