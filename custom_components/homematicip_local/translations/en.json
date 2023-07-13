@@ -210,6 +210,12 @@
       "activity_state": {
         "name": "Activity State"
       },
+      "actual_humidity": {
+        "name": "Humidity"
+      },
+      "actual_temperature": {
+        "name": "Temperature"
+      },
       "air_pressure": {
         "name": "Air Pressure"
       },
@@ -230,6 +236,9 @@
       },
       "concentration": {
         "name": "Concentration"
+      },
+      "current": {
+        "name": "Current"
       },
       "current_illumination": {
         "name": "Illumination"
@@ -278,6 +287,9 @@
       },
       "highest_illumination": {
         "name": "Highest Illumination"
+      },
+      "humidity": {
+        "name": "Humidity"
       },
       "iec_energy_counter": {
         "name": "IEC Energy Counter"
@@ -343,6 +355,9 @@
       },
       "passage_counter_value": {
         "name": "Passage Counter Value"
+      },
+      "power": {
+        "name": "Power"
       },
       "rain_counter": {
         "name": "Rain Counter"
@@ -413,6 +428,9 @@
       "sunshineduration": {
         "name": "Sunshineduration"
       },
+      "temperature": {
+        "name": "Temperature"
+      },
       "typical_particle_size": {
         "name": "Typical Particle Size"
       },
@@ -425,6 +443,9 @@
       "vapor_concentration": {
         "name": "Vapor Concentration"
       },
+      "voltage": {
+        "name": "Voltage"
+      },
       "wind_dir": {
         "name": "Wind Dir"
       },
@@ -436,6 +457,9 @@
       },
       "wind_direction_range": {
         "name": "Wind Direction Range"
+      },
+      "wind_speed": {
+        "name": "Wind Speed"
       },
       "wkp_code_state": {
         "name": "Code Status",

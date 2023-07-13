@@ -2,7 +2,8 @@
 
 - Bump hahomematic to 2023.7.3
   - Fire interface event about ping/pong mismatch
-- Use device class translations
+  - Add message to fire_interface_event
+- Refactor event usage
 
 # Version 1.39.1 (2023-07-12)
 
