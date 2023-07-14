@@ -48,6 +48,7 @@ from hahomematic.platforms.entity import BaseEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
+from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA
 
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
@@ -522,6 +523,7 @@ class ControlUnit(BaseControlUnit):
         if hm_event_type == HmEventType.INTERFACE:
             interface_event_type = event_data[ATTR_TYPE]
             identifier = f"{interface_event_type}-{interface_id}"
+            event_data = cast(dict[str, Any], HM_INTERFACE_EVENT_SCHEMA(event_data))
             if interface_event_type == HmInterfaceEventType.CALLBACK:
                 title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
                 if event_data[ATTR_VALUE]:
