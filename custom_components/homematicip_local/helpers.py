@@ -11,7 +11,7 @@ from typing import Any, TypeAlias, TypeVar
 
 from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE
 from hahomematic.platforms.custom.entity import CustomEntity
-from hahomematic.platforms.entity import HM_EVENT_SCHEMA
+from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 import voluptuous as vol
@@ -44,13 +44,13 @@ HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=GenericHubEntity)
 
 
-BASE_EVENT_SCHEMA = HM_EVENT_SCHEMA.extend(
+BASE_EVENT_DATA_SCHEMA = HM_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(ATTR_DEVICE_ID): str,
         vol.Required(ATTR_NAME): str,
     }
 )
-HM_CLICK_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+HM_CLICK_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): str,
         vol.Required(CONF_SUBTYPE): int,
@@ -60,7 +60,7 @@ HM_CLICK_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
     },
     extra=vol.ALLOW_EXTRA,
 )
-HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(EVENT_DATA_IDENTIFIER): str,
         vol.Required(EVENT_DATA_TITLE): str,
@@ -69,7 +69,7 @@ HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
     },
     extra=vol.ALLOW_EXTRA,
 )
-HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_SCHEMA.extend(
+HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(EVENT_DATA_IDENTIFIER): str,
         vol.Required(EVENT_DATA_TITLE): str,
