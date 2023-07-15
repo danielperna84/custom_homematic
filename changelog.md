@@ -4,6 +4,7 @@
   - Fire interface event about ping/pong mismatch
   - Add message to fire_interface_event
 - Refactor event usage
+- Add option to config flow to control system notifications (controls CALLBACK and PINGPONG notifications)
 
 # Version 1.39.1 (2023-07-12)
 

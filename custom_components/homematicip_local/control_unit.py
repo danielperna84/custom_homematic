@@ -60,6 +60,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import (
+    ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_INSTANCE_NAME,
     ATTR_NAME,
     ATTR_PATH,
@@ -106,6 +107,9 @@ class BaseControlUnit:
         self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
         self._instance_name = self._config_data[ATTR_INSTANCE_NAME]
+        self._enable_system_notifications = self._config_data[
+            ATTR_ENABLE_SYSTEM_NOTIFICATIONS
+        ]
         self._central: CentralUnit | None = None
 
     async def async_init_central(self) -> None:
@@ -525,6 +529,9 @@ class ControlUnit(BaseControlUnit):
             identifier = f"{interface_event_type}-{interface_id}"
             event_data = cast(dict[str, Any], HM_INTERFACE_EVENT_SCHEMA(event_data))
             if interface_event_type == HmInterfaceEventType.CALLBACK:
+                if not self._enable_system_notifications:
+                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for CALLBACK")
+                    return
                 title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
                 if event_data[ATTR_VALUE]:
                     self._async_dismiss_persistent_notification(identifier=identifier)
@@ -535,6 +542,9 @@ class ControlUnit(BaseControlUnit):
                         message=event_data[ATTR_MESSAGE],
                     )
             elif interface_event_type == HmInterfaceEventType.PINGPONG:
+                if not self._enable_system_notifications:
+                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for PINGPONG")
+                    return
                 self._async_create_persistent_notification(
                     identifier=identifier,
                     title=f"{DOMAIN.upper()}-Ping/Pong Mismatch on Interface",

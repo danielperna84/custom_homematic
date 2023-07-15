@@ -48,6 +48,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_INSTANCE_NAME,
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
@@ -98,12 +99,16 @@ def get_domain_schema(data: ConfigType) -> Schema:
                     ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
                 ),
             ): vol.All(vol.Coerce(int), vol.Range(min=5)),
+            vol.Required(
+                ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
+                default=data.get(ATTR_ENABLE_SYSTEM_NOTIFICATIONS, True),
+            ): cv.boolean,
         }
     )
 
 
 def get_options_schema(data: ConfigType) -> Schema:
-    """Return the interface schema with or without tls ports."""
+    """Return the options schema."""
     options_schema = get_domain_schema(data=data)
     del options_schema.schema[ATTR_INSTANCE_NAME]
     return options_schema
@@ -174,7 +179,7 @@ async def _async_validate_config_and_get_serial(
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle the instance flow for Homematic(IP) Local."""
 
-    VERSION = 1
+    VERSION = 2
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
@@ -355,6 +360,7 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         ATTR_CALLBACK_HOST: user_input.get(ATTR_CALLBACK_HOST),
         ATTR_CALLBACK_PORT: user_input.get(ATTR_CALLBACK_PORT),
         ATTR_JSON_PORT: user_input.get(ATTR_JSON_PORT),
+        ATTR_ENABLE_SYSTEM_NOTIFICATIONS: user_input[ATTR_ENABLE_SYSTEM_NOTIFICATIONS],
         ATTR_INTERFACE: {},
     }
 
