@@ -427,6 +427,20 @@ This persistent notification is only displayed in HA if the received PONG events
 
 So the message means there is a problem in the communication from the CCU to HA that was **identified** by the integration but not **caused**.
 
+### What is the meaning of this persistent notification `HOMEMATICIP_LOCAL-Ping/Pong Mismatch on Interface`?
+
+As mentioned above, we send a PING event every 15s to check the connection and expect a corresponding PONG event from the backend.
+
+If everything is OK the number of send PINGs matches the number of received PONGs.
+
+If we receive less PONGs that means that there is another HA Instance with the same instance name, that has been started after this instance, that receives all events, which also includes value update of devices.
+Also a communication or CCU problem could be the cause for this.
+
+If we receive more PONGs that means that there is another HA Instance with the same instance name, that has been started before this instance, so this instance also receives events from the other instance.
+
+Solution:
+Check if there are multiple instances of this integration running with the same instance name, and re-add the integration on one HA instance with a different instance name.
+
 ### Noteworthy about entity states
 
 The integration fetches the states of all devices on initially startup and on reconnect from the backend (CCU/Homegear).
