@@ -13,6 +13,7 @@
         "data": {
           "callback_host": "Callback Hostname/IP-Adresse",
           "callback_port": "Callback XML-RPC Port",
+          "enable_system_notifications": "aktiviere Systembenachrichtigungen",
           "host": "CCU Hostname/IP-Adresse",
           "instance_name": "Instanzname der Integration",
           "json_port": "JSON-RPC Port",
@@ -501,6 +502,7 @@
         "data": {
           "callback_host": "Callback Hostname/IP-Adresse",
           "callback_port": "Callback XML-RPC Port",
+          "enable_system_notifications": "aktiviere Systembenachrichtigungen",
           "host": "CCU Hostname/IP-Adresse",
           "json_port": "JSON-RPC Port",
           "password": "CCU Passwort",

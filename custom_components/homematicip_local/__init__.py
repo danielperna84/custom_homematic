@@ -11,6 +11,7 @@ from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERS
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     CONTROL_UNITS,
     DEFAULT_CALLBACK_PORT,
     DOMAIN,
@@ -86,3 +87,18 @@ async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(config_entry.entry_id)
+
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+        data = dict(config_entry.data)
+        data.update({ATTR_ENABLE_SYSTEM_NOTIFICATIONS: True})
+
+        config_entry.version = 2
+        hass.config_entries.async_update_entry(config_entry, data=data)
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+    return True

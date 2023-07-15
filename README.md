@@ -166,6 +166,14 @@ sysvar_scan_interval:
     Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended.
   type: integer
   default: 30
+enable_system_notifications:
+  required: true
+  description:
+    Control if system notification should be displayed. Affects CALLBACK and PINGPONG notifications.
+    It's not recommended to disable this option, because this would hide problems on your system.
+    A better option is to solve the communication problems in your environment.
+  type: integer
+  default: true
 ```
 
 #### Interface
