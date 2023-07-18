@@ -80,7 +80,6 @@ from .const import (
     EVENT_DATA_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
-    IDENTIFIER_SEPARATOR,
     MANUFACTURER_EQ3,
     MASTER_SCAN_INTERVAL,
 )
@@ -301,9 +300,7 @@ class ControlUnit(BaseControlUnit):
                 identifiers={
                     (
                         DOMAIN,
-                        f"{virtual_remote.device_address}"
-                        f"{IDENTIFIER_SEPARATOR}"
-                        f"{virtual_remote.interface_id}",
+                        virtual_remote.identifier,
                     )
                 },
                 manufacturer=MANUFACTURER_EQ3,
@@ -658,9 +655,7 @@ class ControlUnit(BaseControlUnit):
             identifiers={
                 (
                     DOMAIN,
-                    f"{hm_device.device_address}"
-                    f"{IDENTIFIER_SEPARATOR}"
-                    f"{hm_device.interface_id}",
+                    hm_device.identifier,
                 )
             }
         )

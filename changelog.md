@@ -1,3 +1,9 @@
+# Version 1.34.0 (2023-07-18)
+
+- Bump hahomematic to 2023.7.3
+  - Add identifier to device
+- Use identifier from device
+
 # Version 1.39.2 (2023-07-13)
 
 - Bump hahomematic to 2023.7.3
