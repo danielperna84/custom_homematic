@@ -15,7 +15,7 @@ Provides the following:
 - Services:
   - Get/Put paramset (Call to getParamset/putParamset in the RPC XML interface)
   - Get/Set device value
-  - Set variable value (Get/Set the value of a system variable)
+  - Set variable value (Get the value of a system variable)
   - Enable climate away mode by calendar (Dateformat: `2021-12-24 08:00`)
   - Enable climate away mode by duration
   - Disable climate away mode
