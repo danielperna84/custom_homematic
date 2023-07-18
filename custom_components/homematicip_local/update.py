@@ -15,7 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN, IDENTIFIER_SEPARATOR, MANUFACTURER_EQ3
+from .const import CONTROL_UNITS, DOMAIN, MANUFACTURER_EQ3
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -95,9 +95,7 @@ class HaHomematicUpdate(UpdateEntity):
             identifiers={
                 (
                     DOMAIN,
-                    f"{hm_device.device_address}"
-                    f"{IDENTIFIER_SEPARATOR}"
-                    f"{hm_device.interface_id}",
+                    hm_device.identifier,
                 )
             },
             manufacturer=MANUFACTURER_EQ3,

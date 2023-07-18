@@ -26,7 +26,6 @@ from .const import (
     ATTR_PARAMETER,
     ATTR_VALUE_STATE,
     DOMAIN,
-    IDENTIFIER_SEPARATOR,
     MANUFACTURER_EQ3,
     HmEntityState,
     HmEntityType,
@@ -89,14 +88,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return device specific attributes."""
         hm_device = self._hm_entity.device
         return DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    f"{hm_device.device_address}"
-                    f"{IDENTIFIER_SEPARATOR}"
-                    f"{hm_device.interface_id}",
-                )
-            },
+            identifiers={(DOMAIN, hm_device.identifier)},
             manufacturer=get_manufacturer(device_type=hm_device.device_type),
             model=hm_device.device_type,
             name=hm_device.name,
