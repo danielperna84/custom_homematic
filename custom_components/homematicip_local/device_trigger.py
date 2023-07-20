@@ -70,7 +70,7 @@ async def async_get_triggers(
                 if not isinstance(action_event, ClickEvent):
                     continue
 
-                if action_event.usage == HmEntityUsage.ENTITY_NO_CREATE:
+                if action_event.usage == HmEntityUsage.NO_CREATE:
                     continue
 
                 trigger = {

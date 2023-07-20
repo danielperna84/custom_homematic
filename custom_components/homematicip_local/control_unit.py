@@ -331,7 +331,7 @@ class ControlUnit(BaseControlUnit):
 
         for entity in new_entities:
             if (
-                entity.usage != HmEntityUsage.ENTITY_NO_CREATE
+                entity.usage != HmEntityUsage.NO_CREATE
                 and entity.unique_identifier not in active_unique_ids
                 and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
