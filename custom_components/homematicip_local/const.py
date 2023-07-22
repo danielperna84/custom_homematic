@@ -9,9 +9,7 @@ from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"
-MANUFACTURER_EQ3: Final = "eQ-3"
 HMIP_LOCAL_MIN_VERSION: Final = "2023.7.0"
-
 
 ATTR_ENABLE_SYSTEM_NOTIFICATIONS: Final = "enable_system_notifications"
 ATTR_INSTANCE_NAME: Final = "instance_name"

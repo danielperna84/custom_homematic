@@ -89,7 +89,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         hm_device = self._hm_entity.device
         return DeviceInfo(
             identifiers={(DOMAIN, hm_device.identifier)},
-            manufacturer=get_manufacturer(device_type=hm_device.device_type),
+            manufacturer=hm_device.manufacturer,
             model=hm_device.device_type,
             name=hm_device.name,
             sw_version=hm_device.firmware,

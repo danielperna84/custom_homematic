@@ -33,6 +33,7 @@ from hahomematic.const import (
     HH_EVENT_DEVICES_CREATED,
     HH_EVENT_HUB_REFRESHED,
     IP_ANY_V4,
+    MANUFACTURER_EQ3,
     PARAMSET_KEY_MASTER,
     PORT_ANY,
     HmDeviceFirmwareState,
@@ -80,7 +81,6 @@ from .const import (
     EVENT_DATA_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
-    MANUFACTURER_EQ3,
     MASTER_SCAN_INTERVAL,
 )
 from .helpers import (
