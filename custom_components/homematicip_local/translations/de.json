@@ -48,14 +48,14 @@
       "press_short": "Kurzer Tastendruck auf Taster \"{subtype}\""
     },
     "trigger_type": {
-      "press": "Taster \"{subtype}\" wurde gedrückt",
-      "press_cont": "Taster \"{subtype}\" wird dauerhaft gedrückt",
-      "press_lock": "Sperrtaster \"{subtype}\" wurde gedrückt",
-      "press_long": "Taster \"{subtype}\" wurde lange gedrückt",
-      "press_long_release": "Taster \"{subtype}\" wurde nach langem Tastendruck los gelassen",
-      "press_long_start": "Taster \"{subtype}\" hat langen Tastendruck gestartet",
+      "press": "Taste \"{subtype}\" wurde gedrückt",
+      "press_cont": "Taste \"{subtype}\" wird dauerhaft gedrückt",
+      "press_lock": "Sperrtaste \"{subtype}\" wurde gedrückt",
+      "press_long": "Taste \"{subtype}\" wurde lange gedrückt",
+      "press_long_release": "Taste \"{subtype}\" wurde nach langem Tastendruck los gelassen",
+      "press_long_start": "Taste \"{subtype}\" hat langem Tastendruck gestartet",
       "press_short": "Taster \"{subtype}\" wurde gedrückt",
-      "press_unlock": "Entsperrtaster \"{subtype}\" wurde gedrückt"
+      "press_unlock": "Entsperrtaste \"{subtype}\" wurde gedrückt"
     }
   },
   "entity": {
@@ -194,6 +194,24 @@
               "week_program_4": "WP 4",
               "week_program_5": "WP 5",
               "week_program_6": "WP 6"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "homematic.keypress": {
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "press": "Gedrückt",
+              "press_cont": "Dauerhaft gedrückt",
+              "press_lock": "Sperrtaste gedrückt",
+              "press_long": "Lange gedrückt",
+              "press_long_release": "Nach langem Tastendruck los gelassen",
+              "press_long_start": "Langer Tastendruck gestartet",
+              "press_short": "Kurz gedrückt",
+              "press_unlock": "Entsperrtaste gedrückt"
             }
           }
         }

@@ -1,8 +1,11 @@
-# Version 1.34.0 (2023-07-18)
+# Version 1.40.0 (2023-07-22)
 
 - Bump hahomematic to 2023.7.3
   - Add identifier to device
+  - Rename ENTITY_NO_CREATE to NO_CREATE
+  - Ignore click events on plugs
 - Use identifier from device
+- Add event entities
 
 # Version 1.39.2 (2023-07-13)
 

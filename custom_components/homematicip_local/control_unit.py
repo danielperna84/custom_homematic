@@ -28,6 +28,7 @@ from hahomematic.const import (
     ATTR_VERIFY_TLS,
     AVAILABLE_HM_HUB_PLATFORMS,
     AVAILABLE_HM_PLATFORMS,
+    ENTITY_EVENTS,
     EVENT_STICKY_UN_REACH,
     EVENT_UN_REACH,
     HH_EVENT_DEVICES_CREATED,
@@ -46,6 +47,7 @@ from hahomematic.const import (
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import BaseEntity
+from hahomematic.platforms.event import GenericEvent
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
@@ -205,6 +207,8 @@ class ControlUnit(BaseControlUnit):
         super().__init__(control_config=control_config)
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
+        # {entity_id, [channel_events]}
+        self._active_hm_channel_events: dict[str, list[GenericEvent]] = {}
         # {entity_id, entity}
         self._active_hm_update_entities: dict[str, HmUpdate] = {}
         # {entity_id, sysvar_entity}
@@ -317,6 +321,46 @@ class ControlUnit(BaseControlUnit):
         return self._active_hm_entities.get(entity_id)
 
     @callback
+    def async_get_new_hm_channel_event_entities(
+        self, new_channel_events: list[dict[int, list[GenericEvent]]]
+    ) -> list[list[GenericEvent]]:
+        """Return all hm-update-entities."""
+        active_unique_ids: list[str] = []
+        for events in self._active_hm_channel_events.values():
+            for event in events:
+                active_unique_ids.append(event.unique_identifier)
+        hm_channel_events: list[list[GenericEvent]] = []
+
+        for device_channel_events in new_channel_events:
+            for channel_events in device_channel_events.values():
+                if channel_events[0].channel_unique_identifier not in active_unique_ids:
+                    hm_channel_events.append(channel_events)
+                    continue
+
+        return hm_channel_events
+
+    @callback
+    def async_get_new_hm_channel_event_entities_by_event_type(
+        self, event_type: HmEventType
+    ) -> list[list[GenericEvent]]:
+        """Return all channel event entities."""
+        active_unique_ids: list[str] = []
+        for events in self._active_hm_channel_events.values():
+            for event in events:
+                active_unique_ids.append(event.unique_identifier)
+
+        hm_channel_events: list[list[GenericEvent]] = []
+        for device in self.central.devices:
+            for channel_events in device.get_channel_events(
+                event_type=event_type
+            ).values():
+                if channel_events[0].channel_unique_identifier not in active_unique_ids:
+                    hm_channel_events.append(channel_events)
+                    continue
+
+        return hm_channel_events
+
+    @callback
     def async_get_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
@@ -357,6 +401,18 @@ class ControlUnit(BaseControlUnit):
         return hm_update_entities
 
     @callback
+    def async_get_new_hm_entities_by_platform(
+        self, platform: HmPlatform
+    ) -> list[BaseEntity]:
+        """Return all new hm-entities by platform."""
+        active_unique_ids = [
+            entity.unique_identifier for entity in self._active_hm_entities.values()
+        ]
+        return self.central.get_entities_by_platform(
+            platform=platform, existing_unique_ids=active_unique_ids
+        )
+
+    @callback
     def async_get_new_hm_hub_entities(
         self, new_hub_entities: list[GenericHubEntity]
     ) -> dict[HmPlatform, list[GenericHubEntity]]:
@@ -389,18 +445,6 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def async_get_new_hm_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> list[BaseEntity]:
-        """Return all new hm-entities by platform."""
-        active_unique_ids = [
-            entity.unique_identifier for entity in self._active_hm_entities.values()
-        ]
-        return self.central.get_entities_by_platform(
-            platform=platform, existing_unique_ids=active_unique_ids
-        )
-
-    @callback
     def async_get_update_entities(self) -> list[HmUpdate]:
         """Return all update entities."""
         active_unique_ids = [
@@ -420,6 +464,13 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_entities[entity_id] = hm_entity
 
     @callback
+    def async_add_hm_channel_events(
+        self, entity_id: str, hm_channel_events: list[GenericEvent]
+    ) -> None:
+        """Add channel events to active channel events."""
+        self._active_hm_channel_events[entity_id] = hm_channel_events
+
+    @callback
     def async_add_hm_update_entity(self, entity_id: str, hm_entity: HmUpdate) -> None:
         """Add entity to active update entities."""
         self._active_hm_update_entities[entity_id] = hm_entity
@@ -435,6 +486,11 @@ class ControlUnit(BaseControlUnit):
     def async_remove_hm_entity(self, entity_id: str) -> None:
         """Remove entity from active entities."""
         del self._active_hm_entities[entity_id]
+
+    @callback
+    def async_remove_hm_channel_events(self, entity_id: str) -> None:
+        """Remove channel_events from active channel_events."""
+        del self._active_hm_channel_events[entity_id]
 
     @callback
     def async_remove_hm_update_entity(self, entity_id: str) -> None:
@@ -457,9 +513,15 @@ class ControlUnit(BaseControlUnit):
 
         if name == HH_EVENT_DEVICES_CREATED:
             new_devices = kwargs["new_devices"]
+            new_channel_events = []
             new_entities = []
             new_update_entities = []
             for device in new_devices:
+                for event_type in ENTITY_EVENTS:
+                    if channel_events := device.get_channel_events(
+                        event_type=event_type
+                    ):
+                        new_channel_events.append(channel_events)
                 new_entities.extend(device.get_all_entities())
                 if device.update_entity:
                     new_update_entities.append(device.update_entity)
@@ -485,6 +547,16 @@ class ControlUnit(BaseControlUnit):
                         entry_id=self._entry_id, platform=HmPlatform.UPDATE
                     ),
                     hm_update_entities,
+                )
+            if hm_channel_events := self.async_get_new_hm_channel_event_entities(
+                new_channel_events=new_channel_events
+            ):
+                async_dispatcher_send(
+                    self._hass,
+                    async_signal_new_hm_entity(
+                        entry_id=self._entry_id, platform=HmPlatform.EVENT
+                    ),
+                    hm_channel_events,
                 )
             self._async_add_virtual_remotes_to_device_registry()
         elif name == HH_EVENT_HUB_REFRESHED:

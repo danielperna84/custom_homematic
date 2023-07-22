@@ -3,13 +3,13 @@ from __future__ import annotations
 
 from typing import Final
 
-from hahomematic.const import AVAILABLE_HM_PLATFORMS, HmPlatform
+from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
 from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"
-HMIP_LOCAL_MIN_VERSION: Final = "2023.7.0"
+HMIP_LOCAL_MIN_VERSION: Final = "2023.8.0.dev0"
 
 ATTR_ENABLE_SYSTEM_NOTIFICATIONS: Final = "enable_system_notifications"
 ATTR_INSTANCE_NAME: Final = "instance_name"
@@ -93,7 +93,7 @@ class HmNameSource(StrEnum):
     PARAMETER = "parameter"
 
 
-BLOCK_PLATFORMS: Final[tuple[str, ...]] = (HmPlatform.EVENT,)
+BLOCK_PLATFORMS: Final[tuple[str, ...]] = ()
 
 
 def _get_hmip_local_platforms() -> list[str]:
