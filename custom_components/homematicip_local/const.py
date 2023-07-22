@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Final
 
-from hahomematic.const import AVAILABLE_HM_PLATFORMS
+from hahomematic.const import AVAILABLE_HM_PLATFORMS, HmPlatform
 
 from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
@@ -95,10 +95,15 @@ class HmNameSource(StrEnum):
     PARAMETER = "parameter"
 
 
+BLOCK_PLATFORMS: Final[tuple[str, ...]] = (HmPlatform.EVENT,)
+
+
 def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
-    hm_platforms = [entry.value for entry in AVAILABLE_HM_PLATFORMS]
+    hm_platforms = [
+        entry.value for entry in AVAILABLE_HM_PLATFORMS if entry not in BLOCK_PLATFORMS
+    ]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:
         if hm_platform in platforms:

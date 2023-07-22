@@ -183,6 +183,8 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
+        self._cu.async_remove_hm_update_entity(self.entity_id)
+
         self._hm_entity.unregister_update_callback(
             update_callback=self._async_device_changed
         )
