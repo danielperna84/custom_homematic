@@ -437,6 +437,11 @@ class ControlUnit(BaseControlUnit):
         del self._active_hm_entities[entity_id]
 
     @callback
+    def async_remove_hm_update_entity(self, entity_id: str) -> None:
+        """Remove entity from active update entities."""
+        del self._active_hm_update_entities[entity_id]
+
+    @callback
     def async_remove_hm_hub_entity(self, entity_id: str) -> None:
         """Remove entity from active hub entities."""
         del self._active_hm_hub_entities[entity_id]
