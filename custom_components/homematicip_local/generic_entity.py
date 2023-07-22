@@ -26,7 +26,6 @@ from .const import (
     ATTR_PARAMETER,
     ATTR_VALUE_STATE,
     DOMAIN,
-    MANUFACTURER_EQ3,
     HmEntityState,
     HmEntityType,
 )
@@ -386,12 +385,3 @@ class HaHomematicGenericSysvarEntity(
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         return {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
-
-
-def get_manufacturer(device_type: str) -> str | None:
-    """Return the manufacturer of a device."""
-    if device_type.lower().startswith("hb"):
-        return "Homebrew"
-    if device_type.lower().startswith("alpha"):
-        return "Möhlenhoff"
-    return MANUFACTURER_EQ3
