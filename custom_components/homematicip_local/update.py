@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, cast
+from typing import Any
 
 from hahomematic.const import HmDeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
@@ -15,7 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN, MANUFACTURER_EQ3
+from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -90,20 +90,8 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        hm_device = self._hm_entity.device
         return DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    hm_device.identifier,
-                )
-            },
-            manufacturer=MANUFACTURER_EQ3,
-            model=hm_device.device_type,
-            name=hm_device.name,
-            suggested_area=hm_device.room,
-            # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_device.central.name),
+            identifiers={(DOMAIN, self._hm_entity.device.identifier)},
         )
 
     @property
