@@ -1,11 +1,11 @@
 """Constants."""
 from __future__ import annotations
 
+from enum import StrEnum
 from typing import Final
 
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
 
-from homeassistant.backports.enum import StrEnum
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"
