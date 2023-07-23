@@ -7,6 +7,7 @@
 - Use identifier from device
 - Add event entities
 - Remove unmaintained NL translation
+- Add service translations
 
 # Version 1.39.2 (2023-07-13)
 

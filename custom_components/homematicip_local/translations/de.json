@@ -547,5 +547,308 @@
         "description": "Neu-Konfiguration der CCU Schnittstellen"
       }
     }
+  },
+  "services": {
+    "clear_cache": {
+      "name": "Lösche den Cache",
+      "description": "Löscht den Cache. Benötigt einen Neustart.",
+      "fields": {
+        "entry_id": {
+          "name": "Zentrale",
+          "description": "Name der Homematic Zentrale, deren Cache gelöscht werden soll."
+        }
+      }
+    },
+    "delete_device": {
+      "name": "Lösche eine Gerät",
+      "description": "Löscht ein Gerät aus Home-Assistant, aber nicht aus der Zentrale.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        }
+      }
+    },
+    "export_device_definition": {
+      "name": "Exportiere Geräte-Beschreibungen",
+      "description": "Exportiert die Beschreibungen eines Gerätes nach 'Dein Home-Assistant Konfigurationsverzeichnis'/homematicip_local/export*.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        }
+      }
+    },
+    "fetch_system_variables": {
+      "name": "Rufe Systemvariablen ab",
+      "description": "Ruft die Systemvariablen von einer Zentrale ab.",
+      "fields": {
+        "entry_id": {
+          "name": "Zentrale",
+          "description": "Name der Homematic-Zentrale, von der Systemvariablen abgerufen werden sollen."
+        }
+      }
+    },
+    "force_device_availability": {
+      "name": "Geräteverfügbarkeit erzwingen",
+      "description": "Erzwingt die Verfügbarkeit eines Geräts. Dadurch wird der tatsächliche Status überschrieben.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        },
+        "device_address": {
+          "name": "Geräteadresse",
+          "description": "Geben Sie eine Geräteadresse ein."
+        }
+      }
+    },
+    "get_device_value": {
+      "name": "Gerätewert abrufen",
+      "description": "Ruft einen Gerätewert über die RPC-XML-Schnittstelle ab.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        },
+        "device_address": {
+          "name": "Geräteadresse",
+          "description": "Geben Sie eine Homemativ Geräteadresse ein."
+        },
+        "channel": {
+          "name": "Kanal",
+          "description": "Kanal zum Abruf eines Parameters."
+        },
+        "parameter": {
+          "name": "Parameter",
+          "description": "Abzurufender Parameter, z. B. STATE."
+        }
+      }
+    },
+    "get_paramset": {
+      "name": "Get paramset",
+      "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        },
+        "device_address": {
+          "name": "Geräteadresse",
+          "description": "Geben Sie eine Geräteadresse ein."
+        },
+        "channel": {
+          "name": "Kanal",
+          "description": "Kanal zum Abruf eines Parametersatzes."
+        },
+        "paramset_key": {
+          "name": "Parametersatz-Schlüssel",
+          "description": "Das paramset_key-Argument für getParamset."
+        }
+      }
+    },
+    "set_variable_value": {
+      "name": "Variablenwert schreiben",
+      "description": "Schreiben Sie den Wert einer Homematic Systemvariable.",
+      "fields": {
+        "entry_id": {
+          "name": "Zentrale",
+          "description": "Name der Homematic-Zentrale, um den Wert zu schreiben."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Name der zu schreibenden Variable."
+        },
+        "value": {
+          "name": "Wert",
+          "description": "Der neue Wert."
+        }
+      }
+    },
+    "set_device_value": {
+      "name": "Gerätewert schreiben",
+      "description": "Schreibe einen Geräteparameter über die XML-RPC-Schnittstelle.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        },
+        "device_address": {
+          "name": "Geräteadresse",
+          "description": "Geben Sie eine Geräteadresse ein."
+        },
+        "channel": {
+          "name": "Kanal",
+          "description": "Kanal des Parameters."
+        },
+        "parameter": {
+          "name": "Parameter",
+          "description": "Zu sendender Parameter, z. B. STATE."
+        },
+        "value": {
+          "name": "Wert",
+          "description": "Neuer Wert."
+        },
+        "value_type": {
+          "name": "Werttyp",
+          "description": "Typ des neuen Wertes."
+        },
+        "rx_mode": {
+          "name": "RX mode",
+          "description": "Der verwendete Empfangsmodus."
+        }
+      }
+    },
+    "set_install_mode": {
+      "name": "Legt den Installationsmodus fest",
+      "description": "Versetzen Sie eine RPC-XML-Schnittstelle in den Installationsmodus.",
+      "fields": {
+        "interface_id": {
+          "name": "Schnittstelle",
+          "description": "Wählen Sie die Schnittstelle für den Installationsmodus aus."
+        },
+        "mode": {
+          "name": "Modus",
+          "description": "1= Normaler Modus / 2= Entfernt die vorhandenen alten Links."
+        },
+        "time": {
+          "name": "Dauer",
+          "description": "Dauer für die Ausführung im Installationsmodus."
+        },
+        "address": {
+          "name": "Adresse",
+          "description": "Adresse des Homematic-Gerätes zum anlernen."
+        }
+      }
+    },
+    "put_paramset": {
+      "name": "Parametersatz schreiben",
+      "description": "Aufruf von putParamset auf der RPC-XML-Schnittstelle.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Wähle ein Gerät."
+        },
+        "device_address": {
+          "name": "Geräteadresse",
+          "description": "Geben Sie eine Geräteadresse ein."
+        },
+        "channel": {
+          "name": "Kanal",
+          "description": "Kanal des Parametersatzes."
+        },
+        "paramset_key": {
+          "name": "Parametersatzschlüssel",
+          "description": "Das paramset_key-Argument für putParamset."
+        },
+        "paramset": {
+          "name": "\"Parametersatz",
+          "description": "Ein Paramset-Wörterbuch."
+        },
+        "rx_mode": {
+          "name": "RX Modus",
+          "description": "Der verwendete Empfangsmodus."
+        }
+      }
+    },
+    "enable_away_mode_by_calendar": {
+      "name": "Aktiviert den Klima-Abwesenheitsmodus per Kalender",
+      "description": "Aktiviert den Klima-Abwesenheitsmodus per Kalender.",
+      "fields": {
+        "start": {
+          "name": "Startzeit",
+          "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch aktiviert werden soll."
+        },
+
+        "end": {
+          "name": "Endzeit",
+          "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch deaktiviert werden soll."
+        },
+        "away_temperature": {
+          "name": "Solltemperatur",
+          "description": "Die Temperatur für den Abwesenheitsmodus."
+        }
+      }
+    },
+    "enable_away_mode_by_duration": {
+      "name": "Aktiviert den Klima-Abwesenheitsmodus nach Dauer",
+      "description": "Aktiviert den Klima-Abwesenheitsmodus nach Dauer.",
+      "fields": {
+        "hours": {
+          "name": "Stunde",
+          "description": "Die Anzahl der Stunden nach dem der Abwesenheitsmodus automatisch deaktiviert wird."
+        },
+        "away_temperature": {
+          "name": "Solltemperatur",
+          "description": "Die Temperatur für den Abwesenheitsmodus."
+        }
+      }
+    },
+    "disable_away_mode": {
+      "name": "Deaktiviert den Klima-Abwesenheitsmodus",
+      "description": "Deaktiviert den Klima-Abwesenheitsmodus."
+    },
+    "turn_on_siren": {
+      "name": "Sirene einschalten",
+      "description": "Schaltet die Sirene ein.",
+      "fields": {
+        "tone": {
+          "name": "Ton",
+          "description": "Der Ton, der beim Einschalten der Sirene ausgegeben wird."
+        },
+        "light": {
+          "name": "Licht",
+          "description": "Das Licht, das beim Einschalten der Sirene ausgestrahlt wird."
+        },
+        "duration": {
+          "name": "Dauer",
+          "description": "Die Dauer in Sekunden, die die Sirene eingeschaltet wird."
+        }
+      }
+    },
+    "light_set_on_time": {
+      "name": "Stellt die Einschaltdauer eines Lichts ein",
+      "description": "Stellt die Einschaltdauer für ein Licht ein. Muss von einem light.turn_on gefolgt werden.",
+      "fields": {
+        "on_time": {
+          "name": "Einschaltdauer",
+          "description": "Einschaltdauer für ein Licht in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen."
+        }
+      }
+    },
+    "switch_set_on_time": {
+      "name": "Stellt die Einschaltdauer eines Schalters ein",
+      "description": "Stellt die Einschaltdauer eines Schalters ein. Muss von einem switch.turn_on gefolgt werden.",
+      "fields": {
+        "on_time": {
+          "name": "Einschaltdauer",
+          "description": "Einschaltdauer für einn Schalter in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen."
+        }
+      }
+    },
+    "set_cover_combined_position": {
+      "name": "Stellt die kombinierte Position der Jalousie ein",
+      "description": "Bewegt eine Jalousie in eine bestimmte Position und Neigungsposition.",
+      "fields": {
+        "position": {
+          "name": "Position",
+          "description": "Position der Jalousie."
+        },
+        "tilt_position": {
+          "name": "Neigungsposition",
+          "description": "Neigungsposition der Jalousie."
+        }
+      }
+    },
+    "update_device_firmware_data": {
+      "name": "Aktualisiert die Firmware-Daten des Geräts",
+      "description": "Geräte-Firmware-Daten für alle Homematic Geräte aktualisieren.",
+      "fields": {
+        "entry_id": {
+          "name": "Zentrale",
+          "description": "Name der Homematic-Zentrale, für die die Geräte-Firmware-Daten aktualisiert werden sollen."
+        }
+      }
+    }
   }
 }
