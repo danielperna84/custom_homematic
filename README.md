@@ -394,7 +394,7 @@ Events fired by this integration that can be consumed by users.
 ### `homematic.keypress`
 
 This event type is used when a key is pressed on a device,
-and can be used with device triggers in automation, so manual event listening is not necessary.
+and can be used with device triggers or event entities in automation, so manual event listening is not necessary.
 
 In this context, the following must also be observed: [Events for Homematic(IP) devices](https://github.com/SukramJ/custom_homematic#events-for-homematicip-devices)
 

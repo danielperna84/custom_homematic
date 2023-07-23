@@ -40,6 +40,7 @@ Entity Support
 - Button
 - Climate
 - Cover
+- Event
 - Light
 - Lock
 - Number
