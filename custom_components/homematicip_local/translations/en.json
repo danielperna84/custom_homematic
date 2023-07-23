@@ -544,5 +544,308 @@
         "description": "Re-Configure the interfaces to CCU"
       }
     }
+  },
+  "services": {
+    "clear_cache": {
+      "name": "Clear the cache",
+      "description": "Clear the cache. Requires a restart.",
+      "fields": {
+        "entry_id": {
+          "name": "Central",
+          "description": "Name(s) of homematic central to clear the cache."
+        }
+      }
+    },
+    "delete_device": {
+      "name": "Delete a device",
+      "description": "Delete a device from HA.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        }
+      }
+    },
+    "export_device_definition": {
+      "name": "Export device definition",
+      "description": "Export a device definition to 'Your home-assistant config directory'/homematicip_local/export*.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        }
+      }
+    },
+    "fetch_system_variables": {
+      "name": "Fetch system variables",
+      "description": "Fetch system variables from backend.",
+      "fields": {
+        "entry_id": {
+          "name": "Central",
+          "description": "Name(s) of homematic central to fetch system variables from."
+        }
+      }
+    },
+    "force_device_availability": {
+      "name": "Force device availability",
+      "description": "Force a device to be available, this will override the real state.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        },
+        "device_address": {
+          "name": "Device address",
+          "description": "Enter a device address."
+        }
+      }
+    },
+    "get_device_value": {
+      "name": "Get device value",
+      "description": "Get a device value on RPC XML interface.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        },
+        "device_address": {
+          "name": "Device address",
+          "description": "Enter a device address."
+        },
+        "channel": {
+          "name": "Channel",
+          "description": "Channel for calling a parameter."
+        },
+        "parameter": {
+          "name": "Parameter",
+          "description": "Parameter to get i.e STATE."
+        }
+      }
+    },
+    "get_paramset": {
+      "name": "Get paramset",
+      "description": "Call to getParamset in the RPC XML interface.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        },
+        "device_address": {
+          "name": "Device address",
+          "description": "Enter a device address."
+        },
+        "channel": {
+          "name": "Channel",
+          "description": "Channel for calling a paramset."
+        },
+        "paramset_key": {
+          "name": "Paramset key",
+          "description": "The paramset_key argument to getParamset."
+        }
+      }
+    },
+    "set_variable_value": {
+      "name": "Set variable value",
+      "description": "Write a value to a variable.",
+      "fields": {
+        "entry_id": {
+          "name": "Central",
+          "description": "Name(s) of homematic central to set value."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Name of the variable to set."
+        },
+        "value": {
+          "name": "Value",
+          "description": "New value"
+        }
+      }
+    },
+    "set_device_value": {
+      "name": "Set device value",
+      "description": "Set a device parameter via the XML-RPC interface.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        },
+        "device_address": {
+          "name": "Device address",
+          "description": "Enter a device address."
+        },
+        "channel": {
+          "name": "Channel",
+          "description": "Channel for calling a parameter."
+        },
+        "parameter": {
+          "name": "Parameter",
+          "description": "Parameter to send i.e STATE."
+        },
+        "value": {
+          "name": "Value",
+          "description": "New value."
+        },
+        "value_type": {
+          "name": "Value type",
+          "description": "Type for new value."
+        },
+        "rx_mode": {
+          "name": "RX mode",
+          "description": "The receive mode used."
+        }
+      }
+    },
+    "set_install_mode": {
+      "name": "Set install mode",
+      "description": "Set a RPC XML interface into installation mode.",
+      "fields": {
+        "interface_id": {
+          "name": "Interface",
+          "description": "Select the given interface into install mode."
+        },
+        "mode": {
+          "name": "Mode",
+          "description": "1= Normal mode / 2= Remove exists old links."
+        },
+        "time": {
+          "name": "Time",
+          "description": "Time to run in install mode."
+        },
+        "address": {
+          "name": "Address",
+          "description": "Address of homematic device or BidCoS-RF to learn."
+        }
+      }
+    },
+    "put_paramset": {
+      "name": "Put paramset",
+      "description": "Call to putParamset on the RPC XML interface.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "Select a device."
+        },
+        "device_address": {
+          "name": "Device address",
+          "description": "Enter a device address."
+        },
+        "channel": {
+          "name": "Channel",
+          "description": "Channel for calling a paramset."
+        },
+        "paramset_key": {
+          "name": "Paramset key",
+          "description": "The paramset_key argument to putParamset."
+        },
+        "paramset": {
+          "name": "Paramset",
+          "description": "A paramset dictionary."
+        },
+        "rx_mode": {
+          "name": "RX mode",
+          "description": "The receive mode used."
+        }
+      }
+    },
+    "enable_away_mode_by_calendar": {
+      "name": "Enable climate away mode by calendar",
+      "description": "Enable climate away mode by calendar.",
+      "fields": {
+        "start": {
+          "name": "Start time",
+          "description": "The time when the away mode should automatically be enabled."
+        },
+
+        "end": {
+          "name": "End time",
+          "description": "The time when the away mode should automatically be disabled."
+        },
+        "away_temperature": {
+          "name": "Set point temperature",
+          "description": "The temperature for the away mode."
+        }
+      }
+    },
+    "enable_away_mode_by_duration": {
+      "name": "Enable climate away mode by duration",
+      "description": "Enable climate away mode by duration.",
+      "fields": {
+        "hours": {
+          "name": "Hours",
+          "description": "The number of hours after the away mode should automatically be disabled."
+        },
+        "away_temperature": {
+          "name": "Set point temperature",
+          "description": "The temperature for the away mode."
+        }
+      }
+    },
+    "disable_away_mode": {
+      "name": "Disable climate away mode",
+      "description": "Disable climate away mode."
+    },
+    "turn_on_siren": {
+      "name": "Turn on siren",
+      "description": "Turn siren on.",
+      "fields": {
+        "tone": {
+          "name": "Tone",
+          "description": "The tone to emit when turning the siren on."
+        },
+        "light": {
+          "name": "Light",
+          "description": "The light to emit when turning the siren on."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "The duration in seconds of the noise to emit when turning the siren on."
+        }
+      }
+    },
+    "light_set_on_time": {
+      "name": "Set light on time",
+      "description": "Set on time for a light entity. Must be followed by a light.turn_on.",
+      "fields": {
+        "on_time": {
+          "name": "On Time",
+          "description": "On time for a light in seconds. Use 0 to reset the on time."
+        }
+      }
+    },
+    "switch_set_on_time": {
+      "name": "Set switch on time",
+      "description": "Set on time for a switch entity. Must be followed by a switch.turn_on.",
+      "fields": {
+        "on_time": {
+          "name": "On Time",
+          "description": "On time for a switch in seconds. Use 0 to reset the on time."
+        }
+      }
+    },
+    "set_cover_combined_position": {
+      "name": "Set cover combined position",
+      "description": "Move a blind to a specific position and tilt position.",
+      "fields": {
+        "position": {
+          "name": "Position",
+          "description": "Position of the cover."
+        },
+        "tilt_position": {
+          "name": "Tilt position",
+          "description": "Tilt position of the cover."
+        }
+      }
+    },
+    "update_device_firmware_data": {
+      "name": "Update device firmware data",
+      "description": "Update device firmware data for all homematic data.",
+      "fields": {
+        "entry_id": {
+          "name": "Central",
+          "description": "Name(s) of homematic central to update the device firmware data for."
+        }
+      }
+    }
   }
 }
