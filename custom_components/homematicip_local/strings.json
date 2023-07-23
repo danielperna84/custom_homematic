@@ -197,7 +197,7 @@
       }
     },
     "event": {
-      "homematic.keypress": {
+      "homematic_keypress": {
         "state_attributes": {
           "event_type": {
             "state": {

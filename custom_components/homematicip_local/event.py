@@ -84,7 +84,9 @@ class HaHomematicEvent(EventEntity):
         ]
         self._hm_primary_entity: GenericEvent = hm_channel_events[0]
         self._hm_channel_events = hm_channel_events
-        self._attr_translation_key = self._hm_primary_entity.event_type.value
+        self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(
+            ".", "_"
+        )
 
         self._attr_unique_id = (
             f"{DOMAIN}_{self._hm_primary_entity.channel_unique_identifier}"
