@@ -6,6 +6,7 @@
   - Ignore click events on plugs
 - Use identifier from device
 - Add event entities
+- Remove unmaintained NL translation
 
 # Version 1.39.2 (2023-07-13)
 
