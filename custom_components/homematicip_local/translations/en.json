@@ -196,6 +196,24 @@
         }
       }
     },
+    "event": {
+      "homematic_keypress": {
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "press": "Pressed",
+              "press_cont": "Continuously pressed",
+              "press_lock": "Lock pressed",
+              "press_long": "Long pressed",
+              "press_long_release": "Long press released",
+              "press_long_start": "Long press started",
+              "press_short": "Short pressed",
+              "press_unlock": "Unlock pressed"
+            }
+          }
+        }
+      }
+    },
     "number": {
       "frequency": {
         "name": "Frequency"
