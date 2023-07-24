@@ -4,6 +4,8 @@
   - Add identifier to device
   - Rename ENTITY_NO_CREATE to NO_CREATE
   - Ignore click events on plugs
+- Bump hahomematic to 2023.7.5
+  - Add SystemInformation to client api
 - Use identifier from device
 - Add event entities
 - Remove unmaintained NL translation
