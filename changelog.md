@@ -11,6 +11,7 @@
 - Add event entities
 - Remove unmaintained NL translation
 - Add service translations
+- Remove click_events from logbook
 
 # Version 1.39.2 (2023-07-13)
 
