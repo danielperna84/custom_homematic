@@ -1,6 +1,7 @@
 """Diagnostics support for Homematic(IP) Local."""
 from __future__ import annotations
 
+from dataclasses import asdict
 from typing import Any
 
 from hahomematic.const import ATTR_PASSWORD, ATTR_USERNAME
@@ -28,5 +29,8 @@ async def async_get_config_entry_diagnostics(
 
     diag["platform_stats"] = platform_stats
     diag["devices"] = device_types
+    diag["system_information"] = async_redact_data(
+        asdict(control_unit.central.system_information), "serial"
+    )
 
     return diag
