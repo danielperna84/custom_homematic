@@ -7,11 +7,14 @@
 - Bump hahomematic to 2023.7.5
   - Add SystemInformation to client api
   - Send credentials on XmlRPC api only when authentication is enabled in CCU
+- Remove support for python 3.10
+- Add available_interfaces to SystemInformation
 - Use identifier from device
 - Add event entities
 - Remove unmaintained NL translation
 - Add service translations
 - Remove click_events from logbook
+- Add SystemInformation to diagnostics
 
 # Version 1.39.2 (2023-07-13)
 
