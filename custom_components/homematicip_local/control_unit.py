@@ -51,7 +51,7 @@ from hahomematic.platforms.event import GenericEvent
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
-from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA
+from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
 
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
@@ -989,10 +989,13 @@ def async_signal_new_hm_entity(entry_id: str, platform: HmPlatform) -> str:
     return f"{DOMAIN}-new-entity-{entry_id}-{platform.value}"
 
 
-async def validate_config_and_get_serial(control_config: ControlConfig) -> str | None:
+async def validate_config_and_get_system_information(
+    control_config: ControlConfig,
+) -> SystemInformation | None:
     """Validate the control configuration."""
-    control_unit = await control_config.async_get_control_unit_temp()
-    return await control_unit.central.validate_config_and_get_serial()
+    if control_unit := await control_config.async_get_control_unit_temp():
+        return await control_unit.central.validate_config_and_get_system_information()
+    return None
 
 
 def get_storage_folder(hass: HomeAssistant) -> str:

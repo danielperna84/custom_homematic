@@ -33,7 +33,7 @@ from hahomematic.const import (
     IF_VIRTUAL_DEVICES_TLS_PORT,
 )
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
-from hahomematic.support import check_password
+from hahomematic.support import SystemInformation, check_password
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
@@ -57,7 +57,11 @@ from .const import (
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
-from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_serial
+from .control_unit import (
+    ControlConfig,
+    ControlUnit,
+    validate_config_and_get_system_information,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -166,14 +170,16 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     )
 
 
-async def _async_validate_config_and_get_serial(
+async def _async_validate_config_and_get_system_information(
     hass: HomeAssistant, data: ConfigType
-) -> str | None:
+) -> SystemInformation | None:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     if not check_password(control_config.data.get(ATTR_PASSWORD)):
         raise InvalidPassword()
-    return await validate_config_and_get_serial(control_config=control_config)
+    return await validate_config_and_get_system_information(
+        control_config=control_config
+    )
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -219,8 +225,13 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
-            await self.async_set_unique_id(serial)
+            system_information = (
+                await _async_validate_config_and_get_system_information(
+                    self.hass, self.data
+                )
+            )
+            if system_information is not None:
+                await self.async_set_unique_id(system_information.serial)
             self._abort_if_unique_id_configured()
         except (NoClients, NoConnection):
             errors["base"] = "cannot_connect"
@@ -311,7 +322,11 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
 
         try:
-            serial = await _async_validate_config_and_get_serial(self.hass, self.data)
+            system_information = (
+                await _async_validate_config_and_get_system_information(
+                    self.hass, self.data
+                )
+            )
         except (NoClients, NoConnection):
             errors["base"] = "cannot_connect"
         except AuthFailure:
@@ -322,9 +337,12 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
-            self.hass.config_entries.async_update_entry(
-                entry=self.config_entry, unique_id=serial, data=self.data
-            )
+            if system_information is not None:
+                self.hass.config_entries.async_update_entry(
+                    entry=self.config_entry,
+                    unique_id=system_information.serial,
+                    data=self.data,
+                )
             return self.async_create_entry(title="", data={})
 
         return self.async_show_form(
