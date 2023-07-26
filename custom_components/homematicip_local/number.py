@@ -25,11 +25,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
+    entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local number platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
     def async_add_number(args: Any) -> None:
@@ -63,21 +63,21 @@ async def async_setup_entry(
         if entities:
             async_add_entities(entities)
 
-    config_entry.async_on_unload(
+    entry.async_on_unload(
         async_dispatcher_connect(
             hass,
             async_signal_new_hm_entity(
-                entry_id=config_entry.entry_id, platform=HmPlatform.NUMBER
+                entry_id=entry.entry_id, platform=HmPlatform.NUMBER
             ),
             async_add_number,
         )
     )
 
-    config_entry.async_on_unload(
+    entry.async_on_unload(
         async_dispatcher_connect(
             hass,
             async_signal_new_hm_entity(
-                entry_id=config_entry.entry_id, platform=HmPlatform.HUB_NUMBER
+                entry_id=entry.entry_id, platform=HmPlatform.HUB_NUMBER
             ),
             async_add_hub_number,
         )

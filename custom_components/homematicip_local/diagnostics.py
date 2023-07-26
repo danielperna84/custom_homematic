@@ -17,13 +17,11 @@ REDACT_CONFIG = {ATTR_USERNAME, ATTR_PASSWORD}
 
 
 async def async_get_config_entry_diagnostics(
-    hass: HomeAssistant, config_entry: ConfigEntry
+    hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
-    diag: dict[str, Any] = {
-        "config": async_redact_data(config_entry.as_dict(), REDACT_CONFIG)
-    }
+    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    diag: dict[str, Any] = {"config": async_redact_data(entry.as_dict(), REDACT_CONFIG)}
 
     platform_stats, device_types = control_unit.async_get_entity_stats()
 

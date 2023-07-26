@@ -100,7 +100,9 @@ def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
     hm_platforms = [
-        entry.value for entry in AVAILABLE_HM_PLATFORMS if entry not in BLOCK_PLATFORMS
+        platform.value
+        for platform in AVAILABLE_HM_PLATFORMS
+        if platform not in BLOCK_PLATFORMS
     ]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:

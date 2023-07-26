@@ -279,10 +279,10 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Homematic(IP) Local options."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
+    def __init__(self, entry: ConfigEntry) -> None:
         """Initialize Homematic(IP) Local options flow."""
-        self.config_entry = config_entry
-        self.data: ConfigType = dict(self.config_entry.data.items())
+        self.entry = entry
+        self.data: ConfigType = dict(self.entry.data.items())
 
     async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
         """Manage the Homematic(IP) Local options."""
@@ -339,7 +339,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         else:
             if system_information is not None:
                 self.hass.config_entries.async_update_entry(
-                    entry=self.config_entry,
+                    entry=self.entry,
                     unique_id=system_information.serial,
                     data=self.data,
                 )
@@ -354,7 +354,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
     @property
     def _control_unit(self) -> ControlUnit:
         control_unit: ControlUnit = self.hass.data[DOMAIN][CONTROL_UNITS][
-            self.config_entry.entry_id
+            self.entry.entry_id
         ]
         return control_unit
 

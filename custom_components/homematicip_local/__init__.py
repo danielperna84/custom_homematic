@@ -1,4 +1,4 @@
-"""HaHomematic is a Python 3 module for Home Assistant and Homemaatic(IP) devices."""
+"""HaHomematic is a Python 3 module for Home Assistant and Homematic(IP) devices."""
 from __future__ import annotations
 
 import logging
@@ -25,7 +25,7 @@ HA_VERSION = AwesomeVersion(HA_VERSION_STR)
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Homematic(IP) Local from a config entry."""
     min_version = AwesomeVersion(HMIP_LOCAL_MIN_VERSION)
     if min_version > HA_VERSION:
@@ -46,59 +46,57 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     control = await ControlConfig(
         hass=hass,
-        entry_id=config_entry.entry_id,
-        data=config_entry.data,
+        entry_id=entry.entry_id,
+        data=entry.data,
         default_port=default_callback_port,
     ).async_get_control_unit()
-    hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id] = control
-    await hass.config_entries.async_forward_entry_setups(
-        config_entry, HMIP_LOCAL_PLATFORMS
-    )
+    hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id] = control
+    await hass.config_entries.async_forward_entry_setups(entry, HMIP_LOCAL_PLATFORMS)
     await control.async_start_central()
     await async_setup_services(hass)
 
     # Register on HA stop event to gracefully shutdown Homematic(IP) Local connection
     hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.stop_central)
-    config_entry.async_on_unload(config_entry.add_update_listener(update_listener))
+    entry.async_on_unload(entry.add_update_listener(update_listener))
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    control = hass.data[DOMAIN][CONTROL_UNITS][config_entry.entry_id]
+    control = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
     await async_unload_services(hass)
     await control.async_stop_central()
     if unload_ok := await hass.config_entries.async_unload_platforms(
-        config_entry, HMIP_LOCAL_PLATFORMS
+        entry, HMIP_LOCAL_PLATFORMS
     ):
-        hass.data[DOMAIN][CONTROL_UNITS].pop(config_entry.entry_id)
+        hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id)
 
     return unload_ok
 
 
-async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle removal of an entry."""
     storage_folder = get_storage_folder(hass=hass)
     cleanup_cache_dirs(
-        instance_name=config_entry.data["instance_name"], storage_folder=storage_folder
+        instance_name=entry.data["instance_name"], storage_folder=storage_folder
     )
 
 
-async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
-    await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Migrate old entry."""
-    _LOGGER.debug("Migrating from version %s", config_entry.version)
+    _LOGGER.debug("Migrating from version %s", entry.version)
 
-    if config_entry.version == 1:
-        data = dict(config_entry.data)
+    if entry.version == 1:
+        data = dict(entry.data)
         data.update({ATTR_ENABLE_SYSTEM_NOTIFICATIONS: True})
 
-        config_entry.version = 2
-        hass.config_entries.async_update_entry(config_entry, data=data)
+        entry.version = 2
+        hass.config_entries.async_update_entry(entry, data=data)
 
-    _LOGGER.info("Migration to version %s successful", config_entry.version)
+    _LOGGER.info("Migration to version %s successful", entry.version)
     return True
