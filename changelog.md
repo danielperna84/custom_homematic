@@ -1,4 +1,4 @@
-# Version 1.40.0 (2023-07-22)
+# Version 1.40.0 (2023-08-01)
 
 - Bump hahomematic to 2023.7.4
   - Add identifier to device
@@ -9,6 +9,7 @@
   - Send credentials on XmlRPC api only when authentication is enabled in CCU
 - Bump hahomematic to 2023.8.0
   - Refactor Json error handling / logging
+  - Use ping pong only for CCU
 - Remove support for python 3.10
 - Add available_interfaces to SystemInformation
 - Use identifier from device
