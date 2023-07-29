@@ -418,16 +418,18 @@ The `ERROR*` parameters are evaluated for this event type in the backend.
 
 ### What is the meaning of this persistent notification `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
 
-This integration does not fetch new updates from the CCU, it **receives** state changes and new values for devices from the CCU by the XmlRPC server.
+This integration does not fetch new updates from the backend, it **receives** state changes and new values for devices from the backend by the XmlRPC server.
 
-Therefore the integration checks if this mechanism works:
+Therefore the integration additionally checks for the CCU, if this mechanism works:
 
 Regardless of regular device updates, HA checks the availability of the CCU with a `PING` every **15 seconds**, and expects a `PONG` event as a response on the XMLRPC server.
 This persistent notification is only displayed in HA if the received PONG events and the device updates are missing for **10 minutes**, but it also disappears again as soon as events are received again.
 
-So the message means there is a problem in the communication from the CCU to HA that was **identified** by the integration but not **caused**.
+So the message means there is a problem in the communication from the backend to HA that was **identified** by the integration but not **caused**.
 
 ### What is the meaning of this persistent notification `HOMEMATICIP_LOCAL-Ping/Pong Mismatch on Interface`?
+
+Only relevant for CCU.
 
 As mentioned above, we send a PING event every 15s to check the connection and expect a corresponding PONG event from the backend.
 
