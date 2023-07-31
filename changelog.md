@@ -10,6 +10,9 @@
 - Bump hahomematic to 2023.7.6
   - Refactor Json error handling / logging
   - Use ping pong only for CCU
+- Bump hahomematic to 2023.8.0
+  - Remove only the starting device name from entity name
+  - Remove title from program and sysvar names
 - Remove support for python 3.10
 - Add available_interfaces to SystemInformation
 - Use identifier from device
