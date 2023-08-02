@@ -1,3 +1,7 @@
+# Version 1.40.1 (2023-08-02)
+
+- Fix DE service name translation
+
 # Version 1.40.0 (2023-07-29)
 
 - Bump hahomematic to 2023.7.4
