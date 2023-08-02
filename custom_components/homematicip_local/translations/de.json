@@ -626,7 +626,7 @@
       }
     },
     "get_paramset": {
-      "name": "Get paramset",
+      "name": "Parametersatz lesen",
       "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
       "fields": {
         "device_id": {
