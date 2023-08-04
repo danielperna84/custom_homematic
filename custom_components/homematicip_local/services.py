@@ -569,9 +569,7 @@ def _get_interface_address(
     ) is None:
         return None
 
-    device_address = data[0]
-    interface_id = data[1]
-
+    device_address, interface_id = data
     address = f"{device_address}:{channel}" if channel is not None else device_address
     return interface_id, address
 

@@ -45,9 +45,7 @@ async def async_get_actions(
     ) is None:
         return []
 
-    device_address = data[0]
-    interface_id = data[1]
-
+    device_address, interface_id = data
     actions = []
     for entry_id in device.config_entries:
         if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
@@ -94,9 +92,7 @@ async def async_call_action_from_config(
     ) is None:
         return None
 
-    device_address = data[0]
-    interface_id = data[1]
-
+    device_address, interface_id = data
     for entry_id in device.config_entries:
         if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
             continue
