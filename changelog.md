@@ -1,6 +1,9 @@
 # Version 1.40.1 (2023-08-02)
 
+- Bump hahomematic to 2023.8.1
+  - Prepare backend for HA issue usage
 - Fix DE service name translation
+- Use issues instead of persistent notifications for interface events
 
 # Version 1.40.0 (2023-07-29)
 

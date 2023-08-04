@@ -504,6 +504,20 @@
       }
     }
   },
+  "issues": {
+    "xmlrpc_server_receives_no_events": {
+      "title": "{domain}-XmlRPC-Server received no events.",
+      "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s"
+    },
+    "ping_pong_mismatch": {
+      "title": "{domain}-Ping/Pong Mismatch on Interface",
+      "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons 1: You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise one HA instance will not receive update events from your CCU.\n\nPossible reason 2: Something is stuck on CCU, so try a restart."
+    },
+    "interface_not_reachable": {
+      "title": "{domain}-Interface {interface_id} not reachable",
+      "description": "No connection to interface {interface_id}"
+    }
+  },
   "options": {
     "abort": {},
     "error": {
