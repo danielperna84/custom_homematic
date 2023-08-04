@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
 import logging
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeAlias, TypeVar, cast
 
 from hahomematic.const import (
     ATTR_CHANNEL_NO,
@@ -110,23 +110,13 @@ def is_valid_event(event_data: dict[str, Any], schema: vol.Schema) -> bool:
     return False
 
 
-def get_device_address_from_identifiers(
-    identifiers: set[tuple[str, str]]
-) -> str | None:
-    """Get the device_address from device_info.identifiers."""
-    for identifier in identifiers:
-        if IDENTIFIER_SEPARATOR in identifier[1]:
-            return identifier[1].split(IDENTIFIER_SEPARATOR)[0]
-    return None
-
-
 def get_device_address_at_interface_from_identifiers(
     identifiers: set[tuple[str, str]]
-) -> list[str] | None:
+) -> tuple[str, str] | None:
     """Get the device_address from device_info.identifiers."""
     for identifier in identifiers:
         if IDENTIFIER_SEPARATOR in identifier[1]:
-            return identifier[1].split(IDENTIFIER_SEPARATOR)
+            return cast(tuple[str, str], identifier[1].split(IDENTIFIER_SEPARATOR))
     return None
 
 

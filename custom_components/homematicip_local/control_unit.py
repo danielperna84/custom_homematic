@@ -11,16 +11,18 @@ from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
     ATTR_ADDRESS,
+    ATTR_AVAILABLE,
     ATTR_CALLBACK_HOST,
     ATTR_CALLBACK_PORT,
+    ATTR_DATA,
     ATTR_HOST,
     ATTR_INTERFACE,
     ATTR_INTERFACE_ID,
     ATTR_JSON_PORT,
-    ATTR_MESSAGE,
     ATTR_PARAMETER,
     ATTR_PASSWORD,
     ATTR_PORT,
+    ATTR_SECONDS_SINCE_LAST_EVENT,
     ATTR_TLS,
     ATTR_TYPE,
     ATTR_USERNAME,
@@ -61,6 +63,11 @@ from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.issue_registry import (
+    IssueSeverity,
+    async_create_issue,
+    async_delete_issue,
+)
 
 from .const import (
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -83,6 +90,8 @@ from .const import (
     EVENT_DATA_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
+    LEARN_MORE_URL_PING_PONG_MISMATCH,
+    LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
     MASTER_SCAN_INTERVAL,
 )
 from .helpers import (
@@ -600,39 +609,67 @@ class ControlUnit(BaseControlUnit):
         interface_id = event_data[ATTR_INTERFACE_ID]
         if hm_event_type == HmEventType.INTERFACE:
             interface_event_type = event_data[ATTR_TYPE]
-            identifier = f"{interface_event_type}-{interface_id}"
+            issue_id = f"{interface_event_type}-{interface_id}"
             event_data = cast(dict[str, Any], HM_INTERFACE_EVENT_SCHEMA(event_data))
+            data = event_data[ATTR_DATA]
             if interface_event_type == HmInterfaceEventType.CALLBACK:
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for CALLBACK")
                     return
-                title = f"{DOMAIN.upper()}-XmlRPC-Server received no events."
-                if event_data[ATTR_VALUE]:
-                    self._async_dismiss_persistent_notification(identifier=identifier)
+                if data[ATTR_AVAILABLE]:
+                    async_delete_issue(
+                        hass=self._hass, domain=DOMAIN, issue_id=issue_id
+                    )
                 else:
-                    self._async_create_persistent_notification(
-                        identifier=identifier,
-                        title=title,
-                        message=event_data[ATTR_MESSAGE],
+                    async_create_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                        is_fixable=False,
+                        learn_more_url=LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
+                        severity=IssueSeverity.WARNING,
+                        translation_key="xmlrpc_server_receives_no_events",
+                        translation_placeholders={
+                            ATTR_INTERFACE_ID: interface_id,
+                            ATTR_SECONDS_SINCE_LAST_EVENT: data[
+                                ATTR_SECONDS_SINCE_LAST_EVENT
+                            ],
+                        },
                     )
             elif interface_event_type == HmInterfaceEventType.PINGPONG:
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for PINGPONG")
                     return
-                self._async_create_persistent_notification(
-                    identifier=identifier,
-                    title=f"{DOMAIN.upper()}-Ping/Pong Mismatch on Interface",
-                    message=event_data[ATTR_MESSAGE],
+                async_create_issue(
+                    hass=self._hass,
+                    domain=DOMAIN,
+                    issue_id=issue_id,
+                    is_fixable=False,
+                    learn_more_url=LEARN_MORE_URL_PING_PONG_MISMATCH,
+                    severity=IssueSeverity.WARNING,
+                    translation_key="ping_pong_mismatch",
+                    translation_placeholders={
+                        ATTR_INSTANCE_NAME: self._instance_name,
+                    },
                 )
             elif interface_event_type == HmInterfaceEventType.PROXY:
-                if event_data[ATTR_VALUE]:
-                    self._async_dismiss_persistent_notification(identifier=identifier)
-                else:
-                    self._async_create_persistent_notification(
-                        identifier=identifier,
-                        title=f"{DOMAIN.upper()}-Interface not reachable",
-                        message=event_data[ATTR_MESSAGE],
+                if data[ATTR_AVAILABLE]:
+                    async_delete_issue(
+                        hass=self._hass, domain=DOMAIN, issue_id=issue_id
                     )
+                else:
+                    async_create_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                        is_fixable=False,
+                        severity=IssueSeverity.WARNING,
+                        translation_key="interface_not_reachable",
+                        translation_placeholders={
+                            ATTR_INTERFACE_ID: interface_id,
+                        },
+                    )
+
         else:
             device_address = event_data[ATTR_ADDRESS]
             name: str | None = None
@@ -648,7 +685,7 @@ class ControlUnit(BaseControlUnit):
                     )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[ATTR_PARAMETER]
-                unavailable = event_data[ATTR_VALUE]
+                unavailable = data[ATTR_VALUE]
                 if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
@@ -705,20 +742,6 @@ class ControlUnit(BaseControlUnit):
                         event_type=hm_event_type.value,
                         event_data=event_data,
                     )
-
-    @callback
-    def _async_create_persistent_notification(
-        self, identifier: str, title: str, message: str
-    ) -> None:
-        """Create a message for user to UI."""
-        self._hass.components.persistent_notification.async_create(
-            message, title, identifier
-        )
-
-    @callback
-    def _async_dismiss_persistent_notification(self, identifier: str) -> None:
-        """Dismiss a message for user on UI."""
-        self._hass.components.persistent_notification.async_dismiss(identifier)
 
     @callback
     def _async_get_device(self, device_address: str) -> DeviceEntry | None:
@@ -1026,9 +1049,7 @@ def get_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     ) is None:
         return None
 
-    device_address = data[0]
-    interface_id = data[1]
-
+    device_address, interface_id = data
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         return control_unit.central.get_device(device_address=device_address)
     return None
