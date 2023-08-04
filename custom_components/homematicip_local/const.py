@@ -11,8 +11,8 @@ from homeassistant.const import Platform
 DOMAIN: Final = "homematicip_local"
 HMIP_LOCAL_MIN_VERSION: Final = "2023.8.0.dev0"
 
-LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-homematicip_local-xmlrpc-server-received-no-events"
-LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-homematicip_local-pingpong-mismatch-on-interface"
+LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-xmlrpc-server-received-no-events"
+LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 
 ATTR_ENABLE_SYSTEM_NOTIFICATIONS: Final = "enable_system_notifications"
 ATTR_INSTANCE_NAME: Final = "instance_name"
@@ -26,7 +26,6 @@ ATTR_VALUE_STATE: Final = "value_state"
 ATTR_VALUE_TYPE: Final = "value_type"
 
 ATTR_ADDRESS: Final = "address"
-ATTR_DOMAIN: Final = "domain"
 ATTR_ENTITY_TYPE: Final = "entity_type"
 ATTR_FUNCTION: Final = "function"
 ATTR_INTERFACE_ID: Final = "interface_id"

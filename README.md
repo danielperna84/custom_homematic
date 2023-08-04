@@ -416,7 +416,7 @@ The `ERROR*` parameters are evaluated for this event type in the backend.
 
 ## Additional information
 
-### What is the meaning of `HOMEMATICIP_LOCAL-XmlRPC-Server received no events`?
+### What is the meaning of `XmlRPC-Server received no events`?
 
 This integration does not fetch new updates from the backend, it **receives** state changes and new values for devices from the backend by the XmlRPC server.
 
@@ -427,7 +427,7 @@ This persistent notification is only displayed in HA if the received PONG events
 
 So the message means there is a problem in the communication from the backend to HA that was **identified** by the integration but not **caused**.
 
-### What is the meaning of `HOMEMATICIP_LOCAL-Ping/Pong Mismatch on Interface`?
+### What is the meaning of `Ping/Pong Mismatch on Interface`?
 
 Only relevant for CCU.
 

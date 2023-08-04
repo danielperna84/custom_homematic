@@ -70,7 +70,6 @@ from homeassistant.helpers.issue_registry import (
 )
 
 from .const import (
-    ATTR_DOMAIN,
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_INSTANCE_NAME,
     ATTR_NAME,
@@ -631,7 +630,6 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="xmlrpc_server_receives_no_events",
                         translation_placeholders={
-                            ATTR_DOMAIN: DOMAIN.upper(),
                             ATTR_INTERFACE_ID: interface_id,
                             ATTR_SECONDS_SINCE_LAST_EVENT: data[
                                 ATTR_SECONDS_SINCE_LAST_EVENT
@@ -651,7 +649,6 @@ class ControlUnit(BaseControlUnit):
                     severity=IssueSeverity.WARNING,
                     translation_key="ping_pong_mismatch",
                     translation_placeholders={
-                        ATTR_DOMAIN: DOMAIN.upper(),
                         ATTR_INSTANCE_NAME: self._instance_name,
                     },
                 )
@@ -669,7 +666,6 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="interface_not_reachable",
                         translation_placeholders={
-                            ATTR_DOMAIN: DOMAIN.upper(),
                             ATTR_INTERFACE_ID: interface_id,
                         },
                     )
