@@ -510,7 +510,7 @@
   "issues": {
     "xmlrpc_server_receives_no_events": {
       "title": "XmlRPC-Server empfängt keine Ereignisse.",
-      "description": "Callback für {interface_id} hat keine Ereignisse in den letzten {seconds_since_last_event}s empfangen."
+      "description": "Callback für {interface_id} hat keine Ereignisse in den letzten {seconds_since_last_event}s empfangen.\n\nDiese Integration versucht eine automatische Wiederverbindung."
     },
     "ping_pong_mismatch": {
       "title": "Ping/Pong Übereinstimmungsfehler",
@@ -518,7 +518,7 @@
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} nicht erreichbar.",
-      "description": "Keine Verbindung zu Schnittstelle {interface_id}"
+      "description": "Keine Verbindung zu Schnittstelle {interface_id}.\n\nDiese Integration versucht eine automatische Wiederverbindung."
     }
   },
   "options": {

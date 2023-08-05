@@ -507,7 +507,7 @@
   "issues": {
     "xmlrpc_server_receives_no_events": {
       "title": "XmlRPC-Server received no events.",
-      "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s"
+      "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect."
     },
     "ping_pong_mismatch": {
       "title": "Ping/Pong Mismatch on Interface",
@@ -515,7 +515,7 @@
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} not reachable",
-      "description": "No connection to interface {interface_id}"
+      "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect."
     }
   },
   "options": {
