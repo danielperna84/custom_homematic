@@ -103,7 +103,7 @@ async def async_check_form(
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
         return_value=True,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
@@ -157,7 +157,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
         side_effect=AuthFailure,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
@@ -203,7 +203,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     assert result["errors"] is None
 
     with patch(
-        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_serial",
+        "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
         side_effect=NoConnection,
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
