@@ -685,7 +685,7 @@ class ControlUnit(BaseControlUnit):
                     )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[ATTR_PARAMETER]
-                unavailable = data[ATTR_VALUE]
+                unavailable = event_data[ATTR_VALUE]
                 if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
