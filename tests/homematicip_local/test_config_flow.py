@@ -3,6 +3,7 @@ from typing import Any
 from unittest.mock import patch
 
 from hahomematic.exceptions import AuthFailure, NoConnection
+from hahomematic.support import SystemInformation
 
 from homeassistant import config_entries
 from homeassistant.components.homematicip_local.config_flow import (
@@ -104,7 +105,12 @@ async def async_check_form(
 
     with patch(
         "homeassistant.components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        return_value=True,
+        return_value=SystemInformation(
+            available_interfaces=[],
+            auth_enabled=False,
+            https_redirect_enabled=False,
+            serial="123",
+        ),
     ), patch(
         "homeassistant.components.homematicip_local.async_setup_entry",
         return_value=True,
