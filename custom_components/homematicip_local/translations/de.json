@@ -518,7 +518,7 @@
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} nicht erreichbar.",
-      "description": "Keine Verbindung zu Schnittstelle {interface_id}.\n\nDiese Integration versucht eine automatische Wiederverbindung."
+      "description": "Keine Verbindung zu Schnittstelle {interface_id}.\n\nDiese Integration versucht eine automatische Wiederverbindung.\n\nWeitere Informationen finden Sie in den Protokolldateien von Home Assistant."
     }
   },
   "options": {

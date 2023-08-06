@@ -515,7 +515,7 @@
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} not reachable",
-      "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect."
+      "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect.\n\nCheck the Home Assistant log files for more details."
     }
   },
   "options": {
