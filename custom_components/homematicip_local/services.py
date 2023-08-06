@@ -412,7 +412,7 @@ async def _async_service_get_device_value(
             ) is not None:
                 return {"result": value}
         except ClientException as cex:
-            raise HomeAssistantError from cex
+            raise HomeAssistantError(cex) from cex
     return None
 
 
@@ -437,7 +437,7 @@ async def _async_service_get_paramset(
                 )
             )
         except ClientException as cex:
-            raise HomeAssistantError from cex
+            raise HomeAssistantError(cex) from cex
 
     return None
 
