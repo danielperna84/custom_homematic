@@ -9,7 +9,6 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
-
 from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo, Entity

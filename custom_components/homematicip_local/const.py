@@ -5,7 +5,6 @@ from enum import StrEnum
 from typing import Final
 
 from hahomematic.const import AVAILABLE_HM_PLATFORMS
-
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"

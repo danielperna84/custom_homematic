@@ -5,7 +5,6 @@ import logging
 
 from awesomeversion import AwesomeVersion
 from hahomematic.support import cleanup_cache_dirs, find_free_port
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION_STR
 from homeassistant.core import HomeAssistant
@@ -63,15 +62,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    control = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
-    await async_unload_services(hass)
-    await control.async_stop_central()
-    if unload_ok := await hass.config_entries.async_unload_platforms(
-        entry, HMIP_LOCAL_PLATFORMS
-    ):
-        hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id)
+    if DOMAIN not in hass.data:
+        return False
 
-    return unload_ok
+    if control := hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id):
+        await async_unload_services(hass)
+        await control.async_stop_central()
+        return await hass.config_entries.async_unload_platforms(
+            entry, HMIP_LOCAL_PLATFORMS
+        )
+
+    return False
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

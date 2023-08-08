@@ -7,7 +7,6 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.text import HmText
 from hahomematic.platforms.hub.text import HmSysvarText
-
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN

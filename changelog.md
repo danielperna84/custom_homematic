@@ -1,3 +1,7 @@
+# Version 1.40.2 (2023-08-08)
+
+- Improve custom component testing
+
 # Version 1.40.1 (2023-08-06)
 
 - Bump hahomematic to 2023.8.1

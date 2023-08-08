@@ -54,7 +54,6 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
 from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
-
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError

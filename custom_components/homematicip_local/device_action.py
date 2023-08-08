@@ -6,13 +6,12 @@ from typing import Any
 from hahomematic.const import EVENT_PRESS_LONG, EVENT_PRESS_SHORT
 from hahomematic.platforms.generic.action import HmAction
 from hahomematic.platforms.generic.button import HmButton
-import voluptuous as vol
-
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_TYPE
 from homeassistant.core import Context, HomeAssistant
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType, TemplateVarsType
+import voluptuous as vol
 
 from . import DOMAIN
 from .const import CONF_SUBTYPE, CONTROL_UNITS

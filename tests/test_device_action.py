@@ -1,19 +1,20 @@
 """The tests for Homematic(IP) Local device actions."""
-import pytest
+from __future__ import annotations
 
 from homeassistant.components import automation
-from homeassistant.components.homematicip_local import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.setup import async_setup_component
-
-from tests.common import (
+import pytest
+from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_get_device_automations,
     async_mock_service,
     mock_device_registry,
     mock_registry,
 )
+
+from custom_components.homematicip_local import DOMAIN
 
 
 @pytest.fixture
