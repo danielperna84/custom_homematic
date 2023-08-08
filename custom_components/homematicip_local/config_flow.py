@@ -34,9 +34,6 @@ from hahomematic.const import (
 )
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 from hahomematic.support import SystemInformation, check_password
-import voluptuous as vol
-from voluptuous.schema_builder import UNDEFINED, Schema
-
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntry
@@ -46,6 +43,8 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
+import voluptuous as vol
+from voluptuous.schema_builder import UNDEFINED, Schema
 
 from .const import (
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,

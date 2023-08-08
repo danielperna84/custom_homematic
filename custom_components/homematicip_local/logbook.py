@@ -5,7 +5,6 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from hahomematic.const import ATTR_PARAMETER, HmEventType
-
 from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
 from homeassistant.core import Event, HomeAssistant, callback
 

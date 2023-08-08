@@ -1,6 +1,7 @@
 """Test the HaHomematic entity helper."""
+from __future__ import annotations
 
-from homeassistant.components.homematicip_local.entity_helpers import (
+from custom_components.homematicip_local.entity_helpers import (
     _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM,
     _ENTITY_DESCRIPTION_BY_PARAM,
 )

@@ -19,14 +19,13 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
-import voluptuous as vol
-
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
 from homeassistant.helpers.typing import StateType
+import voluptuous as vol
 
 from .const import (
     ATTR_NAME,

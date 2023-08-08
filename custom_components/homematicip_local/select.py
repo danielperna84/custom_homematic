@@ -7,7 +7,6 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.select import HmSelect
 from hahomematic.platforms.hub.select import HmSysvarSelect
-
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN

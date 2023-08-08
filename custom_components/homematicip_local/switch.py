@@ -8,8 +8,6 @@ from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.switch import CeSwitch
 from hahomematic.platforms.generic.switch import HmSwitch
 from hahomematic.platforms.hub.switch import HmSysvarSwitch
-import voluptuous as vol
-
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
@@ -17,6 +15,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, async_signal_new_hm_entity

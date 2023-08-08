@@ -1,19 +1,20 @@
 """The tests for Homematic(IP) Local device triggers."""
-import pytest
+from __future__ import annotations
 
 from homeassistant.components import automation
-from homeassistant.components.homematicip_local import DOMAIN
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.helpers import device_registry
 from homeassistant.setup import async_setup_component
-
-from tests.common import (
+import pytest
+from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_get_device_automations,
     async_mock_service,
     mock_device_registry,
     mock_registry,
 )
+
+from custom_components.homematicip_local import DOMAIN
 
 
 @pytest.fixture
@@ -104,9 +105,7 @@ async def test_if_fires_on_state_change(hass, calls):
     hass.states.async_set("homematicip_local.entity", STATE_ON)
     await hass.async_block_till_done()
     assert len(calls) == 1
-    assert calls[0].data[
-        "some"
-    ] == "turn_on - device - {} - off - on - None - 0".format(
+    assert calls[0].data["some"] == "turn_on - device - {} - off - on - None - 0".format(
         "homematicip_local.entity"
     )
 
@@ -114,8 +113,6 @@ async def test_if_fires_on_state_change(hass, calls):
     hass.states.async_set("homematicip_local.entity", STATE_OFF)
     await hass.async_block_till_done()
     assert len(calls) == 2
-    assert calls[1].data[
-        "some"
-    ] == "turn_off - device - {} - on - off - None - 0".format(
+    assert calls[1].data["some"] == "turn_off - device - {} - on - off - None - 0".format(
         "homematicip_local.entity"
     )

@@ -16,8 +16,6 @@ from hahomematic.const import (
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
-import voluptuous as vol
-
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
 from homeassistant.core import (
     HomeAssistant,
@@ -33,6 +31,7 @@ from homeassistant.helpers.service import (
     async_register_admin_service,
     verify_domain_control,
 )
+import voluptuous as vol
 
 from .const import (
     ATTR_PARAMSET,

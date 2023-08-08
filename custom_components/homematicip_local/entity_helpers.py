@@ -10,7 +10,6 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.support import element_matches_key
-
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.number import NumberDeviceClass

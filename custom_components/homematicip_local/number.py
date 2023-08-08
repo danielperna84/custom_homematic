@@ -7,7 +7,6 @@ from typing import Any
 from hahomematic.const import SYSVAR_HM_TYPE_FLOAT, SYSVAR_HM_TYPE_INTEGER, HmPlatform
 from hahomematic.platforms.generic.number import BaseNumber
 from hahomematic.platforms.hub.number import HmSysvarNumber
-
 from homeassistant.components.number import NumberEntity, NumberMode, RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory

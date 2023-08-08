@@ -6,7 +6,6 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.lock import LOCK_STATE_LOCKED, BaseLock
-
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
