@@ -9,6 +9,7 @@ from hahomematic.support import SystemInformation
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import RESULT_TYPE_CREATE_ENTRY, RESULT_TYPE_FORM
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
     enable_custom_integrations,
 )
@@ -120,7 +121,7 @@ async def async_check_form(
 
 async def async_check_options_form(
     hass: HomeAssistant,
-    config_entry: config_entries.ConfigEntry,
+    mock_config_entry: MockConfigEntry,
     central_data: dict[str, Any] | None = None,
     interface_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -130,8 +131,8 @@ async def async_check_options_form(
 
     if interface_data is None:
         interface_data = {}
-    await hass.config_entries.async_add(config_entry)
-    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
     assert result["type"] == RESULT_TYPE_FORM
     assert result["errors"] is None
 
@@ -172,7 +173,7 @@ async def async_check_options_form(
     assert result3["type"] == RESULT_TYPE_CREATE_ENTRY
     assert result3["handler"] == TEST_ENTRY_ID
     assert result3["title"] == ""
-    return config_entry.data
+    return mock_config_entry.data
 
 
 async def test_form(hass: HomeAssistant) -> None:
@@ -193,7 +194,7 @@ async def test_options_form(
 ) -> None:
     """Test we get the form."""
     data = await async_check_options_form(
-        hass, config_entry=hmip_mock_config_entry, interface_data={}
+        hass, mock_config_entry=hmip_mock_config_entry, interface_data={}
     )
     interface = data["interface"]
     if_hmip_rf = interface[IF_HMIP_RF_NAME]
@@ -224,7 +225,7 @@ async def test_options_form_no_hmip_other_bidcos_port(
     """Test we get the form."""
     interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
     data = await async_check_options_form(
-        hass, config_entry=hmip_mock_config_entry, interface_data=interface_data
+        hass, mock_config_entry=hmip_mock_config_entry, interface_data=interface_data
     )
     interface = data["interface"]
     assert interface.get(IF_HMIP_RF_NAME) is None
@@ -314,10 +315,10 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
 
 
 async def test_options_form_invalid_auth(
-    hass: HomeAssistant, hmip_mock_config_entry: config_entries.ConfigEntry
+    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we handle invalid auth."""
-    await hass.config_entries.async_add(hmip_mock_config_entry)
+    hmip_mock_config_entry.add_to_hass(hass)
     result = await hass.config_entries.options.async_init(hmip_mock_config_entry.entry_id)
     assert result["type"] == RESULT_TYPE_FORM
     assert result["errors"] is None
@@ -406,10 +407,10 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
 
 
 async def test_options_form_invalid_password(
-    hass: HomeAssistant, hmip_mock_config_entry: config_entries.ConfigEntry
+    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we handle invalid auth."""
-    await hass.config_entries.async_add(hmip_mock_config_entry)
+    hmip_mock_config_entry.add_to_hass(hass)
     result = await hass.config_entries.options.async_init(hmip_mock_config_entry.entry_id)
     assert result["type"] == RESULT_TYPE_FORM
     assert result["errors"] is None
