@@ -1,4 +1,4 @@
-"""Test the HaHomematic config flow."""
+"""Test the Homematic(IP) Local config flow."""
 from __future__ import annotations
 
 from collections.abc import Mapping
@@ -13,9 +13,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
-    enable_custom_integrations,
-)
 
 from custom_components.homematicip_local.config_flow import (
     ATTR_BIDCOS_RF_ENABLED,
@@ -198,12 +195,10 @@ async def test_form(hass: HomeAssistant) -> None:
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
-async def test_options_form(
-    hass: HomeAssistant, hmip_mock_config_entry: config_entries.ConfigEntry
-) -> None:
+async def test_options_form(hass: HomeAssistant, mock_config_entry: MockConfigEntry) -> None:
     """Test we get the form."""
     data = await async_check_options_form(
-        hass, mock_config_entry=hmip_mock_config_entry, interface_data={}
+        hass, mock_config_entry=mock_config_entry, interface_data={}
     )
     interface = data["interface"]
     if_hmip_rf = interface[IF_HMIP_RF_NAME]
@@ -223,24 +218,22 @@ async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     assert interface.get(IF_HMIP_RF_NAME) is None
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 5555
-
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
 
 async def test_options_form_no_hmip_other_bidcos_port(
-    hass: HomeAssistant, hmip_mock_config_entry: config_entries.ConfigEntry
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we get the form."""
     interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
     data = await async_check_options_form(
-        hass, mock_config_entry=hmip_mock_config_entry, interface_data=interface_data
+        hass, mock_config_entry=mock_config_entry, interface_data=interface_data
     )
     interface = data["interface"]
     assert interface.get(IF_HMIP_RF_NAME) is None
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 5555
-
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
@@ -258,7 +251,6 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
     assert interface.get(IF_HMIP_RF_NAME) is None
     assert interface.get(IF_BIDCOS_RF_NAME) is None
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-
     assert interface[IF_BIDCOS_WIRED_NAME][ATTR_PORT] == 2000
 
 
@@ -275,7 +267,22 @@ async def test_form_only_virtual(hass: HomeAssistant) -> None:
     assert interface.get(IF_HMIP_RF_NAME) is None
     assert interface.get(IF_BIDCOS_RF_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface[IF_VIRTUAL_DEVICES_NAME][ATTR_PORT] == 9292
 
+
+async def test_options_form_all_interfaces_enabled(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Test we get the form."""
+    mock_config_entry.data["interface"][IF_VIRTUAL_DEVICES_NAME] = {"port": 9292}
+    mock_config_entry.data["interface"][IF_BIDCOS_WIRED_NAME] = {"port": 2000}
+    mock_config_entry.add_to_hass(hass)
+
+    data = await async_check_options_form(hass, mock_config_entry)
+    interface = data["interface"]
+    assert interface[IF_BIDCOS_RF_NAME][ATTR_PORT] == 2001
+    assert interface[IF_HMIP_RF_NAME][ATTR_PORT] == 2010
+    assert interface[IF_BIDCOS_WIRED_NAME][ATTR_PORT] == 2000
     assert interface[IF_VIRTUAL_DEVICES_NAME][ATTR_PORT] == 9292
 
 
@@ -288,7 +295,6 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     assert if_hmip_rf[ATTR_PORT] == 42010
     if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
     assert if_bidcos_rf[ATTR_PORT] == 42001
-
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
     assert interface.get(IF_BIDCOS_WIRED_NAME) is None
 
@@ -340,11 +346,11 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
 
 
 async def test_options_form_invalid_auth(
-    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we handle invalid auth."""
-    hmip_mock_config_entry.add_to_hass(hass)
-    result = await hass.config_entries.options.async_init(hmip_mock_config_entry.entry_id)
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
@@ -432,11 +438,11 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
 
 
 async def test_options_form_invalid_password(
-    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we handle invalid auth."""
-    hmip_mock_config_entry.add_to_hass(hass)
-    result = await hass.config_entries.options.async_init(hmip_mock_config_entry.entry_id)
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
@@ -524,11 +530,11 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
 
 
 async def test_options_form_cannot_connect(
-    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
 ) -> None:
     """Test we handle cannot connect error."""
-    hmip_mock_config_entry.add_to_hass(hass)
-    result = await hass.config_entries.options.async_init(hmip_mock_config_entry.entry_id)
+    mock_config_entry.add_to_hass(hass)
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
 
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
@@ -636,11 +642,11 @@ async def test_flow_hassio_discovery(
 
 async def test_hassio_discovery_existing_configuration(
     hass: HomeAssistant,
-    hmip_mock_config_entry: MockConfigEntry,
+    mock_config_entry: MockConfigEntry,
     discovery_info: ssdp.SsdpServiceInfo,
 ) -> None:
     """Test abort on an existing config entry."""
-    hmip_mock_config_entry.add_to_hass(hass)
+    mock_config_entry.add_to_hass(hass)
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         data=discovery_info,

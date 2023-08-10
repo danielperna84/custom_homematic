@@ -9,12 +9,7 @@ from decimal import Decimal
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
-from hahomematic.const import (
-    ATTR_CHANNEL_NO,
-    ATTR_PARAMETER,
-    ATTR_VALUE,
-    IDENTIFIER_SEPARATOR,
-)
+from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE, IDENTIFIER_SEPARATOR
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity

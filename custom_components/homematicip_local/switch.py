@@ -19,10 +19,7 @@ import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, async_signal_new_hm_entity
-from .generic_entity import (
-    HaHomematicGenericRestoreEntity,
-    HaHomematicGenericSysvarEntity,
-)
+from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_ON_TIME = "on_time"
