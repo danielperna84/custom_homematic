@@ -1,6 +1,6 @@
 # custom_homematic
 
-Custom Home Assistant Component for HomeMatic and HomematicIP
+Homematic(IP) Integration for Home Assistant
 
 [Installation](https://github.com/danielperna84/custom_homematic/wiki/Installation)
 
