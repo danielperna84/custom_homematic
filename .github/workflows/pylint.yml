@@ -28,4 +28,4 @@ jobs:
           pip install -r requirements_test.txt
       - name: Analysing the code with pylint
         run: |
-          pylint $(git ls-files 'custom_components/homematicip_local/**/*.py')
+          pylint $(git ls-files 'custom_components/**/*.py')
