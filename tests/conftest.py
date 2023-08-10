@@ -1,11 +1,13 @@
 """Initializer helpers for Homematic(IP) Local."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 import datetime
 from typing import Any
 
 from homeassistant import config_entries
 from homeassistant.components import ssdp
+from homeassistant.core import HomeAssistant
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
@@ -13,13 +15,18 @@ from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
 )
 
 from custom_components.homematicip_local.const import DOMAIN
+from custom_components.homematicip_local.control_unit import ControlConfig
 
+TEST_DEFAULT_PORT = 8967
 TEST_ENTRY_ID = "12345678"
-TEST_INSTANCE_NAME = "pytest"
 TEST_HOST = "1.2.3.4"
-TEST_USERNAME = "test-username"
+TEST_INSTANCE_NAME = "pytest"
 TEST_PASSWORD = "test-password"
 TEST_UNIQUE_ID = "9876543210"
+TEST_USERNAME = "test-username"
+TEST_SERIAL = "0987654321"
+
+INVALID_PASSWORD = "In_VäLid"
 
 
 @pytest.fixture(autouse=True)
@@ -29,9 +36,9 @@ def auto_enable_custom_integrations(enable_custom_integrations: Any):  # noqa: F
 
 
 @pytest.fixture
-def hmip_mock_config_entry() -> config_entries.ConfigEntry:  # )
-    """Create a mock config entry for Homematic(IP) Local."""
-    entry_data = {
+def entry_data() -> Mapping[str, Any]:
+    """Create data for config entry."""
+    return {
         "instance_name": TEST_INSTANCE_NAME,
         "host": TEST_HOST,
         "username": TEST_USERNAME,
@@ -46,6 +53,12 @@ def hmip_mock_config_entry() -> config_entries.ConfigEntry:  # )
         "enable_system_notifications": True,
         "interface": {"HmIP-RF": {"port": 2010}, "BidCos-RF": {"port": 2001}},
     }
+
+
+@pytest.fixture
+def hmip_mock_config_entry(entry_data: Mapping[str, Any]) -> config_entries.ConfigEntry:  # )
+    """Create a mock config entry for Homematic(IP) Local."""
+
     return MockConfigEntry(
         entry_id=TEST_ENTRY_ID,
         version=2,
@@ -109,4 +122,15 @@ def discovery_info() -> ssdp.SsdpServiceInfo:
             "location": f"http://{TEST_HOST}/upnp/basic_dev.cgi",
         },
         x_homeassistant_matching_domains={"homematicip_local"},
+    )
+
+
+@pytest.fixture
+def control_config(hass: HomeAssistant, entry_data: dict[str, Any]) -> ControlConfig:
+    """Create a config for the control unit."""
+    return ControlConfig(
+        hass=hass,
+        entry_id=TEST_ENTRY_ID,
+        data=entry_data,
+        default_port=TEST_DEFAULT_PORT,
     )

@@ -1,14 +1,17 @@
 """Test the HaHomematic config flow."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any
 from unittest.mock import patch
 
 from hahomematic.exceptions import AuthFailure, NoConnection
 from hahomematic.support import SystemInformation
 from homeassistant import config_entries
+from homeassistant.components import ssdp
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
     enable_custom_integrations,
@@ -31,14 +34,19 @@ from custom_components.homematicip_local.config_flow import (
     IF_HMIP_RF_NAME,
     IF_VIRTUAL_DEVICES_NAME,
     InvalidPassword,
+    _async_validate_config_and_get_system_information,
+    _get_instance_name,
+    _get_serial,
 )
 from custom_components.homematicip_local.const import DOMAIN
 
 from .conftest import (
+    INVALID_PASSWORD,
     TEST_ENTRY_ID,
     TEST_HOST,
     TEST_INSTANCE_NAME,
     TEST_PASSWORD,
+    TEST_SERIAL,
     TEST_UNIQUE_ID,
     TEST_USERNAME,
 )
@@ -75,7 +83,7 @@ async def async_check_form(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial="123",
+            serial=TEST_SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -143,7 +151,7 @@ async def async_check_options_form(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial="123",
+            serial=TEST_SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -251,8 +259,24 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
     assert interface.get(IF_BIDCOS_RF_NAME) is None
     assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
 
-    if_BIDCOS_WIRED = interface[IF_BIDCOS_WIRED_NAME]
-    assert if_BIDCOS_WIRED[ATTR_PORT] == 2000
+    assert interface[IF_BIDCOS_WIRED_NAME][ATTR_PORT] == 2000
+
+
+async def test_form_only_virtual(hass: HomeAssistant) -> None:
+    """Test we get the form."""
+    interface_data = {
+        ATTR_HMIP_RF_ENABLED: False,
+        ATTR_BIDCOS_RF_ENABLED: False,
+        ATTR_VIRTUAL_DEVICES_ENABLED: True,
+        ATTR_BIDCOS_WIRED_ENABLED: False,
+    }
+    data = await async_check_form(hass, interface_data=interface_data)
+    interface = data["interface"]
+    assert interface.get(IF_HMIP_RF_NAME) is None
+    assert interface.get(IF_BIDCOS_RF_NAME) is None
+    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+
+    assert interface[IF_VIRTUAL_DEVICES_NAME][ATTR_PORT] == 9292
 
 
 async def test_form_tls(hass: HomeAssistant) -> None:
@@ -382,7 +406,7 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
                 ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
                 ATTR_HOST: TEST_HOST,
                 ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: "In_VäLid",
+                ATTR_PASSWORD: INVALID_PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -428,7 +452,7 @@ async def test_options_form_invalid_password(
             {
                 ATTR_HOST: TEST_HOST,
                 ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: "In_VäLid",
+                ATTR_PASSWORD: INVALID_PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -542,7 +566,9 @@ async def test_options_form_cannot_connect(
     assert result3["errors"] == {"base": "cannot_connect"}
 
 
-async def test_flow_hassio_discovery(hass: HomeAssistant, discovery_info) -> None:
+async def test_flow_hassio_discovery(
+    hass: HomeAssistant, discovery_info: ssdp.SsdpServiceInfo
+) -> None:
     """Test hassio discovery flow works."""
 
     result = await hass.config_entries.flow.async_init(
@@ -568,7 +594,7 @@ async def test_flow_hassio_discovery(hass: HomeAssistant, discovery_info) -> Non
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial="123",
+            serial=TEST_SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -609,7 +635,9 @@ async def test_flow_hassio_discovery(hass: HomeAssistant, discovery_info) -> Non
 
 
 async def test_hassio_discovery_existing_configuration(
-    hass: HomeAssistant, hmip_mock_config_entry: MockConfigEntry, discovery_info
+    hass: HomeAssistant,
+    hmip_mock_config_entry: MockConfigEntry,
+    discovery_info: ssdp.SsdpServiceInfo,
 ) -> None:
     """Test abort on an existing config entry."""
     hmip_mock_config_entry.add_to_hass(hass)
@@ -619,3 +647,38 @@ async def test_hassio_discovery_existing_configuration(
         context={"source": config_entries.SOURCE_SSDP},
     )
     assert result["type"] == FlowResultType.ABORT
+
+
+def test_config_flow_helper() -> None:
+    """Test the config flow helper."""
+
+    assert _get_instance_name(None) is None
+    assert _get_instance_name("0123456789") == "0123456789"
+    assert _get_instance_name("HomeMatic Central - test") == "test"
+    assert _get_instance_name("HomeMatic Central 0123456789") == "0123456789"
+    assert _get_serial(None) is None
+    assert _get_serial("1234") is None
+    assert _get_serial(f"9876543210{TEST_SERIAL}") == TEST_SERIAL
+
+
+async def test_async_validate_config_and_get_system_information(
+    hass: HomeAssistant, entry_data: Mapping[str, Any]
+) -> None:
+    """Test backend validation."""
+    with patch(
+        "custom_components.homematicip_local.config_flow.validate_config_and_get_system_information",
+        return_value=SystemInformation(
+            available_interfaces=[],
+            auth_enabled=False,
+            https_redirect_enabled=False,
+            serial=TEST_SERIAL,
+        ),
+    ):
+        result = await _async_validate_config_and_get_system_information(hass, entry_data)
+        assert result.serial == TEST_SERIAL
+
+    entry_data["password"] = INVALID_PASSWORD
+
+    with pytest.raises(InvalidPassword) as exc:
+        await _async_validate_config_and_get_system_information(hass, entry_data)
+    assert exc
