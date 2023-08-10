@@ -11,10 +11,10 @@ from custom_components.homematicip_local.const import DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 
 
-async def test_async_setup_entry(
+async def test_setup_entry(
     hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_control_unit: ControlUnit
 ) -> None:
-    """Test async setup entry."""
+    """Test setup entry."""
     # no config_entry exists
     assert len(hass.config_entries.async_entries(DOMAIN)) == 0
     assert not hass.data.get(DOMAIN)
