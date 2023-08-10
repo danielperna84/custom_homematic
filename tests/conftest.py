@@ -4,18 +4,18 @@ from __future__ import annotations
 from collections.abc import Mapping
 import datetime
 from typing import Any
+from unittest.mock import Mock, patch
 
+from hahomematic.central_unit import CentralUnit
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.core import HomeAssistant
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
-    enable_custom_integrations,
-)
+from pytest_homeassistant_custom_component.plugins import enable_custom_integrations  # noqa: F401
 
 from custom_components.homematicip_local.const import DOMAIN
-from custom_components.homematicip_local.control_unit import ControlConfig
+from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 
 TEST_DEFAULT_PORT = 8967
 TEST_ENTRY_ID = "12345678"
@@ -56,7 +56,7 @@ def entry_data() -> Mapping[str, Any]:
 
 
 @pytest.fixture
-def hmip_mock_config_entry(entry_data: Mapping[str, Any]) -> config_entries.ConfigEntry:  # )
+def mock_config_entry(entry_data: Mapping[str, Any]) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
     return MockConfigEntry(
@@ -134,3 +134,38 @@ def control_config(hass: HomeAssistant, entry_data: dict[str, Any]) -> ControlCo
         data=entry_data,
         default_port=TEST_DEFAULT_PORT,
     )
+
+
+@pytest.fixture
+def mock_control_unit() -> ControlUnit:
+    """Create mock control unit."""
+
+    control_unit = Mock(
+        spec=ControlUnit,
+    )
+    control_unit.async_get_new_hm_entities_by_platform.return_value = []
+    control_unit.async_get_new_hm_hub_entities_by_platform.return_value = []
+    control_unit.async_get_new_hm_channel_event_entities_by_event_type.return_value = []
+    control_unit.async_get_update_entities.return_value = []
+
+    with patch(
+        "custom_components.homematicip_local.control_unit.ControlUnit",
+        autospec=True,
+        return_value=control_unit,
+    ):
+        yield control_unit
+
+
+@pytest.fixture
+def mock_central_unit() -> CentralUnit:
+    """Create mock control unit."""
+    central_unit = Mock(
+        spec=CentralUnit,
+    )
+
+    with patch(
+        "hahomematic.central_unit.CentralUnit",
+        autospec=True,
+        return_value=central_unit,
+    ):
+        yield central_unit

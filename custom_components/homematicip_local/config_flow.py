@@ -55,10 +55,7 @@ from .const import (
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
-from .control_unit import (
-    ControlConfig,
-    validate_config_and_get_system_information,
-)
+from .control_unit import ControlConfig, validate_config_and_get_system_information
 
 _LOGGER = logging.getLogger(__name__)
 

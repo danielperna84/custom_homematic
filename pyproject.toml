@@ -459,6 +459,7 @@ force-sort-within-sections = true
 required-imports = ["from __future__ import annotations"]
 known-first-party = ["custom_components.homematicip_local",]
 combine-as-imports = true
+split-on-trailing-comma = false
 
 
 [tool.ruff.mccabe]

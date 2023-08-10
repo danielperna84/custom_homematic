@@ -17,20 +17,12 @@ from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
-from homeassistant.core import (
-    HomeAssistant,
-    ServiceCall,
-    ServiceResponse,
-    SupportsResponse,
-)
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
-from homeassistant.helpers.service import (
-    async_register_admin_service,
-    verify_domain_control,
-)
+from homeassistant.helpers.service import async_register_admin_service, verify_domain_control
 import voluptuous as vol
 
 from .const import (

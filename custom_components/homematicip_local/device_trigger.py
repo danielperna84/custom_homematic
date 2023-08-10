@@ -5,13 +5,7 @@ from hahomematic.const import CLICK_EVENTS, HmEntityUsage
 from hahomematic.platforms.event import ClickEvent
 from homeassistant.components.device_automation import DEVICE_TRIGGER_BASE_SCHEMA
 from homeassistant.components.homeassistant.triggers import event as event_trigger
-from homeassistant.const import (
-    CONF_ADDRESS,
-    CONF_DEVICE_ID,
-    CONF_DOMAIN,
-    CONF_PLATFORM,
-    CONF_TYPE,
-)
+from homeassistant.const import CONF_ADDRESS, CONF_DEVICE_ID, CONF_DOMAIN, CONF_PLATFORM, CONF_TYPE
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
@@ -21,10 +15,7 @@ import voluptuous as vol
 from . import DOMAIN
 from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
-from .helpers import (
-    cleanup_click_event_data,
-    get_device_address_at_interface_from_identifiers,
-)
+from .helpers import cleanup_click_event_data, get_device_address_at_interface_from_identifiers
 
 TRIGGER_TYPES = {param.lower() for param in CLICK_EVENTS}
 
