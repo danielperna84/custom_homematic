@@ -52,13 +52,11 @@ from .const import (
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
-    CONTROL_UNITS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
 from .control_unit import (
     ControlConfig,
-    ControlUnit,
     validate_config_and_get_system_information,
 )
 
@@ -332,9 +330,6 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             errors["base"] = "invalid_auth"
         except InvalidPassword:
             errors["base"] = "invalid_password"
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.exception("Unexpected exception")
-            errors["base"] = "unknown"
         else:
             if system_information is not None:
                 self.hass.config_entries.async_update_entry(
@@ -349,13 +344,6 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=get_options_schema(data=self.data),
             errors=errors,
         )
-
-    @property
-    def _control_unit(self) -> ControlUnit:
-        control_unit: ControlUnit = self.hass.data[DOMAIN][CONTROL_UNITS][
-            self.entry.entry_id
-        ]
-        return control_unit
 
 
 class InvalidPassword(HomeAssistantError):

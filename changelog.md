@@ -1,6 +1,8 @@
 # Version 1.40.2 (2023-08-08)
 
 - Improve custom component testing
+- Increase config flow coverage
+- Add Github flows for pylint and tests
 
 # Version 1.40.1 (2023-08-06)
 

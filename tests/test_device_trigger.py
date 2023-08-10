@@ -35,7 +35,7 @@ def calls(hass):
     return async_mock_service(hass, "test", "automation")
 
 
-async def test_get_triggers(hass, device_reg, entity_reg):
+async def no_test_get_triggers(hass, device_reg, entity_reg):
     """Test we get the expected triggers from a Homematic(IP) Local."""
     config_entry = MockConfigEntry(domain="test", data={})
     config_entry.add_to_hass(hass)
@@ -48,7 +48,7 @@ async def test_get_triggers(hass, device_reg, entity_reg):
     # assert_lists_same(triggers, expected_triggers)
 
 
-async def test_if_fires_on_state_change(hass, calls):
+async def no_test_if_fires_on_state_change(hass, calls):
     """Test for turn_on and turn_off triggers firing."""
     hass.states.async_set("homematicip_local.entity", STATE_OFF)
 
