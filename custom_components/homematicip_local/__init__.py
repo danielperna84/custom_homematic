@@ -65,12 +65,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if DOMAIN not in hass.data:
         return False
 
-    if control := hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id):
+    if control := hass.data[DOMAIN][CONTROL_UNITS].get(entry.entry_id):
         await async_unload_services(hass)
         await control.async_stop_central()
-        return await hass.config_entries.async_unload_platforms(
+        unload_ok = await hass.config_entries.async_unload_platforms(
             entry, HMIP_LOCAL_PLATFORMS
         )
+        if unload_ok:
+            hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id)
+        if len(hass.data[DOMAIN][CONTROL_UNITS]) == 0:
+            del hass.data[DOMAIN]
+        return unload_ok
 
     return False
 
