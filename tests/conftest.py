@@ -1,7 +1,6 @@
 """Initializer helpers for Homematic(IP) Local."""
 from __future__ import annotations
 
-from collections.abc import Mapping
 import datetime
 from typing import Any
 from unittest.mock import Mock, patch
@@ -9,6 +8,7 @@ from unittest.mock import Mock, patch
 from hahomematic.central_unit import CentralUnit
 from homeassistant import config_entries
 from homeassistant.components import ssdp
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -36,7 +36,7 @@ def auto_enable_custom_integrations(enable_custom_integrations: Any):  # noqa: F
 
 
 @pytest.fixture
-def entry_data() -> Mapping[str, Any]:
+def entry_data_v1() -> dict[str, Any]:
     """Create data for config entry."""
     return {
         "instance_name": TEST_INSTANCE_NAME,
@@ -56,15 +56,23 @@ def entry_data() -> Mapping[str, Any]:
 
 
 @pytest.fixture
-def mock_config_entry(entry_data: Mapping[str, Any]) -> config_entries.ConfigEntry:  # )
+def entry_data_v2(entry_data_v1) -> dict[str, Any]:
+    """Create data for config entry."""
+    entry_data_v2 = entry_data_v1
+    entry_data_v2["enable_system_notifications"] = True
+    return entry_data_v2
+
+
+@pytest.fixture
+def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
     return MockConfigEntry(
         entry_id=TEST_ENTRY_ID,
-        version=2,
+        version=1,
         domain=DOMAIN,
         title=TEST_INSTANCE_NAME,
-        data=entry_data,
+        data=entry_data_v1,
         options={},
         pref_disable_new_entities=False,
         pref_disable_polling=False,
@@ -72,6 +80,16 @@ def mock_config_entry(entry_data: Mapping[str, Any]) -> config_entries.ConfigEnt
         unique_id=TEST_UNIQUE_ID,
         disabled_by=None,
     )
+
+
+@pytest.fixture
+def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.ConfigEntry:  # )
+    """Create a mock config entry for Homematic(IP) Local."""
+
+    mock_config_entry_v2 = mock_config_entry_v1
+    mock_config_entry_v2.version = 2
+    mock_config_entry_v2.data = entry_data_v2
+    return mock_config_entry_v2
 
 
 @pytest.fixture
@@ -126,12 +144,12 @@ def discovery_info() -> ssdp.SsdpServiceInfo:
 
 
 @pytest.fixture
-def control_config(hass: HomeAssistant, entry_data: dict[str, Any]) -> ControlConfig:
+def control_config(hass: HomeAssistant, entry_data_v2) -> ControlConfig:
     """Create a config for the control unit."""
     return ControlConfig(
         hass=hass,
         entry_id=TEST_ENTRY_ID,
-        data=entry_data,
+        data=entry_data_v2,
         default_port=TEST_DEFAULT_PORT,
     )
 
@@ -154,6 +172,22 @@ def mock_control_unit() -> ControlUnit:
         return_value=control_unit,
     ):
         yield control_unit
+
+
+@pytest.fixture
+async def mock_loaded_config_entry(
+    hass, mock_config_entry_v2: MockConfigEntry, mock_control_unit: ControlUnit
+) -> ControlUnit:
+    """Create mock running control unit."""
+    with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
+        "custom_components.homematicip_local.control_unit.ControlConfig.async_get_control_unit",
+        return_value=mock_control_unit,
+    ):
+        mock_config_entry_v2.add_to_hass(hass)
+        await hass.config_entries.async_setup(mock_config_entry_v2.entry_id)
+        await hass.async_block_till_done()
+        assert mock_config_entry_v2.state == ConfigEntryState.LOADED
+        yield mock_config_entry_v2
 
 
 @pytest.fixture
