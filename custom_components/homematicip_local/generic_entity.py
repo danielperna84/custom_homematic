@@ -15,6 +15,7 @@ from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import UndefinedType
 
+from .config import DEFAULT_SYSVAR_REGISTRY_ENABLED
 from .const import (
     ATTR_ADDRESS,
     ATTR_ENTITY_TYPE,
@@ -284,7 +285,7 @@ class HaHomematicGenericHubEntity(Entity):
     """Representation of the HomematicIP generic hub entity."""
 
     _attr_has_entity_name = True
-    _attr_entity_registry_enabled_default = False
+    _attr_entity_registry_enabled_default = DEFAULT_SYSVAR_REGISTRY_ENABLED
     _attr_should_poll = False
 
     def __init__(

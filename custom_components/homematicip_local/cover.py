@@ -27,8 +27,7 @@ from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-HmBaseCoverEntity = CeCover | CeGarage
-HmGenericCover = TypeVar("HmGenericCover", bound=HmBaseCoverEntity)
+HmGenericCover = TypeVar("HmGenericCover", bound=CeCover | CeGarage)
 
 SERVICE_SET_COVER_COMBINED_POSITION = "set_cover_combined_position"
 

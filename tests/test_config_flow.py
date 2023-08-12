@@ -36,15 +36,15 @@ from custom_components.homematicip_local.config_flow import (
 )
 from custom_components.homematicip_local.const import DOMAIN
 
-from .conftest import (
+from .const import (
+    CONFIG_ENTRY_ID,
+    CONFIG_ENTRY_UNIQUE_ID,
+    HOST,
+    INSTANCE_NAME,
     INVALID_PASSWORD,
-    TEST_ENTRY_ID,
-    TEST_HOST,
-    TEST_INSTANCE_NAME,
-    TEST_PASSWORD,
-    TEST_SERIAL,
-    TEST_UNIQUE_ID,
-    TEST_USERNAME,
+    PASSWORD,
+    SERIAL,
+    USERNAME,
 )
 
 
@@ -57,10 +57,10 @@ async def async_check_form(
     """Test we get the form."""
     if central_data is None:
         central_data = {
-            ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
-            ATTR_HOST: TEST_HOST,
-            ATTR_USERNAME: TEST_USERNAME,
-            ATTR_PASSWORD: TEST_PASSWORD,
+            ATTR_INSTANCE_NAME: INSTANCE_NAME,
+            ATTR_HOST: HOST,
+            ATTR_USERNAME: USERNAME,
+            ATTR_PASSWORD: PASSWORD,
             ATTR_TLS: tls,
         }
 
@@ -79,7 +79,7 @@ async def async_check_form(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial=TEST_SERIAL,
+            serial=SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -88,10 +88,10 @@ async def async_check_form(
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: TEST_PASSWORD,
+                ATTR_INSTANCE_NAME: INSTANCE_NAME,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
+                ATTR_PASSWORD: PASSWORD,
                 ATTR_TLS: tls,
             },
         )
@@ -115,12 +115,12 @@ async def async_check_form(
 
     assert result3["type"] == FlowResultType.CREATE_ENTRY
     assert result3["handler"] == DOMAIN
-    assert result3["title"] == TEST_INSTANCE_NAME
+    assert result3["title"] == INSTANCE_NAME
     data = result3["data"]
-    assert data[ATTR_INSTANCE_NAME] == TEST_INSTANCE_NAME
-    assert data[ATTR_HOST] == TEST_HOST
-    assert data[ATTR_USERNAME] == TEST_USERNAME
-    assert data[ATTR_PASSWORD] == TEST_PASSWORD
+    assert data[ATTR_INSTANCE_NAME] == INSTANCE_NAME
+    assert data[ATTR_HOST] == HOST
+    assert data[ATTR_USERNAME] == USERNAME
+    assert data[ATTR_PASSWORD] == PASSWORD
     return data
 
 
@@ -147,7 +147,7 @@ async def async_check_options_form(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial=TEST_SERIAL,
+            serial=SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -160,7 +160,7 @@ async def async_check_options_form(
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == TEST_ENTRY_ID
+        assert result2["handler"] == CONFIG_ENTRY_ID
         assert result2["step_id"] == "interface"
 
         next(
@@ -176,7 +176,7 @@ async def async_check_options_form(
         await hass.async_block_till_done()
 
     assert result3["type"] == FlowResultType.CREATE_ENTRY
-    assert result3["handler"] == TEST_ENTRY_ID
+    assert result3["handler"] == CONFIG_ENTRY_ID
     assert result3["title"] == ""
     return mock_config_entry.data
 
@@ -316,10 +316,10 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: TEST_PASSWORD,
+                ATTR_INSTANCE_NAME: INSTANCE_NAME,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
+                ATTR_PASSWORD: PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -363,15 +363,15 @@ async def test_options_form_invalid_auth(
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
             {
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: TEST_PASSWORD,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
+                ATTR_PASSWORD: PASSWORD,
             },
         )
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == TEST_ENTRY_ID
+        assert result2["handler"] == CONFIG_ENTRY_ID
         assert result2["step_id"] == "interface"
 
         next(
@@ -408,9 +408,9 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
+                ATTR_INSTANCE_NAME: INSTANCE_NAME,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
                 ATTR_PASSWORD: INVALID_PASSWORD,
             },
         )
@@ -455,15 +455,15 @@ async def test_options_form_invalid_password(
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
             {
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
                 ATTR_PASSWORD: INVALID_PASSWORD,
             },
         )
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == TEST_ENTRY_ID
+        assert result2["handler"] == CONFIG_ENTRY_ID
         assert result2["step_id"] == "interface"
 
         next(
@@ -500,10 +500,10 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: TEST_INSTANCE_NAME,
-                ATTR_HOST: TEST_HOST,
-                ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: TEST_PASSWORD,
+                ATTR_INSTANCE_NAME: INSTANCE_NAME,
+                ATTR_HOST: HOST,
+                ATTR_USERNAME: USERNAME,
+                ATTR_PASSWORD: PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -552,7 +552,7 @@ async def test_options_form_cannot_connect(
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == TEST_ENTRY_ID
+        assert result2["handler"] == CONFIG_ENTRY_ID
         assert result2["step_id"] == "interface"
 
         next(
@@ -589,8 +589,8 @@ async def test_flow_hassio_discovery(
     assert len(flows) == 1
     assert flows[0].get("context", {}) == {
         "source": "ssdp",
-        "title_placeholders": {"host": TEST_HOST, "name": TEST_INSTANCE_NAME},
-        "unique_id": TEST_UNIQUE_ID,
+        "title_placeholders": {"host": HOST, "name": INSTANCE_NAME},
+        "unique_id": CONFIG_ENTRY_UNIQUE_ID,
     }
 
     with patch(
@@ -599,7 +599,7 @@ async def test_flow_hassio_discovery(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial=TEST_SERIAL,
+            serial=SERIAL,
         ),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
@@ -608,8 +608,8 @@ async def test_flow_hassio_discovery(
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             user_input={
-                ATTR_USERNAME: TEST_USERNAME,
-                ATTR_PASSWORD: TEST_PASSWORD,
+                ATTR_USERNAME: USERNAME,
+                ATTR_PASSWORD: PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -631,12 +631,12 @@ async def test_flow_hassio_discovery(
 
     assert result3["type"] == FlowResultType.CREATE_ENTRY
     assert result3["handler"] == DOMAIN
-    assert result3["title"] == TEST_INSTANCE_NAME
+    assert result3["title"] == INSTANCE_NAME
     data = result3["data"]
-    assert data[ATTR_INSTANCE_NAME] == TEST_INSTANCE_NAME
-    assert data[ATTR_HOST] == TEST_HOST
-    assert data[ATTR_USERNAME] == TEST_USERNAME
-    assert data[ATTR_PASSWORD] == TEST_PASSWORD
+    assert data[ATTR_INSTANCE_NAME] == INSTANCE_NAME
+    assert data[ATTR_HOST] == HOST
+    assert data[ATTR_USERNAME] == USERNAME
+    assert data[ATTR_PASSWORD] == PASSWORD
 
 
 async def test_hassio_discovery_existing_configuration(
@@ -663,7 +663,7 @@ def test_config_flow_helper() -> None:
     assert _get_instance_name("HomeMatic Central 0123456789") == "0123456789"
     assert _get_serial(None) is None
     assert _get_serial("1234") is None
-    assert _get_serial(f"9876543210{TEST_SERIAL}") == TEST_SERIAL
+    assert _get_serial(f"9876543210{SERIAL}") == SERIAL
 
 
 async def test_async_validate_config_and_get_system_information(
@@ -676,11 +676,11 @@ async def test_async_validate_config_and_get_system_information(
             available_interfaces=[],
             auth_enabled=False,
             https_redirect_enabled=False,
-            serial=TEST_SERIAL,
+            serial=SERIAL,
         ),
     ):
         result = await _async_validate_config_and_get_system_information(hass, entry_data_v2)
-        assert result.serial == TEST_SERIAL
+        assert result.serial == SERIAL
 
     entry_data_v2["password"] = INVALID_PASSWORD
 

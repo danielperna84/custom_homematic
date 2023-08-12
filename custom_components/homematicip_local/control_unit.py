@@ -68,6 +68,14 @@ from homeassistant.helpers.issue_registry import (
     async_delete_issue,
 )
 
+from .config import (
+    DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEVICE_FIRMWARE_CHECK_ENABLED,
+    DEVICE_FIRMWARE_CHECK_INTERVAL,
+    DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
+    DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
+    MASTER_SCAN_INTERVAL,
+)
 from .const import (
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_INSTANCE_NAME,
@@ -76,10 +84,6 @@ from .const import (
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
     CONTROL_UNITS,
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
-    DEVICE_FIRMWARE_CHECK_INTERVAL,
-    DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
-    DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     DOMAIN,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
@@ -91,7 +95,6 @@ from .const import (
     HMIP_LOCAL_PLATFORMS,
     LEARN_MORE_URL_PING_PONG_MISMATCH,
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
-    MASTER_SCAN_INTERVAL,
 )
 from .helpers import (
     HM_CLICK_EVENT_SCHEMA,
@@ -580,6 +583,7 @@ class ControlUnit(BaseControlUnit):
                     control_unit=self,
                     sysvar_scan_enabled=sysvar_scan_enabled,
                     sysvar_scan_interval=sysvar_scan_interval,
+                    device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED
                 )
                 self._hass.create_task(target=self._scheduler.init())
             if self._scheduler and self._scheduler.sysvar_scan_enabled:
@@ -869,8 +873,8 @@ class HmScheduler:
         control_unit: ControlUnit,
         sysvar_scan_enabled: bool,
         sysvar_scan_interval: int,
+        device_firmware_check_enabled: bool,
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
-        device_firmware_check_enabled: bool = True,
         device_firmware_check_interval: int = DEVICE_FIRMWARE_CHECK_INTERVAL,
         device_firmware_delivering_check_interval: int = DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
         device_firmware_updating_check_interval: int = DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
@@ -921,14 +925,16 @@ class HmScheduler:
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self.remove_sysvar_listener is not None:
+        if self.sysvar_scan_enabled and self.remove_sysvar_listener is not None:
             self.remove_sysvar_listener()
         if self.remove_master_listener is not None:
             self.remove_master_listener()
-        if self.remove_device_firmware_check_listener is not None:
+        if self.device_firmware_check_enabled and self.remove_device_firmware_check_listener is not None:
             self.remove_device_firmware_check_listener()
-        if self.remove_device_firmware_delivering_check_listener is not None:
+        if self.device_firmware_check_enabled and self.remove_device_firmware_delivering_check_listener is not None:
             self.remove_device_firmware_delivering_check_listener()
+        if self.device_firmware_check_enabled and self.remove_device_firmware_updating_check_listener is not None:
+            self.remove_device_firmware_updating_check_listener()
 
     async def _async_fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
