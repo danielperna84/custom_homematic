@@ -46,13 +46,13 @@ from homeassistant.helpers.typing import ConfigType
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
+from .config import DEFAULT_SYSVAR_SCAN_INTERVAL
 from .const import (
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_INSTANCE_NAME,
     ATTR_PATH,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
 from .control_unit import ControlConfig, validate_config_and_get_system_information

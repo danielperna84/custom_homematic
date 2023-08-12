@@ -1,0 +1,56 @@
+"""Tests for binary_sensor entities of hahomematic."""
+from __future__ import annotations
+
+from homeassistant.const import STATE_OFF, STATE_ON
+import pytest
+
+from .const import LOCAL_INTERFACE_ID
+from .helper import Factory, get_and_check_state
+
+TEST_DEVICES: dict[str, str] = {
+    "VCU5864966": "HmIP-SWDO-I.json",
+}
+
+# pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_hmbinarysensor(
+    factory: Factory,
+) -> None:
+    """Test HmBinarySensor."""
+
+    entity_id = "binary_sensor.hmip_swdo_i_vcu5864966"
+    entity_name = "HmIP-SWDO-I_VCU5864966 "
+
+    hass, control = await factory.setup_environment(TEST_DEVICES)
+    ha_state, _ = get_and_check_state(
+        hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
+    )
+
+    assert ha_state.state == STATE_OFF
+
+    control.central.event(LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 1)
+    assert hass.states.get(entity_id).state == STATE_ON
+
+    control.central.event(LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 0)
+    assert hass.states.get(entity_id).state == STATE_OFF
+
+    control.central.event(LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", None)
+    assert hass.states.get(entity_id).state == STATE_OFF
+
+
+@pytest.mark.asyncio
+async def test_hmsysvarbinarysensor(
+    factory: Factory,
+) -> None:
+    """Test HmSysvarBinarySensor."""
+    entity_id = "binary_sensor.centraltest_sv_logic"
+    entity_name = "CentralTest sv_logic"
+
+    hass, control = await factory.setup_environment({}, add_sysvars=True)
+    ha_state, _ = get_and_check_state(
+        hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
+    )
+
+    assert ha_state.state == STATE_OFF
