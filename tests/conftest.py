@@ -15,13 +15,14 @@ from pytest_homeassistant_custom_component.plugins import enable_custom_integrat
 
 from custom_components.homematicip_local.const import DOMAIN
 from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
+
 from tests import const, helper
 
 
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations: Any):  # noqa: F811
     """Auto add enable_custom_integrations."""
-    yield
+    return
 
 
 @pytest.fixture

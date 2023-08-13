@@ -37,6 +37,7 @@ from custom_components.homematicip_local.config_flow import (
     _get_serial,
 )
 from custom_components.homematicip_local.const import DOMAIN
+
 from tests import const
 
 
