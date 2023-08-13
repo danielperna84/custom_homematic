@@ -15,8 +15,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
-
-from .const import HOST, INSTANCE_NAME, LOCAL_PORT, PASSWORD, PROGRAM_DATA, SYSVAR_DATA, USERNAME
+from tests import const
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,10 +49,10 @@ class Factory:
         )
 
         central = await CentralConfig(
-            name=INSTANCE_NAME,
-            host=HOST,
-            username=USERNAME,
-            password=PASSWORD,
+            name=const.INSTANCE_NAME,
+            host=const.HOST,
+            username=const.USERNAME,
+            password=const.PASSWORD,
             central_id="test1234",
             storage_folder="homematicip_local",
             interface_configs={
@@ -82,11 +81,11 @@ class Factory:
             ),
             patch(
                 "hahomematic.client.ClientLocal.get_all_system_variables",
-                return_value=SYSVAR_DATA if add_sysvars else [],
+                return_value=const.SYSVAR_DATA if add_sysvars else [],
             ),
             patch(
                 "hahomematic.client.ClientLocal.get_all_programs",
-                return_value=PROGRAM_DATA if add_programs else [],
+                return_value=const.PROGRAM_DATA if add_programs else [],
             ),
             patch(
                 "hahomematic.central_unit.CentralUnit._identify_callback_ip",
@@ -134,9 +133,9 @@ def _get_local_client_interface_config(
     )
 
     return InterfaceConfig(
-        central_name=INSTANCE_NAME,
+        central_name=const.INSTANCE_NAME,
         interface=hahomematic_const.HmInterface.LOCAL,
-        port=LOCAL_PORT,
+        port=const.LOCAL_PORT,
         local_resources=LocalRessources(
             address_device_translation=address_device_translation,
             ignore_devices_on_create=_ignore_devices_on_create,
