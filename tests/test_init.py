@@ -12,7 +12,7 @@ from custom_components.homematicip_local import async_unload_entry
 from custom_components.homematicip_local.const import ATTR_ENABLE_SYSTEM_NOTIFICATIONS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 
-from .const import INSTANCE_NAME
+from tests import const
 
 
 async def test_setup_entry(
@@ -111,7 +111,7 @@ async def test_reload_entry(
     hass: HomeAssistant, mock_loaded_config_entry: MockConfigEntry
 ) -> None:
     """Test unload entry."""
-    mock_loaded_config_entry.title = INSTANCE_NAME
+    mock_loaded_config_entry.title = const.INSTANCE_NAME
     assert hass.data[DOMAIN]
     hass.config_entries.async_update_entry(mock_loaded_config_entry, title="Reload")
     await hass.async_block_till_done()
