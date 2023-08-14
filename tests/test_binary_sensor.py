@@ -23,7 +23,7 @@ async def test_hmbinarysensor(
     entity_name = "HmIP-SWDO-I_VCU5864966 "
 
     hass, control = await factory.setup_environment(TEST_DEVICES)
-    ha_state, _ = helper.get_and_check_state(
+    ha_state, hm_entity = helper.get_and_check_state(
         hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
     )
 
@@ -48,7 +48,7 @@ async def test_hmsysvarbinarysensor(
     entity_name = "CentralTest sv_logic"
 
     hass, control = await factory.setup_environment({}, add_sysvars=True)
-    ha_state, _ = helper.get_and_check_state(
+    ha_state, hm_entity = helper.get_and_check_state(
         hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
     )
 

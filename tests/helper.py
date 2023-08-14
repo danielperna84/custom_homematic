@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Final
 from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
@@ -15,11 +16,27 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
+from custom_components.homematicip_local.helpers import HmGenericEntity
 
 from tests import const
 
 _LOGGER = logging.getLogger(__name__)
 
+EXCLUDE_METHODS_FROM_MOCKS: Final = [
+    "event",
+    "get_event_data",
+    "is_state_change",
+    "register_remove_callback",
+    "register_update_callback",
+    "remove_entity",
+    "set_usage",
+    "unregister_remove_callback",
+    "unregister_update_callback",
+    "update_entity",
+    "update_value",
+    "set_usage",
+    "is_state_change",
+]
 # pylint: disable=protected-access
 
 
@@ -97,6 +114,10 @@ class Factory:
                 "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
                 return_value=central,
             ),
+            patch(
+                "custom_components.homematicip_local.generic_entity.get_hm_entity",
+                side_effect=get_hm_entity_mock,
+            ),
         ):
             self.mock_config_entry.add_to_hass(self._hass)
             await self._hass.config_entries.async_setup(self.mock_config_entry.entry_id)
@@ -153,3 +174,25 @@ def get_mock(instance, **kwargs):
     mock = MagicMock(spec=instance, wraps=instance, **kwargs)
     mock.__dict__.update(instance.__dict__)
     return mock
+
+
+def get_hm_entity_mock(hm_entity: HmGenericEntity) -> HmGenericEntity:
+    """Return the mocked homematic entity."""
+    for method_name in _get_mockable_method_names(hm_entity):
+        pt = patch.object(hm_entity, method_name)
+        pt.start()
+    return hm_entity
+
+
+def _get_mockable_method_names(hm_entity: HmGenericEntity) -> list[str]:
+    """Return all relevant method names for mocking."""
+    method_list: list[str] = []
+    for attribute in dir(hm_entity):
+        # Get the attribute value
+        attribute_value = getattr(hm_entity, attribute)
+        # Check that it is callable
+        if callable(attribute_value):
+            # Filter not public methods
+            if attribute.startswith("_") is False and attribute not in EXCLUDE_METHODS_FROM_MOCKS:
+                method_list.append(attribute)
+    return method_list

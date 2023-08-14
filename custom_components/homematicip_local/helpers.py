@@ -146,3 +146,8 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
 
     multiplier: int | None = None
     icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
+
+
+def get_hm_entity(hm_entity: HmGenericEntity) -> HmGenericEntity:
+    """Return the homematic entity."""
+    return hm_entity
