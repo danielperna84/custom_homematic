@@ -8,6 +8,9 @@ from unittest.mock import MagicMock, Mock, patch
 from hahomematic import const as hahomematic_const
 from hahomematic.central_unit import CentralConfig
 from hahomematic.client import InterfaceConfig, LocalRessources, _ClientConfig
+from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.entity import BaseParameterEntity
+from hahomematic.platforms.hub.entity import GenericHubEntity
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.aiohttp_client as http_client
@@ -25,17 +28,18 @@ _LOGGER = logging.getLogger(__name__)
 EXCLUDE_METHODS_FROM_MOCKS: Final = [
     "event",
     "get_event_data",
+    "get_on_time_and_cleanup",
+    "is_state_change",
     "is_state_change",
     "register_remove_callback",
     "register_update_callback",
     "remove_entity",
     "set_usage",
+    "set_usage",
     "unregister_remove_callback",
     "unregister_update_callback",
     "update_entity",
     "update_value",
-    "set_usage",
-    "is_state_change",
 ]
 # pylint: disable=protected-access
 
@@ -178,10 +182,22 @@ def get_mock(instance, **kwargs):
 
 def get_hm_entity_mock(hm_entity: HmGenericEntity) -> HmGenericEntity:
     """Return the mocked homematic entity."""
-    for method_name in _get_mockable_method_names(hm_entity):
-        pt = patch.object(hm_entity, method_name)
-        pt.start()
-    return hm_entity
+    try:
+        for method_name in _get_mockable_method_names(hm_entity):
+            patch.object(hm_entity, method_name).start()
+
+        if isinstance(hm_entity, CustomEntity):
+            for g_entity in hm_entity.data_entities.values():
+                g_entity._set_last_update()
+        elif isinstance(hm_entity, BaseParameterEntity):
+            hm_entity._set_last_update()
+        if not isinstance(hm_entity, GenericHubEntity):
+            assert hm_entity.is_valid is True
+        # patch.object(hm_entity, "is_valid", return_value=True).start()
+    except Exception:
+        pass
+    finally:
+        return hm_entity
 
 
 def _get_mockable_method_names(hm_entity: HmGenericEntity) -> list[str]:

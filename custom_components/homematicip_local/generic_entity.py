@@ -295,7 +295,7 @@ class HaHomematicGenericHubEntity(Entity):
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._hm_hub_entity = hm_hub_entity
+        self._hm_hub_entity = get_hm_entity(hm_hub_entity)
         self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         if entity_description := get_entity_description(hm_entity=hm_hub_entity):
             self.entity_description = entity_description
