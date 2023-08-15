@@ -29,13 +29,13 @@ async def test_hmbinarysensor(
 
     assert ha_state.state == STATE_OFF
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 1)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 1)
     assert hass.states.get(entity_id).state == STATE_ON
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 0)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 0)
     assert hass.states.get(entity_id).state == STATE_OFF
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", None)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", None)
     assert hass.states.get(entity_id).state == STATE_OFF
 
 

@@ -7,9 +7,10 @@ from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
 from hahomematic.central_unit import CentralConfig
-from hahomematic.client import InterfaceConfig, LocalRessources, _ClientConfig
+from hahomematic.client import InterfaceConfig, _ClientConfig
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import BaseParameterEntity
+from hahomematic_support.client_local import ClientLocal, LocalRessources
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.aiohttp_client as http_client
@@ -67,14 +68,8 @@ class Factory:
         """Return a central based on give address_device_translation."""
         interface_config = InterfaceConfig(
             central_name=const.INSTANCE_NAME,
-            interface=hahomematic_const.HmInterface.LOCAL,
+            interface=hahomematic_const.HmInterface.HM,
             port=const.LOCAL_PORT,
-            local_resources=LocalRessources(
-                address_device_translation=address_device_translation,
-                ignore_devices_on_create=ignore_devices_on_create
-                if ignore_devices_on_create
-                else [],
-            ),
         )
 
         central = await CentralConfig(
@@ -91,53 +86,67 @@ class Factory:
             client_session=http_client.async_get_clientsession(self._hass),
             load_un_ignore=un_ignore_list is not None,
             un_ignore_list=un_ignore_list,
+            enable_server=False,
         ).create_central()
 
         central.register_system_event_callback(self.system_event_mock)
         central.register_entity_event_callback(self.entity_event_mock)
         central.register_ha_event_callback(self.ha_event_mock)
 
-        client = await _ClientConfig(
-            central=central,
-            interface_config=interface_config,
-            local_ip="127.0.0.1",
-        ).get_client()
+        client = ClientLocal(
+            client_config=_ClientConfig(
+                central=central,
+                interface_config=interface_config,
+                local_ip="127.0.0.1",
+            ),
+            local_resources=LocalRessources(
+                address_device_translation=address_device_translation,
+                ignore_devices_on_create=ignore_devices_on_create
+                if ignore_devices_on_create
+                else [],
+            ),
+        )
+        await client.init_client()
 
-        with (
-            patch(
-                "hahomematic.client.create_client",
-                return_value=client,
-            ),
-            patch(
-                "hahomematic.client.ClientLocal.get_all_system_variables",
-                return_value=const.SYSVAR_DATA if add_sysvars else [],
-            ),
-            patch(
-                "hahomematic.client.ClientLocal.get_all_programs",
-                return_value=const.PROGRAM_DATA if add_programs else [],
-            ),
-            patch(
-                "hahomematic.central_unit.CentralUnit._identify_callback_ip",
-                return_value="127.0.0.1",
-            ),
-            patch("custom_components.homematicip_local.find_free_port", return_value=8765),
-            patch(
-                "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
-                return_value=central,
-            ),
-            patch(
-                "custom_components.homematicip_local.generic_entity.get_hm_entity",
-                side_effect=get_hm_entity_mock,
-            ),
-        ):
-            self.mock_config_entry.add_to_hass(self._hass)
-            await self._hass.config_entries.async_setup(self.mock_config_entry.entry_id)
-            await self._hass.async_block_till_done()
-            assert self.mock_config_entry.state == ConfigEntryState.LOADED
+        patch(
+            "hahomematic.central_unit.CentralUnit._get_primary_client", return_value=client
+        ).start()
+        patch("hahomematic.client._ClientConfig.get_client", return_value=client).start()
+        patch(
+            "hahomematic_support.client_local.ClientLocal.get_all_system_variables",
+            return_value=const.SYSVAR_DATA if add_sysvars else [],
+        ).start()
+        patch(
+            "hahomematic_support.client_local.ClientLocal.get_all_programs",
+            return_value=const.PROGRAM_DATA if add_programs else [],
+        ).start()
+        patch(
+            "hahomematic.central_unit.CentralUnit._identify_callback_ip", return_value="127.0.0.1"
+        ).start()
+
+        await central.start()
+        await central._refresh_device_descriptions(client=client)
+
+        patch("custom_components.homematicip_local.find_free_port", return_value=8765).start()
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
+            return_value=central,
+        ).start()
+        patch(
+            "custom_components.homematicip_local.generic_entity.get_hm_entity",
+            side_effect=get_hm_entity_mock,
+        ).start()
+
+        # Start integration in hass
+        self.mock_config_entry.add_to_hass(self._hass)
+        await self._hass.config_entries.async_setup(self.mock_config_entry.entry_id)
+        await self._hass.async_block_till_done()
+        assert self.mock_config_entry.state == ConfigEntryState.LOADED
 
         control: ControlUnit = self._hass.data[DOMAIN][CONTROL_UNITS][
             self.mock_config_entry.entry_id
         ]
+        await self._hass.async_block_till_done()
         if control._scheduler:
             control._scheduler.de_init()
         await self._hass.async_block_till_done()
