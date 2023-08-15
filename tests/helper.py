@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Final
+from typing import Final, TypeVar
 from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
@@ -19,7 +19,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
-from custom_components.homematicip_local.helpers import HmGenericEntity
+from custom_components.homematicip_local.support import HmGenericEntity
 
 from tests import const
 
@@ -41,6 +41,7 @@ EXCLUDE_METHODS_FROM_MOCKS: Final = [
     "update_entity",
     "update_value",
 ]
+T = TypeVar("T")
 # pylint: disable=protected-access
 
 
@@ -180,7 +181,7 @@ def get_mock(instance, **kwargs):
     return mock
 
 
-def get_hm_entity_mock(hm_entity: HmGenericEntity) -> HmGenericEntity:
+def get_hm_entity_mock(hm_entity: T) -> T:
     """Return the mocked homematic entity."""
     try:
         for method_name in _get_mockable_method_names(hm_entity):

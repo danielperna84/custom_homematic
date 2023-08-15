@@ -41,7 +41,7 @@ from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.typing import UNDEFINED
 
 from .const import HmNameSource
-from .helpers import (
+from .support import (
     HmBinarySensorEntityDescription,
     HmButtonEntityDescription,
     HmEntityDescription,

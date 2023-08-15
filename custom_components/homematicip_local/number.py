@@ -17,7 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit, async_signal_new_hm_entity
 from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
-from .helpers import HmNumberEntityDescription
+from .support import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 

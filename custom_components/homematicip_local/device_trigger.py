@@ -15,7 +15,7 @@ import voluptuous as vol
 from . import DOMAIN
 from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
-from .helpers import cleanup_click_event_data, get_device_address_at_interface_from_identifiers
+from .support import cleanup_click_event_data, get_device_address_at_interface_from_identifiers
 
 TRIGGER_TYPES = {param.lower() for param in CLICK_EVENTS}
 

@@ -31,7 +31,7 @@ from .const import (
 )
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
-from .helpers import HmGenericEntity, HmGenericSysvarEntity, get_hm_entity
+from .support import HmGenericEntity, HmGenericSysvarEntity, get_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
 

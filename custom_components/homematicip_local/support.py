@@ -40,7 +40,7 @@ HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
 HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=GenericHubEntity)
-
+T = TypeVar("T")
 
 BASE_EVENT_DATA_SCHEMA = HM_EVENT_DATA_SCHEMA.extend(
     {
@@ -148,6 +148,6 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
     icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
 
 
-def get_hm_entity(hm_entity: HmGenericEntity | GenericHubEntity) -> HmGenericEntity | GenericHubEntity:
+def get_hm_entity(hm_entity: T) -> T:
     """Return the homematic entity."""
     return hm_entity

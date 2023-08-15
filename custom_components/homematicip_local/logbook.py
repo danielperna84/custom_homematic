@@ -9,7 +9,7 @@ from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTR
 from homeassistant.core import Event, HomeAssistant, callback
 
 from .const import ATTR_NAME, DOMAIN as HMIP_DOMAIN, EVENT_DATA_ERROR, EVENT_DATA_ERROR_VALUE
-from .helpers import HM_DEVICE_ERROR_EVENT_SCHEMA, is_valid_event
+from .support import HM_DEVICE_ERROR_EVENT_SCHEMA, is_valid_event
 
 
 @callback
