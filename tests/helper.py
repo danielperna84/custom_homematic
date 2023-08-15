@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Final, TypeVar
+from typing import Any, Final, TypeVar
 from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
@@ -10,7 +10,6 @@ from hahomematic.central_unit import CentralConfig
 from hahomematic.client import InterfaceConfig, LocalRessources, _ClientConfig
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import BaseParameterEntity
-from hahomematic.platforms.hub.entity import GenericHubEntity
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.aiohttp_client as http_client
@@ -19,7 +18,6 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
-from custom_components.homematicip_local.support import HmGenericEntity
 
 from tests import const
 
@@ -42,6 +40,7 @@ EXCLUDE_METHODS_FROM_MOCKS: Final = [
     "update_value",
 ]
 T = TypeVar("T")
+
 # pylint: disable=protected-access
 
 
@@ -66,9 +65,16 @@ class Factory:
         un_ignore_list: list[str] | None = None,
     ) -> tuple[HomeAssistant, ControlUnit]:
         """Return a central based on give address_device_translation."""
-        interface_config = _get_local_client_interface_config(
-            address_device_translation=address_device_translation,
-            ignore_devices_on_create=ignore_devices_on_create,
+        interface_config = InterfaceConfig(
+            central_name=const.INSTANCE_NAME,
+            interface=hahomematic_const.HmInterface.LOCAL,
+            port=const.LOCAL_PORT,
+            local_resources=LocalRessources(
+                address_device_translation=address_device_translation,
+                ignore_devices_on_create=ignore_devices_on_create
+                if ignore_devices_on_create
+                else [],
+            ),
         )
 
         central = await CentralConfig(
@@ -150,26 +156,6 @@ def get_and_check_state(
     return ha_state, hm_entity
 
 
-def _get_local_client_interface_config(
-    address_device_translation: dict[str, str],
-    ignore_devices_on_create: list[str] | None = None,
-) -> InterfaceConfig:
-    """Return a central based on give address_device_translation."""
-    _ignore_devices_on_create: list[str] = (
-        ignore_devices_on_create if ignore_devices_on_create else []
-    )
-
-    return InterfaceConfig(
-        central_name=const.INSTANCE_NAME,
-        interface=hahomematic_const.HmInterface.LOCAL,
-        port=const.LOCAL_PORT,
-        local_resources=LocalRessources(
-            address_device_translation=address_device_translation,
-            ignore_devices_on_create=_ignore_devices_on_create,
-        ),
-    )
-
-
 def get_mock(instance, **kwargs):
     """Create a mock and copy instance attributes over mock."""
     if isinstance(instance, Mock):
@@ -192,7 +178,7 @@ def get_hm_entity_mock(hm_entity: T) -> T:
                 g_entity._set_last_update()
         elif isinstance(hm_entity, BaseParameterEntity):
             hm_entity._set_last_update()
-        if not isinstance(hm_entity, GenericHubEntity):
+        if hasattr(hm_entity, "is_valid"):
             assert hm_entity.is_valid is True
         # patch.object(hm_entity, "is_valid", return_value=True).start()
     except Exception:
@@ -201,7 +187,7 @@ def get_hm_entity_mock(hm_entity: T) -> T:
         return hm_entity
 
 
-def _get_mockable_method_names(hm_entity: HmGenericEntity) -> list[str]:
+def _get_mockable_method_names(hm_entity: Any) -> list[str]:
     """Return all relevant method names for mocking."""
     method_list: list[str] = []
     for attribute in dir(hm_entity):
