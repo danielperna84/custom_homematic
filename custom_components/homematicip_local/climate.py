@@ -67,9 +67,7 @@ HM_TO_HA_HVAC_MODE: dict[HmHvacMode, HVACMode] = {
     HmHvacMode.OFF: HVACMode.OFF,
 }
 
-HA_TO_HM_HVAC_MODE: dict[HVACMode, HmHvacMode] = {
-    v: k for k, v in HM_TO_HA_HVAC_MODE.items()
-}
+HA_TO_HM_HVAC_MODE: dict[HVACMode, HmHvacMode] = {v: k for k, v in HM_TO_HA_HVAC_MODE.items()}
 
 HM_TO_HA_ACTION: dict[HmHvacAction, HVACAction] = {
     HmHvacAction.COOL: HVACAction.COOLING,
@@ -106,9 +104,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.CLIMATE
-            ),
+            async_signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.CLIMATE),
             async_add_climate,
         )
     )
@@ -147,9 +143,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicClimate(
-    HaHomematicGenericRestoreEntity[BaseClimateEntity], ClimateEntity
-):
+class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], ClimateEntity):
     """Representation of the HomematicIP climate entity."""
 
     _attr_translation_key = "hmip_climate"
@@ -288,9 +282,7 @@ class HaHomematicClimate(
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
         if preset_mode not in self.preset_modes:
-            _LOGGER.warning(
-                "Preset mode %s is not supported by integration", preset_mode
-            )
+            _LOGGER.warning("Preset mode %s is not supported in hvac_mode %s", preset_mode, self.hvac_mode)
             return None
         await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 
