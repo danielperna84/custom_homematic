@@ -39,7 +39,7 @@ from .control_unit import (
     get_device_by_address,
     get_device_by_id,
 )
-from .helpers import get_device_address_at_interface_from_identifiers
+from .support import get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 

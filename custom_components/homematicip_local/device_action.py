@@ -16,7 +16,7 @@ import voluptuous as vol
 from . import DOMAIN
 from .const import CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
-from .helpers import get_device_address_at_interface_from_identifiers
+from .support import get_device_address_at_interface_from_identifiers
 
 ACTION_PARAMS = {EVENT_PRESS_LONG, EVENT_PRESS_SHORT}
 ACTION_TYPES = {param.lower() for param in ACTION_PARAMS}

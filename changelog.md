@@ -1,13 +1,19 @@
-# Version 1.40.2 (2023-08-12)
+# Version 1.40.2 (2023-08-15)
 
 - Bump hahomematic to 2023.8.3
   - Update project setup
   - Restructure test helper
   - Add ping pong tests
+- Bump hahomematic to 2023.8.4
+  - Improve testing:
+    - Extract ClientLocal code from production code
+    - Use own main package for ClientLocal
+    - Patch permanent till teardown
 - Improve custom component testing
-- Increase config flow coverage
-- Add Github flows for pylint and tests
-- Add infrastructure for platform tests
+  - Increase config flow coverage
+  - Add Github flows for pylint and tests
+  - Add infrastructure for platform tests
+  - Make homematic entities mockable
 
 # Version 1.40.1 (2023-08-06)
 

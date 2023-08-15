@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import logging
+from typing import Any, Final, TypeVar
 from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
 from hahomematic.central_unit import CentralConfig
-from hahomematic.client import InterfaceConfig, LocalRessources, _ClientConfig
+from hahomematic.client import InterfaceConfig, _ClientConfig
+from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.entity import BaseParameterEntity
+from hahomematic_support.client_local import ClientLocal, LocalRessources
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.aiohttp_client as http_client
@@ -19,6 +23,24 @@ from custom_components.homematicip_local.control_unit import ControlUnit
 from tests import const
 
 _LOGGER = logging.getLogger(__name__)
+
+EXCLUDE_METHODS_FROM_MOCKS: Final = [
+    "event",
+    "get_event_data",
+    "get_on_time_and_cleanup",
+    "is_state_change",
+    "is_state_change",
+    "register_remove_callback",
+    "register_update_callback",
+    "remove_entity",
+    "set_usage",
+    "set_usage",
+    "unregister_remove_callback",
+    "unregister_update_callback",
+    "update_entity",
+    "update_value",
+]
+T = TypeVar("T")
 
 # pylint: disable=protected-access
 
@@ -44,9 +66,10 @@ class Factory:
         un_ignore_list: list[str] | None = None,
     ) -> tuple[HomeAssistant, ControlUnit]:
         """Return a central based on give address_device_translation."""
-        interface_config = _get_local_client_interface_config(
-            address_device_translation=address_device_translation,
-            ignore_devices_on_create=ignore_devices_on_create,
+        interface_config = InterfaceConfig(
+            central_name=const.INSTANCE_NAME,
+            interface=hahomematic_const.HmInterface.HM,
+            port=const.LOCAL_PORT,
         )
 
         central = await CentralConfig(
@@ -63,49 +86,67 @@ class Factory:
             client_session=http_client.async_get_clientsession(self._hass),
             load_un_ignore=un_ignore_list is not None,
             un_ignore_list=un_ignore_list,
+            enable_server=False,
         ).create_central()
 
         central.register_system_event_callback(self.system_event_mock)
         central.register_entity_event_callback(self.entity_event_mock)
         central.register_ha_event_callback(self.ha_event_mock)
 
-        client = await _ClientConfig(
-            central=central,
-            interface_config=interface_config,
-            local_ip="127.0.0.1",
-        ).get_client()
+        client = ClientLocal(
+            client_config=_ClientConfig(
+                central=central,
+                interface_config=interface_config,
+                local_ip="127.0.0.1",
+            ),
+            local_resources=LocalRessources(
+                address_device_translation=address_device_translation,
+                ignore_devices_on_create=ignore_devices_on_create
+                if ignore_devices_on_create
+                else [],
+            ),
+        )
+        await client.init_client()
 
-        with (
-            patch(
-                "hahomematic.client.create_client",
-                return_value=client,
-            ),
-            patch(
-                "hahomematic.client.ClientLocal.get_all_system_variables",
-                return_value=const.SYSVAR_DATA if add_sysvars else [],
-            ),
-            patch(
-                "hahomematic.client.ClientLocal.get_all_programs",
-                return_value=const.PROGRAM_DATA if add_programs else [],
-            ),
-            patch(
-                "hahomematic.central_unit.CentralUnit._identify_callback_ip",
-                return_value="127.0.0.1",
-            ),
-            patch("custom_components.homematicip_local.find_free_port", return_value=8765),
-            patch(
-                "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
-                return_value=central,
-            ),
-        ):
-            self.mock_config_entry.add_to_hass(self._hass)
-            await self._hass.config_entries.async_setup(self.mock_config_entry.entry_id)
-            await self._hass.async_block_till_done()
-            assert self.mock_config_entry.state == ConfigEntryState.LOADED
+        patch(
+            "hahomematic.central_unit.CentralUnit._get_primary_client", return_value=client
+        ).start()
+        patch("hahomematic.client._ClientConfig.get_client", return_value=client).start()
+        patch(
+            "hahomematic_support.client_local.ClientLocal.get_all_system_variables",
+            return_value=const.SYSVAR_DATA if add_sysvars else [],
+        ).start()
+        patch(
+            "hahomematic_support.client_local.ClientLocal.get_all_programs",
+            return_value=const.PROGRAM_DATA if add_programs else [],
+        ).start()
+        patch(
+            "hahomematic.central_unit.CentralUnit._identify_callback_ip", return_value="127.0.0.1"
+        ).start()
+
+        await central.start()
+        await central._refresh_device_descriptions(client=client)
+
+        patch("custom_components.homematicip_local.find_free_port", return_value=8765).start()
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
+            return_value=central,
+        ).start()
+        patch(
+            "custom_components.homematicip_local.generic_entity.get_hm_entity",
+            side_effect=get_hm_entity_mock,
+        ).start()
+
+        # Start integration in hass
+        self.mock_config_entry.add_to_hass(self._hass)
+        await self._hass.config_entries.async_setup(self.mock_config_entry.entry_id)
+        await self._hass.async_block_till_done()
+        assert self.mock_config_entry.state == ConfigEntryState.LOADED
 
         control: ControlUnit = self._hass.data[DOMAIN][CONTROL_UNITS][
             self.mock_config_entry.entry_id
         ]
+        await self._hass.async_block_till_done()
         if control._scheduler:
             control._scheduler.de_init()
         await self._hass.async_block_till_done()
@@ -124,26 +165,6 @@ def get_and_check_state(
     return ha_state, hm_entity
 
 
-def _get_local_client_interface_config(
-    address_device_translation: dict[str, str],
-    ignore_devices_on_create: list[str] | None = None,
-) -> InterfaceConfig:
-    """Return a central based on give address_device_translation."""
-    _ignore_devices_on_create: list[str] = (
-        ignore_devices_on_create if ignore_devices_on_create else []
-    )
-
-    return InterfaceConfig(
-        central_name=const.INSTANCE_NAME,
-        interface=hahomematic_const.HmInterface.LOCAL,
-        port=const.LOCAL_PORT,
-        local_resources=LocalRessources(
-            address_device_translation=address_device_translation,
-            ignore_devices_on_create=_ignore_devices_on_create,
-        ),
-    )
-
-
 def get_mock(instance, **kwargs):
     """Create a mock and copy instance attributes over mock."""
     if isinstance(instance, Mock):
@@ -153,3 +174,37 @@ def get_mock(instance, **kwargs):
     mock = MagicMock(spec=instance, wraps=instance, **kwargs)
     mock.__dict__.update(instance.__dict__)
     return mock
+
+
+def get_hm_entity_mock(hm_entity: T) -> T:
+    """Return the mocked homematic entity."""
+    try:
+        for method_name in _get_mockable_method_names(hm_entity):
+            patch.object(hm_entity, method_name).start()
+
+        if isinstance(hm_entity, CustomEntity):
+            for g_entity in hm_entity.data_entities.values():
+                g_entity._set_last_update()
+        elif isinstance(hm_entity, BaseParameterEntity):
+            hm_entity._set_last_update()
+        if hasattr(hm_entity, "is_valid"):
+            assert hm_entity.is_valid is True
+        # patch.object(hm_entity, "is_valid", return_value=True).start()
+    except Exception:
+        pass
+    finally:
+        return hm_entity
+
+
+def _get_mockable_method_names(hm_entity: Any) -> list[str]:
+    """Return all relevant method names for mocking."""
+    method_list: list[str] = []
+    for attribute in dir(hm_entity):
+        # Get the attribute value
+        attribute_value = getattr(hm_entity, attribute)
+        # Check that it is callable
+        if callable(attribute_value):
+            # Filter not public methods
+            if attribute.startswith("_") is False and attribute not in EXCLUDE_METHODS_FROM_MOCKS:
+                method_list.append(attribute)
+    return method_list

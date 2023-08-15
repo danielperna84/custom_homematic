@@ -31,7 +31,7 @@ from .const import (
 )
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
-from .helpers import HmGenericEntity, HmGenericSysvarEntity
+from .support import HmGenericEntity, HmGenericSysvarEntity, get_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._hm_entity: HmGenericEntity = hm_entity
+        self._hm_entity: HmGenericEntity = get_hm_entity(hm_entity=hm_entity)
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
 
         if entity_description := get_entity_description(hm_entity=hm_entity):
@@ -295,7 +295,7 @@ class HaHomematicGenericHubEntity(Entity):
     ) -> None:
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
-        self._hm_hub_entity = hm_hub_entity
+        self._hm_hub_entity = get_hm_entity(hm_hub_entity)
         self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
         if entity_description := get_entity_description(hm_entity=hm_hub_entity):
             self.entity_description = entity_description

@@ -11,7 +11,7 @@ from typing import Any, TypeAlias, TypeVar, cast
 
 from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE, IDENTIFIER_SEPARATOR
 from hahomematic.platforms.custom.entity import CustomEntity
-from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA
+from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA, CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
@@ -40,7 +40,7 @@ HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
 HmGenericSysvarEntity = TypeVar("HmGenericSysvarEntity", bound=GenericHubEntity)
-
+T = TypeVar("T", bound=CallbackEntity)
 
 BASE_EVENT_DATA_SCHEMA = HM_EVENT_DATA_SCHEMA.extend(
     {
@@ -146,3 +146,8 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
 
     multiplier: int | None = None
     icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
+
+
+def get_hm_entity(hm_entity: T) -> T:
+    """Return the homematic entity."""
+    return hm_entity

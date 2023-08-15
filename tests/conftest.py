@@ -18,6 +18,14 @@ from custom_components.homematicip_local.control_unit import ControlConfig, Cont
 
 from tests import const, helper
 
+# pylint: disable=protected-access, redefined-outer-name
+
+
+@pytest.fixture(autouse=True)
+def teardown():
+    """Clean up."""
+    patch.stopall()
+
 
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations: Any):  # noqa: F811

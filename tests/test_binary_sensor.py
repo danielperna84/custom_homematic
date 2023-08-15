@@ -23,19 +23,19 @@ async def test_hmbinarysensor(
     entity_name = "HmIP-SWDO-I_VCU5864966 "
 
     hass, control = await factory.setup_environment(TEST_DEVICES)
-    ha_state, _ = helper.get_and_check_state(
+    ha_state, hm_entity = helper.get_and_check_state(
         hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
     )
 
     assert ha_state.state == STATE_OFF
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 1)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 1)
     assert hass.states.get(entity_id).state == STATE_ON
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", 0)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 0)
     assert hass.states.get(entity_id).state == STATE_OFF
 
-    control.central.event(const.LOCAL_INTERFACE_ID, "VCU5864966:1", "STATE", None)
+    control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", None)
     assert hass.states.get(entity_id).state == STATE_OFF
 
 
@@ -48,7 +48,7 @@ async def test_hmsysvarbinarysensor(
     entity_name = "CentralTest sv_logic"
 
     hass, control = await factory.setup_environment({}, add_sysvars=True)
-    ha_state, _ = helper.get_and_check_state(
+    ha_state, hm_entity = helper.get_and_check_state(
         hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
     )
 
