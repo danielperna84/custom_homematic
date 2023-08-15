@@ -272,6 +272,7 @@ class ControlUnit(BaseControlUnit):
             )
         return None
 
+    @callback
     def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
         device_registry = dr.async_get(self._hass)
@@ -332,7 +333,7 @@ class ControlUnit(BaseControlUnit):
         return self._active_hm_entities.get(entity_id)
 
     @callback
-    def async_get_new_hm_channel_event_entities(
+    def _async_identify_new_hm_channel_event_entities(
         self, new_channel_events: list[dict[int, list[GenericEvent]]]
     ) -> list[list[GenericEvent]]:
         """Return all hm-update-entities."""
@@ -372,7 +373,7 @@ class ControlUnit(BaseControlUnit):
         return hm_channel_events
 
     @callback
-    def async_get_new_hm_entities(
+    def _async_identify_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """Return all hm-entities."""
@@ -395,7 +396,7 @@ class ControlUnit(BaseControlUnit):
         return hm_entities
 
     @callback
-    def async_get_new_hm_update_entities(
+    def _async_identify_new_hm_update_entities(
         self, new_update_entities: list[HmUpdate]
     ) -> list[HmUpdate]:
         """Return all hm-update-entities."""
@@ -424,7 +425,7 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def async_get_new_hm_hub_entities(
+    def _async_identify_new_hm_hub_entities(
         self, new_hub_entities: list[GenericHubEntity]
     ) -> dict[HmPlatform, list[GenericHubEntity]]:
         """Return all hm-hub-entities."""
@@ -538,7 +539,7 @@ class ControlUnit(BaseControlUnit):
                     new_update_entities.append(device.update_entity)
 
             # Handle event of new device creation in Homematic(IP) Local.
-            for platform, hm_entities in self.async_get_new_hm_entities(
+            for platform, hm_entities in self._async_identify_new_hm_entities(
                 new_entities=new_entities
             ).items():
                 if hm_entities and len(hm_entities) > 0:
@@ -549,7 +550,7 @@ class ControlUnit(BaseControlUnit):
                         ),
                         hm_entities,
                     )
-            if hm_update_entities := self.async_get_new_hm_update_entities(
+            if hm_update_entities := self._async_identify_new_hm_update_entities(
                 new_update_entities=new_update_entities
             ):
                 async_dispatcher_send(
@@ -559,7 +560,7 @@ class ControlUnit(BaseControlUnit):
                     ),
                     hm_update_entities,
                 )
-            if hm_channel_events := self.async_get_new_hm_channel_event_entities(
+            if hm_channel_events := self._async_identify_new_hm_channel_event_entities(
                 new_channel_events=new_channel_events
             ):
                 async_dispatcher_send(
@@ -589,7 +590,7 @@ class ControlUnit(BaseControlUnit):
             if self._scheduler and self._scheduler.sysvar_scan_enabled:
                 new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
-                for platform, hm_hub_entities in self.async_get_new_hm_hub_entities(
+                for platform, hm_hub_entities in self._async_identify_new_hm_hub_entities(
                     new_hub_entities=new_hub_entities
                 ).items():
                     if hm_hub_entities and len(hm_hub_entities) > 0:
