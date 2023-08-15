@@ -48,14 +48,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry_id=entry.entry_id,
         data=entry.data,
         default_port=default_callback_port,
-    ).async_get_control_unit()
+    ).create_control_unit()
     hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id] = control
     await hass.config_entries.async_forward_entry_setups(entry, HMIP_LOCAL_PLATFORMS)
-    await control.async_start_central()
+    await control.start_central()
     await async_setup_services(hass)
 
     # Register on HA stop event to gracefully shutdown Homematic(IP) Local connection
-    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.stop_central)
+    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.sync_stop_central)
     entry.async_on_unload(entry.add_update_listener(update_listener))
     return True
 
@@ -67,7 +67,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if control := hass.data[DOMAIN][CONTROL_UNITS].get(entry.entry_id):
         await async_unload_services(hass)
-        await control.async_stop_central()
+        await control.stop_central()
         unload_ok = await hass.config_entries.async_unload_platforms(
             entry, HMIP_LOCAL_PLATFORMS
         )

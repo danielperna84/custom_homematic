@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
-from .control_unit import ControlUnit, async_signal_new_hm_entity
+from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.SWITCH
             ),
             async_add_switch,
@@ -79,7 +79,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.HUB_SWITCH
             ),
             async_add_hub_switch,
@@ -87,11 +87,11 @@ async def async_setup_entry(
     )
 
     async_add_switch(
-        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH)
+        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH)
     )
 
     async_add_hub_switch(
-        control_unit.async_get_new_hm_hub_entities_by_platform(
+        control_unit.get_new_hm_hub_entities_by_platform(
             platform=HmPlatform.HUB_SWITCH
         )
     )

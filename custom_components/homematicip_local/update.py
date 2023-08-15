@@ -15,7 +15,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
-from .control_unit import ControlUnit, async_signal_new_hm_entity
+from .control_unit import ControlUnit, signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
 ATTR_FIRMWARE_UPDATE_STATE = "firmware_update_state"
@@ -48,14 +48,14 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.UPDATE
             ),
             async_add_update,
         )
     )
 
-    async_add_update(control_unit.async_get_update_entities())
+    async_add_update(control_unit.get_update_entities())
 
 
 class HaHomematicUpdate(UpdateEntity):
@@ -150,7 +150,7 @@ class HaHomematicUpdate(UpdateEntity):
         self._hm_entity.register_remove_callback(
             remove_callback=self._async_device_removed
         )
-        self._cu.async_add_hm_update_entity(
+        self._cu.add_hm_update_entity(
             entity_id=self.entity_id, hm_entity=self._hm_entity
         )
 
@@ -170,7 +170,7 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
-        self._cu.async_remove_hm_update_entity(self.entity_id)
+        self._cu.remove_hm_update_entity(self.entity_id)
 
         self._hm_entity.unregister_update_callback(
             update_callback=self._async_device_changed

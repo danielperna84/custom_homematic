@@ -22,7 +22,7 @@ async def async_get_config_entry_diagnostics(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
     diag: dict[str, Any] = {"config": async_redact_data(entry.as_dict(), REDACT_CONFIG)}
 
-    platform_stats, device_types = control_unit.async_get_entity_stats()
+    platform_stats, device_types = control_unit.get_entity_stats()
 
     diag["platform_stats"] = platform_stats
     diag["devices"] = device_types

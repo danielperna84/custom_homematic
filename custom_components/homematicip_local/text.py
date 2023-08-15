@@ -15,7 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
-from .control_unit import ControlUnit, async_signal_new_hm_entity
+from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.TEXT
             ),
             async_add_text,
@@ -73,7 +73,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.HUB_TEXT
             ),
             async_add_hub_text,
@@ -81,11 +81,11 @@ async def async_setup_entry(
     )
 
     async_add_text(
-        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.TEXT)
+        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.TEXT)
     )
 
     async_add_hub_text(
-        control_unit.async_get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_TEXT)
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_TEXT)
     )
 
 

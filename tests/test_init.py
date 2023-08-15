@@ -24,7 +24,7 @@ async def test_setup_entry(
     assert not hass.data.get(DOMAIN)
 
     with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.async_get_control_unit",
+        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
         return_value=mock_control_unit,
     ):
         mock_config_entry_v2.add_to_hass(hass)
@@ -58,7 +58,7 @@ async def test_migrate_entry(
     assert not hass.data.get(DOMAIN)
 
     with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.async_get_control_unit",
+        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
         return_value=mock_control_unit,
     ):
         mock_config_entry_v1.add_to_hass(hass)

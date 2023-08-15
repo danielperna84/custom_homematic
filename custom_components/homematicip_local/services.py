@@ -507,7 +507,7 @@ async def _async_service_fetch_system_variables(
     """Service to fetch system variables from backend."""
     entry_id = service.data[ATTR_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        await control.async_fetch_all_system_variables()
+        await control.fetch_all_system_variables()
 
 
 async def _async_service_put_paramset(

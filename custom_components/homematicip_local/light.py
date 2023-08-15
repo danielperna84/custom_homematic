@@ -31,7 +31,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
-from .control_unit import ControlUnit, async_signal_new_hm_entity
+from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
 ATTR_ON_TIME = "on_time"
@@ -72,7 +72,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            async_signal_new_hm_entity(
+            signal_new_hm_entity(
                 entry_id=entry.entry_id, platform=HmPlatform.LIGHT
             ),
             async_add_light,
@@ -80,7 +80,7 @@ async def async_setup_entry(
     )
 
     async_add_light(
-        control_unit.async_get_new_hm_entities_by_platform(platform=HmPlatform.LIGHT)
+        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LIGHT)
     )
 
     platform = entity_platform.async_get_current_platform()
