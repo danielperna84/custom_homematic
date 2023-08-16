@@ -1,7 +1,7 @@
 -r requirements_test_pre_commit.txt
 
 async-upnp-client
-coverage==7.3.0
+coverage==7.2.7
 hahomematic==2023.8.5
 homeassistant==2023.8.2
 mypy==1.5.1
