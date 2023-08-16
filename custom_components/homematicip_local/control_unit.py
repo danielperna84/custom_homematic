@@ -147,17 +147,7 @@ class BaseControlUnit:
             )
         _LOGGER.info("Started central unit for %s", self._instance_name)
 
-    @callback
-    def sync_stop_central(self, *args: Any) -> None:
-        """
-        Wrap the call to async_stop.
-
-        Used as an argument to EventBus.async_listen_once.
-        """
-        self._hass.async_create_task(self.stop_central())
-        _LOGGER.info("Stopped central unit for %s", self._instance_name)
-
-    async def stop_central(self) -> None:
+    async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
         _LOGGER.debug(
             "Stopping central unit %s",
@@ -165,6 +155,7 @@ class BaseControlUnit:
         )
         if self._central is not None:
             await self._central.stop()
+        _LOGGER.info("Stopped central unit for %s", self._instance_name)
 
     @property
     def central(self) -> CentralUnit:
@@ -238,7 +229,7 @@ class ControlUnit(BaseControlUnit):
             await super().start_central()
             self._add_central_to_device_registry()
 
-    async def stop_central(self) -> None:
+    async def stop_central(self, *args: Any) -> None:
         """Stop the central unit."""
         if self._scheduler:
             self._scheduler.de_init()
@@ -250,7 +241,7 @@ class ControlUnit(BaseControlUnit):
                 callback_handler=self._callback_ha_event
             )
 
-        await super().stop_central()
+        await super().stop_central(*args)
 
     @property
     def device_info(self) -> DeviceInfo | None:
@@ -457,7 +448,7 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def get_update_entities(self) -> list[HmUpdate]:
+    def get_new_hm_update_entities(self) -> list[HmUpdate]:
         """Return all update entities."""
         active_unique_ids = [
             entity.unique_identifier
@@ -790,7 +781,7 @@ class ControlUnit(BaseControlUnit):
         return platform_stats, sorted(set(device_types))
 
     @callback
-    def _get_active_entities_by_device_address(
+    def _get_active_hm_entities_by_device_address(
         self, device_address: str
     ) -> list[HmBaseEntity]:
         """Return used hm_entities by address."""
@@ -822,10 +813,10 @@ class ControlUnitTemp(BaseControlUnit):
                 self._instance_name,
             )
 
-    async def stop_central(self) -> None:
+    async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
         await self.central.clear_all_caches()
-        await super().stop_central()
+        await super().stop_central(*args)
 
 
 class ControlConfig:
@@ -1044,7 +1035,7 @@ def get_cu_by_interface_id(
     return None
 
 
-def get_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+def get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     """Return the homematic device."""
     device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
     if not device_entry:
@@ -1062,7 +1053,7 @@ def get_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     return None
 
 
-def get_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
+def get_hm_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
     """Return the homematic device."""
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]

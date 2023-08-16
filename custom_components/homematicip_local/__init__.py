@@ -55,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await async_setup_services(hass)
 
     # Register on HA stop event to gracefully shutdown Homematic(IP) Local connection
-    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.sync_stop_central)
+    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, control.stop_central)
     entry.async_on_unload(entry.add_update_listener(update_listener))
     return True
 
@@ -106,3 +106,5 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
+
+
