@@ -14,6 +14,7 @@
   - Add Github flows for pylint and tests
   - Add infrastructure for platform tests
   - Make homematic entities mockable
+- Rename some methods for consistency
 
 # Version 1.40.1 (2023-08-06)
 

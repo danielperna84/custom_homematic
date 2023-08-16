@@ -129,7 +129,7 @@ class Factory:
 
         patch("custom_components.homematicip_local.find_free_port", return_value=8765).start()
         patch(
-            "custom_components.homematicip_local.control_unit.ControlUnit._async_create_central",
+            "custom_components.homematicip_local.control_unit.ControlUnit._create_central",
             return_value=central,
         ).start()
         patch(
@@ -160,7 +160,7 @@ def get_and_check_state(
     ha_state = hass.states.get(entity_id)
     assert ha_state is not None
     assert ha_state.name == entity_name
-    hm_entity = control.async_get_hm_entity(entity_id=entity_id)
+    hm_entity = control.get_hm_entity(entity_id=entity_id)
 
     return ha_state, hm_entity
 

@@ -36,8 +36,8 @@ from .const import (
 from .control_unit import (
     ControlUnit,
     get_cu_by_interface_id,
-    get_device_by_address,
-    get_device_by_id,
+    get_hm_device_by_address,
+    get_hm_device_by_id,
 )
 from .support import get_device_address_at_interface_from_identifiers
 
@@ -507,7 +507,7 @@ async def _async_service_fetch_system_variables(
     """Service to fetch system variables from backend."""
     entry_id = service.data[ATTR_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        await control.async_fetch_all_system_variables()
+        await control.fetch_all_system_variables()
 
 
 async def _async_service_put_paramset(
@@ -580,7 +580,7 @@ def _get_hm_device_by_service_data(
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
     if device_id := service.data.get(ATTR_DEVICE_ID):
-        hm_device = get_device_by_id(hass=hass, device_id=device_id)
+        hm_device = get_hm_device_by_id(hass=hass, device_id=device_id)
         if not hm_device:
             _LOGGER.warning(
                 "No device found by device_id %s for service %s.%s",
@@ -589,7 +589,7 @@ def _get_hm_device_by_service_data(
                 service.service,
             )
     elif device_address := service.data.get(ATTR_DEVICE_ADDRESS):
-        hm_device = get_device_by_address(hass=hass, device_address=device_address)
+        hm_device = get_hm_device_by_address(hass=hass, device_address=device_address)
         if not hm_device:
             _LOGGER.warning(
                 "No device found by device_address %s for service %s.%s",

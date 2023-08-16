@@ -159,10 +159,10 @@ def mock_control_unit() -> ControlUnit:
     control_unit = Mock(
         spec=ControlUnit,
     )
-    control_unit.async_get_new_hm_entities_by_platform.return_value = []
-    control_unit.async_get_new_hm_hub_entities_by_platform.return_value = []
-    control_unit.async_get_new_hm_channel_event_entities_by_event_type.return_value = []
-    control_unit.async_get_update_entities.return_value = []
+    control_unit.get_new_hm_entities_by_platform.return_value = []
+    control_unit.get_new_hm_hub_entities_by_platform.return_value = []
+    control_unit.get_new_hm_channel_event_entities_by_event_type.return_value = []
+    control_unit.get_new_hm_update_entities.return_value = []
 
     with patch(
         "custom_components.homematicip_local.control_unit.ControlUnit",
@@ -178,7 +178,7 @@ async def mock_loaded_config_entry(
 ) -> ControlUnit:
     """Create mock running control unit."""
     with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.async_get_control_unit",
+        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
         return_value=mock_control_unit,
     ):
         mock_config_entry_v2.add_to_hass(hass)
