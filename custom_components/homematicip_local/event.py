@@ -57,7 +57,7 @@ async def async_setup_entry(
 
     for event_type in ENTITY_EVENTS:
         async_add_event(
-            control_unit.get_new_hm_channel_event_entities_by_event_type(
+            control_unit.get_new_hm_channel_events_by_event_type(
                 event_type=event_type
             )
         )
