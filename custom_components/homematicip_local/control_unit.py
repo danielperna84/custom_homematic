@@ -324,7 +324,7 @@ class ControlUnit(BaseControlUnit):
         return self._active_hm_entities.get(entity_id)
 
     @callback
-    def _identify_new_hm_channel_event_entities(
+    def _identify_new_hm_channel_events(
         self, new_channel_events: list[dict[int, list[GenericEvent]]]
     ) -> list[list[GenericEvent]]:
         """Return all hm-update-entities."""
@@ -343,7 +343,7 @@ class ControlUnit(BaseControlUnit):
         return hm_channel_events
 
     @callback
-    def get_new_hm_channel_event_entities_by_event_type(
+    def get_new_hm_channel_events_by_event_type(
         self, event_type: HmEventType
     ) -> list[list[GenericEvent]]:
         """Return all channel event entities."""
@@ -551,7 +551,7 @@ class ControlUnit(BaseControlUnit):
                     ),
                     hm_update_entities,
                 )
-            if hm_channel_events := self._identify_new_hm_channel_event_entities(
+            if hm_channel_events := self._identify_new_hm_channel_events(
                 new_channel_events=new_channel_events
             ):
                 async_dispatcher_send(
