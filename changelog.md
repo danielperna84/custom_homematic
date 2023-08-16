@@ -15,6 +15,8 @@
   - Add infrastructure for platform tests
   - Make homematic entities mockable
 - Rename some methods for consistency
+- Avoid init_central
+- Make start_direct a config option
 
 # Version 1.40.1 (2023-08-06)
 
