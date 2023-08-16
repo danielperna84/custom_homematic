@@ -9,12 +9,18 @@
     - Extract ClientLocal code from production code
     - Use own main package for ClientLocal
     - Patch permanent till teardown
+- Bump hahomematic to 2023.8.5
+  - Improve testing:
+    - Set client_session to None
+    - Remove unnecessary async from create_central
+  - Make start_direct a config option
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
   - Add infrastructure for platform tests
   - Make homematic entities mockable
 - Rename some methods for consistency
+- Avoid init_central
 
 # Version 1.40.1 (2023-08-06)
 

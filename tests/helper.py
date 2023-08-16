@@ -71,7 +71,7 @@ class Factory:
             port=const.LOCAL_PORT,
         )
 
-        central = await CentralConfig(
+        central = CentralConfig(
             name=const.INSTANCE_NAME,
             host=const.HOST,
             username=const.USERNAME,
@@ -85,7 +85,7 @@ class Factory:
             client_session=None,
             load_un_ignore=un_ignore_list is not None,
             un_ignore_list=un_ignore_list,
-            enable_server=False,
+            start_direct=True,
         ).create_central()
 
         central.register_system_event_callback(self.system_event_mock)
@@ -124,7 +124,7 @@ class Factory:
         ).start()
 
         await central.start()
-        await central._refresh_device_descriptions(client=client)
+        await central._init_hub()
 
         patch("custom_components.homematicip_local.find_free_port", return_value=8765).start()
         patch(

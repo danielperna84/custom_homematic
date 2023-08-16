@@ -56,7 +56,6 @@ from hahomematic.platforms.update import HmUpdate
 from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
 from homeassistant.const import ATTR_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
 from homeassistant.helpers.dispatcher import async_dispatcher_send
@@ -118,19 +117,13 @@ class BaseControlUnit:
         self._entry_id = control_config.entry_id
         self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
+        self._start_direct = control_config.start_direct
         self._instance_name = self._config_data[ATTR_INSTANCE_NAME]
         self._enable_system_notifications = self._config_data[
             ATTR_ENABLE_SYSTEM_NOTIFICATIONS
         ]
-        self._central: CentralUnit | None = None
+        self._central: CentralUnit = self._create_central()
 
-    async def init_central(self) -> None:
-        """Start the central unit."""
-        _LOGGER.debug(
-            "Init central unit %s",
-            self._instance_name,
-        )
-        self._central = await self._create_central()
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -138,13 +131,7 @@ class BaseControlUnit:
             "Starting central unit %s",
             self._instance_name,
         )
-        if self._central:
-            await self._central.start()
-        else:
-            _LOGGER.exception(
-                "Starting central unit %s not possible",
-                self._instance_name,
-            )
+        await self._central.start()
         _LOGGER.info("Started central unit for %s", self._instance_name)
 
     async def stop_central(self, *args: Any) -> None:
@@ -153,18 +140,15 @@ class BaseControlUnit:
             "Stopping central unit %s",
             self._instance_name,
         )
-        if self._central is not None:
-            await self._central.stop()
+        await self._central.stop()
         _LOGGER.info("Stopped central unit for %s", self._instance_name)
 
     @property
     def central(self) -> CentralUnit:
         """Return the Homematic(IP) Local central unit instance."""
-        if self._central is not None:
-            return self._central
-        raise HomeAssistantError("homematicip_local.central not initialized")
+        return self._central
 
-    async def _create_central(self) -> CentralUnit:
+    def _create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         interface_configs: set[InterfaceConfig] = set()
         for interface_name in self._config_data[ATTR_INTERFACE]:
@@ -179,7 +163,7 @@ class BaseControlUnit:
             )
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
-        return await CentralConfig(
+        return CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
             host=self._config_data[ATTR_HOST],
@@ -198,6 +182,7 @@ class BaseControlUnit:
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
+            start_direct=self._start_direct,
         ).create_central()
 
 
@@ -219,25 +204,24 @@ class ControlUnit(BaseControlUnit):
 
     async def start_central(self) -> None:
         """Start the central unit."""
-        if self._central:
-            self._central.register_system_event_callback(
-                callback_handler=self._callback_system_event
-            )
-            self._central.register_ha_event_callback(
-                callback_handler=self._callback_ha_event
-            )
-            await super().start_central()
-            self._add_central_to_device_registry()
+        self._central.register_system_event_callback(
+            callback_handler=self._callback_system_event
+        )
+        self._central.register_ha_event_callback(
+            callback_handler=self._callback_ha_event
+        )
+        await super().start_central()
+        self._add_central_to_device_registry()
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the central unit."""
         if self._scheduler:
             self._scheduler.de_init()
-        if self._central:
-            self._central.unregister_system_event_callback(
+        if central := self._central:
+            central.unregister_system_event_callback(
                 callback_handler=self._callback_system_event
             )
-            self._central.unregister_ha_event_callback(
+            central.unregister_ha_event_callback(
                 callback_handler=self._callback_ha_event
             )
 
@@ -246,22 +230,20 @@ class ControlUnit(BaseControlUnit):
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
-        if self._central:
-            return DeviceInfo(
-                identifiers={
-                    (
-                        DOMAIN,
-                        self._central.name,
-                    )
-                },
-                manufacturer=MANUFACTURER_EQ3,
-                model=self._central.model,
-                name=self._central.name,
-                sw_version=self._central.version,
-                # Link to the homematic control unit.
-                via_device=cast(tuple[str, str], self._central.name),
-            )
-        return None
+        return DeviceInfo(
+            identifiers={
+                (
+                    DOMAIN,
+                    self._central.name,
+                )
+            },
+            manufacturer=MANUFACTURER_EQ3,
+            model=self._central.model,
+            name=self._central.name,
+            sw_version=self._central.version,
+            # Link to the homematic control unit.
+            via_device=cast(tuple[str, str], self._central.name),
+        )
 
     @callback
     def _add_central_to_device_registry(self) -> None:
@@ -272,27 +254,20 @@ class ControlUnit(BaseControlUnit):
             identifiers={
                 (
                     DOMAIN,
-                    self.central.name,
+                    self._central.name,
                 )
             },
             manufacturer=MANUFACTURER_EQ3,
-            model=self.central.model,
-            sw_version=self.central.version,
-            name=self.central.name,
+            model=self._central.model,
+            sw_version=self._central.version,
+            name=self._central.name,
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=self.central.central_url,
+            configuration_url=self._central.central_url,
         )
 
     @callback
     def _add_virtual_remotes_to_device_registry(self) -> None:
         """Add the virtual remotes to device registry."""
-        if not self._central:
-            _LOGGER.error(
-                "Cannot create ControlUnit %s virtual remote devices. No central",
-                self._instance_name,
-            )
-            return
-
         if not self._central.has_clients:
             _LOGGER.error(
                 "Cannot create ControlUnit %s virtual remote devices. No clients",
@@ -353,7 +328,7 @@ class ControlUnit(BaseControlUnit):
                 active_unique_ids.append(event.unique_identifier)
 
         hm_channel_events: list[list[GenericEvent]] = []
-        for device in self.central.devices:
+        for device in self._central.devices:
             for channel_events in device.get_channel_events(
                 event_type=event_type
             ).values():
@@ -411,7 +386,7 @@ class ControlUnit(BaseControlUnit):
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_entities.values()
         ]
-        return self.central.get_entities_by_platform(
+        return self._central.get_entities_by_platform(
             platform=platform, existing_unique_ids=active_unique_ids
         )
 
@@ -443,7 +418,7 @@ class ControlUnit(BaseControlUnit):
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
         ]
 
-        return self.central.get_hub_entities_by_platform(
+        return self._central.get_hub_entities_by_platform(
             platform=platform, existing_unique_ids=active_unique_ids
         )
 
@@ -456,7 +431,7 @@ class ControlUnit(BaseControlUnit):
         ]
         return [
             device.update_entity
-            for device in self.central.devices
+            for device in self._central.devices
             if device.update_entity
             and device.update_entity.unique_identifier not in active_unique_ids
         ]
@@ -742,7 +717,7 @@ class ControlUnit(BaseControlUnit):
     def _get_device_entry(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
         if (
-            hm_device := self.central.get_device(device_address=device_address)
+            hm_device := self._central.get_device(device_address=device_address)
         ) is None:
             return None
         device_registry = dr.async_get(self._hass)
@@ -804,8 +779,8 @@ class ControlUnitTemp(BaseControlUnit):
             "Starting temporary ControlUnit %s",
             self._instance_name,
         )
-        if self._central:
-            await self._central.start_direct()
+        if central := self._central:
+            await central.start_direct()
         else:
             _LOGGER.exception(
                 "Starting temporary ControlUnit %s not possible, "
@@ -815,7 +790,8 @@ class ControlUnitTemp(BaseControlUnit):
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
-        await self.central.clear_all_caches()
+        if central := self._central:
+            await central.clear_all_caches()
         await super().stop_central(*args)
 
 
@@ -828,24 +804,23 @@ class ControlConfig:
         entry_id: str,
         data: Mapping[str, Any],
         default_port: int = PORT_ANY,
+        start_direct: bool = False,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass = hass
         self.entry_id = entry_id
         self.data = data
         self.default_callback_port = default_port
+        self.start_direct = start_direct
 
     async def create_control_unit(self) -> ControlUnit:
         """Identify the used client."""
-        control_unit = ControlUnit(self)
-        await control_unit.init_central()
-        return control_unit
+        return ControlUnit(self)
 
     async def create_control_unit_temp(self) -> ControlUnitTemp:
         """Identify the used client."""
-        control_unit = ControlUnitTemp(self._temporary_config)
-        await control_unit.init_central()
-        return control_unit
+        return ControlUnitTemp(self._temporary_config)
+
 
     @property
     def _temporary_config(self) -> ControlConfig:
@@ -853,7 +828,7 @@ class ControlConfig:
         temporary_data: dict[str, Any] = deepcopy(dict(self.data))
         temporary_data[ATTR_INSTANCE_NAME] = "temporary_instance"
         return ControlConfig(
-            hass=self.hass, entry_id="hmip_local_temporary", data=temporary_data
+            hass=self.hass, entry_id="hmip_local_temporary", data=temporary_data, start_direct=True
         )
 
 
