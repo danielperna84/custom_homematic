@@ -13,7 +13,6 @@ from hahomematic.platforms.entity import BaseParameterEntity
 from hahomematic_support.client_local import ClientLocal, LocalRessources
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
-import homeassistant.helpers.aiohttp_client as http_client
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.homematicip_local import config
@@ -83,7 +82,7 @@ class Factory:
                 interface_config,
             },
             default_callback_port=54321,
-            client_session=http_client.async_get_clientsession(self._hass),
+            client_session=None,
             load_un_ignore=un_ignore_list is not None,
             un_ignore_list=un_ignore_list,
             enable_server=False,
