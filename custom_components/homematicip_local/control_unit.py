@@ -200,7 +200,17 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_update_entities: dict[str, HmUpdate] = {}
         # {entity_id, sysvar_entity}
         self._active_hm_hub_entities: dict[str, GenericHubEntity] = {}
-        self._scheduler: HmScheduler | None = None
+        self._scheduler = HmScheduler(
+            hass=self._hass,
+            control_unit=self,
+            sysvar_scan_enabled=self._config_data.get(
+                ATTR_SYSVAR_SCAN_ENABLED, True
+            ),
+            sysvar_scan_interval=self._config_data.get(
+                ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+            ),
+            device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED
+        )
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -215,8 +225,7 @@ class ControlUnit(BaseControlUnit):
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the central unit."""
-        if self._scheduler:
-            self._scheduler.de_init()
+        self._scheduler.de_init()
         if central := self._central:
             central.unregister_system_event_callback(
                 callback_handler=self._callback_system_event
@@ -538,22 +547,9 @@ class ControlUnit(BaseControlUnit):
                 )
             self._add_virtual_remotes_to_device_registry()
         elif name == HH_EVENT_HUB_REFRESHED:
-            if not self._scheduler:
-                sysvar_scan_enabled: bool = self._config_data.get(
-                    ATTR_SYSVAR_SCAN_ENABLED, True
-                )
-                sysvar_scan_interval: int = self._config_data.get(
-                    ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
-                )
-                self._scheduler = HmScheduler(
-                    self._hass,
-                    control_unit=self,
-                    sysvar_scan_enabled=sysvar_scan_enabled,
-                    sysvar_scan_interval=sysvar_scan_interval,
-                    device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED
-                )
+            if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
-            if self._scheduler and self._scheduler.sysvar_scan_enabled:
+            if self._scheduler.sysvar_scan_enabled:
                 new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
                 for platform, hm_hub_entities in self._identify_new_hm_hub_entities(
@@ -732,7 +728,7 @@ class ControlUnit(BaseControlUnit):
 
     async def fetch_all_system_variables(self) -> None:
         """Fetch all system variables from CCU / Homegear."""
-        if not self._scheduler:
+        if not self._scheduler.initialized:
             _LOGGER.debug(
                 "Hub scheduler for %s is not initialized", self._instance_name
             )
@@ -848,65 +844,93 @@ class HmScheduler:
         device_firmware_updating_check_interval: int = DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     ) -> None:
         """Initialize Homematic(IP) Local hub scheduler."""
-        self.hass = hass
+        self._hass = hass
         self._control: ControlUnit = control_unit
         self._central: CentralUnit = control_unit.central
-        self.remove_sysvar_listener: Callable | None = None
-        # sysvar_scan_interval == 0 means sysvar scanning is disabled
-        self.sysvar_scan_enabled = sysvar_scan_enabled
-        if self.sysvar_scan_enabled:
-            self.remove_sysvar_listener = async_track_time_interval(
-                self.hass,
-                self._fetch_data,
-                timedelta(seconds=sysvar_scan_interval),
-            )
-        self.remove_master_listener: Callable | None = async_track_time_interval(
-            self.hass,
-            self._fetch_master_data,
-            timedelta(seconds=master_scan_interval),
-        )
-        self.device_firmware_check_enabled = device_firmware_check_enabled
-        if self.device_firmware_check_enabled:
-            self.remove_device_firmware_check_listener = async_track_time_interval(
-                self.hass,
-                self._fetch_device_firmware_update_data,
-                timedelta(seconds=device_firmware_check_interval),
-            )
-            self.remove_device_firmware_delivering_check_listener = (
-                async_track_time_interval(
-                    self.hass,
-                    self._fetch_device_firmware_update_data_in_delivery,
-                    timedelta(seconds=device_firmware_delivering_check_interval),
-                )
-            )
-            self.remove_device_firmware_updating_check_listener = (
-                async_track_time_interval(
-                    self.hass,
-                    self._fetch_device_firmware_update_data_in_update,
-                    timedelta(seconds=device_firmware_updating_check_interval),
-                )
-            )
+        self._device_firmware_check_enabled = device_firmware_check_enabled
+        self._device_firmware_check_interval = device_firmware_check_interval
+        self._device_firmware_delivering_check_interval = device_firmware_delivering_check_interval
+        self._device_firmware_updating_check_interval = device_firmware_updating_check_interval
+        self._master_scan_interval = master_scan_interval
+        self._sysvar_scan_enabled = sysvar_scan_enabled
+        self._sysvar_scan_interval = sysvar_scan_interval
+        self._initialized = False
+        self._remove_device_firmware_check_listener: Callable | None = None
+        self._remove_device_firmware_delivering_check_listener: Callable | None = None
+        self._remove_device_firmware_updating_check_listener: Callable | None = None
+        self._remove_master_listener: Callable | None = None
+        self._remove_sysvar_listener: Callable | None = None
+
+    @property
+    def initialized(self) -> bool:
+        """Return initialized state."""
+        return self._initialized
+
+    @property
+    def sysvar_scan_enabled(self) -> bool:
+        """Return sysvar_scan_enabled state."""
+        return self._sysvar_scan_enabled
 
     async def init(self) -> None:
         """Execute the initial data refresh."""
+        if self._initialized:
+            return
+        if self._sysvar_scan_enabled:
+            # sysvar_scan_interval == 0 means sysvar scanning is disabled
+            self._remove_sysvar_listener = async_track_time_interval(
+                hass=self._hass,
+                action=self._fetch_data,
+                interval=timedelta(seconds=self._sysvar_scan_interval),
+            )
+        self._remove_master_listener = async_track_time_interval(
+            hass=self._hass,
+            action=self._fetch_master_data,
+            interval=timedelta(seconds=self._master_scan_interval),
+        )
+
+        if self._device_firmware_check_enabled:
+            self._remove_device_firmware_check_listener = async_track_time_interval(
+                hass=self._hass,
+                action=self._fetch_device_firmware_update_data,
+                interval=timedelta(seconds=self._device_firmware_check_interval),
+            )
+            self._remove_device_firmware_delivering_check_listener = (
+                async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_device_firmware_update_data_in_delivery,
+                    interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
+                )
+            )
+            self._remove_device_firmware_updating_check_listener = (
+                async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_device_firmware_update_data_in_update,
+                    interval=timedelta(seconds=self._device_firmware_updating_check_interval),
+                )
+            )
         await self._central.refresh_firmware_data()
+        self._initialized = True
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self.sysvar_scan_enabled and self.remove_sysvar_listener is not None:
-            self.remove_sysvar_listener()
-        if self.remove_master_listener is not None:
-            self.remove_master_listener()
-        if self.device_firmware_check_enabled and self.remove_device_firmware_check_listener is not None:
-            self.remove_device_firmware_check_listener()
-        if self.device_firmware_check_enabled and self.remove_device_firmware_delivering_check_listener is not None:
-            self.remove_device_firmware_delivering_check_listener()
-        if self.device_firmware_check_enabled and self.remove_device_firmware_updating_check_listener is not None:
-            self.remove_device_firmware_updating_check_listener()
+        if self._remove_sysvar_listener and callback(self._remove_sysvar_listener):
+            self._remove_sysvar_listener()
+        if self._remove_master_listener and callback(self._remove_master_listener):
+            self._remove_master_listener()
+        if (self._remove_device_firmware_check_listener
+                and callback(self._remove_device_firmware_check_listener)):
+            self._remove_device_firmware_check_listener()
+        if (self._remove_device_firmware_delivering_check_listener
+                and callback(self._remove_device_firmware_delivering_check_listener)):
+            self._remove_device_firmware_delivering_check_listener()
+        if (self._remove_device_firmware_updating_check_listener
+                and callback(self._remove_device_firmware_updating_check_listener)):
+            self._remove_device_firmware_updating_check_listener()
+        self._initialized = False
 
     async def _fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
-        if self.sysvar_scan_enabled is False:
+        if self._sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Scheduled fetching of programs and sysvars for %s is disabled",
                 self._central.name,
@@ -921,7 +945,7 @@ class HmScheduler:
 
     async def fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
-        if self.sysvar_scan_enabled is False:
+        if self._sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Manually fetching of sysvars for %s is disabled",
                 self._central.name,
