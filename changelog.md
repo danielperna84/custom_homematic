@@ -14,6 +14,10 @@
     - Set client_session to None
     - Remove unnecessary async from create_central
   - Make start_direct a config option
+- Bump hahomematic to 2023.8.6
+  - Remove use_caches and load_un_ignore from central config
+  - Remove obsolete comments
+  - Align sslcontext creation with Home Assistant
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
