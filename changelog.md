@@ -21,6 +21,7 @@
   - Make homematic entities mockable
 - Rename some methods for consistency
 - Avoid init_central
+- Cleanup scheduler code
 
 # Version 1.40.1 (2023-08-06)
 
