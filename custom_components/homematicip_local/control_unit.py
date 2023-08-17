@@ -124,7 +124,6 @@ class BaseControlUnit:
         ]
         self._central: CentralUnit = self._create_central()
 
-
     async def start_central(self) -> None:
         """Start the central unit."""
         _LOGGER.debug(
@@ -713,7 +712,7 @@ class ControlUnit(BaseControlUnit):
     def _get_device_entry(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
         if (
-            hm_device := self._central.get_device(device_address=device_address)
+            hm_device := self._central.get_device(address=device_address)
         ) is None:
             return None
         device_registry = dr.async_get(self._hass)
@@ -769,25 +768,9 @@ class ControlUnit(BaseControlUnit):
 class ControlUnitTemp(BaseControlUnit):
     """Central unit to control a central unit for temporary usage."""
 
-    async def start_direct(self) -> None:
-        """Start the temporary control unit."""
-        _LOGGER.debug(
-            "Starting temporary ControlUnit %s",
-            self._instance_name,
-        )
-        if central := self._central:
-            await central.start_direct()
-        else:
-            _LOGGER.exception(
-                "Starting temporary ControlUnit %s not possible, "
-                "central unit is not available",
-                self._instance_name,
-            )
-
     async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
-        if central := self._central:
-            await central.clear_all_caches()
+        await self._central.clear_all_caches()
         await super().stop_central(*args)
 
 
@@ -913,18 +896,18 @@ class HmScheduler:
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self._remove_sysvar_listener and callback(self._remove_sysvar_listener):
+        if self._remove_sysvar_listener and callable(self._remove_sysvar_listener):
             self._remove_sysvar_listener()
-        if self._remove_master_listener and callback(self._remove_master_listener):
+        if self._remove_master_listener and callable(self._remove_master_listener):
             self._remove_master_listener()
         if (self._remove_device_firmware_check_listener
-                and callback(self._remove_device_firmware_check_listener)):
+                and callable(self._remove_device_firmware_check_listener)):
             self._remove_device_firmware_check_listener()
         if (self._remove_device_firmware_delivering_check_listener
-                and callback(self._remove_device_firmware_delivering_check_listener)):
+                and callable(self._remove_device_firmware_delivering_check_listener)):
             self._remove_device_firmware_delivering_check_listener()
         if (self._remove_device_firmware_updating_check_listener
-                and callback(self._remove_device_firmware_updating_check_listener)):
+                and callable(self._remove_device_firmware_updating_check_listener)):
             self._remove_device_firmware_updating_check_listener()
         self._initialized = False
 
@@ -1048,7 +1031,7 @@ def get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
 
     device_address, interface_id = data
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.get_device(device_address=device_address)
+        return control_unit.central.get_device(address=device_address)
     return None
 
 
@@ -1056,6 +1039,6 @@ def get_hm_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevi
     """Return the homematic device."""
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if hm_device := control_unit.central.get_device(device_address=device_address):
+        if hm_device := control_unit.central.get_device(address=device_address):
             return hm_device
     return None

@@ -53,7 +53,7 @@ async def async_get_triggers(
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
         if control_unit.central.has_client(interface_id=interface_id) is False:
             continue
-        if hm_device := control_unit.central.get_device(device_address=device_address):
+        if hm_device := control_unit.central.get_device(address=device_address):
             for action_event in hm_device.generic_events.values():
                 if not isinstance(action_event, ClickEvent):
                     continue
