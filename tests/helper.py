@@ -83,7 +83,6 @@ class Factory:
             },
             default_callback_port=54321,
             client_session=None,
-            load_un_ignore=un_ignore_list is not None,
             un_ignore_list=un_ignore_list,
             start_direct=True,
         ).create_central()
