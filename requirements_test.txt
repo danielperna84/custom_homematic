@@ -12,7 +12,7 @@ pylint-strict-informational==0.1
 pylint==2.17.5
 pytest-asyncio==0.21.0
 pytest-cov==4.1.0
-pytest-homeassistant-custom-component==0.13.51
+pytest-homeassistant-custom-component==0.13.52
 pytest-rerunfailures==12.0
 pytest-socket==0.6.0
 pytest-timeout==2.1.0
