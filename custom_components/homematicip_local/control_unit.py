@@ -864,11 +864,13 @@ class HmScheduler:
                 hass=self._hass,
                 action=self._fetch_data,
                 interval=timedelta(seconds=self._sysvar_scan_interval),
+                cancel_on_shutdown=True,
             )
         self._remove_master_listener = async_track_time_interval(
             hass=self._hass,
             action=self._fetch_master_data,
             interval=timedelta(seconds=self._master_scan_interval),
+            cancel_on_shutdown=True,
         )
 
         if self._device_firmware_check_enabled:
@@ -876,12 +878,14 @@ class HmScheduler:
                 hass=self._hass,
                 action=self._fetch_device_firmware_update_data,
                 interval=timedelta(seconds=self._device_firmware_check_interval),
+                cancel_on_shutdown=True,
             )
             self._remove_device_firmware_delivering_check_listener = (
                 async_track_time_interval(
                     hass=self._hass,
                     action=self._fetch_device_firmware_update_data_in_delivery,
                     interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
+                    cancel_on_shutdown=True,
                 )
             )
             self._remove_device_firmware_updating_check_listener = (

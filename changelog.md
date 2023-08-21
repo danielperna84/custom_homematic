@@ -18,6 +18,9 @@
   - Remove use_caches and load_un_ignore from central config
   - Remove obsolete comments
   - Align sslcontext creation with Home Assistant
+- Bump hahomematic to 2023.8.7
+  - Add SSLError to XmlRpcProxy and JsonRpcAioHttpClient
+  - Make integration more robust against json result failures
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
