@@ -21,6 +21,8 @@
 - Bump hahomematic to 2023.8.7
   - Add SSLError to XmlRpcProxy and JsonRpcAioHttpClient
   - Make integration more robust against json result failures
+- Bump hahomematic to 2023.8.8
+  - Fix get_all_system_variables return value
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
