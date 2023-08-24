@@ -23,6 +23,9 @@
   - Make integration more robust against json result failures
 - Bump hahomematic to 2023.8.8
   - Fix get_all_system_variables return value
+- Bump hahomematic to 2023.8.9
+  - Add decorator to measure function execution time
+  - Extend HmIPW-WRC6 implementation
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
