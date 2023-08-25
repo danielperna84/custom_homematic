@@ -1,6 +1,6 @@
 # Version 1.40.2 (2023-08-25)
 
-- Bump hahomematic to 2023.8.3 - 2023.8.10
+- Bump hahomematic to 2023.8.3 - 2023.8.11
   - Update project setup
   - Restructure test helper
   - Add ping pong tests
