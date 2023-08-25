@@ -1,29 +1,17 @@
-# Version 1.40.2 (2023-08-15)
+# Version 1.40.2 (2023-08-25)
 
-- Bump hahomematic to 2023.8.3
+- Bump hahomematic to 2023.8.3 - 2023.8.10
   - Update project setup
   - Restructure test helper
   - Add ping pong tests
-- Bump hahomematic to 2023.8.4
-  - Improve testing:
-    - Extract ClientLocal code from production code
-    - Use own main package for ClientLocal
-    - Patch permanent till teardown
-- Bump hahomematic to 2023.8.5
-  - Improve testing:
-    - Set client_session to None
-    - Remove unnecessary async from create_central
+  - Improve testing
   - Make start_direct a config option
-- Bump hahomematic to 2023.8.6
   - Remove use_caches and load_un_ignore from central config
   - Remove obsolete comments
   - Align sslcontext creation with Home Assistant
-- Bump hahomematic to 2023.8.7
   - Add SSLError to XmlRpcProxy and JsonRpcAioHttpClient
   - Make integration more robust against json result failures
-- Bump hahomematic to 2023.8.8
   - Fix get_all_system_variables return value
-- Bump hahomematic to 2023.8.9
   - Add decorator to measure function execution time
   - Extend HmIPW-WRC6 implementation
 - Improve custom component testing
