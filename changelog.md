@@ -23,6 +23,7 @@
 - Rename some methods for consistency
 - Avoid init_central
 - Cleanup scheduler code
+- Increase master scan interval to 1h
 
 # Version 1.40.1 (2023-08-06)
 
