@@ -9,7 +9,13 @@ from decimal import Decimal
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
-from hahomematic.const import ATTR_CHANNEL_NO, ATTR_PARAMETER, ATTR_VALUE, IDENTIFIER_SEPARATOR
+from hahomematic.const import (
+    ATTR_CHANNEL_NO,
+    ATTR_NAME,
+    ATTR_PARAMETER,
+    ATTR_VALUE,
+    IDENTIFIER_SEPARATOR,
+)
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA, CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
@@ -23,7 +29,6 @@ from homeassistant.helpers.typing import StateType
 import voluptuous as vol
 
 from .const import (
-    ATTR_NAME,
     CONF_SUBTYPE,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,

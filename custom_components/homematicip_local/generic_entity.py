@@ -4,7 +4,13 @@ from __future__ import annotations
 import logging
 from typing import Any, Generic, cast
 
-from hahomematic.const import HmCallSource
+from hahomematic.const import (
+    ATTR_ADDRESS,
+    ATTR_INTERFACE_ID,
+    ATTR_NAME,
+    ATTR_PARAMETER,
+    HmCallSource,
+)
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
@@ -17,13 +23,9 @@ from homeassistant.helpers.typing import UndefinedType
 
 from .config import DEFAULT_SYSVAR_REGISTRY_ENABLED
 from .const import (
-    ATTR_ADDRESS,
     ATTR_ENTITY_TYPE,
     ATTR_FUNCTION,
-    ATTR_INTERFACE_ID,
     ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_PARAMETER,
     ATTR_VALUE_STATE,
     DOMAIN,
     HmEntityState,
