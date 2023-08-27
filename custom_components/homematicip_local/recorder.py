@@ -1,18 +1,10 @@
 """Integration platform for recorder."""
 from __future__ import annotations
 
+from hahomematic.const import ATTR_ADDRESS, ATTR_INTERFACE_ID, ATTR_NAME, ATTR_PARAMETER
 from homeassistant.core import HomeAssistant, callback
 
-from .const import (
-    ATTR_ADDRESS,
-    ATTR_ENTITY_TYPE,
-    ATTR_FUNCTION,
-    ATTR_INTERFACE_ID,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_VALUE_STATE,
-)
+from .const import ATTR_ENTITY_TYPE, ATTR_FUNCTION, ATTR_MODEL, ATTR_VALUE_STATE
 
 
 @callback

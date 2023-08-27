@@ -7,13 +7,9 @@ from typing import Any, cast
 from urllib.parse import urlparse
 
 from hahomematic.const import (
-    ATTR_CALLBACK_HOST,
-    ATTR_CALLBACK_PORT,
-    ATTR_HOST,
+    ATTR_INSTANCE_NAME,
     ATTR_INTERFACE,
-    ATTR_JSON_PORT,
     ATTR_PASSWORD,
-    ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
     ATTR_VERIFY_TLS,
@@ -48,9 +44,13 @@ from voluptuous.schema_builder import UNDEFINED, Schema
 
 from .config import DEFAULT_SYSVAR_SCAN_INTERVAL
 from .const import (
+    ATTR_CALLBACK_HOST,
+    ATTR_CALLBACK_PORT,
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
-    ATTR_INSTANCE_NAME,
+    ATTR_HOST,
+    ATTR_JSON_PORT,
     ATTR_PATH,
+    ATTR_PORT,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
