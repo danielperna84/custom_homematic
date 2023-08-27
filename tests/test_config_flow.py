@@ -5,9 +5,7 @@ from typing import Any
 from unittest.mock import patch
 
 from hahomematic.const import (
-    ATTR_HOST,
     ATTR_PASSWORD,
-    ATTR_PORT,
     ATTR_TLS,
     ATTR_USERNAME,
     IF_BIDCOS_RF_NAME,
@@ -36,7 +34,7 @@ from custom_components.homematicip_local.config_flow import (
     _get_instance_name,
     _get_serial,
 )
-from custom_components.homematicip_local.const import DOMAIN
+from custom_components.homematicip_local.const import ATTR_HOST, ATTR_PORT, DOMAIN
 
 from tests import const
 
