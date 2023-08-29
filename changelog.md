@@ -1,6 +1,6 @@
-# Version 1.40.2 (2023-08-27)
+# Version 1.40.2 (2023-08-29)
 
-- Bump hahomematic to 2023.8.3 - 2023.8.12
+- Bump hahomematic to 2023.8.3 - 2023.8.13
   - Update project setup
   - Restructure test helper
   - Add ping pong tests
@@ -15,6 +15,7 @@
   - Add decorator to measure function execution time
   - Extend HmIPW-WRC6 implementation
   - Optimize get readable entities for MASTER
+  - Refactor to more enum usage
 - Improve custom component testing
   - Increase config flow coverage
   - Add Github flows for pylint and tests
