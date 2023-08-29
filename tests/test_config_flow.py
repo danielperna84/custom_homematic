@@ -9,24 +9,25 @@ from hahomematic.exceptions import AuthFailure, NoConnection
 from hahomematic.support import SystemInformation
 from homeassistant import config_entries
 from homeassistant.components import ssdp
+from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.homematicip_local.config_flow import (
-    ATTR_BIDCOS_RF_ENABLED,
-    ATTR_BIDCOS_RF_PORT,
-    ATTR_BIDCOS_WIRED_ENABLED,
-    ATTR_HMIP_RF_ENABLED,
-    ATTR_INSTANCE_NAME,
-    ATTR_VIRTUAL_DEVICES_ENABLED,
+    CONF_BIDCOS_RF_ENABLED,
+    CONF_BIDCOS_RF_PORT,
+    CONF_BIDCOS_WIRED_ENABLED,
+    CONF_HMIP_RF_ENABLED,
+    CONF_INSTANCE_NAME,
+    CONF_VIRTUAL_DEVICES_ENABLED,
     InvalidPassword,
     _async_validate_config_and_get_system_information,
     _get_instance_name,
     _get_serial,
 )
-from custom_components.homematicip_local.const import ATTR_HOST, ATTR_PORT, ATTR_TLS, DOMAIN
+from custom_components.homematicip_local.const import CONF_TLS, DOMAIN
 
 from tests import const
 
@@ -40,11 +41,11 @@ async def async_check_form(
     """Test we get the form."""
     if central_data is None:
         central_data = {
-            ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
-            ATTR_HOST: const.HOST,
+            CONF_INSTANCE_NAME: const.INSTANCE_NAME,
+            CONF_HOST: const.HOST,
             CONF_USERNAME: const.USERNAME,
             CONF_PASSWORD: const.PASSWORD,
-            ATTR_TLS: tls,
+            CONF_TLS: tls,
         }
 
     if interface_data is None:
@@ -71,11 +72,11 @@ async def async_check_form(
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
-                ATTR_HOST: const.HOST,
+                CONF_INSTANCE_NAME: const.INSTANCE_NAME,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.PASSWORD,
-                ATTR_TLS: tls,
+                CONF_TLS: tls,
             },
         )
         await hass.async_block_till_done()
@@ -100,8 +101,8 @@ async def async_check_form(
     assert result3["handler"] == DOMAIN
     assert result3["title"] == const.INSTANCE_NAME
     data = result3["data"]
-    assert data[ATTR_INSTANCE_NAME] == const.INSTANCE_NAME
-    assert data[ATTR_HOST] == const.HOST
+    assert data[CONF_INSTANCE_NAME] == const.INSTANCE_NAME
+    assert data[CONF_HOST] == const.HOST
     assert data[CONF_USERNAME] == const.USERNAME
     assert data[CONF_PASSWORD] == const.PASSWORD
     return data
@@ -169,9 +170,9 @@ async def test_form(hass: HomeAssistant) -> None:
     data = await async_check_form(hass)
     interface = data["interface"]
     if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
-    assert if_hmip_rf[ATTR_PORT] == 2010
+    assert if_hmip_rf[CONF_PORT] == 2010
     if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
-    assert if_bidcos_rf[ATTR_PORT] == 2001
+    assert if_bidcos_rf[CONF_PORT] == 2001
 
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
@@ -184,9 +185,9 @@ async def test_options_form(hass: HomeAssistant, mock_config_entry_v2: MockConfi
     )
     interface = data["interface"]
     if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
-    assert if_hmip_rf[ATTR_PORT] == 2010
+    assert if_hmip_rf[CONF_PORT] == 2010
     if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
-    assert if_bidcos_rf[ATTR_PORT] == 2001
+    assert if_bidcos_rf[CONF_PORT] == 2001
 
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
@@ -194,12 +195,12 @@ async def test_options_form(hass: HomeAssistant, mock_config_entry_v2: MockConfi
 
 async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     """Test we get the form."""
-    interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
+    interface_data = {CONF_HMIP_RF_ENABLED: False, CONF_BIDCOS_RF_PORT: 5555}
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
     assert interface.get(HmInterfaceName.HMIP_RF) is None
     if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
-    assert if_bidcos_rf[ATTR_PORT] == 5555
+    assert if_bidcos_rf[CONF_PORT] == 5555
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
@@ -208,14 +209,14 @@ async def test_options_form_no_hmip_other_bidcos_port(
     hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
 ) -> None:
     """Test we get the form."""
-    interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
+    interface_data = {CONF_HMIP_RF_ENABLED: False, CONF_BIDCOS_RF_PORT: 5555}
     data = await async_check_options_form(
         hass, mock_config_entry=mock_config_entry_v2, interface_data=interface_data
     )
     interface = data["interface"]
     assert interface.get(HmInterfaceName.HMIP_RF) is None
     if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
-    assert if_bidcos_rf[ATTR_PORT] == 5555
+    assert if_bidcos_rf[CONF_PORT] == 5555
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
@@ -223,33 +224,33 @@ async def test_options_form_no_hmip_other_bidcos_port(
 async def test_form_only_hs485(hass: HomeAssistant) -> None:
     """Test we get the form."""
     interface_data = {
-        ATTR_HMIP_RF_ENABLED: False,
-        ATTR_BIDCOS_RF_ENABLED: False,
-        ATTR_VIRTUAL_DEVICES_ENABLED: False,
-        ATTR_BIDCOS_WIRED_ENABLED: True,
+        CONF_HMIP_RF_ENABLED: False,
+        CONF_BIDCOS_RF_ENABLED: False,
+        CONF_VIRTUAL_DEVICES_ENABLED: False,
+        CONF_BIDCOS_WIRED_ENABLED: True,
     }
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
     assert interface.get(HmInterfaceName.HMIP_RF) is None
     assert interface.get(HmInterfaceName.BIDCOS_RF) is None
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
-    assert interface[HmInterfaceName.BIDCOS_WIRED][ATTR_PORT] == 2000
+    assert interface[HmInterfaceName.BIDCOS_WIRED][CONF_PORT] == 2000
 
 
 async def test_form_only_virtual(hass: HomeAssistant) -> None:
     """Test we get the form."""
     interface_data = {
-        ATTR_HMIP_RF_ENABLED: False,
-        ATTR_BIDCOS_RF_ENABLED: False,
-        ATTR_VIRTUAL_DEVICES_ENABLED: True,
-        ATTR_BIDCOS_WIRED_ENABLED: False,
+        CONF_HMIP_RF_ENABLED: False,
+        CONF_BIDCOS_RF_ENABLED: False,
+        CONF_VIRTUAL_DEVICES_ENABLED: True,
+        CONF_BIDCOS_WIRED_ENABLED: False,
     }
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
     assert interface.get(HmInterfaceName.HMIP_RF) is None
     assert interface.get(HmInterfaceName.BIDCOS_RF) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
-    assert interface[HmInterfaceName.VIRTUAL_DEVICES][ATTR_PORT] == 9292
+    assert interface[HmInterfaceName.VIRTUAL_DEVICES][CONF_PORT] == 9292
 
 
 async def test_options_form_all_interfaces_enabled(
@@ -262,10 +263,10 @@ async def test_options_form_all_interfaces_enabled(
 
     data = await async_check_options_form(hass, mock_config_entry_v2)
     interface = data["interface"]
-    assert interface[HmInterfaceName.BIDCOS_RF][ATTR_PORT] == 2001
-    assert interface[HmInterfaceName.HMIP_RF][ATTR_PORT] == 2010
-    assert interface[HmInterfaceName.BIDCOS_WIRED][ATTR_PORT] == 2000
-    assert interface[HmInterfaceName.VIRTUAL_DEVICES][ATTR_PORT] == 9292
+    assert interface[HmInterfaceName.BIDCOS_RF][CONF_PORT] == 2001
+    assert interface[HmInterfaceName.HMIP_RF][CONF_PORT] == 2010
+    assert interface[HmInterfaceName.BIDCOS_WIRED][CONF_PORT] == 2000
+    assert interface[HmInterfaceName.VIRTUAL_DEVICES][CONF_PORT] == 9292
 
 
 async def test_form_tls(hass: HomeAssistant) -> None:
@@ -274,9 +275,9 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     interface = data["interface"]
 
     if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
-    assert if_hmip_rf[ATTR_PORT] == 42010
+    assert if_hmip_rf[CONF_PORT] == 42010
     if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
-    assert if_bidcos_rf[ATTR_PORT] == 42001
+    assert if_bidcos_rf[CONF_PORT] == 42001
     assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
     assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
@@ -299,8 +300,8 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
-                ATTR_HOST: const.HOST,
+                CONF_INSTANCE_NAME: const.INSTANCE_NAME,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.PASSWORD,
             },
@@ -346,7 +347,7 @@ async def test_options_form_invalid_auth(
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
             {
-                ATTR_HOST: const.HOST,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.PASSWORD,
             },
@@ -391,8 +392,8 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
-                ATTR_HOST: const.HOST,
+                CONF_INSTANCE_NAME: const.INSTANCE_NAME,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.INVALID_PASSWORD,
             },
@@ -438,7 +439,7 @@ async def test_options_form_invalid_password(
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
             {
-                ATTR_HOST: const.HOST,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.INVALID_PASSWORD,
             },
@@ -483,8 +484,8 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
-                ATTR_HOST: const.HOST,
+                CONF_INSTANCE_NAME: const.INSTANCE_NAME,
+                CONF_HOST: const.HOST,
                 CONF_USERNAME: const.USERNAME,
                 CONF_PASSWORD: const.PASSWORD,
             },
@@ -616,8 +617,8 @@ async def test_flow_hassio_discovery(
     assert result3["handler"] == DOMAIN
     assert result3["title"] == const.INSTANCE_NAME
     data = result3["data"]
-    assert data[ATTR_INSTANCE_NAME] == const.INSTANCE_NAME
-    assert data[ATTR_HOST] == const.HOST
+    assert data[CONF_INSTANCE_NAME] == const.INSTANCE_NAME
+    assert data[CONF_HOST] == const.HOST
     assert data[CONF_USERNAME] == const.USERNAME
     assert data[CONF_PASSWORD] == const.PASSWORD
 

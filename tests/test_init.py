@@ -9,7 +9,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 import custom_components.homematicip_local
 from custom_components.homematicip_local import async_unload_entry
-from custom_components.homematicip_local.const import ATTR_ENABLE_SYSTEM_NOTIFICATIONS, DOMAIN
+from custom_components.homematicip_local.const import CONF_ENABLE_SYSTEM_NOTIFICATIONS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 
 from tests import const
@@ -69,7 +69,7 @@ async def test_migrate_entry(
         config_entry = config_entries[0]
         assert config_entry.state == ConfigEntryState.LOADED
         assert config_entry.version == 2
-        assert config_entry.data[ATTR_ENABLE_SYSTEM_NOTIFICATIONS] is True
+        assert config_entry.data[CONF_ENABLE_SYSTEM_NOTIFICATIONS] is True
 
 
 async def test_unload_entry(

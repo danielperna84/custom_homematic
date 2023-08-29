@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import ENTITY_EVENTS, HmPlatform
+from hahomematic.const import ENTITY_EVENTS, EVENT_ADDRESS, EVENT_INTERFACE_ID, HmPlatform
 from hahomematic.platforms.event import GenericEvent
 from homeassistant.components.event import EventDeviceClass, EventEntity
 from homeassistant.config_entries import ConfigEntry
@@ -15,7 +15,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import UndefinedType
 
-from .const import ATTR_ADDRESS, ATTR_INTERFACE_ID, ATTR_MODEL, CONTROL_UNITS, DOMAIN
+from .const import CONTROL_UNITS, DOMAIN, EVENT_MODEL
 from .control_unit import ControlUnit, signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,9 +113,9 @@ class HaHomematicEvent(EventEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic channel event entity."""
         attributes: dict[str, Any] = {
-            ATTR_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
-            ATTR_ADDRESS: self._hm_primary_entity.channel_address,
-            ATTR_MODEL: self._hm_primary_entity.device.device_type,
+            EVENT_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
+            EVENT_ADDRESS: self._hm_primary_entity.channel_address,
+            EVENT_MODEL: self._hm_primary_entity.device.device_type,
         }
 
         return attributes

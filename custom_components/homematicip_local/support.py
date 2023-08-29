@@ -9,7 +9,7 @@ from decimal import Decimal
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
-from hahomematic.const import IDENTIFIER_SEPARATOR
+from hahomematic.const import EVENT_CHANNEL_NO, EVENT_PARAMETER, EVENT_VALUE, IDENTIFIER_SEPARATOR
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA, CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
@@ -18,22 +18,20 @@ from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
-from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
+from homeassistant.const import CONF_TYPE
 from homeassistant.helpers.typing import StateType
 import voluptuous as vol
 
 from .const import (
-    ATTR_CHANNEL_NO,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_VALUE,
     CONF_SUBTYPE,
-    EVENT_DATA_ERROR,
-    EVENT_DATA_ERROR_VALUE,
-    EVENT_DATA_IDENTIFIER,
-    EVENT_DATA_MESSAGE,
-    EVENT_DATA_TITLE,
-    EVENT_DATA_UNAVAILABLE,
+    EVENT_DEVICE_ID,
+    EVENT_ERROR,
+    EVENT_ERROR_VALUE,
+    EVENT_IDENTIFIER,
+    EVENT_MESSAGE,
+    EVENT_NAME,
+    EVENT_TITLE,
+    EVENT_UNAVAILABLE,
     HmNameSource,
 )
 
@@ -47,36 +45,36 @@ T = TypeVar("T", bound=CallbackEntity)
 
 BASE_EVENT_DATA_SCHEMA = HM_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(ATTR_DEVICE_ID): str,
-        vol.Required(ATTR_NAME): str,
+        vol.Required(EVENT_DEVICE_ID): str,
+        vol.Required(EVENT_NAME): str,
     }
 )
 HM_CLICK_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): str,
         vol.Required(CONF_SUBTYPE): int,
-        vol.Remove(ATTR_CHANNEL_NO): int,
-        vol.Remove(ATTR_PARAMETER): str,
-        vol.Remove(ATTR_VALUE): vol.Any(bool, int),
+        vol.Remove(EVENT_CHANNEL_NO): int,
+        vol.Remove(EVENT_PARAMETER): str,
+        vol.Remove(EVENT_VALUE): vol.Any(bool, int),
     },
     extra=vol.ALLOW_EXTRA,
 )
 HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(EVENT_DATA_IDENTIFIER): str,
-        vol.Required(EVENT_DATA_TITLE): str,
-        vol.Required(EVENT_DATA_MESSAGE): str,
-        vol.Required(EVENT_DATA_UNAVAILABLE): bool,
+        vol.Required(EVENT_IDENTIFIER): str,
+        vol.Required(EVENT_TITLE): str,
+        vol.Required(EVENT_MESSAGE): str,
+        vol.Required(EVENT_UNAVAILABLE): bool,
     },
     extra=vol.ALLOW_EXTRA,
 )
 HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(EVENT_DATA_IDENTIFIER): str,
-        vol.Required(EVENT_DATA_TITLE): str,
-        vol.Required(EVENT_DATA_MESSAGE): str,
-        vol.Required(EVENT_DATA_ERROR_VALUE): vol.Any(bool, int),
-        vol.Required(EVENT_DATA_ERROR): bool,
+        vol.Required(EVENT_IDENTIFIER): str,
+        vol.Required(EVENT_TITLE): str,
+        vol.Required(EVENT_MESSAGE): str,
+        vol.Required(EVENT_ERROR_VALUE): vol.Any(bool, int),
+        vol.Required(EVENT_ERROR): bool,
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -88,12 +86,12 @@ def cleanup_click_event_data(event_data: dict[str, Any]) -> dict[str, Any]:
     """Cleanup the click_event."""
     event_data.update(
         {
-            CONF_TYPE: event_data[ATTR_PARAMETER].lower(),
-            CONF_SUBTYPE: event_data[ATTR_CHANNEL_NO],
+            CONF_TYPE: event_data[EVENT_PARAMETER].lower(),
+            CONF_SUBTYPE: event_data[EVENT_CHANNEL_NO],
         }
     )
-    del event_data[ATTR_PARAMETER]
-    del event_data[ATTR_CHANNEL_NO]
+    del event_data[EVENT_PARAMETER]
+    del event_data[EVENT_CHANNEL_NO]
     return event_data
 
 
