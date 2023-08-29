@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic, cast
+from typing import Any, Final, Generic, cast
 
 from hahomematic.const import HmCallSource
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -16,25 +16,20 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import UndefinedType
 
 from .config import DEFAULT_SYSVAR_REGISTRY_ENABLED
-from .const import (
-    ATTR_ADDRESS,
-    ATTR_ENTITY_TYPE,
-    ATTR_FUNCTION,
-    ATTR_INTERFACE_ID,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_VALUE_STATE,
-    DOMAIN,
-    HmEntityState,
-    HmEntityType,
-)
+from .const import DOMAIN, HmEntityState, HmEntityType
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
 from .support import HmGenericEntity, HmGenericSysvarEntity, get_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
-
+ATTR_ADDRESS: Final = "address"
+ATTR_ENTITY_TYPE: Final = "entity_type"
+ATTR_FUNCTION: Final = "function"
+ATTR_INTERFACE_ID: Final = "interface_id"
+ATTR_MODEL: Final = "model"
+ATTR_NAME: Final = "name"
+ATTR_PARAMETER: Final = "parameter"
+ATTR_VALUE_STATE: Final = "value_state"
 
 class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     """Representation of the HomematicIP generic entity."""

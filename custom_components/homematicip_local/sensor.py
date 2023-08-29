@@ -21,9 +21,13 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, TOTAL_INCREASING_SYSVAR, HmEntityState
+from .const import CONTROL_UNITS, DOMAIN, TOTAL_INCREASING_SYSVAR, HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
+from .generic_entity import (
+    ATTR_VALUE_STATE,
+    HaHomematicGenericEntity,
+    HaHomematicGenericSysvarEntity,
+)
 from .support import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)

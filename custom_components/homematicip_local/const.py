@@ -13,14 +13,7 @@ HMIP_LOCAL_MIN_VERSION: Final = "2023.8.0.dev0"
 LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-xmlrpc-server-received-no-events"
 LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 
-ATTR_ADDRESS: Final = "address"
-ATTR_ENTITY_TYPE: Final = "entity_type"
-ATTR_FUNCTION: Final = "function"
-ATTR_INTERFACE_ID: Final = "interface_id"
-ATTR_MODEL: Final = "model"
-ATTR_NAME: Final = "name"
-ATTR_PARAMETER: Final = "parameter"
-ATTR_VALUE_STATE: Final = "value_state"
+
 
 CONF_CALLBACK_HOST: Final = "callback_host"
 CONF_CALLBACK_PORT: Final = "callback_port"
