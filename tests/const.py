@@ -1,15 +1,7 @@
 """Constants for tests."""
 from __future__ import annotations
 
-from hahomematic.const import (
-    IF_BIDCOS_RF_NAME,
-    SYSVAR_HM_TYPE_FLOAT,
-    SYSVAR_HM_TYPE_INTEGER,
-    SYSVAR_TYPE_ALARM,
-    SYSVAR_TYPE_LIST,
-    SYSVAR_TYPE_LOGIC,
-    SYSVAR_TYPE_STRING,
-)
+from hahomematic.const import HmInterfaceName, HmSysvarType
 from hahomematic.support import ProgramData, SystemVariableData
 
 CONFIG_ENTRY_ID = "12345678"
@@ -18,7 +10,7 @@ DEFAULT_CALLBACK_PORT = 8967
 HOST = "127.0.0.1"
 INSTANCE_NAME = "CentralTest"
 INVALID_PASSWORD = "In_VäLid"
-INTERFACE_ID = f"{INSTANCE_NAME}-{IF_BIDCOS_RF_NAME}"
+INTERFACE_ID = f"{INSTANCE_NAME}-{HmInterfaceName.BIDCOS_RF}"
 LOCAL_PORT = 2002
 PASSWORD = "pass"
 SERIAL = "0987654321"
@@ -27,7 +19,7 @@ USERNAME = "user"
 SYSVAR_DATA: list[SystemVariableData] = [
     SystemVariableData(
         name="sv_alarm",
-        data_type=SYSVAR_TYPE_ALARM,
+        data_type=HmSysvarType.ALARM,
         unit=None,
         value=False,
         value_list=None,
@@ -37,7 +29,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_alarm_ext",
-        data_type=SYSVAR_TYPE_ALARM,
+        data_type=HmSysvarType.ALARM,
         unit=None,
         value=False,
         value_list=None,
@@ -47,7 +39,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_logic",
-        data_type=SYSVAR_TYPE_LOGIC,
+        data_type=HmSysvarType.LOGIC,
         unit=None,
         value=False,
         value_list=None,
@@ -57,7 +49,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_logic_ext",
-        data_type=SYSVAR_TYPE_LOGIC,
+        data_type=HmSysvarType.LOGIC,
         unit=None,
         value=False,
         value_list=None,
@@ -67,7 +59,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_list",
-        data_type=SYSVAR_TYPE_LIST,
+        data_type=HmSysvarType.LIST,
         unit=None,
         value=0,
         value_list=["v1", "v2", "v3"],
@@ -77,7 +69,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_list_ext",
-        data_type=SYSVAR_TYPE_LIST,
+        data_type=HmSysvarType.LIST,
         unit=None,
         value=0,
         value_list=["v1", "v2", "v3"],
@@ -87,7 +79,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_string",
-        data_type=SYSVAR_TYPE_STRING,
+        data_type=HmSysvarType.STRING,
         unit=None,
         value="test1",
         value_list=None,
@@ -97,7 +89,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_string_ext",
-        data_type=SYSVAR_TYPE_STRING,
+        data_type=HmSysvarType.STRING,
         unit=None,
         value="test1",
         value_list=None,
@@ -107,7 +99,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_float",
-        data_type=SYSVAR_HM_TYPE_FLOAT,
+        data_type=HmSysvarType.HM_FLOAT,
         unit=None,
         value=23.2,
         value_list=None,
@@ -117,7 +109,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_float_ext",
-        data_type=SYSVAR_HM_TYPE_FLOAT,
+        data_type=HmSysvarType.HM_FLOAT,
         unit="°C",
         value=23.2,
         value_list=None,
@@ -127,7 +119,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_integer",
-        data_type=SYSVAR_HM_TYPE_INTEGER,
+        data_type=HmSysvarType.HM_INTEGER,
         unit=None,
         value=17,
         value_list=None,
@@ -137,7 +129,7 @@ SYSVAR_DATA: list[SystemVariableData] = [
     ),
     SystemVariableData(
         name="sv_integer_ext",
-        data_type=SYSVAR_HM_TYPE_INTEGER,
+        data_type=HmSysvarType.HM_INTEGER,
         unit=None,
         value=17,
         value_list=None,
