@@ -10,7 +10,7 @@ from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERS
 from homeassistant.core import HomeAssistant
 
 from .const import (
-    ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
+    CONF_ENABLE_SYSTEM_NOTIFICATIONS,
     CONTROL_UNITS,
     DEFAULT_CALLBACK_PORT,
     DOMAIN,
@@ -99,7 +99,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if entry.version == 1:
         data = dict(entry.data)
-        data.update({ATTR_ENABLE_SYSTEM_NOTIFICATIONS: True})
+        data.update({CONF_ENABLE_SYSTEM_NOTIFICATIONS: True})
 
         entry.version = 2
         hass.config_entries.async_update_entry(entry, data=data)

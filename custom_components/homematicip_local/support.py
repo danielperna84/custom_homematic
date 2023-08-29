@@ -9,7 +9,7 @@ from decimal import Decimal
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
-from hahomematic.const import IDENTIFIER_SEPARATOR
+from hahomematic.const import EVENT_CHANNEL_NO, EVENT_PARAMETER, EVENT_VALUE, IDENTIFIER_SEPARATOR
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import HM_EVENT_DATA_SCHEMA, CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
@@ -23,10 +23,7 @@ from homeassistant.helpers.typing import StateType
 import voluptuous as vol
 
 from .const import (
-    ATTR_CHANNEL_NO,
     ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_VALUE,
     CONF_SUBTYPE,
     EVENT_DATA_ERROR,
     EVENT_DATA_ERROR_VALUE,
@@ -55,9 +52,9 @@ HM_CLICK_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): str,
         vol.Required(CONF_SUBTYPE): int,
-        vol.Remove(ATTR_CHANNEL_NO): int,
-        vol.Remove(ATTR_PARAMETER): str,
-        vol.Remove(ATTR_VALUE): vol.Any(bool, int),
+        vol.Remove(EVENT_CHANNEL_NO): int,
+        vol.Remove(EVENT_PARAMETER): str,
+        vol.Remove(EVENT_VALUE): vol.Any(bool, int),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -88,12 +85,12 @@ def cleanup_click_event_data(event_data: dict[str, Any]) -> dict[str, Any]:
     """Cleanup the click_event."""
     event_data.update(
         {
-            CONF_TYPE: event_data[ATTR_PARAMETER].lower(),
-            CONF_SUBTYPE: event_data[ATTR_CHANNEL_NO],
+            CONF_TYPE: event_data[EVENT_PARAMETER].lower(),
+            CONF_SUBTYPE: event_data[EVENT_CHANNEL_NO],
         }
     )
-    del event_data[ATTR_PARAMETER]
-    del event_data[ATTR_CHANNEL_NO]
+    del event_data[EVENT_PARAMETER]
+    del event_data[EVENT_CHANNEL_NO]
     return event_data
 
 

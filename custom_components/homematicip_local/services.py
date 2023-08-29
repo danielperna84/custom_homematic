@@ -3,12 +3,13 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
+from typing import Final
 
 from hahomematic.const import HmForcedDeviceAvailability, HmParamsetKey
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_MODE, ATTR_TIME
+from homeassistant.const import CONF_DEVICE_ID, CONF_MODE
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
@@ -17,19 +18,7 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.service import async_register_admin_service, verify_domain_control
 import voluptuous as vol
 
-from .const import (
-    ATTR_ADDRESS,
-    ATTR_INTERFACE_ID,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_PARAMSET,
-    ATTR_PARAMSET_KEY,
-    ATTR_RX_MODE,
-    ATTR_VALUE,
-    ATTR_VALUE_TYPE,
-    CONTROL_UNITS,
-    DOMAIN,
-)
+from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import (
     ControlUnit,
     get_cu_by_interface_id,
@@ -40,23 +29,34 @@ from .support import get_device_address_at_interface_from_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_CHANNEL = "channel"
-ATTR_ENTRY_ID = "entry_id"
-ATTR_DEVICE_ADDRESS = "device_address"
-DEFAULT_CHANNEL = 1
+CONF_ADDRESS: Final = "address"
+CONF_CHANNEL: Final = "channel"
+CONF_TIME: Final = "time"
+CONF_DEVICE_ADDRESS: Final = "device_address"
+CONF_ENTRY_ID: Final = "entry_id"
+CONF_INTERFACE_ID: Final = "interface_id"
+CONF_NAME: Final = "name"
+CONF_PARAMETER: Final = "parameter"
+CONF_PARAMSET: Final = "paramset"
+CONF_PARAMSET_KEY: Final = "paramset_key"
+CONF_RX_MODE: Final = "rx_mode"
+CONF_VALUE: Final = "value"
+CONF_VALUE_TYPE: Final = "value_type"
 
-SERVICE_CLEAR_CACHE = "clear_cache"
-SERVICE_DELETE_DEVICE = "delete_device"
-SERVICE_EXPORT_DEVICE_DEFINITION = "export_device_definition"
-SERVICE_FETCH_SYSTEM_VARIABLES = "fetch_system_variables"
-SERVICE_FORCE_DEVICE_AVAILABILITY = "force_device_availability"
-SERVICE_GET_DEVICE_VALUE = "get_device_value"
-SERVICE_GET_PARAMSET = "get_paramset"
-SERVICE_PUT_PARAMSET = "put_paramset"
-SERVICE_SET_DEVICE_VALUE = "set_device_value"
-SERVICE_SET_INSTALL_MODE = "set_install_mode"
-SERVICE_SET_VARIABLE_VALUE = "set_variable_value"
-SERVICE_UPDATE_DEVICE_FIRMWARE_DATA = "update_device_firmware_data"
+DEFAULT_CHANNEL: Final = 1
+
+SERVICE_CLEAR_CACHE: Final = "clear_cache"
+SERVICE_DELETE_DEVICE: Final = "delete_device"
+SERVICE_EXPORT_DEVICE_DEFINITION: Final = "export_device_definition"
+SERVICE_FETCH_SYSTEM_VARIABLES: Final = "fetch_system_variables"
+SERVICE_FORCE_DEVICE_AVAILABILITY: Final = "force_device_availability"
+SERVICE_GET_DEVICE_VALUE: Final = "get_device_value"
+SERVICE_GET_PARAMSET: Final = "get_paramset"
+SERVICE_PUT_PARAMSET: Final = "put_paramset"
+SERVICE_SET_DEVICE_VALUE: Final = "set_device_value"
+SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
+SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
+SERVICE_UPDATE_DEVICE_FIRMWARE_DATA: Final = "update_device_firmware_data"
 
 HMIP_LOCAL_SERVICES = [
     SERVICE_CLEAR_CACHE,
@@ -76,113 +76,113 @@ HMIP_LOCAL_SERVICES = [
 
 BASE_SCHEMA_DEVICE = vol.Schema(
     {
-        vol.Optional(ATTR_DEVICE_ID): cv.string,
-        vol.Optional(ATTR_DEVICE_ADDRESS): cv.string,
+        vol.Optional(CONF_DEVICE_ID): cv.string,
+        vol.Optional(CONF_DEVICE_ADDRESS): cv.string,
     }
 )
 
 
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
     {
-        vol.Required(ATTR_ENTRY_ID): cv.string,
+        vol.Required(CONF_ENTRY_ID): cv.string,
     }
 )
 
 SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
     {
-        vol.Required(ATTR_DEVICE_ID): cv.string,
+        vol.Required(CONF_DEVICE_ID): cv.string,
     }
 )
 
 SCHEMA_SERVICE_EXPORT_DEVICE_DEFINITION = vol.Schema(
     {
-        vol.Required(ATTR_DEVICE_ID): cv.string,
+        vol.Required(CONF_DEVICE_ID): cv.string,
     }
 )
 
 SCHEMA_SERVICE_FETCH_SYSTEM_VARIABLES = vol.Schema(
     {
-        vol.Required(ATTR_ENTRY_ID): cv.string,
+        vol.Required(CONF_ENTRY_ID): cv.string,
     }
 )
 
 SCHEMA_SERVICE_FORCE_DEVICE_AVAILABILITY = vol.All(
-    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
-    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE,
 )
 
 SCHEMA_SERVICE_GET_DEVICE_VALUE = vol.All(
-    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
-    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
-            vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
         }
     ),
 )
 
 SCHEMA_SERVICE_GET_PARAMSET = vol.All(
-    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
-    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
-            vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
         }
     ),
 )
 
 SCHEMA_SERVICE_SET_VARIABLE_VALUE = vol.Schema(
     {
-        vol.Required(ATTR_ENTRY_ID): cv.string,
-        vol.Required(ATTR_NAME): cv.string,
-        vol.Required(ATTR_VALUE): cv.match_all,
+        vol.Required(CONF_ENTRY_ID): cv.string,
+        vol.Required(CONF_NAME): cv.string,
+        vol.Required(CONF_VALUE): cv.match_all,
     }
 )
 
 SCHEMA_SERVICE_SET_INSTALL_MODE = vol.Schema(
     {
-        vol.Required(ATTR_INTERFACE_ID): cv.string,
-        vol.Optional(ATTR_TIME, default=60): cv.positive_int,
-        vol.Optional(ATTR_MODE, default=1): vol.All(vol.Coerce(int), vol.In([1, 2])),
-        vol.Optional(ATTR_ADDRESS): vol.All(cv.string, vol.Upper),
+        vol.Required(CONF_INTERFACE_ID): cv.string,
+        vol.Optional(CONF_TIME, default=60): cv.positive_int,
+        vol.Optional(CONF_MODE, default=1): vol.All(vol.Coerce(int), vol.In([1, 2])),
+        vol.Optional(CONF_ADDRESS): vol.All(cv.string, vol.Upper),
     }
 )
 
 SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
-    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
-    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(ATTR_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
-            vol.Required(ATTR_PARAMETER): vol.All(cv.string, vol.Upper),
-            vol.Required(ATTR_VALUE): cv.match_all,
-            vol.Optional(ATTR_VALUE_TYPE): vol.In(
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
+            vol.Required(CONF_VALUE): cv.match_all,
+            vol.Optional(CONF_VALUE_TYPE): vol.In(
                 ["boolean", "dateTime.iso8601", "double", "int", "string"]
             ),
-            vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
+            vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
         }
     ),
 )
 
 SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
-    cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
-    cv.has_at_most_one_key(ATTR_DEVICE_ID, ATTR_DEVICE_ADDRESS),
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(ATTR_CHANNEL): vol.Coerce(int),
-            vol.Required(ATTR_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
-            vol.Required(ATTR_PARAMSET): dict,
-            vol.Optional(ATTR_RX_MODE): vol.All(cv.string, vol.Upper),
+            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+            vol.Required(CONF_PARAMSET): dict,
+            vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
         }
     ),
 )
 
 SCHEMA_SERVICE_UPDATE_DEVICE_FIRMWARE_DATA = vol.Schema(
     {
-        vol.Required(ATTR_ENTRY_ID): cv.string,
+        vol.Required(CONF_ENTRY_ID): cv.string,
     }
 )
 
@@ -328,7 +328,7 @@ async def _async_service_delete_device(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to delete a Homematic(IP) Local device from HA."""
-    device_id = service.data[ATTR_DEVICE_ID]
+    device_id = service.data[CONF_DEVICE_ID]
 
     if (address_data := _get_interface_address(hass=hass, device_id=device_id)) is None:
         return None
@@ -386,8 +386,8 @@ async def _async_service_get_device_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> ServiceResponse:
     """Service to call getValue method for Homematic(IP) Local devices."""
-    channel_no = service.data[ATTR_CHANNEL]
-    parameter = service.data[ATTR_PARAMETER]
+    channel_no = service.data[CONF_CHANNEL]
+    parameter = service.data[CONF_PARAMETER]
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         try:
@@ -408,8 +408,8 @@ async def _async_service_get_paramset(
     hass: HomeAssistant, service: ServiceCall
 ) -> ServiceResponse:
     """Service to call the getParamset method on a Homematic(IP) Local connection."""
-    channel_no = service.data.get(ATTR_CHANNEL)
-    paramset_key = service.data[ATTR_PARAMSET_KEY]
+    channel_no = service.data.get(CONF_CHANNEL)
+    paramset_key = service.data[CONF_PARAMSET_KEY]
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         address = (
@@ -434,11 +434,11 @@ async def _async_service_set_device_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
-    channel_no = service.data[ATTR_CHANNEL]
-    parameter = service.data[ATTR_PARAMETER]
-    value = service.data[ATTR_VALUE]
-    value_type = service.data.get(ATTR_VALUE_TYPE)
-    rx_mode = service.data.get(ATTR_RX_MODE)
+    channel_no = service.data[CONF_CHANNEL]
+    parameter = service.data[CONF_PARAMETER]
+    value = service.data[CONF_VALUE]
+    value_type = service.data.get(CONF_VALUE_TYPE)
+    rx_mode = service.data.get(CONF_RX_MODE)
     if value_type:
         # Convert value into correct XML-RPC Type.
         # https://docs.python.org/3/library/xmlrpc.client.html#xmlrpc.client.ServerProxy
@@ -468,9 +468,9 @@ async def _async_service_set_variable_value(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local system variable."""
-    entry_id = service.data[ATTR_ENTRY_ID]
-    name = service.data[ATTR_NAME]
-    value = service.data[ATTR_VALUE]
+    entry_id = service.data[CONF_ENTRY_ID]
+    name = service.data[CONF_NAME]
+    value = service.data[CONF_VALUE]
 
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.set_system_variable(name=name, value=value)
@@ -480,10 +480,10 @@ async def _async_service_set_install_mode(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to set interface_id into install mode."""
-    interface_id = service.data[ATTR_INTERFACE_ID]
-    mode: int = service.data.get(ATTR_MODE, 1)
-    time: int = service.data.get(ATTR_TIME, 60)
-    device_address = service.data.get(ATTR_ADDRESS)
+    interface_id = service.data[CONF_INTERFACE_ID]
+    mode: int = service.data.get(CONF_MODE, 1)
+    time: int = service.data.get(CONF_TIME, 60)
+    device_address = service.data.get(CONF_ADDRESS)
 
     if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         await control_unit.central.set_install_mode(
@@ -493,7 +493,7 @@ async def _async_service_set_install_mode(
 
 async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to clear the cache."""
-    entry_id = service.data[ATTR_ENTRY_ID]
+    entry_id = service.data[CONF_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.clear_all_caches()
 
@@ -502,7 +502,7 @@ async def _async_service_fetch_system_variables(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to fetch system variables from backend."""
-    entry_id = service.data[ATTR_ENTRY_ID]
+    entry_id = service.data[CONF_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
         await control.fetch_all_system_variables()
 
@@ -511,13 +511,13 @@ async def _async_service_put_paramset(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call the putParamset method on a Homematic(IP) Local connection."""
-    channel_no = service.data.get(ATTR_CHANNEL)
-    paramset_key = service.data[ATTR_PARAMSET_KEY]
+    channel_no = service.data.get(CONF_CHANNEL)
+    paramset_key = service.data[CONF_PARAMSET_KEY]
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
-    value = dict(service.data[ATTR_PARAMSET])
-    rx_mode = service.data.get(ATTR_RX_MODE)
+    value = dict(service.data[CONF_PARAMSET])
+    rx_mode = service.data.get(CONF_RX_MODE)
 
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         address = (
@@ -537,7 +537,7 @@ async def _async_service_update_device_firmware_data(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to clear the cache."""
-    entry_id = service.data[ATTR_ENTRY_ID]
+    entry_id = service.data[CONF_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.refresh_firmware_data()
 
@@ -576,7 +576,7 @@ def _get_hm_device_by_service_data(
 ) -> HmDevice | None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
-    if device_id := service.data.get(ATTR_DEVICE_ID):
+    if device_id := service.data.get(CONF_DEVICE_ID):
         hm_device = get_hm_device_by_id(hass=hass, device_id=device_id)
         if not hm_device:
             _LOGGER.warning(
@@ -585,7 +585,7 @@ def _get_hm_device_by_service_data(
                 service.domain,
                 service.service,
             )
-    elif device_address := service.data.get(ATTR_DEVICE_ADDRESS):
+    elif device_address := service.data.get(CONF_DEVICE_ADDRESS):
         hm_device = get_hm_device_by_address(hass=hass, device_address=device_address)
         if not hm_device:
             _LOGGER.warning(

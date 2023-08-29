@@ -22,6 +22,7 @@ from hahomematic.const import (
     EVENT_PARAMETER,
     EVENT_SECONDS_SINCE_LAST_EVENT,
     EVENT_TYPE,
+    EVENT_VALUE,
     IP_ANY_V4,
     PORT_ANY,
     HmDeviceFirmwareState,
@@ -43,7 +44,7 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
 from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
-from homeassistant.const import ATTR_DEVICE_ID
+from homeassistant.const import ATTR_DEVICE_ID, CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
@@ -65,21 +66,17 @@ from .config import (
     MASTER_SCAN_INTERVAL,
 )
 from .const import (
-    ATTR_CALLBACK_HOST,
-    ATTR_CALLBACK_PORT,
-    ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
-    ATTR_HOST,
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_JSON_PORT,
     ATTR_NAME,
-    ATTR_PATH,
-    ATTR_PORT,
-    ATTR_SYSVAR_SCAN_ENABLED,
-    ATTR_SYSVAR_SCAN_INTERVAL,
-    ATTR_TLS,
-    ATTR_VALUE,
-    ATTR_VERIFY_TLS,
+    CONF_CALLBACK_HOST,
+    CONF_CALLBACK_PORT,
+    CONF_ENABLE_SYSTEM_NOTIFICATIONS,
+    CONF_INSTANCE_NAME,
+    CONF_INTERFACE,
+    CONF_JSON_PORT,
+    CONF_SYSVAR_SCAN_ENABLED,
+    CONF_SYSVAR_SCAN_INTERVAL,
+    CONF_TLS,
+    CONF_VERIFY_TLS,
     CONTROL_UNITS,
     DOMAIN,
     EVENT_DATA_ERROR,
@@ -116,9 +113,9 @@ class BaseControlUnit:
         self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
         self._start_direct = control_config.start_direct
-        self._instance_name = self._config_data[ATTR_INSTANCE_NAME]
+        self._instance_name = self._config_data[CONF_INSTANCE_NAME]
         self._enable_system_notifications = self._config_data[
-            ATTR_ENABLE_SYSTEM_NOTIFICATIONS
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS
         ]
         self._central: CentralUnit = self._create_central()
 
@@ -148,14 +145,14 @@ class BaseControlUnit:
     def _create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         interface_configs: set[InterfaceConfig] = set()
-        for interface_name in self._config_data[ATTR_INTERFACE]:
-            interface = self._config_data[ATTR_INTERFACE][interface_name]
+        for interface_name in self._config_data[CONF_INTERFACE]:
+            interface = self._config_data[CONF_INTERFACE][interface_name]
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
                     interface=HmInterfaceName(interface_name),
-                    port=interface[ATTR_PORT],
-                    remote_path=interface.get(ATTR_PATH),
+                    port=interface[CONF_PORT],
+                    remote_path=interface.get(CONF_PATH),
                 )
             )
         # use last 10 chars of entry_id for central_id uniqueness
@@ -163,19 +160,19 @@ class BaseControlUnit:
         return CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
-            host=self._config_data[ATTR_HOST],
+            host=self._config_data[CONF_HOST],
             username=self._config_data[CONF_USERNAME],
             password=self._config_data[CONF_PASSWORD],
             central_id=central_id,
-            tls=self._config_data[ATTR_TLS],
-            verify_tls=self._config_data[ATTR_VERIFY_TLS],
+            tls=self._config_data[CONF_TLS],
+            verify_tls=self._config_data[CONF_VERIFY_TLS],
             client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._config_data[ATTR_JSON_PORT],
-            callback_host=self._config_data.get(ATTR_CALLBACK_HOST)
-            if self._config_data.get(ATTR_CALLBACK_HOST) != IP_ANY_V4
+            json_port=self._config_data[CONF_JSON_PORT],
+            callback_host=self._config_data.get(CONF_CALLBACK_HOST)
+            if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
             else None,
-            callback_port=self._config_data.get(ATTR_CALLBACK_PORT)
-            if self._config_data.get(ATTR_CALLBACK_PORT) != PORT_ANY
+            callback_port=self._config_data.get(CONF_CALLBACK_PORT)
+            if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
@@ -201,10 +198,10 @@ class ControlUnit(BaseControlUnit):
             hass=self._hass,
             control_unit=self,
             sysvar_scan_enabled=self._config_data.get(
-                ATTR_SYSVAR_SCAN_ENABLED, True
+                CONF_SYSVAR_SCAN_ENABLED, True
             ),
             sysvar_scan_interval=self._config_data.get(
-                ATTR_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+                CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
             ),
             device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED
         )
@@ -612,7 +609,7 @@ class ControlUnit(BaseControlUnit):
                     severity=IssueSeverity.WARNING,
                     translation_key="ping_pong_mismatch",
                     translation_placeholders={
-                        ATTR_INSTANCE_NAME: self._instance_name,
+                        CONF_INSTANCE_NAME: self._instance_name,
                     },
                 )
             elif interface_event_type == HmInterfaceEventType.PROXY:
@@ -648,7 +645,7 @@ class ControlUnit(BaseControlUnit):
                     )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[EVENT_PARAMETER]
-                unavailable = event_data[ATTR_VALUE]
+                unavailable = event_data[EVENT_VALUE]
                 if parameter in (HmEvent.STICKY_UN_REACH, HmEvent.UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
@@ -675,7 +672,7 @@ class ControlUnit(BaseControlUnit):
                 error_parameter_display = error_parameter.replace("_", " ").title()
                 title = f"{DOMAIN.upper()} Device Error"
                 error_message: str = ""
-                error_value = event_data[ATTR_VALUE]
+                error_value = event_data[EVENT_VALUE]
                 display_error: bool = False
                 if isinstance(error_value, bool):
                     display_error = error_value
@@ -803,7 +800,7 @@ class ControlConfig:
     def _temporary_config(self) -> ControlConfig:
         """Return a config for validation."""
         temporary_data: dict[str, Any] = deepcopy(dict(self.data))
-        temporary_data[ATTR_INSTANCE_NAME] = "temporary_instance"
+        temporary_data[CONF_INSTANCE_NAME] = "temporary_instance"
         return ControlConfig(
             hass=self.hass, entry_id="hmip_local_temporary", data=temporary_data, start_direct=True
         )
