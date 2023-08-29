@@ -5,9 +5,8 @@ from typing import Any
 from unittest.mock import patch
 
 from hahomematic.const import (
-    ATTR_PASSWORD,
-    ATTR_TLS,
-    ATTR_USERNAME,
+    CONF_PASSWORD,
+    CONF_USERNAME,
     IF_BIDCOS_RF_NAME,
     IF_BIDCOS_WIRED_NAME,
     IF_HMIP_RF_NAME,
@@ -34,7 +33,7 @@ from custom_components.homematicip_local.config_flow import (
     _get_instance_name,
     _get_serial,
 )
-from custom_components.homematicip_local.const import ATTR_HOST, ATTR_PORT, DOMAIN
+from custom_components.homematicip_local.const import ATTR_HOST, ATTR_PORT, ATTR_TLS, DOMAIN
 
 from tests import const
 
@@ -50,8 +49,8 @@ async def async_check_form(
         central_data = {
             ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
             ATTR_HOST: const.HOST,
-            ATTR_USERNAME: const.USERNAME,
-            ATTR_PASSWORD: const.PASSWORD,
+            CONF_USERNAME: const.USERNAME,
+            CONF_PASSWORD: const.PASSWORD,
             ATTR_TLS: tls,
         }
 
@@ -81,8 +80,8 @@ async def async_check_form(
             {
                 ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.PASSWORD,
                 ATTR_TLS: tls,
             },
         )
@@ -110,8 +109,8 @@ async def async_check_form(
     data = result3["data"]
     assert data[ATTR_INSTANCE_NAME] == const.INSTANCE_NAME
     assert data[ATTR_HOST] == const.HOST
-    assert data[ATTR_USERNAME] == const.USERNAME
-    assert data[ATTR_PASSWORD] == const.PASSWORD
+    assert data[CONF_USERNAME] == const.USERNAME
+    assert data[CONF_PASSWORD] == const.PASSWORD
     return data
 
 
@@ -309,8 +308,8 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
             {
                 ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -355,8 +354,8 @@ async def test_options_form_invalid_auth(
             result["flow_id"],
             {
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -401,8 +400,8 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
             {
                 ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.INVALID_PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.INVALID_PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -447,8 +446,8 @@ async def test_options_form_invalid_password(
             result["flow_id"],
             {
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.INVALID_PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.INVALID_PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -493,8 +492,8 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
             {
                 ATTR_INSTANCE_NAME: const.INSTANCE_NAME,
                 ATTR_HOST: const.HOST,
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -599,8 +598,8 @@ async def test_flow_hassio_discovery(
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             user_input={
-                ATTR_USERNAME: const.USERNAME,
-                ATTR_PASSWORD: const.PASSWORD,
+                CONF_USERNAME: const.USERNAME,
+                CONF_PASSWORD: const.PASSWORD,
             },
         )
         await hass.async_block_till_done()
@@ -626,8 +625,8 @@ async def test_flow_hassio_discovery(
     data = result3["data"]
     assert data[ATTR_INSTANCE_NAME] == const.INSTANCE_NAME
     assert data[ATTR_HOST] == const.HOST
-    assert data[ATTR_USERNAME] == const.USERNAME
-    assert data[ATTR_PASSWORD] == const.PASSWORD
+    assert data[CONF_USERNAME] == const.USERNAME
+    assert data[CONF_PASSWORD] == const.PASSWORD
 
 
 async def test_hassio_discovery_existing_configuration(
@@ -673,7 +672,7 @@ async def test_async_validate_config_and_get_system_information(
         result = await _async_validate_config_and_get_system_information(hass, entry_data_v2)
         assert result.serial == const.SERIAL
 
-    entry_data_v2[ATTR_PASSWORD] = const.INVALID_PASSWORD
+    entry_data_v2[CONF_PASSWORD] = const.INVALID_PASSWORD
 
     with pytest.raises(InvalidPassword) as exc:
         await _async_validate_config_and_get_system_information(hass, entry_data_v2)

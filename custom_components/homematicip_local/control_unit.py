@@ -10,38 +10,30 @@ from typing import Any, cast
 from hahomematic.central_unit import CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
-    ATTR_ADDRESS,
-    ATTR_AVAILABLE,
-    ATTR_DATA,
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_INTERFACE_ID,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_PASSWORD,
-    ATTR_SECONDS_SINCE_LAST_EVENT,
-    ATTR_TLS,
-    ATTR_TYPE,
-    ATTR_USERNAME,
-    ATTR_VALUE,
-    ATTR_VERIFY_TLS,
     AVAILABLE_HM_HUB_PLATFORMS,
     AVAILABLE_HM_PLATFORMS,
+    CONF_PASSWORD,
+    CONF_USERNAME,
     ENTITY_EVENTS,
-    EVENT_STICKY_UN_REACH,
-    EVENT_UN_REACH,
-    HH_EVENT_DEVICES_CREATED,
-    HH_EVENT_HUB_REFRESHED,
+    EVENT_ADDRESS,
+    EVENT_AVAILABLE,
+    EVENT_DATA,
+    EVENT_INTERFACE_ID,
+    EVENT_PARAMETER,
+    EVENT_SECONDS_SINCE_LAST_EVENT,
+    EVENT_TYPE,
     IP_ANY_V4,
-    MANUFACTURER_EQ3,
-    PARAMSET_KEY_MASTER,
     PORT_ANY,
     HmDeviceFirmwareState,
     HmEntityUsage,
+    HmEvent,
     HmEventType,
-    HmInterface,
     HmInterfaceEventType,
+    HmInterfaceName,
+    HmManufacturer,
+    HmParamsetKey,
     HmPlatform,
+    HmSystemEvent,
 )
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
@@ -77,11 +69,17 @@ from .const import (
     ATTR_CALLBACK_PORT,
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_HOST,
+    ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
     ATTR_JSON_PORT,
+    ATTR_NAME,
     ATTR_PATH,
     ATTR_PORT,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
+    ATTR_TLS,
+    ATTR_VALUE,
+    ATTR_VERIFY_TLS,
     CONTROL_UNITS,
     DOMAIN,
     EVENT_DATA_ERROR,
@@ -155,7 +153,7 @@ class BaseControlUnit:
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
-                    interface=HmInterface(interface_name),
+                    interface=HmInterfaceName(interface_name),
                     port=interface[ATTR_PORT],
                     remote_path=interface.get(ATTR_PATH),
                 )
@@ -166,8 +164,8 @@ class BaseControlUnit:
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
             host=self._config_data[ATTR_HOST],
-            username=self._config_data[ATTR_USERNAME],
-            password=self._config_data[ATTR_PASSWORD],
+            username=self._config_data[CONF_USERNAME],
+            password=self._config_data[CONF_PASSWORD],
             central_id=central_id,
             tls=self._config_data[ATTR_TLS],
             verify_tls=self._config_data[ATTR_VERIFY_TLS],
@@ -245,7 +243,7 @@ class ControlUnit(BaseControlUnit):
                     self._central.name,
                 )
             },
-            manufacturer=MANUFACTURER_EQ3,
+            manufacturer=HmManufacturer.EQ3,
             model=self._central.model,
             name=self._central.name,
             sw_version=self._central.version,
@@ -265,7 +263,7 @@ class ControlUnit(BaseControlUnit):
                     self._central.name,
                 )
             },
-            manufacturer=MANUFACTURER_EQ3,
+            manufacturer=HmManufacturer.EQ3,
             model=self._central.model,
             sw_version=self._central.version,
             name=self._central.name,
@@ -293,7 +291,7 @@ class ControlUnit(BaseControlUnit):
                         virtual_remote.identifier,
                     )
                 },
-                manufacturer=MANUFACTURER_EQ3,
+                manufacturer=HmManufacturer.EQ3,
                 name=virtual_remote.name,
                 model=virtual_remote.device_type,
                 sw_version=virtual_remote.firmware,
@@ -489,15 +487,15 @@ class ControlUnit(BaseControlUnit):
         del self._active_hm_hub_entities[entity_id]
 
     @callback
-    def _callback_system_event(self, name: str, **kwargs: Any) -> None:
+    def _callback_system_event(self, system_event: HmSystemEvent, **kwargs: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
-            name,
+            system_event,
             self._instance_name,
         )
 
-        if name == HH_EVENT_DEVICES_CREATED:
+        if system_event == HmSystemEvent.DEVICES_CREATED:
             new_devices = kwargs["new_devices"]
             new_channel_events = []
             new_entities = []
@@ -545,7 +543,7 @@ class ControlUnit(BaseControlUnit):
                     hm_channel_events,
                 )
             self._add_virtual_remotes_to_device_registry()
-        elif name == HH_EVENT_HUB_REFRESHED:
+        elif system_event == HmSystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
             if self._scheduler.sysvar_scan_enabled:
@@ -571,17 +569,17 @@ class ControlUnit(BaseControlUnit):
     ) -> None:
         """Execute the callback used for device related events."""
 
-        interface_id = event_data[ATTR_INTERFACE_ID]
+        interface_id = event_data[EVENT_INTERFACE_ID]
         if hm_event_type == HmEventType.INTERFACE:
-            interface_event_type = event_data[ATTR_TYPE]
+            interface_event_type = event_data[EVENT_TYPE]
             issue_id = f"{interface_event_type}-{interface_id}"
             event_data = cast(dict[str, Any], HM_INTERFACE_EVENT_SCHEMA(event_data))
-            data = event_data[ATTR_DATA]
+            data = event_data[EVENT_DATA]
             if interface_event_type == HmInterfaceEventType.CALLBACK:
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for CALLBACK")
                     return
-                if data[ATTR_AVAILABLE]:
+                if data[EVENT_AVAILABLE]:
                     async_delete_issue(
                         hass=self._hass, domain=DOMAIN, issue_id=issue_id
                     )
@@ -595,9 +593,9 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="xmlrpc_server_receives_no_events",
                         translation_placeholders={
-                            ATTR_INTERFACE_ID: interface_id,
-                            ATTR_SECONDS_SINCE_LAST_EVENT: data[
-                                ATTR_SECONDS_SINCE_LAST_EVENT
+                            EVENT_INTERFACE_ID: interface_id,
+                            EVENT_SECONDS_SINCE_LAST_EVENT: data[
+                                EVENT_SECONDS_SINCE_LAST_EVENT
                             ],
                         },
                     )
@@ -618,7 +616,7 @@ class ControlUnit(BaseControlUnit):
                     },
                 )
             elif interface_event_type == HmInterfaceEventType.PROXY:
-                if data[ATTR_AVAILABLE]:
+                if data[EVENT_AVAILABLE]:
                     async_delete_issue(
                         hass=self._hass, domain=DOMAIN, issue_id=issue_id
                     )
@@ -631,12 +629,12 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="interface_not_reachable",
                         translation_placeholders={
-                            ATTR_INTERFACE_ID: interface_id,
+                            EVENT_INTERFACE_ID: interface_id,
                         },
                     )
 
         else:
-            device_address = event_data[ATTR_ADDRESS]
+            device_address = event_data[EVENT_ADDRESS]
             name: str | None = None
             if device_entry := self._get_device_entry(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
@@ -649,9 +647,9 @@ class ControlUnit(BaseControlUnit):
                         event_data=event_data,
                     )
             elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
-                parameter = event_data[ATTR_PARAMETER]
+                parameter = event_data[EVENT_PARAMETER]
                 unavailable = event_data[ATTR_VALUE]
-                if parameter in (EVENT_STICKY_UN_REACH, EVENT_UN_REACH):
+                if parameter in (HmEvent.STICKY_UN_REACH, HmEvent.UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
                         {
@@ -671,7 +669,7 @@ class ControlUnit(BaseControlUnit):
                             event_data=event_data,
                         )
             elif hm_event_type == HmEventType.DEVICE_ERROR:
-                error_parameter = event_data[ATTR_PARAMETER]
+                error_parameter = event_data[EVENT_PARAMETER]
                 if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
                     return None
                 error_parameter_display = error_parameter.replace("_", " ").title()
@@ -948,7 +946,7 @@ class HmScheduler:
             self._central.name,
         )
         await self._central.load_and_refresh_entity_data(
-            paramset_key=PARAMSET_KEY_MASTER
+            paramset_key=HmParamsetKey.MASTER
         )
 
     async def _fetch_device_firmware_update_data(self, now: datetime) -> None:

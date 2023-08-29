@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from hahomematic.const import ATTR_NAME, ATTR_PARAMETER, HmEventType
+from hahomematic.const import EVENT_PARAMETER, HmEventType
 from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
 from homeassistant.core import Event, HomeAssistant, callback
 
-from .const import DOMAIN as HMIP_DOMAIN, EVENT_DATA_ERROR, EVENT_DATA_ERROR_VALUE
+from .const import ATTR_NAME, DOMAIN as HMIP_DOMAIN, EVENT_DATA_ERROR, EVENT_DATA_ERROR_VALUE
 from .support import HM_DEVICE_ERROR_EVENT_SCHEMA, is_valid_event
 
 
@@ -26,7 +26,7 @@ def async_describe_events(
             event_data=event.data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA
         ):
             return {}
-        error_name = event.data[ATTR_PARAMETER].replace("_", " ").title()
+        error_name = event.data[EVENT_PARAMETER].replace("_", " ").title()
         error_value = event.data[EVENT_DATA_ERROR_VALUE]
         is_error = event.data[EVENT_DATA_ERROR]
         error_message = (

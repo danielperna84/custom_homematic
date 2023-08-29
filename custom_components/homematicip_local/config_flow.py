@@ -3,31 +3,10 @@ from __future__ import annotations
 
 import logging
 from pprint import pformat
-from typing import Any, cast
+from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import (
-    ATTR_INSTANCE_NAME,
-    ATTR_INTERFACE,
-    ATTR_PASSWORD,
-    ATTR_TLS,
-    ATTR_USERNAME,
-    ATTR_VERIFY_TLS,
-    DEFAULT_TLS,
-    IF_BIDCOS_RF_NAME,
-    IF_BIDCOS_RF_PORT,
-    IF_BIDCOS_RF_TLS_PORT,
-    IF_BIDCOS_WIRED_NAME,
-    IF_BIDCOS_WIRED_PORT,
-    IF_BIDCOS_WIRED_TLS_PORT,
-    IF_HMIP_RF_NAME,
-    IF_HMIP_RF_PORT,
-    IF_HMIP_RF_TLS_PORT,
-    IF_VIRTUAL_DEVICES_NAME,
-    IF_VIRTUAL_DEVICES_PATH,
-    IF_VIRTUAL_DEVICES_PORT,
-    IF_VIRTUAL_DEVICES_TLS_PORT,
-)
+from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, DEFAULT_TLS, HmInterfaceName
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 from hahomematic.support import SystemInformation, check_password
 from homeassistant import config_entries
@@ -48,27 +27,40 @@ from .const import (
     ATTR_CALLBACK_PORT,
     ATTR_ENABLE_SYSTEM_NOTIFICATIONS,
     ATTR_HOST,
+    ATTR_INSTANCE_NAME,
+    ATTR_INTERFACE,
     ATTR_JSON_PORT,
     ATTR_PATH,
     ATTR_PORT,
     ATTR_SYSVAR_SCAN_ENABLED,
     ATTR_SYSVAR_SCAN_INTERVAL,
+    ATTR_TLS,
+    ATTR_VERIFY_TLS,
     DOMAIN,
 )
 from .control_unit import ControlConfig, validate_config_and_get_system_information
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_HMIP_RF_ENABLED = "hmip_rf_enabled"
-ATTR_HMIP_RF_PORT = "hmip_rf_port"
-ATTR_BIDCOS_RF_ENABLED = "bidcos_rf_enabled"
-ATTR_BIDCOS_RF_PORT = "bidcos_rf_port"
-ATTR_VIRTUAL_DEVICES_ENABLED = "virtual_devices_enabled"
-ATTR_VIRTUAL_DEVICES_PORT = "virtual_devices_port"
-ATTR_VIRTUAL_DEVICES_PATH = "virtual_devices_path"
-ATTR_BIDCOS_WIRED_ENABLED = "bidcos_wired_enabled"
-ATTR_BIDCOS_WIRED_PORT = "bidcos_wired_port"
+ATTR_HMIP_RF_ENABLED: Final = "hmip_rf_enabled"
+ATTR_HMIP_RF_PORT: Final = "hmip_rf_port"
+ATTR_BIDCOS_RF_ENABLED: Final = "bidcos_rf_enabled"
+ATTR_BIDCOS_RF_PORT: Final = "bidcos_rf_port"
+ATTR_VIRTUAL_DEVICES_ENABLED: Final = "virtual_devices_enabled"
+ATTR_VIRTUAL_DEVICES_PORT: Final = "virtual_devices_port"
+ATTR_VIRTUAL_DEVICES_PATH: Final = "virtual_devices_path"
+ATTR_BIDCOS_WIRED_ENABLED: Final = "bidcos_wired_enabled"
+ATTR_BIDCOS_WIRED_PORT: Final = "bidcos_wired_port"
 
+IF_BIDCOS_RF_PORT: Final = 2001
+IF_BIDCOS_RF_TLS_PORT: Final = 42001
+IF_BIDCOS_WIRED_PORT: Final = 2000
+IF_BIDCOS_WIRED_TLS_PORT: Final = 42000
+IF_HMIP_RF_PORT: Final = 2010
+IF_HMIP_RF_TLS_PORT: Final = 42010
+IF_VIRTUAL_DEVICES_PORT: Final = 9292
+IF_VIRTUAL_DEVICES_TLS_PORT: Final = 49292
+IF_VIRTUAL_DEVICES_PATH: Final = "/groups"
 
 def get_domain_schema(data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
@@ -78,8 +70,8 @@ def get_domain_schema(data: ConfigType) -> Schema:
                 ATTR_INSTANCE_NAME, default=data.get(ATTR_INSTANCE_NAME) or UNDEFINED
             ): cv.string,
             vol.Required(ATTR_HOST, default=data.get(ATTR_HOST)): cv.string,
-            vol.Required(ATTR_USERNAME, default=data.get(ATTR_USERNAME)): cv.string,
-            vol.Required(ATTR_PASSWORD, default=data.get(ATTR_PASSWORD)): cv.string,
+            vol.Required(CONF_USERNAME, default=data.get(CONF_USERNAME)): cv.string,
+            vol.Required(CONF_PASSWORD, default=data.get(CONF_PASSWORD)): cv.string,
             vol.Required(ATTR_TLS, default=data.get(ATTR_TLS, DEFAULT_TLS)): cv.boolean,
             vol.Required(
                 ATTR_VERIFY_TLS, default=data.get(ATTR_VERIFY_TLS, False)
@@ -116,22 +108,22 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
     interfaces = data.get(ATTR_INTERFACE, {})
     # HmIP-RF
-    if IF_HMIP_RF_NAME in interfaces:
-        hmip_rf_enabled = interfaces.get(IF_HMIP_RF_NAME) is not None
+    if HmInterfaceName.HMIP_RF in interfaces:
+        hmip_rf_enabled = interfaces.get(HmInterfaceName.HMIP_RF) is not None
     else:
         hmip_rf_enabled = True
     hmip_port = IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT
 
     # BidCos-RF
-    if IF_BIDCOS_RF_NAME in interfaces:
-        bidcos_rf_enabled = interfaces.get(IF_BIDCOS_RF_NAME) is not None
+    if HmInterfaceName.BIDCOS_RF in interfaces:
+        bidcos_rf_enabled = interfaces.get(HmInterfaceName.BIDCOS_RF) is not None
     else:
         bidcos_rf_enabled = True
     bidcos_rf_port = IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT
 
     # Virtual devices
-    if IF_VIRTUAL_DEVICES_NAME in interfaces:
-        virtual_devices_enabled = interfaces.get(IF_VIRTUAL_DEVICES_NAME) is not None
+    if HmInterfaceName.VIRTUAL_DEVICES in interfaces:
+        virtual_devices_enabled = interfaces.get(HmInterfaceName.VIRTUAL_DEVICES) is not None
     else:
         virtual_devices_enabled = False
     virtual_devices_port = (
@@ -139,8 +131,8 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     )
 
     # BidCos-Wired
-    if IF_BIDCOS_WIRED_NAME in interfaces:
-        bidcos_wired_enabled = interfaces.get(IF_BIDCOS_WIRED_NAME) is not None
+    if HmInterfaceName.BIDCOS_WIRED in interfaces:
+        bidcos_wired_enabled = interfaces.get(HmInterfaceName.BIDCOS_WIRED) is not None
     else:
         bidcos_wired_enabled = False
     bidcos_wired_port = IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT
@@ -169,7 +161,7 @@ async def _async_validate_config_and_get_system_information(
 ) -> SystemInformation | None:
     """Validate the user input allows us to connect."""
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
-    if not check_password(control_config.data.get(ATTR_PASSWORD)):
+    if not check_password(control_config.data.get(CONF_PASSWORD)):
         raise InvalidPassword()
     return await validate_config_and_get_system_information(
         control_config=control_config
@@ -353,8 +345,8 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
             ATTR_INSTANCE_NAME, data.get(ATTR_INSTANCE_NAME)
         ),
         ATTR_HOST: user_input[ATTR_HOST],
-        ATTR_USERNAME: user_input[ATTR_USERNAME],
-        ATTR_PASSWORD: user_input[ATTR_PASSWORD],
+        CONF_USERNAME: user_input[CONF_USERNAME],
+        CONF_PASSWORD: user_input[CONF_PASSWORD],
         ATTR_TLS: user_input[ATTR_TLS],
         ATTR_VERIFY_TLS: user_input[ATTR_VERIFY_TLS],
         ATTR_SYSVAR_SCAN_ENABLED: user_input[ATTR_SYSVAR_SCAN_ENABLED],
@@ -371,20 +363,20 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
     if interface_input is not None:
         data[ATTR_INTERFACE] = {}
         if interface_input[ATTR_HMIP_RF_ENABLED] is True:
-            data[ATTR_INTERFACE][IF_HMIP_RF_NAME] = {
+            data[ATTR_INTERFACE][HmInterfaceName.HMIP_RF] = {
                 ATTR_PORT: interface_input[ATTR_HMIP_RF_PORT],
             }
         if interface_input[ATTR_BIDCOS_RF_ENABLED] is True:
-            data[ATTR_INTERFACE][IF_BIDCOS_RF_NAME] = {
+            data[ATTR_INTERFACE][HmInterfaceName.BIDCOS_RF] = {
                 ATTR_PORT: interface_input[ATTR_BIDCOS_RF_PORT],
             }
         if interface_input[ATTR_VIRTUAL_DEVICES_ENABLED] is True:
-            data[ATTR_INTERFACE][IF_VIRTUAL_DEVICES_NAME] = {
+            data[ATTR_INTERFACE][HmInterfaceName.VIRTUAL_DEVICES] = {
                 ATTR_PORT: interface_input[ATTR_VIRTUAL_DEVICES_PORT],
                 ATTR_PATH: interface_input.get(ATTR_VIRTUAL_DEVICES_PATH),
             }
         if interface_input[ATTR_BIDCOS_WIRED_ENABLED] is True:
-            data[ATTR_INTERFACE][IF_BIDCOS_WIRED_NAME] = {
+            data[ATTR_INTERFACE][HmInterfaceName.BIDCOS_WIRED] = {
                 ATTR_PORT: interface_input[ATTR_BIDCOS_WIRED_PORT],
             }
 

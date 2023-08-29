@@ -4,15 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 import logging
 
-from hahomematic.const import (
-    ATTR_ADDRESS,
-    ATTR_INTERFACE_ID,
-    ATTR_NAME,
-    ATTR_PARAMETER,
-    ATTR_VALUE,
-    PARAMSET_KEY_VALUES,
-    HmForcedDeviceAvailability,
-)
+from hahomematic.const import HmForcedDeviceAvailability, HmParamsetKey
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
@@ -26,9 +18,14 @@ from homeassistant.helpers.service import async_register_admin_service, verify_d
 import voluptuous as vol
 
 from .const import (
+    ATTR_ADDRESS,
+    ATTR_INTERFACE_ID,
+    ATTR_NAME,
+    ATTR_PARAMETER,
     ATTR_PARAMSET,
     ATTR_PARAMSET_KEY,
     ATTR_RX_MODE,
+    ATTR_VALUE,
     ATTR_VALUE_TYPE,
     CONTROL_UNITS,
     DOMAIN,
@@ -397,7 +394,7 @@ async def _async_service_get_device_value(
             if (
                 value := await hm_device.client.get_value(
                     channel_address=f"{hm_device.device_address}:{channel_no}",
-                    paramset_key=PARAMSET_KEY_VALUES,
+                    paramset_key=HmParamsetKey.VALUES,
                     parameter=parameter,
                 )
             ) is not None:
@@ -460,7 +457,7 @@ async def _async_service_set_device_value(
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.client.set_value(
             channel_address=f"{hm_device.device_address}:{channel_no}",
-            paramset_key=PARAMSET_KEY_VALUES,
+            paramset_key=HmParamsetKey.VALUES,
             parameter=parameter,
             value=value,
             rx_mode=rx_mode,
