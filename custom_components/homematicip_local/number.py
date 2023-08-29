@@ -14,9 +14,13 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTR_VALUE_STATE, CONTROL_UNITS, DOMAIN, HmEntityState
+from .const import CONTROL_UNITS, DOMAIN, HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericSysvarEntity
+from .generic_entity import (
+    ATTR_VALUE_STATE,
+    HaHomematicGenericEntity,
+    HaHomematicGenericSysvarEntity,
+)
 from .support import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
