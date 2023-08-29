@@ -4,14 +4,7 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import patch
 
-from hahomematic.const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
-    IF_BIDCOS_RF_NAME,
-    IF_BIDCOS_WIRED_NAME,
-    IF_HMIP_RF_NAME,
-    IF_VIRTUAL_DEVICES_NAME,
-)
+from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, HmInterfaceName
 from hahomematic.exceptions import AuthFailure, NoConnection
 from hahomematic.support import SystemInformation
 from homeassistant import config_entries
@@ -175,13 +168,13 @@ async def test_form(hass: HomeAssistant) -> None:
     """Test we get the form."""
     data = await async_check_form(hass)
     interface = data["interface"]
-    if_hmip_rf = interface[IF_HMIP_RF_NAME]
+    if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
     assert if_hmip_rf[ATTR_PORT] == 2010
-    if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
+    if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
     assert if_bidcos_rf[ATTR_PORT] == 2001
 
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
 
 async def test_options_form(hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry) -> None:
@@ -190,13 +183,13 @@ async def test_options_form(hass: HomeAssistant, mock_config_entry_v2: MockConfi
         hass, mock_config_entry=mock_config_entry_v2, interface_data={}
     )
     interface = data["interface"]
-    if_hmip_rf = interface[IF_HMIP_RF_NAME]
+    if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
     assert if_hmip_rf[ATTR_PORT] == 2010
-    if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
+    if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
     assert if_bidcos_rf[ATTR_PORT] == 2001
 
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
 
 async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
@@ -204,11 +197,11 @@ async def test_form_no_hmip_other_bidcos_port(hass: HomeAssistant) -> None:
     interface_data = {ATTR_HMIP_RF_ENABLED: False, ATTR_BIDCOS_RF_PORT: 5555}
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
-    assert interface.get(IF_HMIP_RF_NAME) is None
-    if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
+    assert interface.get(HmInterfaceName.HMIP_RF) is None
+    if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
     assert if_bidcos_rf[ATTR_PORT] == 5555
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
 
 async def test_options_form_no_hmip_other_bidcos_port(
@@ -220,11 +213,11 @@ async def test_options_form_no_hmip_other_bidcos_port(
         hass, mock_config_entry=mock_config_entry_v2, interface_data=interface_data
     )
     interface = data["interface"]
-    assert interface.get(IF_HMIP_RF_NAME) is None
-    if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
+    assert interface.get(HmInterfaceName.HMIP_RF) is None
+    if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
     assert if_bidcos_rf[ATTR_PORT] == 5555
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
 
 async def test_form_only_hs485(hass: HomeAssistant) -> None:
@@ -237,10 +230,10 @@ async def test_form_only_hs485(hass: HomeAssistant) -> None:
     }
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
-    assert interface.get(IF_HMIP_RF_NAME) is None
-    assert interface.get(IF_BIDCOS_RF_NAME) is None
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface[IF_BIDCOS_WIRED_NAME][ATTR_PORT] == 2000
+    assert interface.get(HmInterfaceName.HMIP_RF) is None
+    assert interface.get(HmInterfaceName.BIDCOS_RF) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface[HmInterfaceName.BIDCOS_WIRED][ATTR_PORT] == 2000
 
 
 async def test_form_only_virtual(hass: HomeAssistant) -> None:
@@ -253,26 +246,26 @@ async def test_form_only_virtual(hass: HomeAssistant) -> None:
     }
     data = await async_check_form(hass, interface_data=interface_data)
     interface = data["interface"]
-    assert interface.get(IF_HMIP_RF_NAME) is None
-    assert interface.get(IF_BIDCOS_RF_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
-    assert interface[IF_VIRTUAL_DEVICES_NAME][ATTR_PORT] == 9292
+    assert interface.get(HmInterfaceName.HMIP_RF) is None
+    assert interface.get(HmInterfaceName.BIDCOS_RF) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
+    assert interface[HmInterfaceName.VIRTUAL_DEVICES][ATTR_PORT] == 9292
 
 
 async def test_options_form_all_interfaces_enabled(
     hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
 ) -> None:
     """Test we get the form."""
-    mock_config_entry_v2.data["interface"][IF_VIRTUAL_DEVICES_NAME] = {"port": 9292}
-    mock_config_entry_v2.data["interface"][IF_BIDCOS_WIRED_NAME] = {"port": 2000}
+    mock_config_entry_v2.data["interface"][HmInterfaceName.VIRTUAL_DEVICES] = {"port": 9292}
+    mock_config_entry_v2.data["interface"][HmInterfaceName.BIDCOS_WIRED] = {"port": 2000}
     mock_config_entry_v2.add_to_hass(hass)
 
     data = await async_check_options_form(hass, mock_config_entry_v2)
     interface = data["interface"]
-    assert interface[IF_BIDCOS_RF_NAME][ATTR_PORT] == 2001
-    assert interface[IF_HMIP_RF_NAME][ATTR_PORT] == 2010
-    assert interface[IF_BIDCOS_WIRED_NAME][ATTR_PORT] == 2000
-    assert interface[IF_VIRTUAL_DEVICES_NAME][ATTR_PORT] == 9292
+    assert interface[HmInterfaceName.BIDCOS_RF][ATTR_PORT] == 2001
+    assert interface[HmInterfaceName.HMIP_RF][ATTR_PORT] == 2010
+    assert interface[HmInterfaceName.BIDCOS_WIRED][ATTR_PORT] == 2000
+    assert interface[HmInterfaceName.VIRTUAL_DEVICES][ATTR_PORT] == 9292
 
 
 async def test_form_tls(hass: HomeAssistant) -> None:
@@ -280,12 +273,12 @@ async def test_form_tls(hass: HomeAssistant) -> None:
     data = await async_check_form(hass, tls=True)
     interface = data["interface"]
 
-    if_hmip_rf = interface[IF_HMIP_RF_NAME]
+    if_hmip_rf = interface[HmInterfaceName.HMIP_RF]
     assert if_hmip_rf[ATTR_PORT] == 42010
-    if_bidcos_rf = interface[IF_BIDCOS_RF_NAME]
+    if_bidcos_rf = interface[HmInterfaceName.BIDCOS_RF]
     assert if_bidcos_rf[ATTR_PORT] == 42001
-    assert interface.get(IF_VIRTUAL_DEVICES_NAME) is None
-    assert interface.get(IF_BIDCOS_WIRED_NAME) is None
+    assert interface.get(HmInterfaceName.VIRTUAL_DEVICES) is None
+    assert interface.get(HmInterfaceName.BIDCOS_WIRED) is None
 
 
 async def test_form_invalid_auth(hass: HomeAssistant) -> None:

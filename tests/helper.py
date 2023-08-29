@@ -67,7 +67,7 @@ class Factory:
         """Return a central based on give address_device_translation."""
         interface_config = InterfaceConfig(
             central_name=const.INSTANCE_NAME,
-            interface=hahomematic_const.HmInterface.HM,
+            interface=hahomematic_const.HmInterfaceName.BIDCOS_RF,
             port=const.LOCAL_PORT,
         )
 
