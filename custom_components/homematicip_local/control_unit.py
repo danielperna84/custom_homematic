@@ -44,7 +44,7 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
 from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
-from homeassistant.const import ATTR_DEVICE_ID, CONF_HOST, CONF_PATH, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
@@ -66,7 +66,6 @@ from .config import (
     MASTER_SCAN_INTERVAL,
 )
 from .const import (
-    ATTR_NAME,
     CONF_CALLBACK_HOST,
     CONF_CALLBACK_PORT,
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -79,12 +78,14 @@ from .const import (
     CONF_VERIFY_TLS,
     CONTROL_UNITS,
     DOMAIN,
-    EVENT_DATA_ERROR,
-    EVENT_DATA_ERROR_VALUE,
-    EVENT_DATA_IDENTIFIER,
-    EVENT_DATA_MESSAGE,
-    EVENT_DATA_TITLE,
-    EVENT_DATA_UNAVAILABLE,
+    EVENT_DEVICE_ID,
+    EVENT_ERROR,
+    EVENT_ERROR_VALUE,
+    EVENT_IDENTIFIER,
+    EVENT_MESSAGE,
+    EVENT_NAME,
+    EVENT_TITLE,
+    EVENT_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
     HMIP_LOCAL_PLATFORMS,
     LEARN_MORE_URL_PING_PONG_MISMATCH,
@@ -635,7 +636,7 @@ class ControlUnit(BaseControlUnit):
             name: str | None = None
             if device_entry := self._get_device_entry(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
-                event_data.update({ATTR_DEVICE_ID: device_entry.id, ATTR_NAME: name})
+                event_data.update({EVENT_DEVICE_ID: device_entry.id, EVENT_NAME: name})
             if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
                 event_data = cleanup_click_event_data(event_data=event_data)
                 if is_valid_event(event_data=event_data, schema=HM_CLICK_EVENT_SCHEMA):
@@ -650,11 +651,11 @@ class ControlUnit(BaseControlUnit):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
                         {
-                            EVENT_DATA_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
-                            EVENT_DATA_TITLE: title,
-                            EVENT_DATA_MESSAGE: f"{name}/{device_address} "
+                            EVENT_IDENTIFIER: f"{device_address}_DEVICE_AVAILABILITY",
+                            EVENT_TITLE: title,
+                            EVENT_MESSAGE: f"{name}/{device_address} "
                             f"on interface {interface_id}",
-                            EVENT_DATA_UNAVAILABLE: unavailable,
+                            EVENT_UNAVAILABLE: unavailable,
                         }
                     )
                     if is_valid_event(
@@ -688,11 +689,11 @@ class ControlUnit(BaseControlUnit):
                     )
                 event_data.update(
                     {
-                        EVENT_DATA_IDENTIFIER: f"{device_address}_{error_parameter}",
-                        EVENT_DATA_TITLE: title,
-                        EVENT_DATA_MESSAGE: error_message,
-                        EVENT_DATA_ERROR_VALUE: error_value,
-                        EVENT_DATA_ERROR: display_error,
+                        EVENT_IDENTIFIER: f"{device_address}_{error_parameter}",
+                        EVENT_TITLE: title,
+                        EVENT_MESSAGE: error_message,
+                        EVENT_ERROR_VALUE: error_value,
+                        EVENT_ERROR: display_error,
                     }
                 )
                 if is_valid_event(

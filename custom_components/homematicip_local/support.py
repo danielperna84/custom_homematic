@@ -18,19 +18,20 @@ from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
-from homeassistant.const import ATTR_DEVICE_ID, CONF_TYPE
+from homeassistant.const import CONF_TYPE
 from homeassistant.helpers.typing import StateType
 import voluptuous as vol
 
 from .const import (
-    ATTR_NAME,
     CONF_SUBTYPE,
-    EVENT_DATA_ERROR,
-    EVENT_DATA_ERROR_VALUE,
-    EVENT_DATA_IDENTIFIER,
-    EVENT_DATA_MESSAGE,
-    EVENT_DATA_TITLE,
-    EVENT_DATA_UNAVAILABLE,
+    EVENT_DEVICE_ID,
+    EVENT_ERROR,
+    EVENT_ERROR_VALUE,
+    EVENT_IDENTIFIER,
+    EVENT_MESSAGE,
+    EVENT_NAME,
+    EVENT_TITLE,
+    EVENT_UNAVAILABLE,
     HmNameSource,
 )
 
@@ -44,8 +45,8 @@ T = TypeVar("T", bound=CallbackEntity)
 
 BASE_EVENT_DATA_SCHEMA = HM_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(ATTR_DEVICE_ID): str,
-        vol.Required(ATTR_NAME): str,
+        vol.Required(EVENT_DEVICE_ID): str,
+        vol.Required(EVENT_NAME): str,
     }
 )
 HM_CLICK_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
@@ -60,20 +61,20 @@ HM_CLICK_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
 )
 HM_DEVICE_AVAILABILITY_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(EVENT_DATA_IDENTIFIER): str,
-        vol.Required(EVENT_DATA_TITLE): str,
-        vol.Required(EVENT_DATA_MESSAGE): str,
-        vol.Required(EVENT_DATA_UNAVAILABLE): bool,
+        vol.Required(EVENT_IDENTIFIER): str,
+        vol.Required(EVENT_TITLE): str,
+        vol.Required(EVENT_MESSAGE): str,
+        vol.Required(EVENT_UNAVAILABLE): bool,
     },
     extra=vol.ALLOW_EXTRA,
 )
 HM_DEVICE_ERROR_EVENT_SCHEMA = BASE_EVENT_DATA_SCHEMA.extend(
     {
-        vol.Required(EVENT_DATA_IDENTIFIER): str,
-        vol.Required(EVENT_DATA_TITLE): str,
-        vol.Required(EVENT_DATA_MESSAGE): str,
-        vol.Required(EVENT_DATA_ERROR_VALUE): vol.Any(bool, int),
-        vol.Required(EVENT_DATA_ERROR): bool,
+        vol.Required(EVENT_IDENTIFIER): str,
+        vol.Required(EVENT_TITLE): str,
+        vol.Required(EVENT_MESSAGE): str,
+        vol.Required(EVENT_ERROR_VALUE): vol.Any(bool, int),
+        vol.Required(EVENT_ERROR): bool,
     },
     extra=vol.ALLOW_EXTRA,
 )

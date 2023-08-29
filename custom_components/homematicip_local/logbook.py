@@ -8,7 +8,7 @@ from hahomematic.const import EVENT_PARAMETER, HmEventType
 from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
 from homeassistant.core import Event, HomeAssistant, callback
 
-from .const import DOMAIN as HMIP_DOMAIN, EVENT_DATA_ERROR, EVENT_DATA_ERROR_VALUE, EVENT_NAME
+from .const import DOMAIN as HMIP_DOMAIN, EVENT_ERROR, EVENT_ERROR_VALUE, EVENT_NAME
 from .support import HM_DEVICE_ERROR_EVENT_SCHEMA, is_valid_event
 
 
@@ -27,8 +27,8 @@ def async_describe_events(
         ):
             return {}
         error_name = event.data[EVENT_PARAMETER].replace("_", " ").title()
-        error_value = event.data[EVENT_DATA_ERROR_VALUE]
-        is_error = event.data[EVENT_DATA_ERROR]
+        error_value = event.data[EVENT_ERROR_VALUE]
+        is_error = event.data[EVENT_ERROR]
         error_message = (
             f"{error_name} {error_value} occurred"
             if is_error
