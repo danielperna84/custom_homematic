@@ -27,6 +27,7 @@
 - Avoid init_central
 - Cleanup scheduler code
 - Increase master scan interval to 1h
+- Make tilt_postion optional for set_cover_combined_position
 - Rename some methods for consistency
 
 # Version 1.40.1 (2023-08-06)
