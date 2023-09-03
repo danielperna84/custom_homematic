@@ -111,7 +111,7 @@ async def async_setup_entry(
             vol.Required(ATTR_POSITION): vol.All(
                 vol.Coerce(int), vol.Range(min=0, max=100)
             ),
-            vol.Required(ATTR_TILT_POSITION): vol.All(
+            vol.Optional(ATTR_TILT_POSITION): vol.All(
                 vol.Coerce(int), vol.Range(min=0, max=100)
             ),
         },
@@ -167,6 +167,12 @@ class HaHomematicBaseCover(
             position = float(kwargs[ATTR_POSITION])
             await self._hm_entity.set_position(position=position)
 
+    async def async_set_cover_combined_position(
+        self, position: float, tilt_position: float | None = None
+    ) -> None:
+        """Move the cover to a specific position incl. tilt."""
+        await self._hm_entity.set_position(position=position, tilt_position=tilt_position)
+
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
         await self._hm_entity.open()
@@ -200,15 +206,7 @@ class HaHomematicBlind(HaHomematicBaseCover[CeBlind | CeIpBlind]):
         """Move the cover to a specific tilt position."""
         if ATTR_TILT_POSITION in kwargs:
             tilt_position = float(kwargs[ATTR_TILT_POSITION])
-            await self._hm_entity.set_tilt_position(tilt_position=tilt_position)
-
-    async def async_set_cover_combined_position(
-        self, position: float, tilt_position: float
-    ) -> None:
-        """Move the cover to a specific position incl. tilt."""
-        await self._hm_entity.set_combined_position(
-            position=position, tilt_position=tilt_position
-        )
+            await self._hm_entity.set_position(tilt_position=tilt_position)
 
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:
         """Open the tilt."""
