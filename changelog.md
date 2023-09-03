@@ -1,32 +1,33 @@
-# Version 1.40.2 (2023-08-29)
+# Version 1.41.0 (2023-09-03)
 
-- Bump hahomematic to 2023.8.3 - 2023.8.14
-  - Update project setup
-  - Restructure test helper
-  - Add ping pong tests
-  - Improve testing
-  - Make start_direct a config option
-  - Remove use_caches and load_un_ignore from central config
-  - Remove obsolete comments
-  - Align sslcontext creation with Home Assistant
+- Bump hahomematic to 2023.8.3 - 2023.9.0
   - Add SSLError to XmlRpcProxy and JsonRpcAioHttpClient
-  - Make integration more robust against json result failures
-  - Fix get_all_system_variables return value
   - Add decorator to measure function execution time
-  - Extend HmIPW-WRC6 implementation
-  - Optimize get readable entities for MASTER
-  - Refactor to more enum usage
-  - Reduce visibility of local constants
+  - Add ping pong tests
+  - Align sslcontext creation with Home Assistant
   - Convert StrEnum and IntEnum in proxy
+  - Extend HmIPW-WRC6 implementation
+  - Fix get_all_system_variables return value
+  - Improve testing
+  - Make integration more robust against json result failures
+  - Make start_direct a config option
+  - Optimize get readable entities for MASTER
+  - Reduce visibility of local constants
+  - Refactor cover api
+  - Refactor to more enum usage
+  - Remove obsolete comments
+  - Remove use_caches and load_un_ignore from central config
+  - Restructure test helper
+  - Update project setup
 - Improve custom component testing
-  - Increase config flow coverage
   - Add Github flows for pylint and tests
   - Add infrastructure for platform tests
+  - Increase config flow coverage
   - Make homematic entities mockable
-- Rename some methods for consistency
 - Avoid init_central
 - Cleanup scheduler code
 - Increase master scan interval to 1h
+- Rename some methods for consistency
 
 # Version 1.40.1 (2023-08-06)
 
