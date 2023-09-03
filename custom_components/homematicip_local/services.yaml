@@ -332,7 +332,7 @@ set_cover_combined_position:
           max: 100
           unit_of_measurement: "%"
     tilt_position:
-      required: true
+      required: false
       selector:
         number:
           min: 0
