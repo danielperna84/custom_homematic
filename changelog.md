@@ -1,3 +1,10 @@
+# Version 1.41.1 (2023-09-06)
+
+- Bump hahomematic to 2023.9.1
+  - Re add channel 7 for HmIPW-WRC6
+  - Reduce log level for exceptions in fetch_paramset_description
+  - Filter SSLErrors by code
+
 # Version 1.41.0 (2023-09-03)
 
 - Bump hahomematic to 2023.8.3 - 2023.9.0
