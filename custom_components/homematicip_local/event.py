@@ -93,6 +93,11 @@ class HaHomematicEvent(EventEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
         )
+        self._attr_extra_state_attributes = {
+            EVENT_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
+            EVENT_ADDRESS: self._hm_primary_entity.channel_address,
+            EVENT_MODEL: self._hm_primary_entity.device.device_type,
+        }
 
         _LOGGER.debug(
             "init: Setting up %s %s",
@@ -104,17 +109,6 @@ class HaHomematicEvent(EventEntity):
     def available(self) -> bool:
         """Return if event is available."""
         return self._hm_primary_entity.device.available
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic channel event entity."""
-        attributes: dict[str, Any] = {
-            EVENT_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
-            EVENT_ADDRESS: self._hm_primary_entity.channel_address,
-            EVENT_MODEL: self._hm_primary_entity.device.device_type,
-        }
-
-        return attributes
 
     @property
     def name(self) -> str | UndefinedType | None:

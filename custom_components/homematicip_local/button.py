@@ -112,11 +112,8 @@ class HaHomematicProgramButton(HaHomematicGenericHubEntity, ButtonEntity):
             hm_hub_entity=hm_program_button,
         )
         self._hm_hub_entity: HmProgramButton = hm_program_button
+        self._attr_extra_state_attributes = {ATTR_NAME: self._hm_hub_entity.ccu_program_name}
 
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the program button entity."""
-        return {ATTR_NAME: self._hm_hub_entity.ccu_program_name}
 
     async def async_press(self) -> None:
         """Execute a button press."""
