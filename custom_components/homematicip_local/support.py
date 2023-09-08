@@ -150,5 +150,5 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
 
 
 def get_hm_entity(hm_entity: T) -> T:
-    """Return the homematic entity."""
+    """Return the homematic entity. Makes it mockable."""
     return hm_entity

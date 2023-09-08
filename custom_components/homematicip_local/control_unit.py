@@ -47,9 +47,8 @@ from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA, SystemInformation
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
-from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType
+from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType, DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_send
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.issue_registry import (
     IssueSeverity,
@@ -119,6 +118,20 @@ class BaseControlUnit:
             CONF_ENABLE_SYSTEM_NOTIFICATIONS
         ]
         self._central: CentralUnit = self._create_central()
+        self._attr_device_info = DeviceInfo(
+                identifiers={
+                    (
+                        DOMAIN,
+                        self._central.name,
+                    )
+                },
+                manufacturer=HmManufacturer.EQ3,
+                model=self._central.model,
+                name=self._central.name,
+                sw_version=self._central.version,
+                # Link to the homematic control unit.
+                via_device=cast(tuple[str, str], self._central.name),
+            )
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -142,6 +155,11 @@ class BaseControlUnit:
     def central(self) -> CentralUnit:
         """Return the Homematic(IP) Local central unit instance."""
         return self._central
+
+    @property
+    def device_info(self) -> DeviceInfo | None:
+        """Return device specific attributes."""
+        return self._attr_device_info
 
     def _create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
@@ -187,6 +205,7 @@ class ControlUnit(BaseControlUnit):
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
         super().__init__(control_config=control_config)
+
         # {entity_id, entity}
         self._active_hm_entities: dict[str, HmBaseEntity] = {}
         # {entity_id, [channel_events]}
@@ -230,24 +249,6 @@ class ControlUnit(BaseControlUnit):
             )
 
         await super().stop_central(*args)
-
-    @property
-    def device_info(self) -> DeviceInfo | None:
-        """Return device specific attributes."""
-        return DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    self._central.name,
-                )
-            },
-            manufacturer=HmManufacturer.EQ3,
-            model=self._central.model,
-            name=self._central.name,
-            sw_version=self._central.version,
-            # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], self._central.name),
-        )
 
     @callback
     def _add_central_to_device_registry(self) -> None:

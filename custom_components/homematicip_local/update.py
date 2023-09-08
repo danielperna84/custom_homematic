@@ -10,8 +10,8 @@ from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
@@ -78,20 +78,15 @@ class HaHomematicUpdate(UpdateEntity):
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmUpdate = hm_entity
         self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
-
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, hm_entity.device.identifier)},
+        )
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
         return self._hm_entity.available
-
-    @property
-    def device_info(self) -> DeviceInfo | None:
-        """Return device specific attributes."""
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._hm_entity.device.identifier)},
-        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
