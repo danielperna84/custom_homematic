@@ -81,21 +81,15 @@ class HaHomematicUpdate(UpdateEntity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, hm_entity.device.identifier)},
         )
+        self._attr_extra_state_attributes = {
+            ATTR_FIRMWARE_UPDATE_STATE: hm_entity.firmware_update_state
+        }
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
         return self._hm_entity.available
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic entity."""
-        attributes: dict[str, Any] = {
-            ATTR_FIRMWARE_UPDATE_STATE: self._hm_entity.firmware_update_state
-        }
-
-        return attributes
 
     @property
     def installed_version(self) -> str | None:

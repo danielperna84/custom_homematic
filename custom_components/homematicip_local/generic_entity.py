@@ -71,6 +71,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             via_device=cast(tuple[str, str], hm_device.central.name),
         )
 
+        self._static_state_attributes = self._get_static_state_attributes()
+
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
             isinstance(hm_entity, GenericEntity | WrapperEntity)
@@ -90,9 +92,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return if entity is available."""
         return self._hm_entity.available
 
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic entity."""
+    def _get_static_state_attributes(self) -> dict[str, Any]:
+        """Return the static attributes of the generic entity."""
         attributes: dict[str, Any] = {
             ATTR_INTERFACE_ID: self._hm_entity.device.interface_id,
             ATTR_ADDRESS: self._hm_entity.channel_address,
@@ -105,6 +106,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if isinstance(self._hm_entity, CustomEntity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.CUSTOM.value
+        return attributes
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the generic entity."""
+        attributes = self._static_state_attributes
 
         if (
             isinstance(self._hm_entity, GenericEntity | WrapperEntity)
@@ -369,8 +376,5 @@ class HaHomematicGenericSysvarEntity(
             hm_hub_entity=hm_sysvar_entity,
         )
         self._hm_hub_entity: GenericSystemVariable = hm_sysvar_entity
+        self._attr_extra_state_attributes = {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
 
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes of the generic entity."""
-        return {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
