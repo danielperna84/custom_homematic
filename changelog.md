@@ -4,6 +4,7 @@
   - Re add channel 7 for HmIPW-WRC6
   - Reduce log level for exceptions in fetch_paramset_description
   - Filter SSLErrors by code
+- Adopt changes in HA 2023.9
 
 # Version 1.41.0 (2023-09-03)
 

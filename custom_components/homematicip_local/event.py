@@ -10,8 +10,8 @@ from homeassistant.components.event import EventDeviceClass, EventEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import UndefinedType
 
@@ -90,6 +90,9 @@ class HaHomematicEvent(EventEntity):
         self._attr_unique_id = (
             f"{DOMAIN}_{self._hm_primary_entity.channel_unique_identifier}"
         )
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
+        )
 
         _LOGGER.debug(
             "init: Setting up %s %s",
@@ -101,13 +104,6 @@ class HaHomematicEvent(EventEntity):
     def available(self) -> bool:
         """Return if event is available."""
         return self._hm_primary_entity.device.available
-
-    @property
-    def device_info(self) -> DeviceInfo | None:
-        """Return device specific attributes."""
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
-        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

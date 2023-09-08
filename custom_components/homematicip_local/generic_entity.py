@@ -11,7 +11,8 @@ from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
 from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import UndefinedType
 
@@ -58,6 +59,18 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             if isinstance(hm_entity, GenericEntity | WrapperEntity):
                 self._attr_translation_key = hm_entity.parameter.lower()
 
+        hm_device = hm_entity.device
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, hm_device.identifier)},
+            manufacturer=hm_device.manufacturer,
+            model=hm_device.device_type,
+            name=hm_device.name,
+            sw_version=hm_device.firmware,
+            suggested_area=hm_device.room,
+            # Link to the homematic control unit.
+            via_device=cast(tuple[str, str], hm_device.central.name),
+        )
+
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
             isinstance(hm_entity, GenericEntity | WrapperEntity)
@@ -76,21 +89,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     def available(self) -> bool:
         """Return if entity is available."""
         return self._hm_entity.available
-
-    @property
-    def device_info(self) -> DeviceInfo | None:
-        """Return device specific attributes."""
-        hm_device = self._hm_entity.device
-        return DeviceInfo(
-            identifiers={(DOMAIN, hm_device.identifier)},
-            manufacturer=hm_device.manufacturer,
-            model=hm_device.device_type,
-            name=hm_device.name,
-            sw_version=hm_device.firmware,
-            suggested_area=hm_device.room,
-            # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_device.central.name),
-        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -295,17 +293,13 @@ class HaHomematicGenericHubEntity(Entity):
         if entity_description := get_entity_description(hm_entity=hm_hub_entity):
             self.entity_description = entity_description
         self._attr_name = hm_hub_entity.name
+        self._attr_device_info = control_unit.device_info
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
         return self._hm_hub_entity.available
-
-    @property
-    def device_info(self) -> DeviceInfo | None:
-        """Return device specific attributes."""
-        return self._cu.device_info
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
