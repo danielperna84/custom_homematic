@@ -1,9 +1,11 @@
-# Version 1.41.1 (2023-09-08)
+# Version 1.41.1 (2023-09-17)
 
-- Bump hahomematic to 2023.9.1
+- Bump hahomematic to 2023.9.2
   - Re add channel 7 for HmIPW-WRC6
   - Reduce log level for exceptions in fetch_paramset_description
   - Filter SSLErrors by code
+  - Cleanup logger
+  - Refactor client and central modules
 - Adopt changes in HA 2023.9
 - Use more shorthand attributes
 
