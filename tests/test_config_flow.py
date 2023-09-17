@@ -4,9 +4,8 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import patch
 
-from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, HmInterfaceName
+from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, HmInterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoConnection
-from hahomematic.support import SystemInformation
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.const import CONF_HOST, CONF_PORT

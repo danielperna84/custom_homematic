@@ -6,7 +6,7 @@ from typing import Any, Final, TypeVar
 from unittest.mock import MagicMock, Mock, patch
 
 from hahomematic import const as hahomematic_const
-from hahomematic.central_unit import CentralConfig
+from hahomematic.central import CentralConfig
 from hahomematic.client import InterfaceConfig, _ClientConfig
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import BaseParameterEntity
@@ -45,7 +45,7 @@ T = TypeVar("T")
 
 
 class Factory:
-    """Factory for a central_unit with one local client."""
+    """Factory for a central with one local client."""
 
     def __init__(self, hass: HomeAssistant, mock_config_entry: MockConfigEntry):
         """Init the central factory."""
@@ -106,9 +106,7 @@ class Factory:
         )
         await client.init_client()
 
-        patch(
-            "hahomematic.central_unit.CentralUnit._get_primary_client", return_value=client
-        ).start()
+        patch("hahomematic.central.CentralUnit._get_primary_client", return_value=client).start()
         patch("hahomematic.client._ClientConfig.get_client", return_value=client).start()
         patch(
             "hahomematic_support.client_local.ClientLocal.get_all_system_variables",
@@ -119,7 +117,7 @@ class Factory:
             return_value=const.PROGRAM_DATA if add_programs else [],
         ).start()
         patch(
-            "hahomematic.central_unit.CentralUnit._identify_callback_ip", return_value="127.0.0.1"
+            "hahomematic.central.CentralUnit._identify_callback_ip", return_value="127.0.0.1"
         ).start()
 
         await central.start()

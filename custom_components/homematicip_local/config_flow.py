@@ -6,9 +6,9 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import DEFAULT_TLS, HmInterfaceName
+from hahomematic.const import DEFAULT_TLS, HmInterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
-from hahomematic.support import SystemInformation, check_password
+from hahomematic.support import check_password
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntry
