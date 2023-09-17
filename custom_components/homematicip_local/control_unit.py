@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any, cast
 
-from hahomematic.central import CentralConfig, CentralUnit
+from hahomematic.central import HM_INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
     AVAILABLE_HM_HUB_PLATFORMS,
@@ -44,7 +44,6 @@ from hahomematic.platforms.event import GenericEvent
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
-from hahomematic.support import HM_INTERFACE_EVENT_SCHEMA
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
