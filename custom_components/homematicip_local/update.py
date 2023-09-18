@@ -65,6 +65,8 @@ class HaHomematicUpdate(UpdateEntity):
     _attr_should_poll = False
     _attr_entity_registry_enabled_default = True
 
+    _platform_unstored_attributes = frozenset({ATTR_FIRMWARE_UPDATE_STATE})
+
     def __init__(
         self,
         control_unit: ControlUnit,

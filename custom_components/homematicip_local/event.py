@@ -67,6 +67,8 @@ class HaHomematicEvent(EventEntity):
     _attr_has_entity_name = True
     _attr_should_poll = False
 
+    _platform_unstored_attributes = frozenset({EVENT_INTERFACE_ID, EVENT_ADDRESS, EVENT_MODEL })
+
     def __init__(
         self,
         control_unit: ControlUnit,
