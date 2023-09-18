@@ -14,7 +14,6 @@ LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/dan
 LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 
 
-
 CONF_CALLBACK_HOST: Final = "callback_host"
 CONF_CALLBACK_PORT: Final = "callback_port"
 CONF_ENABLE_SYSTEM_NOTIFICATIONS: Final = "enable_system_notifications"
@@ -92,9 +91,7 @@ def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
     hm_platforms = [
-        platform.value
-        for platform in AVAILABLE_HM_PLATFORMS
-        if platform not in BLOCK_PLATFORMS
+        platform.value for platform in AVAILABLE_HM_PLATFORMS if platform not in BLOCK_PLATFORMS
     ]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:

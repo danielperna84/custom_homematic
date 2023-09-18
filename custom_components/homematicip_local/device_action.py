@@ -29,18 +29,14 @@ ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(
 )
 
 
-async def async_get_actions(
-    hass: HomeAssistant, device_id: str
-) -> list[dict[str, Any]]:
+async def async_get_actions(hass: HomeAssistant, device_id: str) -> list[dict[str, Any]]:
     """List device actions for Homematic(IP) Local devices."""
 
     device_registry = dr.async_get(hass)
     if (device := device_registry.async_get(device_id)) is None:
         return []
     if (
-        data := get_device_address_at_interface_from_identifiers(
-            identifiers=device.identifiers
-        )
+        data := get_device_address_at_interface_from_identifiers(identifiers=device.identifiers)
     ) is None:
         return []
 
@@ -85,9 +81,7 @@ async def async_call_action_from_config(
     if (device := device_registry.async_get(device_id)) is None:
         return None
     if (
-        data := get_device_address_at_interface_from_identifiers(
-            identifiers=device.identifiers
-        )
+        data := get_device_address_at_interface_from_identifiers(identifiers=device.identifiers)
     ) is None:
         return None
 
@@ -102,8 +96,5 @@ async def async_call_action_from_config(
             for entity in hm_device.generic_entities.values():
                 if not isinstance(entity, HmAction | HmButton):
                     continue
-                if (
-                    entity.parameter == action_type.upper()
-                    and entity.channel_no == action_subtype
-                ):
+                if entity.parameter == action_type.upper() and entity.channel_no == action_subtype:
                     await entity.send_value(True)

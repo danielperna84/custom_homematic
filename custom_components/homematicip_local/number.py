@@ -58,9 +58,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicSysvarNumber(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
+                HaHomematicSysvarNumber(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
 
         if entities:
@@ -69,9 +67,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.NUMBER
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.NUMBER),
             async_add_number,
         )
     )
@@ -79,21 +75,15 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_NUMBER
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_NUMBER),
             async_add_hub_number,
         )
     )
 
-    async_add_number(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.NUMBER)
-    )
+    async_add_number(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.NUMBER))
 
     async_add_hub_number(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_NUMBER
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_NUMBER)
     )
 
 
@@ -124,9 +114,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], RestoreNumber):
         )
         self._attr_native_min_value = hm_entity.min * self._multiplier
         self._attr_native_max_value = hm_entity.max * self._multiplier
-        self._attr_native_step = (
-            1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
-        )
+        self._attr_native_step = 1.0 if hm_entity.hmtype == "INTEGER" else 0.01 * self._multiplier
         if not hasattr(self, "entity_description") and hm_entity.unit:
             self._attr_native_unit_of_measurement = hm_entity.unit
 
@@ -165,9 +153,7 @@ class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], RestoreNumber):
             self._restored_native_value = restored_sensor_data.native_value
 
 
-class HaHomematicSysvarNumber(
-    HaHomematicGenericSysvarEntity[HmSysvarNumber], NumberEntity
-):
+class HaHomematicSysvarNumber(HaHomematicGenericSysvarEntity[HmSysvarNumber], NumberEntity):
     """Representation of the HomematicIP hub number entity."""
 
     _attr_mode = NumberMode.BOX

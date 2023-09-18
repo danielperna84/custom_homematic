@@ -53,9 +53,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicSysvarText(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
+                HaHomematicSysvarText(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
 
         if entities:
@@ -64,25 +62,19 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.TEXT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.TEXT),
             async_add_text,
         )
     )
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_TEXT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_TEXT),
             async_add_hub_text,
         )
     )
 
-    async_add_text(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.TEXT)
-    )
+    async_add_text(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.TEXT))
 
     async_add_hub_text(
         control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_TEXT)

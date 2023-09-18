@@ -72,24 +72,18 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.LIGHT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LIGHT),
             async_add_light,
         )
     )
 
-    async_add_light(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LIGHT)
-    )
+    async_add_light(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LIGHT))
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
         SERVICE_LIGHT_SET_ON_TIME,
         {
-            vol.Required(ATTR_ON_TIME): vol.All(
-                vol.Coerce(int), vol.Range(min=0, max=8580000)
-            ),
+            vol.Required(ATTR_ON_TIME): vol.All(vol.Coerce(int), vol.Range(min=0, max=8580000)),
         },
         "async_set_on_time",
     )
@@ -121,18 +115,14 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
             self._hm_entity.channel_brightness
             and self._hm_entity.brightness != self._hm_entity.channel_brightness
         ):
-            attributes[ATTR_CHANNEL_LEVEL] = (
-                self._hm_entity.channel_brightness / 255 * 100
-            )
+            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
         if isinstance(self._hm_entity, CeIpFixedColorLight):
             attributes[ATTR_COLOR] = self._hm_entity.color_name
             if (
                 self._hm_entity.channel_brightness
                 and self._hm_entity.brightness != self._hm_entity.channel_brightness
             ):
-                attributes[ATTR_CHANNEL_LEVEL] = (
-                    self._hm_entity.channel_brightness / 255 * 100
-                )
+                attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
             if (
                 self._hm_entity.channel_color_name
                 and self._hm_entity.color_name != self._hm_entity.channel_color_name

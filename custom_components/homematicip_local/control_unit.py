@@ -114,24 +114,22 @@ class BaseControlUnit:
         self._default_callback_port = control_config.default_callback_port
         self._start_direct = control_config.start_direct
         self._instance_name = self._config_data[CONF_INSTANCE_NAME]
-        self._enable_system_notifications = self._config_data[
-            CONF_ENABLE_SYSTEM_NOTIFICATIONS
-        ]
+        self._enable_system_notifications = self._config_data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
         self._central: CentralUnit = self._create_central()
         self._attr_device_info = DeviceInfo(
-                identifiers={
-                    (
-                        DOMAIN,
-                        self._central.name,
-                    )
-                },
-                manufacturer=HmManufacturer.EQ3,
-                model=self._central.model,
-                name=self._central.name,
-                sw_version=self._central.version,
-                # Link to the homematic control unit.
-                via_device=cast(tuple[str, str], self._central.name),
-            )
+            identifiers={
+                (
+                    DOMAIN,
+                    self._central.name,
+                )
+            },
+            manufacturer=HmManufacturer.EQ3,
+            model=self._central.model,
+            name=self._central.name,
+            sw_version=self._central.version,
+            # Link to the homematic control unit.
+            via_device=cast(tuple[str, str], self._central.name),
+        )
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -217,23 +215,17 @@ class ControlUnit(BaseControlUnit):
         self._scheduler = HmScheduler(
             hass=self._hass,
             control_unit=self,
-            sysvar_scan_enabled=self._config_data.get(
-                CONF_SYSVAR_SCAN_ENABLED, True
-            ),
+            sysvar_scan_enabled=self._config_data.get(CONF_SYSVAR_SCAN_ENABLED, True),
             sysvar_scan_interval=self._config_data.get(
                 CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
             ),
-            device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED
+            device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED,
         )
 
     async def start_central(self) -> None:
         """Start the central unit."""
-        self._central.register_system_event_callback(
-            callback_handler=self._callback_system_event
-        )
-        self._central.register_ha_event_callback(
-            callback_handler=self._callback_ha_event
-        )
+        self._central.register_system_event_callback(callback_handler=self._callback_system_event)
+        self._central.register_ha_event_callback(callback_handler=self._callback_ha_event)
         await super().start_central()
         self._add_central_to_device_registry()
 
@@ -241,12 +233,8 @@ class ControlUnit(BaseControlUnit):
         """Stop the central unit."""
         self._scheduler.de_init()
         if central := self._central:
-            central.unregister_system_event_callback(
-                callback_handler=self._callback_system_event
-            )
-            central.unregister_ha_event_callback(
-                callback_handler=self._callback_ha_event
-            )
+            central.unregister_system_event_callback(callback_handler=self._callback_system_event)
+            central.unregister_ha_event_callback(callback_handler=self._callback_ha_event)
 
         await super().stop_central(*args)
 
@@ -334,9 +322,7 @@ class ControlUnit(BaseControlUnit):
 
         hm_channel_events: list[list[GenericEvent]] = []
         for device in self._central.devices:
-            for channel_events in device.get_channel_events(
-                event_type=event_type
-            ).values():
+            for channel_events in device.get_channel_events(event_type=event_type).values():
                 if channel_events[0].channel_unique_identifier not in active_unique_ids:
                     hm_channel_events.append(channel_events)
                     continue
@@ -372,8 +358,7 @@ class ControlUnit(BaseControlUnit):
     ) -> list[HmUpdate]:
         """Return all hm-update-entities."""
         active_unique_ids = [
-            entity.unique_identifier
-            for entity in self._active_hm_update_entities.values()
+            entity.unique_identifier for entity in self._active_hm_update_entities.values()
         ]
         hm_update_entities: list[HmUpdate] = []
 
@@ -384,9 +369,7 @@ class ControlUnit(BaseControlUnit):
         return hm_update_entities
 
     @callback
-    def get_new_hm_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> list[BaseEntity]:
+    def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> list[BaseEntity]:
         """Return all new hm-entities by platform."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_entities.values()
@@ -415,9 +398,7 @@ class ControlUnit(BaseControlUnit):
         return hm_hub_entities
 
     @callback
-    def get_new_hm_hub_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> list[GenericHubEntity]:
+    def get_new_hm_hub_entities_by_platform(self, platform: HmPlatform) -> list[GenericHubEntity]:
         """Return all new hm-hub-entities by platform."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
@@ -431,8 +412,7 @@ class ControlUnit(BaseControlUnit):
     def get_new_hm_update_entities(self) -> list[HmUpdate]:
         """Return all update entities."""
         active_unique_ids = [
-            entity.unique_identifier
-            for entity in self._active_hm_update_entities.values()
+            entity.unique_identifier for entity in self._active_hm_update_entities.values()
         ]
         return [
             device.update_entity
@@ -447,9 +427,7 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_entities[entity_id] = hm_entity
 
     @callback
-    def add_hm_channel_events(
-        self, entity_id: str, hm_channel_events: list[GenericEvent]
-    ) -> None:
+    def add_hm_channel_events(self, entity_id: str, hm_channel_events: list[GenericEvent]) -> None:
         """Add channel events to active channel events."""
         self._active_hm_channel_events[entity_id] = hm_channel_events
 
@@ -459,9 +437,7 @@ class ControlUnit(BaseControlUnit):
         self._active_hm_update_entities[entity_id] = hm_entity
 
     @callback
-    def add_hm_hub_entity(
-        self, entity_id: str, hm_hub_entity: GenericHubEntity
-    ) -> None:
+    def add_hm_hub_entity(self, entity_id: str, hm_hub_entity: GenericHubEntity) -> None:
         """Add entity to active hub entities."""
         self._active_hm_hub_entities[entity_id] = hm_hub_entity
 
@@ -501,9 +477,7 @@ class ControlUnit(BaseControlUnit):
             new_update_entities = []
             for device in new_devices:
                 for event_type in ENTITY_EVENTS:
-                    if channel_events := device.get_channel_events(
-                        event_type=event_type
-                    ):
+                    if channel_events := device.get_channel_events(event_type=event_type):
                         new_channel_events.append(channel_events)
                 new_entities.extend(device.get_all_entities())
                 if device.update_entity:
@@ -516,9 +490,7 @@ class ControlUnit(BaseControlUnit):
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
                         self._hass,
-                        signal_new_hm_entity(
-                            entry_id=self._entry_id, platform=platform
-                        ),
+                        signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
                         hm_entities,
                     )
             if hm_update_entities := self._identify_new_hm_update_entities(
@@ -526,9 +498,7 @@ class ControlUnit(BaseControlUnit):
             ):
                 async_dispatcher_send(
                     self._hass,
-                    signal_new_hm_entity(
-                        entry_id=self._entry_id, platform=HmPlatform.UPDATE
-                    ),
+                    signal_new_hm_entity(entry_id=self._entry_id, platform=HmPlatform.UPDATE),
                     hm_update_entities,
                 )
             if hm_channel_events := self._identify_new_hm_channel_events(
@@ -536,9 +506,7 @@ class ControlUnit(BaseControlUnit):
             ):
                 async_dispatcher_send(
                     self._hass,
-                    signal_new_hm_entity(
-                        entry_id=self._entry_id, platform=HmPlatform.EVENT
-                    ),
+                    signal_new_hm_entity(entry_id=self._entry_id, platform=HmPlatform.EVENT),
                     hm_channel_events,
                 )
             self._add_virtual_remotes_to_device_registry()
@@ -554,18 +522,14 @@ class ControlUnit(BaseControlUnit):
                     if hm_hub_entities and len(hm_hub_entities) > 0:
                         async_dispatcher_send(
                             self._hass,
-                            signal_new_hm_entity(
-                                entry_id=self._entry_id, platform=platform
-                            ),
+                            signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
                             hm_hub_entities,
                         )
             return None
         return None
 
     @callback
-    def _callback_ha_event(
-        self, hm_event_type: HmEventType, event_data: dict[str, Any]
-    ) -> None:
+    def _callback_ha_event(self, hm_event_type: HmEventType, event_data: dict[str, Any]) -> None:
         """Execute the callback used for device related events."""
 
         interface_id = event_data[EVENT_INTERFACE_ID]
@@ -579,9 +543,7 @@ class ControlUnit(BaseControlUnit):
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for CALLBACK")
                     return
                 if data[EVENT_AVAILABLE]:
-                    async_delete_issue(
-                        hass=self._hass, domain=DOMAIN, issue_id=issue_id
-                    )
+                    async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
                 else:
                     async_create_issue(
                         hass=self._hass,
@@ -593,9 +555,7 @@ class ControlUnit(BaseControlUnit):
                         translation_key="xmlrpc_server_receives_no_events",
                         translation_placeholders={
                             EVENT_INTERFACE_ID: interface_id,
-                            EVENT_SECONDS_SINCE_LAST_EVENT: data[
-                                EVENT_SECONDS_SINCE_LAST_EVENT
-                            ],
+                            EVENT_SECONDS_SINCE_LAST_EVENT: data[EVENT_SECONDS_SINCE_LAST_EVENT],
                         },
                     )
             elif interface_event_type == HmInterfaceEventType.PINGPONG:
@@ -616,9 +576,7 @@ class ControlUnit(BaseControlUnit):
                 )
             elif interface_event_type == HmInterfaceEventType.PROXY:
                 if data[EVENT_AVAILABLE]:
-                    async_delete_issue(
-                        hass=self._hass, domain=DOMAIN, issue_id=issue_id
-                    )
+                    async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
                 else:
                     async_create_issue(
                         hass=self._hass,
@@ -697,9 +655,7 @@ class ControlUnit(BaseControlUnit):
                         EVENT_ERROR: display_error,
                     }
                 )
-                if is_valid_event(
-                    event_data=event_data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA
-                ):
+                if is_valid_event(event_data=event_data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA):
                     self._hass.bus.fire(
                         event_type=hm_event_type.value,
                         event_data=event_data,
@@ -708,9 +664,7 @@ class ControlUnit(BaseControlUnit):
     @callback
     def _get_device_entry(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
-        if (
-            hm_device := self._central.get_device(address=device_address)
-        ) is None:
+        if (hm_device := self._central.get_device(address=device_address)) is None:
             return None
         device_registry = dr.async_get(self._hass)
         return device_registry.async_get_device(
@@ -725,9 +679,7 @@ class ControlUnit(BaseControlUnit):
     async def fetch_all_system_variables(self) -> None:
         """Fetch all system variables from CCU / Homegear."""
         if not self._scheduler.initialized:
-            _LOGGER.debug(
-                "Hub scheduler for %s is not initialized", self._instance_name
-            )
+            _LOGGER.debug("Hub scheduler for %s is not initialized", self._instance_name)
             return None
 
         await self._scheduler.fetch_sysvars()
@@ -748,9 +700,7 @@ class ControlUnit(BaseControlUnit):
         return platform_stats, sorted(set(device_types))
 
     @callback
-    def _get_active_hm_entities_by_device_address(
-        self, device_address: str
-    ) -> list[HmBaseEntity]:
+    def _get_active_hm_entities_by_device_address(self, device_address: str) -> list[HmBaseEntity]:
         """Return used hm_entities by address."""
         entities: list[HmBaseEntity] = []
         for entity in self._active_hm_entities.values():
@@ -797,14 +747,16 @@ class ControlConfig:
         """Identify the used client."""
         return ControlUnitTemp(self._temporary_config)
 
-
     @property
     def _temporary_config(self) -> ControlConfig:
         """Return a config for validation."""
         temporary_data: dict[str, Any] = deepcopy(dict(self.data))
         temporary_data[CONF_INSTANCE_NAME] = "temporary_instance"
         return ControlConfig(
-            hass=self.hass, entry_id="hmip_local_temporary", data=temporary_data, start_direct=True
+            hass=self.hass,
+            entry_id="hmip_local_temporary",
+            data=temporary_data,
+            start_direct=True,
         )
 
 
@@ -877,20 +829,16 @@ class HmScheduler:
                 interval=timedelta(seconds=self._device_firmware_check_interval),
                 cancel_on_shutdown=True,
             )
-            self._remove_device_firmware_delivering_check_listener = (
-                async_track_time_interval(
-                    hass=self._hass,
-                    action=self._fetch_device_firmware_update_data_in_delivery,
-                    interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
-                    cancel_on_shutdown=True,
-                )
+            self._remove_device_firmware_delivering_check_listener = async_track_time_interval(
+                hass=self._hass,
+                action=self._fetch_device_firmware_update_data_in_delivery,
+                interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
+                cancel_on_shutdown=True,
             )
-            self._remove_device_firmware_updating_check_listener = (
-                async_track_time_interval(
-                    hass=self._hass,
-                    action=self._fetch_device_firmware_update_data_in_update,
-                    interval=timedelta(seconds=self._device_firmware_updating_check_interval),
-                )
+            self._remove_device_firmware_updating_check_listener = async_track_time_interval(
+                hass=self._hass,
+                action=self._fetch_device_firmware_update_data_in_update,
+                interval=timedelta(seconds=self._device_firmware_updating_check_interval),
             )
         await self._central.refresh_firmware_data()
         self._initialized = True
@@ -901,14 +849,17 @@ class HmScheduler:
             self._remove_sysvar_listener()
         if self._remove_master_listener and callable(self._remove_master_listener):
             self._remove_master_listener()
-        if (self._remove_device_firmware_check_listener
-                and callable(self._remove_device_firmware_check_listener)):
+        if self._remove_device_firmware_check_listener and callable(
+            self._remove_device_firmware_check_listener
+        ):
             self._remove_device_firmware_check_listener()
-        if (self._remove_device_firmware_delivering_check_listener
-                and callable(self._remove_device_firmware_delivering_check_listener)):
+        if self._remove_device_firmware_delivering_check_listener and callable(
+            self._remove_device_firmware_delivering_check_listener
+        ):
             self._remove_device_firmware_delivering_check_listener()
-        if (self._remove_device_firmware_updating_check_listener
-                and callable(self._remove_device_firmware_updating_check_listener)):
+        if self._remove_device_firmware_updating_check_listener and callable(
+            self._remove_device_firmware_updating_check_listener
+        ):
             self._remove_device_firmware_updating_check_listener()
         self._initialized = False
 
@@ -944,9 +895,7 @@ class HmScheduler:
             "Scheduled fetching of master entities for %s",
             self._central.name,
         )
-        await self._central.load_and_refresh_entity_data(
-            paramset_key=HmParamsetKey.MASTER
-        )
+        await self._central.load_and_refresh_entity_data(paramset_key=HmParamsetKey.MASTER)
 
     async def _fetch_device_firmware_update_data(self, now: datetime) -> None:
         """Fetch device firmware update data from backend."""
@@ -956,9 +905,7 @@ class HmScheduler:
         )
         await self._central.refresh_firmware_data()
 
-    async def _fetch_device_firmware_update_data_in_delivery(
-        self, now: datetime
-    ) -> None:
+    async def _fetch_device_firmware_update_data_in_delivery(self, now: datetime) -> None:
         """Fetch device firmware update data from backend for delivering devices."""
         _LOGGER.debug(
             "Scheduled fetching of device firmware update data for delivering devices for %s",
@@ -971,9 +918,7 @@ class HmScheduler:
             )
         )
 
-    async def _fetch_device_firmware_update_data_in_update(
-        self, now: datetime
-    ) -> None:
+    async def _fetch_device_firmware_update_data_in_update(self, now: datetime) -> None:
         """Fetch device firmware update data from backend for updating devices."""
         _LOGGER.debug(
             "Scheduled fetching of device firmware update data for updating devices for %s",
@@ -1007,9 +952,7 @@ def get_storage_folder(hass: HomeAssistant) -> str:
     return f"{hass.config.config_dir}/{DOMAIN}"
 
 
-def get_cu_by_interface_id(
-    hass: HomeAssistant, interface_id: str
-) -> ControlUnit | None:
+def get_cu_by_interface_id(hass: HomeAssistant, interface_id: str) -> ControlUnit | None:
     """Get ControlUnit by interface_id."""
     for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
         control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]

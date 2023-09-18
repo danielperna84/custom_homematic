@@ -123,9 +123,7 @@ class HmEntityDescription(ABC):
 
 
 @dataclass
-class HmBinarySensorEntityDescription(
-    HmEntityDescription, BinarySensorEntityDescription
-):
+class HmBinarySensorEntityDescription(HmEntityDescription, BinarySensorEntityDescription):
     """Class describing Homematic(IP) Local binary sensor entities."""
 
 

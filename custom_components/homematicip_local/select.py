@@ -53,9 +53,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicSysvarSelect(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
+                HaHomematicSysvarSelect(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
 
         if entities:
@@ -64,9 +62,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.SELECT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SELECT),
             async_add_select,
         )
     )
@@ -74,21 +70,15 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_SELECT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_SELECT),
             async_add_hub_select,
         )
     )
 
-    async_add_select(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SELECT)
-    )
+    async_add_select(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SELECT))
 
     async_add_hub_select(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_SELECT
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_SELECT)
     )
 
 
@@ -124,9 +114,7 @@ class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity)
         await self._hm_entity.send_value(option)
 
 
-class HaHomematicSysvarSelect(
-    HaHomematicGenericSysvarEntity[HmSysvarSelect], SelectEntity
-):
+class HaHomematicSysvarSelect(HaHomematicGenericSysvarEntity[HmSysvarSelect], SelectEntity):
     """Representation of the HomematicIP hub select entity."""
 
     @property

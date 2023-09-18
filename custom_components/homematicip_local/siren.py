@@ -71,16 +71,12 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.SIREN
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SIREN),
             async_add_siren,
         )
     )
 
-    async_add_siren(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SIREN)
-    )
+    async_add_siren(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SIREN))
 
 
 class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):

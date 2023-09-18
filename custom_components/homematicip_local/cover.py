@@ -92,36 +92,26 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.COVER
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.COVER),
             async_add_cover,
         )
     )
 
-    async_add_cover(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.COVER)
-    )
+    async_add_cover(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.COVER))
 
     platform = entity_platform.async_get_current_platform()
 
     platform.async_register_entity_service(
         SERVICE_SET_COVER_COMBINED_POSITION,
         {
-            vol.Required(ATTR_POSITION): vol.All(
-                vol.Coerce(int), vol.Range(min=0, max=100)
-            ),
-            vol.Optional(ATTR_TILT_POSITION): vol.All(
-                vol.Coerce(int), vol.Range(min=0, max=100)
-            ),
+            vol.Required(ATTR_POSITION): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
+            vol.Optional(ATTR_TILT_POSITION): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
         },
         "async_set_cover_combined_position",
     )
 
 
-class HaHomematicBaseCover(
-    HaHomematicGenericRestoreEntity[HmGenericCover], CoverEntity
-):
+class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], CoverEntity):
     """Representation of the HomematicIP cover entity."""
 
     @property

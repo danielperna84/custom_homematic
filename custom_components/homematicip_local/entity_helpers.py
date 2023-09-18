@@ -309,9 +309,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
         device_class=SensorDeviceClass.ENUM,
         icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
         if value in ("primary_alarm", "secondary_alarm")
-        else (
-            "mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"
-        ),
+        else ("mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"),
         translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
@@ -658,17 +656,13 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_ENTITY_DESCRIPTION_BY_DEVICE: dict[
-    HmPlatform, dict[str | tuple[str, ...], EntityDescription]
-] = {
+_ENTITY_DESCRIPTION_BY_DEVICE: dict[HmPlatform, dict[str | tuple[str, ...], EntityDescription]] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SIREN: _SIREN_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_BY_PARAM: dict[
-    HmPlatform, dict[str | tuple[str, ...], EntityDescription]
-] = {
+_ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | tuple[str, ...], EntityDescription]] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.BUTTON: _BUTTOM_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
@@ -747,9 +741,7 @@ def _find_entity_description(
 ) -> EntityDescription | None:
     """Find the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity | WrapperEntity):
-        if entity_desc := _get_entity_description_by_device_type_and_param(
-            hm_entity=hm_entity
-        ):
+        if entity_desc := _get_entity_description_by_device_type_and_param(hm_entity=hm_entity):
             return entity_desc
 
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
@@ -792,9 +784,7 @@ def _get_entity_description_by_param(
     hm_entity: GenericEntity | WrapperEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter."""
-    if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(
-        hm_entity.platform
-    ):
+    if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
                 return entity_desc
@@ -805,9 +795,7 @@ def _get_entity_description_by_device_type(
     hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type."""
-    if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(
-        hm_entity.platform
-    ):
+    if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(hm_entity.platform):
         for devices, entity_desc in platform_device_descriptions.items():
             if element_matches_key(
                 search_elements=devices,

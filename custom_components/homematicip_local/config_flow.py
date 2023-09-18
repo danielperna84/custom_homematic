@@ -66,6 +66,7 @@ IF_VIRTUAL_DEVICES_PORT: Final = 9292
 IF_VIRTUAL_DEVICES_TLS_PORT: Final = 49292
 IF_VIRTUAL_DEVICES_PATH: Final = "/groups"
 
+
 def get_domain_schema(data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
     return vol.Schema(
@@ -77,9 +78,7 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(CONF_USERNAME, default=data.get(CONF_USERNAME)): cv.string,
             vol.Required(CONF_PASSWORD, default=data.get(CONF_PASSWORD)): cv.string,
             vol.Required(CONF_TLS, default=data.get(CONF_TLS, DEFAULT_TLS)): cv.boolean,
-            vol.Required(
-                CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
-            ): cv.boolean,
+            vol.Required(CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)): cv.boolean,
             vol.Optional(CONF_CALLBACK_HOST): cv.string,
             vol.Optional(CONF_CALLBACK_PORT): cv.port,
             vol.Optional(CONF_JSON_PORT): cv.port,
@@ -89,9 +88,7 @@ def get_domain_schema(data: ConfigType) -> Schema:
             ): cv.boolean,
             vol.Required(
                 CONF_SYSVAR_SCAN_INTERVAL,
-                default=data.get(
-                    CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
-                ),
+                default=data.get(CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL),
             ): vol.All(vol.Coerce(int), vol.Range(min=5)),
             vol.Required(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -130,9 +127,7 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
         virtual_devices_enabled = interfaces.get(HmInterfaceName.VIRTUAL_DEVICES) is not None
     else:
         virtual_devices_enabled = False
-    virtual_devices_port = (
-        IF_VIRTUAL_DEVICES_TLS_PORT if use_tls else IF_VIRTUAL_DEVICES_PORT
-    )
+    virtual_devices_port = IF_VIRTUAL_DEVICES_TLS_PORT if use_tls else IF_VIRTUAL_DEVICES_PORT
 
     # BidCos-Wired
     if HmInterfaceName.BIDCOS_WIRED in interfaces:
@@ -147,13 +142,9 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
             vol.Required(CONF_HMIP_RF_PORT, default=hmip_port): int,
             vol.Required(CONF_BIDCOS_RF_ENABLED, default=bidcos_rf_enabled): bool,
             vol.Required(CONF_BIDCOS_RF_PORT, default=bidcos_rf_port): int,
-            vol.Required(
-                CONF_VIRTUAL_DEVICES_ENABLED, default=virtual_devices_enabled
-            ): bool,
+            vol.Required(CONF_VIRTUAL_DEVICES_ENABLED, default=virtual_devices_enabled): bool,
             vol.Required(CONF_VIRTUAL_DEVICES_PORT, default=virtual_devices_port): int,
-            vol.Required(
-                CONF_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH
-            ): str,
+            vol.Required(CONF_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH): str,
             vol.Required(CONF_BIDCOS_WIRED_ENABLED, default=bidcos_wired_enabled): bool,
             vol.Required(CONF_BIDCOS_WIRED_PORT, default=bidcos_wired_port): int,
         }
@@ -167,9 +158,7 @@ async def _async_validate_config_and_get_system_information(
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     if not check_password(control_config.data.get(CONF_PASSWORD)):
         raise InvalidPassword()
-    return await validate_config_and_get_system_information(
-        control_config=control_config
-    )
+    return await validate_config_and_get_system_information(control_config=control_config)
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -187,9 +176,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         return await self.async_step_central(user_input=user_input)
 
-    async def async_step_central(
-        self, user_input: ConfigType | None = None
-    ) -> FlowResult:
+    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
         """Handle the initial step."""
         if user_input is not None:
             self.data = _get_ccu_data(self.data, user_input=user_input)
@@ -215,10 +202,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         try:
-            system_information = (
-                await _async_validate_config_and_get_system_information(
-                    self.hass, self.data
-                )
+            system_information = await _async_validate_config_and_get_system_information(
+                self.hass, self.data
             )
             if system_information is not None:
                 await self.async_set_unique_id(system_information.serial)
@@ -230,9 +215,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         except InvalidPassword:
             errors["base"] = "invalid_password"
         else:
-            return self.async_create_entry(
-                title=self.data[CONF_INSTANCE_NAME], data=self.data
-            )
+            return self.async_create_entry(title=self.data[CONF_INSTANCE_NAME], data=self.data)
 
         return self.async_show_form(
             step_id="central",
@@ -243,12 +226,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
         """Handle a discovered HomeMatic CCU."""
         _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
-        instance_name = _get_instance_name(
-            friendly_name=discovery_info.upnp.get("friendlyName")
-        )
-        serial = _get_serial(
-            model_description=discovery_info.upnp.get("modelDescription")
-        )
+        instance_name = _get_instance_name(friendly_name=discovery_info.upnp.get("friendlyName"))
+        serial = _get_serial(model_description=discovery_info.upnp.get("modelDescription"))
 
         host = cast(str, urlparse(discovery_info.ssdp_location).hostname)
         await self.async_set_unique_id(serial)
@@ -278,9 +257,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the Homematic(IP) Local options."""
         return await self.async_step_central(user_input=user_input)
 
-    async def async_step_central(
-        self, user_input: ConfigType | None = None
-    ) -> FlowResult:
+    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
         """Manage the Homematic(IP) Local devices options."""
         if user_input is not None:
             old_interfaces = self.data[CONF_INTERFACE]
@@ -312,10 +289,8 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         errors = {}
 
         try:
-            system_information = (
-                await _async_validate_config_and_get_system_information(
-                    self.hass, self.data
-                )
+            system_information = await _async_validate_config_and_get_system_information(
+                self.hass, self.data
             )
         except (NoClients, NoConnection):
             errors["base"] = "cannot_connect"
@@ -345,9 +320,7 @@ class InvalidPassword(HomeAssistantError):
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
     return {
-        CONF_INSTANCE_NAME: user_input.get(
-            CONF_INSTANCE_NAME, data.get(CONF_INSTANCE_NAME)
-        ),
+        CONF_INSTANCE_NAME: user_input.get(CONF_INSTANCE_NAME, data.get(CONF_INSTANCE_NAME)),
         CONF_HOST: user_input[CONF_HOST],
         CONF_USERNAME: user_input[CONF_USERNAME],
         CONF_PASSWORD: user_input[CONF_PASSWORD],

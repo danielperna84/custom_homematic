@@ -32,6 +32,7 @@ ATTR_NAME: Final = "name"
 ATTR_PARAMETER: Final = "parameter"
 ATTR_VALUE_STATE: Final = "value_state"
 
+
 class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     """Representation of the HomematicIP generic entity."""
 
@@ -51,9 +52,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         if entity_description := get_entity_description(hm_entity=hm_entity):
             self.entity_description = entity_description
             if entity_description.entity_registry_enabled_default:
-                entity_description.entity_registry_enabled_default = (
-                    hm_entity.enabled_default
-                )
+                entity_description.entity_registry_enabled_default = hm_entity.enabled_default
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
             if isinstance(hm_entity, GenericEntity | WrapperEntity):
@@ -162,11 +161,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 self._name_translation_key
                 and hasattr(self, "platform")
                 and hasattr(self.platform, "platform_translations")
-                and (
-                    name := self.platform.platform_translations.get(
-                        self._name_translation_key
-                    )
-                )
+                and (name := self.platform.platform_translations.get(self._name_translation_key))
                 is not None
             ):
                 return bool(name == "")
@@ -177,15 +172,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
-            self._hm_entity.register_update_callback(
-                update_callback=self._async_device_changed
-            )
-            self._hm_entity.register_remove_callback(
-                remove_callback=self._async_device_removed
-            )
-        self._cu.add_hm_entity(
-            entity_id=self.entity_id, hm_entity=self._hm_entity
-        )
+            self._hm_entity.register_update_callback(update_callback=self._async_device_changed)
+            self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
+        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_entity)
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity | WrapperEntity):
             await self._hm_entity.load_entity_value(call_source=HmCallSource.HA_INIT)
@@ -193,12 +182,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             isinstance(self._hm_entity, GenericEntity)
             and not self._hm_entity.is_valid
             and self._hm_entity.is_readable
-        ) or (
-            isinstance(self._hm_entity, CustomEntity) and not self._hm_entity.is_valid
-        ):
+        ) or (isinstance(self._hm_entity, CustomEntity) and not self._hm_entity.is_valid):
             _LOGGER.debug(
-                "CCU did not provide initial value for %s. "
-                "See README for more information",
+                "CCU did not provide initial value for %s. See README for more information",
                 self._hm_entity.full_name,
             )
 
@@ -218,21 +204,15 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
-            await self._hm_entity.load_entity_value(
-                call_source=HmCallSource.MANUAL_OR_SCHEDULED
-            )
+            await self._hm_entity.load_entity_value(call_source=HmCallSource.MANUAL_OR_SCHEDULED)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         self._cu.remove_hm_entity(self.entity_id)
 
         # Remove callback from device.
-        self._hm_entity.unregister_update_callback(
-            update_callback=self._async_device_changed
-        )
-        self._hm_entity.unregister_remove_callback(
-            remove_callback=self._async_device_removed
-        )
+        self._hm_entity.unregister_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
@@ -250,9 +230,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 device_registry.async_remove_device(device_id)
 
 
-class HaHomematicGenericRestoreEntity(
-    HaHomematicGenericEntity[HmGenericEntity], RestoreEntity
-):
+class HaHomematicGenericRestoreEntity(HaHomematicGenericEntity[HmGenericEntity], RestoreEntity):
     """Representation of the HomematicIP generic restore entity."""
 
     _restored_state: State | None = None
@@ -317,9 +295,7 @@ class HaHomematicGenericHubEntity(Entity):
             self._hm_hub_entity.register_remove_callback(
                 remove_callback=self._async_hub_entity_removed
             )
-        self._cu.add_hm_hub_entity(
-            entity_id=self.entity_id, hm_hub_entity=self._hm_hub_entity
-        )
+        self._cu.add_hm_hub_entity(entity_id=self.entity_id, hm_hub_entity=self._hm_hub_entity)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip sysvar entity will be removed from hass."""
@@ -360,9 +336,7 @@ class HaHomematicGenericHubEntity(Entity):
                 entity_registry.async_remove(entity_id)
 
 
-class HaHomematicGenericSysvarEntity(
-    Generic[HmGenericSysvarEntity], HaHomematicGenericHubEntity
-):
+class HaHomematicGenericSysvarEntity(Generic[HmGenericSysvarEntity], HaHomematicGenericHubEntity):
     """Representation of the HomematicIP generic sysvar entity."""
 
     def __init__(
@@ -377,4 +351,3 @@ class HaHomematicGenericSysvarEntity(
         )
         self._hm_hub_entity: GenericSystemVariable = hm_sysvar_entity
         self._attr_extra_state_attributes = {ATTR_NAME: self._hm_hub_entity.ccu_var_name}
-
