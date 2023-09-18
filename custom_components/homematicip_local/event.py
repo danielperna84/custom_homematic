@@ -48,18 +48,14 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.EVENT
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.EVENT),
             async_add_event,
         )
     )
 
     for event_type in ENTITY_EVENTS:
         async_add_event(
-            control_unit.get_new_hm_channel_events_by_event_type(
-                event_type=event_type
-            )
+            control_unit.get_new_hm_channel_events_by_event_type(event_type=event_type)
         )
 
 
@@ -78,18 +74,12 @@ class HaHomematicEvent(EventEntity):
     ) -> None:
         """Initialize the event."""
         self._cu: ControlUnit = control_unit
-        self._attr_event_types = [
-            event.parameter.lower() for event in hm_channel_events
-        ]
+        self._attr_event_types = [event.parameter.lower() for event in hm_channel_events]
         self._hm_primary_entity: GenericEvent = hm_channel_events[0]
         self._hm_channel_events = hm_channel_events
-        self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(
-            ".", "_"
-        )
+        self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(".", "_")
 
-        self._attr_unique_id = (
-            f"{DOMAIN}_{self._hm_primary_entity.channel_unique_identifier}"
-        )
+        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel_unique_identifier}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
         )

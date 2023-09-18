@@ -22,17 +22,13 @@ def async_describe_events(
     @callback
     def async_describe_homematic_device_error_event(event: Event) -> dict[str, str]:
         """Describe Homematic(IP) Local logbook device error event."""
-        if not is_valid_event(
-            event_data=event.data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA
-        ):
+        if not is_valid_event(event_data=event.data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA):
             return {}
         error_name = event.data[EVENT_PARAMETER].replace("_", " ").title()
         error_value = event.data[EVENT_ERROR_VALUE]
         is_error = event.data[EVENT_ERROR]
         error_message = (
-            f"{error_name} {error_value} occurred"
-            if is_error
-            else f"{error_name} resolved"
+            f"{error_name} {error_value} occurred" if is_error else f"{error_name} resolved"
         )
 
         return {

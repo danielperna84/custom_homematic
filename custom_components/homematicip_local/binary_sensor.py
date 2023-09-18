@@ -64,9 +64,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.BINARY_SENSOR
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.BINARY_SENSOR),
             async_add_binary_sensor,
         )
     )
@@ -79,21 +77,15 @@ async def async_setup_entry(
     )
 
     async_add_binary_sensor(
-        control_unit.get_new_hm_entities_by_platform(
-            platform=HmPlatform.BINARY_SENSOR
-        )
+        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.BINARY_SENSOR)
     )
 
     async_add_hub_binary_sensor(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_BINARY_SENSOR
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_BINARY_SENSOR)
     )
 
 
-class HaHomematicBinarySensor(
-    HaHomematicGenericRestoreEntity[HmBinarySensor], BinarySensorEntity
-):
+class HaHomematicBinarySensor(HaHomematicGenericRestoreEntity[HmBinarySensor], BinarySensorEntity):
     """Representation of the Homematic(IP) Local binary sensor."""
 
     @property

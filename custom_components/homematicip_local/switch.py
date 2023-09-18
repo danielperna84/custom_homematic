@@ -59,9 +59,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicSysvarSwitch(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
+                HaHomematicSysvarSwitch(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
 
         if entities:
@@ -70,47 +68,35 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.SWITCH
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SWITCH),
             async_add_switch,
         )
     )
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_SWITCH
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_SWITCH),
             async_add_hub_switch,
         )
     )
 
-    async_add_switch(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH)
-    )
+    async_add_switch(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH))
 
     async_add_hub_switch(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_SWITCH
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_SWITCH)
     )
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
         SERVICE_SWITCH_SET_ON_TIME,
         {
-            vol.Required(ATTR_ON_TIME): vol.All(
-                vol.Coerce(int), vol.Range(min=0, max=8580000)
-            ),
+            vol.Required(ATTR_ON_TIME): vol.All(vol.Coerce(int), vol.Range(min=0, max=8580000)),
         },
         "async_set_on_time",
     )
 
 
-class HaHomematicSwitch(
-    HaHomematicGenericRestoreEntity[CeSwitch | HmSwitch], SwitchEntity
-):
+class HaHomematicSwitch(HaHomematicGenericRestoreEntity[CeSwitch | HmSwitch], SwitchEntity):
     """Representation of the HomematicIP switch entity."""
 
     @property
@@ -157,9 +143,7 @@ class HaHomematicSwitch(
             await self._hm_entity.set_on_time(on_time=on_time)
 
 
-class HaHomematicSysvarSwitch(
-    HaHomematicGenericSysvarEntity[HmSysvarSwitch], SwitchEntity
-):
+class HaHomematicSysvarSwitch(HaHomematicGenericSysvarEntity[HmSysvarSwitch], SwitchEntity):
     """Representation of the HomematicIP hub switch entity."""
 
     @property

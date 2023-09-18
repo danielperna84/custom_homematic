@@ -5,7 +5,7 @@ repos:
       - id: black
         args:
           - --quiet
-        files: ^((pylint|script|tests)/.+)?[^/]+\.py$
+        files: ^((custom_components/homematicip_local|pylint|script|tests)/.+)?[^/]+\.py$
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.0.290
     hooks:

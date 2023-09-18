@@ -65,9 +65,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicSysvarSensor(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
+                HaHomematicSysvarSensor(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
 
         if entities:
@@ -76,30 +74,22 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.SENSOR
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SENSOR),
             async_add_sensor,
         )
     )
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_SENSOR
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_SENSOR),
             async_add_hub_sensor,
         )
     )
 
-    async_add_sensor(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SENSOR)
-    )
+    async_add_sensor(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SENSOR))
 
     async_add_hub_sensor(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_SENSOR
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_SENSOR)
     )
 
 
@@ -130,9 +120,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
             self._attr_native_unit_of_measurement = hm_entity.unit
         if self.device_class == SensorDeviceClass.ENUM:
             self._attr_options = (
-                [item.lower() for item in hm_entity.value_list]
-                if hm_entity.value_list
-                else None
+                [item.lower() for item in hm_entity.value_list] if hm_entity.value_list else None
             )
 
     @property
@@ -192,9 +180,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
             self._restored_native_value = restored_sensor_data.native_value
 
 
-class HaHomematicSysvarSensor(
-    HaHomematicGenericSysvarEntity[HmSysvarSensor], SensorEntity
-):
+class HaHomematicSysvarSensor(HaHomematicGenericSysvarEntity[HmSysvarSensor], SensorEntity):
     """Representation of the HomematicIP hub sensor entity."""
 
     def __init__(
@@ -206,9 +192,7 @@ class HaHomematicSysvarSensor(
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
         if hm_sysvar_entity.data_type == HmSysvarType.LIST:
             self._attr_options = (
-                list(hm_sysvar_entity.value_list)
-                if hm_sysvar_entity.value_list
-                else None
+                list(hm_sysvar_entity.value_list) if hm_sysvar_entity.value_list else None
             )
             self._attr_device_class = SensorDeviceClass.ENUM
         else:

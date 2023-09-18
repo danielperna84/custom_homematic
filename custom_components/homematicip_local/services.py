@@ -324,9 +324,7 @@ async def async_unload_services(hass: HomeAssistant) -> None:
         hass.services.async_remove(domain=DOMAIN, service=hmip_local_service)
 
 
-async def _async_service_delete_device(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_delete_device(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to delete a Homematic(IP) Local device from HA."""
     device_id = service.data[CONF_DEVICE_ID]
 
@@ -339,9 +337,7 @@ async def _async_service_delete_device(
     if (
         interface_id
         and device_address
-        and (
-            control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id)
-        )
+        and (control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id))
     ):
         await control_unit.central.delete_device(
             interface_id=interface_id, device_address=device_address
@@ -430,9 +426,7 @@ async def _async_service_get_paramset(
     return None
 
 
-async def _async_service_set_device_value(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
     channel_no = service.data[CONF_CHANNEL]
     parameter = service.data[CONF_PARAMETER]
@@ -464,9 +458,7 @@ async def _async_service_set_device_value(
         )
 
 
-async def _async_service_set_variable_value(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_set_variable_value(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call setValue method for Homematic(IP) Local system variable."""
     entry_id = service.data[CONF_ENTRY_ID]
     name = service.data[CONF_NAME]
@@ -476,9 +468,7 @@ async def _async_service_set_variable_value(
         await control.central.set_system_variable(name=name, value=value)
 
 
-async def _async_service_set_install_mode(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_set_install_mode(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to set interface_id into install mode."""
     interface_id = service.data[CONF_INTERFACE_ID]
     mode: int = service.data.get(CONF_MODE, 1)
@@ -498,18 +488,14 @@ async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) 
         await control.central.clear_all_caches()
 
 
-async def _async_service_fetch_system_variables(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_fetch_system_variables(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to fetch system variables from backend."""
     entry_id = service.data[CONF_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
         await control.fetch_all_system_variables()
 
 
-async def _async_service_put_paramset(
-    hass: HomeAssistant, service: ServiceCall
-) -> None:
+async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call the putParamset method on a Homematic(IP) Local connection."""
     channel_no = service.data.get(CONF_CHANNEL)
     paramset_key = service.data[CONF_PARAMSET_KEY]
@@ -571,9 +557,7 @@ def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
     return control_unit
 
 
-def _get_hm_device_by_service_data(
-    hass: HomeAssistant, service: ServiceCall
-) -> HmDevice | None:
+def _get_hm_device_by_service_data(hass: HomeAssistant, service: ServiceCall) -> HmDevice | None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
     if device_id := service.data.get(CONF_DEVICE_ID):

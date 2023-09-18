@@ -47,16 +47,12 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.LOCK
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LOCK),
             async_add_lock,
         )
     )
 
-    async_add_lock(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LOCK)
-    )
+    async_add_lock(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LOCK))
 
 
 class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):

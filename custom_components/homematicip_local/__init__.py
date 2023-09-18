@@ -68,9 +68,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if control := hass.data[DOMAIN][CONTROL_UNITS].get(entry.entry_id):
         await async_unload_services(hass)
         await control.stop_central()
-        unload_ok = await hass.config_entries.async_unload_platforms(
-            entry, HMIP_LOCAL_PLATFORMS
-        )
+        unload_ok = await hass.config_entries.async_unload_platforms(entry, HMIP_LOCAL_PLATFORMS)
         if unload_ok:
             hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id)
         if len(hass.data[DOMAIN][CONTROL_UNITS]) == 0:
@@ -83,9 +81,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle removal of an entry."""
     storage_folder = get_storage_folder(hass=hass)
-    cleanup_cache_dirs(
-        instance_name=entry.data["instance_name"], storage_folder=storage_folder
-    )
+    cleanup_cache_dirs(instance_name=entry.data["instance_name"], storage_folder=storage_folder)
 
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -106,5 +102,3 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
-
-

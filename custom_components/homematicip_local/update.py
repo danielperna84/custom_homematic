@@ -48,9 +48,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.UPDATE
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.UPDATE),
             async_add_update,
         )
     )
@@ -61,9 +59,7 @@ async def async_setup_entry(
 class HaHomematicUpdate(UpdateEntity):
     """Representation of the HomematicIP update entity."""
 
-    _attr_supported_features = (
-        UpdateEntityFeature.PROGRESS | UpdateEntityFeature.INSTALL
-    )
+    _attr_supported_features = UpdateEntityFeature.PROGRESS | UpdateEntityFeature.INSTALL
 
     _attr_has_entity_name = True
     _attr_should_poll = False
@@ -120,9 +116,7 @@ class HaHomematicUpdate(UpdateEntity):
         """Return the name of the entity."""
         return self._hm_entity.name
 
-    async def async_install(
-        self, version: str | None, backup: bool, **kwargs: Any
-    ) -> None:
+    async def async_install(self, version: str | None, backup: bool, **kwargs: Any) -> None:
         """Install an update."""
         await self._hm_entity.update_firmware(refresh_after_update_intervals=(10, 60))
 
@@ -133,15 +127,9 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
 
-        self._hm_entity.register_update_callback(
-            update_callback=self._async_device_changed
-        )
-        self._hm_entity.register_remove_callback(
-            remove_callback=self._async_device_removed
-        )
-        self._cu.add_hm_update_entity(
-            entity_id=self.entity_id, hm_entity=self._hm_entity
-        )
+        self._hm_entity.register_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
+        self._cu.add_hm_update_entity(entity_id=self.entity_id, hm_entity=self._hm_entity)
 
     @callback
     def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -161,12 +149,8 @@ class HaHomematicUpdate(UpdateEntity):
         # Remove callback from device.
         self._cu.remove_hm_update_entity(self.entity_id)
 
-        self._hm_entity.unregister_update_callback(
-            update_callback=self._async_device_changed
-        )
-        self._hm_entity.unregister_remove_callback(
-            remove_callback=self._async_device_removed
-        )
+        self._hm_entity.unregister_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:

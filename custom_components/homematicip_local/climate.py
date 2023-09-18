@@ -109,9 +109,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_climate(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.CLIMATE)
-    )
+    async_add_climate(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.CLIMATE))
 
     platform = entity_platform.async_get_current_platform()
 
@@ -282,7 +280,11 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
         if preset_mode not in self.preset_modes:
-            _LOGGER.warning("Preset mode %s is not supported in hvac_mode %s", preset_mode, self.hvac_mode)
+            _LOGGER.warning(
+                "Preset mode %s is not supported in hvac_mode %s",
+                preset_mode,
+                self.hvac_mode,
+            )
             return None
         await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 

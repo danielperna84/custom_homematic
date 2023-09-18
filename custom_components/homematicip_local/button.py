@@ -51,9 +51,7 @@ async def async_setup_entry(
 
         for hm_entity in args:
             entities.append(
-                HaHomematicProgramButton(
-                    control_unit=control_unit, hm_program_button=hm_entity
-                )
+                HaHomematicProgramButton(control_unit=control_unit, hm_program_button=hm_entity)
             )
 
         if entities:
@@ -62,9 +60,7 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.BUTTON
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.BUTTON),
             async_add_button,
         )
     )
@@ -72,21 +68,15 @@ async def async_setup_entry(
     entry.async_on_unload(
         async_dispatcher_connect(
             hass,
-            signal_new_hm_entity(
-                entry_id=entry.entry_id, platform=HmPlatform.HUB_BUTTON
-            ),
+            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_BUTTON),
             async_add_program_button,
         )
     )
 
-    async_add_button(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.BUTTON)
-    )
+    async_add_button(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.BUTTON))
 
     async_add_program_button(
-        control_unit.get_new_hm_hub_entities_by_platform(
-            platform=HmPlatform.HUB_BUTTON
-        )
+        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_BUTTON)
     )
 
 
@@ -113,7 +103,6 @@ class HaHomematicProgramButton(HaHomematicGenericHubEntity, ButtonEntity):
         )
         self._hm_hub_entity: HmProgramButton = hm_program_button
         self._attr_extra_state_attributes = {ATTR_NAME: self._hm_hub_entity.ccu_program_name}
-
 
     async def async_press(self) -> None:
         """Execute a button press."""
