@@ -39,7 +39,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     _attr_has_entity_name = True
     _attr_should_poll = False
 
-    _platform_unstored_attributes = frozenset(
+    _unrecorded_attributes = frozenset(
         {
             ATTR_ADDRESS,
             ATTR_ENTITY_TYPE,
@@ -279,7 +279,7 @@ class HaHomematicGenericHubEntity(Entity):
     _attr_entity_registry_enabled_default = DEFAULT_SYSVAR_REGISTRY_ENABLED
     _attr_should_poll = False
 
-    _platform_unstored_attributes = frozenset({ATTR_NAME})
+    _unrecorded_attributes = frozenset({ATTR_NAME})
 
     def __init__(
         self,
