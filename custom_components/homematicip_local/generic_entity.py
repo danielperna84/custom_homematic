@@ -43,7 +43,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         {
             ATTR_ADDRESS,
             ATTR_ENTITY_TYPE,
-            ATTR_ENTITY_TYPE,
             ATTR_FUNCTION,
             ATTR_INTERFACE_ID,
             ATTR_MODEL,
