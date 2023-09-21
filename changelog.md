@@ -1,6 +1,6 @@
 # Version 1.41.1 (2023-09-17)
 
-- Bump hahomematic to 2023.9.3
+- Bump hahomematic to 2023.9.4
   - Re add channel 7 for HmIPW-WRC6
   - Reduce log level for exceptions in fetch_paramset_description
   - Refactor get_paramset_description
