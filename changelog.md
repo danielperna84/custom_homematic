@@ -1,4 +1,4 @@
-# Version 1.41.1 (2023-09-17)
+# Version 1.42.0 (2023-09-22)
 
 - Bump hahomematic to 2023.9.4
   - Re add channel 7 for HmIPW-WRC6
@@ -9,6 +9,7 @@
   - Refactor client and central modules
 - Adopt changes in HA 2023.9
 - Use more shorthand attributes
+- Add _unrecorded_attributes
 
 # Version 1.41.0 (2023-09-03)
 
