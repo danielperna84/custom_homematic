@@ -124,11 +124,11 @@ class HaHomematicEvent(EventEntity):
         # Don't update disabled entities
         if self.enabled:
             self._trigger_event(event_type=kwargs["parameter"])
-            _LOGGER.debug("Event %s", self.name)
+            _LOGGER.debug("Device event fired %s", self.name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
-                "Device Changed Event for %s not fired. Entity is disabled",
+                "Device event for %s not fired. Entity is disabled",
                 self.name,
             )
 

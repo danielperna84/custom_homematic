@@ -205,11 +205,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
-            _LOGGER.debug("Event %s", self.name)
+            _LOGGER.debug("Device changed event fired for %s", self.name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
-                "Device Changed Event for %s not fired. Entity is disabled",
+                "Device changed event for %s not fired. Entity is disabled",
                 self.name,
             )
 
@@ -328,11 +328,11 @@ class HaHomematicGenericHubEntity(Entity):
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:
-            _LOGGER.debug("Sysvar changed event %s", self.name)
+            _LOGGER.debug("Sysvar changed event fired for %s", self.name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
-                "Sysvar Changed Event for %s not fired. Sysvar entity is disabled",
+                "Sysvar changed event for %s not fired. Sysvar entity is disabled",
                 self.name,
             )
 
