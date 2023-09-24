@@ -5,7 +5,7 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.lock import LOCK_STATE_LOCKED, BaseLock
+from hahomematic.platforms.custom.lock import BaseLock, HmLockState
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
@@ -74,7 +74,7 @@ class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
                 STATE_UNAVAILABLE,
             )
         ):
-            return restored_state == LOCK_STATE_LOCKED
+            return restored_state == HmLockState.LOCKED
         return None
 
     @property
