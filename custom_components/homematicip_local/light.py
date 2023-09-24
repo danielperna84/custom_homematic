@@ -220,7 +220,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[CeDimmer], LightEntity):
         if effect := kwargs.get(ATTR_EFFECT):
             hm_kwargs["effect"] = effect
 
-        await self._hm_entity.turn_on(params=hm_kwargs)
+        await self._hm_entity.turn_on(**hm_kwargs)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
