@@ -6,10 +6,10 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.light import (
-    BaseHmLight,
     CeDimmer,
     CeIpFixedColorLight,
-    HmLightArgs,
+    HmLightOffArgs,
+    HmLightOnArgs,
 )
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -38,7 +38,7 @@ ATTR_ON_TIME = "on_time"
 
 ATTR_COLOR = "color"
 ATTR_CHANNEL_COLOR = "channel_color"
-ATTR_CHANNEL_LEVEL = "channel_level"
+ATTR_CHANNEL_BRIGHTNESS = "channel_brightness"
 
 SERVICE_LIGHT_SET_ON_TIME = "light_set_on_time"
 
@@ -89,7 +89,7 @@ async def async_setup_entry(
     )
 
 
-class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity):
+class HaHomematicLight(HaHomematicGenericRestoreEntity[CeDimmer], LightEntity):
     """Representation of the HomematicIP light entity."""
 
     @property
@@ -111,18 +111,11 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
         attributes = super().extra_state_attributes
-        if isinstance(self._hm_entity, CeDimmer) and (
-            self._hm_entity.channel_brightness
-            and self._hm_entity.brightness != self._hm_entity.channel_brightness
-        ):
-            attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
+        if self._hm_entity.channel_brightness is not None:
+            attributes[ATTR_CHANNEL_BRIGHTNESS] = self._hm_entity.channel_brightness
+
         if isinstance(self._hm_entity, CeIpFixedColorLight):
             attributes[ATTR_COLOR] = self._hm_entity.color_name
-            if (
-                self._hm_entity.channel_brightness
-                and self._hm_entity.brightness != self._hm_entity.channel_brightness
-            ):
-                attributes[ATTR_CHANNEL_LEVEL] = self._hm_entity.channel_brightness / 255 * 100
             if (
                 self._hm_entity.channel_color_name
                 and self._hm_entity.color_name != self._hm_entity.channel_color_name
@@ -211,7 +204,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
-        hm_kwargs = HmLightArgs()
+        hm_kwargs = HmLightOnArgs()
         # Use hs_color from kwargs, if not applicable use current hs_color.
         if color_temp := kwargs.get(ATTR_COLOR_TEMP, self.color_temp):
             hm_kwargs["color_temp"] = color_temp
@@ -227,11 +220,11 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[BaseHmLight], LightEntity
         if effect := kwargs.get(ATTR_EFFECT):
             hm_kwargs["effect"] = effect
 
-        await self._hm_entity.turn_on(**hm_kwargs)
+        await self._hm_entity.turn_on(params=hm_kwargs)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
-        hm_kwargs: dict[str, Any] = {}
+        hm_kwargs = HmLightOffArgs()
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
             hm_kwargs["ramp_time"] = ramp_time

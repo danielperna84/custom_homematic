@@ -1,3 +1,10 @@
+# Version 1.43.0 (2023-09-24)
+
+- Bump hahomematic to 2023.9.5
+  - Cleanup light code
+  - Use more enums for climate, cover, lock
+  - Use TypedDict for light, siren args
+
 # Version 1.42.0 (2023-09-22)
 
 - Bump hahomematic to 2023.9.4
@@ -9,7 +16,7 @@
   - Refactor client and central modules
 - Adopt changes in HA 2023.9
 - Use more shorthand attributes
-- Add _unrecorded_attributes
+- Add \_unrecorded_attributes
 
 # Version 1.41.0 (2023-09-03)
 
