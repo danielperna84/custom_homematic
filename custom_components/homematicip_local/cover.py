@@ -6,6 +6,8 @@ from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.cover import CeBlind, CeCover, CeGarage, CeIpBlind
+import voluptuous as vol
+
 from homeassistant.components.cover import (
     ATTR_CURRENT_POSITION,
     ATTR_CURRENT_TILT_POSITION,
@@ -19,7 +21,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity

@@ -7,6 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.button import HmButton
 from hahomematic.platforms.hub.button import HmProgramButton
+
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -15,7 +16,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import ATTR_NAME, HaHomematicGenericEntity, HaHomematicGenericHubEntity
+from .generic_entity import (
+    ATTR_NAME,
+    HaHomematicGenericEntity,
+    HaHomematicGenericHubEntity,
+)
 
 _LOGGER = logging.getLogger(__name__)
 

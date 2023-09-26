@@ -11,13 +11,13 @@ from hahomematic.client import InterfaceConfig, _ClientConfig
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import BaseParameterEntity
 from hahomematic_support.client_local import ClientLocal, LocalRessources
-from homeassistant.config_entries import ConfigEntryState
-from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import HomeAssistant
 
 from tests import const
 

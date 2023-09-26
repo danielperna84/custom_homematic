@@ -1,8 +1,9 @@
 """Tests for binary_sensor entities of hahomematic."""
 from __future__ import annotations
 
-from homeassistant.const import STATE_OFF, STATE_ON
 import pytest
+
+from homeassistant.const import STATE_OFF, STATE_ON
 
 from tests import const, helper
 

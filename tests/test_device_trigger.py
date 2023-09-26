@@ -1,10 +1,6 @@
 """The tests for Homematic(IP) Local device triggers."""
 from __future__ import annotations
 
-from homeassistant.components import automation
-from homeassistant.const import STATE_OFF, STATE_ON
-from homeassistant.helpers import device_registry
-from homeassistant.setup import async_setup_component
 import pytest
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
@@ -15,6 +11,10 @@ from pytest_homeassistant_custom_component.common import (
 )
 
 from custom_components.homematicip_local import DOMAIN
+from homeassistant.components import automation
+from homeassistant.const import STATE_OFF, STATE_ON
+from homeassistant.helpers import device_registry
+from homeassistant.setup import async_setup_component
 
 
 @pytest.fixture

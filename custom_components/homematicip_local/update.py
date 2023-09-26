@@ -6,6 +6,7 @@ from typing import Any
 
 from hahomematic.const import HmDeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
+
 from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback

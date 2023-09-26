@@ -6,6 +6,8 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.siren import BaseSiren, HmSirenOnArgs
+import voluptuous as vol
+
 from homeassistant.components.siren import (
     ATTR_DURATION,
     ATTR_TONE,
@@ -19,7 +21,6 @@ from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-import voluptuous as vol
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
