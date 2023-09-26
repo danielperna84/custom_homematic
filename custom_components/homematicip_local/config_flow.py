@@ -9,6 +9,9 @@ from urllib.parse import urlparse
 from hahomematic.const import DEFAULT_TLS, HmInterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 from hahomematic.support import check_password
+import voluptuous as vol
+from voluptuous.schema_builder import UNDEFINED, Schema
+
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntry
@@ -25,8 +28,6 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
-import voluptuous as vol
-from voluptuous.schema_builder import UNDEFINED, Schema
 
 from .config import DEFAULT_SYSVAR_SCAN_INTERVAL
 from .const import (

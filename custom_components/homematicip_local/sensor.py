@@ -9,6 +9,7 @@ from typing import Any
 from hahomematic.const import HmPlatform, HmSysvarType, HmType
 from hahomematic.platforms.generic.sensor import HmSensor
 from hahomematic.platforms.hub.sensor import HmSysvarSensor
+
 from homeassistant.components.sensor import (
     RestoreSensor,
     SensorDeviceClass,

@@ -1,7 +1,12 @@
 """Constants for tests."""
 from __future__ import annotations
 
-from hahomematic.const import HmInterfaceName, HmSysvarType, ProgramData, SystemVariableData
+from hahomematic.const import (
+    HmInterfaceName,
+    HmSysvarType,
+    ProgramData,
+    SystemVariableData,
+)
 
 CONFIG_ENTRY_ID = "12345678"
 CONFIG_ENTRY_UNIQUE_ID = "9876543210"

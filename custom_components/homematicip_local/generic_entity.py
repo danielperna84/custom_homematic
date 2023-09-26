@@ -9,6 +9,7 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
+
 from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -140,8 +141,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     @property
     def name(self) -> str | UndefinedType | None:
-        """
-        Return the name of the entity.
+        """Return the name of the entity.
 
         A hm entity can consist of two parts. The first part is already defined by the user,
         and the second part is the english named parameter that must be translated.
@@ -162,8 +162,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return entity_name
 
     def _do_remove_name(self) -> bool:
-        """
-        Check if entity name part should be removed.
+        """Check if entity name part should be removed.
 
         Here we use the HA translation support to identify if the translated name is ''
         This is guarded against failure due to future HA api changes.

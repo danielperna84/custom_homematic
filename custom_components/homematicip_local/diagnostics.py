@@ -5,6 +5,7 @@ from dataclasses import asdict
 from typing import Any
 
 from hahomematic.const import CONF_PASSWORD, CONF_USERNAME
+
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant

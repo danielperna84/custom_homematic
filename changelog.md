@@ -4,6 +4,7 @@
   - Cleanup light code
   - Use more enums for climate, cover, lock
   - Use TypedDict for light, siren args
+- Align isort setup with hass
 
 # Version 1.42.0 (2023-09-22)
 

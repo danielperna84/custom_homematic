@@ -3,14 +3,17 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from homeassistant.config_entries import ConfigEntryState
-from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 import custom_components.homematicip_local
 from custom_components.homematicip_local import async_unload_entry
-from custom_components.homematicip_local.const import CONF_ENABLE_SYSTEM_NOTIFICATIONS, DOMAIN
+from custom_components.homematicip_local.const import (
+    CONF_ENABLE_SYSTEM_NOTIFICATIONS,
+    DOMAIN,
+)
 from custom_components.homematicip_local.control_unit import ControlUnit
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import HomeAssistant
 
 from tests import const
 

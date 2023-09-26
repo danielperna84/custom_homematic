@@ -4,8 +4,14 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import ENTITY_EVENTS, EVENT_ADDRESS, EVENT_INTERFACE_ID, HmPlatform
+from hahomematic.const import (
+    ENTITY_EVENTS,
+    EVENT_ADDRESS,
+    EVENT_INTERFACE_ID,
+    HmPlatform,
+)
 from hahomematic.platforms.event import GenericEvent
+
 from homeassistant.components.event import EventDeviceClass, EventEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback

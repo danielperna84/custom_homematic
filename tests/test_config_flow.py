@@ -4,13 +4,13 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import patch
 
-from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, HmInterfaceName, SystemInformation
+from hahomematic.const import (
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    HmInterfaceName,
+    SystemInformation,
+)
 from hahomematic.exceptions import AuthFailure, NoConnection
-from homeassistant import config_entries
-from homeassistant.components import ssdp
-from homeassistant.const import CONF_HOST, CONF_PORT
-from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -27,6 +27,11 @@ from custom_components.homematicip_local.config_flow import (
     _get_serial,
 )
 from custom_components.homematicip_local.const import CONF_TLS, DOMAIN
+from homeassistant import config_entries
+from homeassistant.components import ssdp
+from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
 
 from tests import const
 

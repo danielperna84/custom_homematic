@@ -7,6 +7,7 @@ from typing import Any
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.text import HmText
 from hahomematic.platforms.hub.text import HmSysvarText
+
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
@@ -16,7 +17,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
+from .generic_entity import (
+    HaHomematicGenericRestoreEntity,
+    HaHomematicGenericSysvarEntity,
+)
 
 _LOGGER = logging.getLogger(__name__)
 

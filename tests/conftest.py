@@ -5,16 +5,18 @@ import datetime
 from typing import Any
 from unittest.mock import Mock, patch
 
+import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.plugins import (
+    enable_custom_integrations,  # noqa: F401
+)
+
+from custom_components.homematicip_local.const import DOMAIN
+from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
-import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.plugins import enable_custom_integrations  # noqa: F401
-
-from custom_components.homematicip_local.const import DOMAIN
-from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 
 from tests import const, helper
 
