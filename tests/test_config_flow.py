@@ -296,7 +296,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=AuthFailure,
+        side_effect=AuthFailure("no pw"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -343,7 +343,7 @@ async def test_options_form_invalid_auth(
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=AuthFailure,
+        side_effect=AuthFailure("no pw"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -388,7 +388,7 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidPassword,
+        side_effect=InvalidPassword("wrong char"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -435,7 +435,7 @@ async def test_options_form_invalid_password(
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidPassword,
+        side_effect=InvalidPassword("wrong char"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -480,7 +480,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=NoConnection,
+        side_effect=NoConnection("no host"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -528,7 +528,7 @@ async def test_options_form_cannot_connect(
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=NoConnection,
+        side_effect=NoConnection("no host"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
