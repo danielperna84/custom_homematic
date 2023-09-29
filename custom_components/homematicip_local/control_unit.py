@@ -1,11 +1,12 @@
 """HaHomematic is a Python 3 module for Home Assistant and Homematic(IP) devices."""
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable, Mapping
 from copy import deepcopy
 from datetime import datetime, timedelta
 import logging
-from typing import Any, cast
+from typing import Any, Final, cast
 
 from hahomematic.central import HM_INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
@@ -797,6 +798,7 @@ class HmScheduler:
         self._remove_device_firmware_updating_check_listener: Callable | None = None
         self._remove_master_listener: Callable | None = None
         self._remove_sysvar_listener: Callable | None = None
+        self._sema_init: Final = asyncio.Semaphore()
 
     @property
     def initialized(self) -> bool:
@@ -810,43 +812,44 @@ class HmScheduler:
 
     async def init(self) -> None:
         """Execute the initial data refresh."""
-        if self._initialized:
-            return
-        if self._sysvar_scan_enabled:
-            # sysvar_scan_interval == 0 means sysvar scanning is disabled
-            self._remove_sysvar_listener = async_track_time_interval(
+        async with self._sema_init:
+            if self._initialized:
+                return
+            self._initialized = True
+            if self._sysvar_scan_enabled:
+                # sysvar_scan_interval == 0 means sysvar scanning is disabled
+                self._remove_sysvar_listener = async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_data,
+                    interval=timedelta(seconds=self._sysvar_scan_interval),
+                    cancel_on_shutdown=True,
+                )
+            self._remove_master_listener = async_track_time_interval(
                 hass=self._hass,
-                action=self._fetch_data,
-                interval=timedelta(seconds=self._sysvar_scan_interval),
+                action=self._fetch_master_data,
+                interval=timedelta(seconds=self._master_scan_interval),
                 cancel_on_shutdown=True,
             )
-        self._remove_master_listener = async_track_time_interval(
-            hass=self._hass,
-            action=self._fetch_master_data,
-            interval=timedelta(seconds=self._master_scan_interval),
-            cancel_on_shutdown=True,
-        )
 
-        if self._device_firmware_check_enabled:
-            self._remove_device_firmware_check_listener = async_track_time_interval(
-                hass=self._hass,
-                action=self._fetch_device_firmware_update_data,
-                interval=timedelta(seconds=self._device_firmware_check_interval),
-                cancel_on_shutdown=True,
-            )
-            self._remove_device_firmware_delivering_check_listener = async_track_time_interval(
-                hass=self._hass,
-                action=self._fetch_device_firmware_update_data_in_delivery,
-                interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
-                cancel_on_shutdown=True,
-            )
-            self._remove_device_firmware_updating_check_listener = async_track_time_interval(
-                hass=self._hass,
-                action=self._fetch_device_firmware_update_data_in_update,
-                interval=timedelta(seconds=self._device_firmware_updating_check_interval),
-            )
-        await self._central.refresh_firmware_data()
-        self._initialized = True
+            if self._device_firmware_check_enabled:
+                self._remove_device_firmware_check_listener = async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_device_firmware_update_data,
+                    interval=timedelta(seconds=self._device_firmware_check_interval),
+                    cancel_on_shutdown=True,
+                )
+                self._remove_device_firmware_delivering_check_listener = async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_device_firmware_update_data_in_delivery,
+                    interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
+                    cancel_on_shutdown=True,
+                )
+                self._remove_device_firmware_updating_check_listener = async_track_time_interval(
+                    hass=self._hass,
+                    action=self._fetch_device_firmware_update_data_in_update,
+                    interval=timedelta(seconds=self._device_firmware_updating_check_interval),
+                )
+            await self._central.refresh_firmware_data()
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""

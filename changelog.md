@@ -1,9 +1,15 @@
 # Version 1.43.0 (2023-09-24)
 
-- Bump hahomematic to 2023.9.5
+- Bump hahomematic to 2023.9.6
   - Cleanup light code
   - Use more enums for climate, cover, lock
   - Use TypedDict for light, siren args
+  - Update ReGa-Script fetch_all_device_data.fn by @Baxxy13
+  - Parameterize call to fetch_all_device_data.fn
+  - Simplify json rpc post code
+  - Improve for ConnectionProblemIssuer json rpc
+  - Improve handle_exception_log
+  - Avoid repeated logs
 - Align isort setup with hass
 
 # Version 1.42.0 (2023-09-22)
