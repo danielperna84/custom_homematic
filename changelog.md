@@ -1,6 +1,6 @@
-# Version 1.43.0 (2023-09-24)
+# Version 1.43.0 (2023-09-29)
 
-- Bump hahomematic to 2023.9.6
+- Bump hahomematic to 2023.9.7
   - Cleanup light code
   - Use more enums for climate, cover, lock
   - Use TypedDict for light, siren args
@@ -10,6 +10,8 @@
   - Improve for ConnectionProblemIssuer json rpc
   - Improve handle_exception_log
   - Avoid repeated logs
+  - Add check to BaseHomematicException
+  - Reduce log level to 'warning' for get_all_device_data 'JSONDecodeError' exceptions
 - Align isort setup with hass
 
 # Version 1.42.0 (2023-09-22)

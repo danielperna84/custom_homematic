@@ -1,6 +1,6 @@
 -r requirements_test_pre_commit.txt
 
-hahomematic==2023.9.6
+hahomematic==2023.9.7
 homeassistant==2023.9.3
 pytest-homeassistant-custom-component==0.13.57
 async-upnp-client
