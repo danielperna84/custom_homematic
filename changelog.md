@@ -1,3 +1,13 @@
+# Version 1.43.1 (2023-10-01)
+
+- Bump hahomematic to 2023.9.8
+  - Improve caching
+    - Cleanup cache naming
+    - Remove max_age from most method signatures
+    - Simplify data cache
+    - Rename some cache methods
+  - Remove attr prefix
+
 # Version 1.43.0 (2023-09-29)
 
 - Bump hahomematic to 2023.9.7
