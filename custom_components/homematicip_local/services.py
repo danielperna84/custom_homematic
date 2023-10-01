@@ -5,7 +5,7 @@ from datetime import datetime
 import logging
 from typing import Final
 
-from hahomematic.const import HmForcedDeviceAvailability, HmParamsetKey
+from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
@@ -377,9 +377,7 @@ async def _async_service_force_device_availability(
 ) -> None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
-        hm_device.set_forced_availability(
-            forced_availability=HmForcedDeviceAvailability.FORCE_TRUE
-        )
+        hm_device.set_forced_availability(forced_availability=ForcedDeviceAvailability.FORCE_TRUE)
         _LOGGER.debug(
             "Called force_device_availability: %s, %s",
             hm_device.name,
@@ -399,7 +397,7 @@ async def _async_service_get_device_value(
             if (
                 value := await hm_device.client.get_value(
                     channel_address=f"{hm_device.device_address}:{channel_no}",
-                    paramset_key=HmParamsetKey.VALUES,
+                    paramset_key=ParamsetKey.VALUES,
                     parameter=parameter,
                 )
             ) is not None:
@@ -460,7 +458,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
     if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.client.set_value(
             channel_address=f"{hm_device.device_address}:{channel_no}",
-            paramset_key=HmParamsetKey.VALUES,
+            paramset_key=ParamsetKey.VALUES,
             parameter=parameter,
             value=value,
             rx_mode=rx_mode,

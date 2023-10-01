@@ -6,7 +6,7 @@ from decimal import Decimal
 import logging
 from typing import Any
 
-from hahomematic.const import HmPlatform, HmSysvarType, HmType
+from hahomematic.const import HmPlatform, ParameterType, SysvarType
 from hahomematic.platforms.generic.sensor import HmSensor
 from hahomematic.platforms.hub.sensor import HmSysvarSensor
 
@@ -130,7 +130,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
         if self._hm_entity.is_valid:
             if (
                 self._hm_entity.value is not None
-                and self._hm_entity.hmtype in (HmType.FLOAT, HmType.INTEGER)
+                and self._hm_entity.hmtype in (ParameterType.FLOAT, ParameterType.INTEGER)
                 and self._multiplier != 1
             ):
                 return self._hm_entity.value * self._multiplier  # type: ignore[no-any-return]
@@ -139,7 +139,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
             if (
                 self._hm_entity.value is not None
                 and self.translation_key is not None
-                and self._hm_entity.hmtype in (HmType.ENUM, HmType.STRING)
+                and self._hm_entity.hmtype in (ParameterType.ENUM, ParameterType.STRING)
             ):
                 return self._hm_entity.value.lower()  # type: ignore[no-any-return]
             return self._hm_entity.value
@@ -191,15 +191,15 @@ class HaHomematicSysvarSensor(HaHomematicGenericSysvarEntity[HmSysvarSensor], Se
     ) -> None:
         """Initialize the sensor entity."""
         super().__init__(control_unit=control_unit, hm_sysvar_entity=hm_sysvar_entity)
-        if hm_sysvar_entity.data_type == HmSysvarType.LIST:
+        if hm_sysvar_entity.data_type == SysvarType.LIST:
             self._attr_options = (
                 list(hm_sysvar_entity.value_list) if hm_sysvar_entity.value_list else None
             )
             self._attr_device_class = SensorDeviceClass.ENUM
         else:
             if hm_sysvar_entity.data_type in (
-                HmSysvarType.HM_FLOAT,
-                HmSysvarType.HM_INTEGER,
+                SysvarType.FLOAT,
+                SysvarType.INTEGER,
             ):
                 self._attr_state_class = (
                     SensorStateClass.TOTAL_INCREASING

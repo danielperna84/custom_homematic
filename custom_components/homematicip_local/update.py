@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from hahomematic.const import HmDeviceFirmwareState, HmPlatform
+from hahomematic.const import DeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
@@ -99,17 +99,17 @@ class HaHomematicUpdate(UpdateEntity):
     def in_progress(self) -> bool | int | None:
         """Update installation progress."""
         return self._hm_entity.firmware_update_state in (
-            HmDeviceFirmwareState.DO_UPDATE_PENDING,
-            HmDeviceFirmwareState.PERFORMING_UPDATE,
+            DeviceFirmwareState.DO_UPDATE_PENDING,
+            DeviceFirmwareState.PERFORMING_UPDATE,
         )
 
     @property
     def latest_version(self) -> str | None:
         """Latest version available for install."""
         if self._hm_entity.firmware_update_state in (
-            HmDeviceFirmwareState.READY_FOR_UPDATE,
-            HmDeviceFirmwareState.DO_UPDATE_PENDING,
-            HmDeviceFirmwareState.PERFORMING_UPDATE,
+            DeviceFirmwareState.READY_FOR_UPDATE,
+            DeviceFirmwareState.DO_UPDATE_PENDING,
+            DeviceFirmwareState.PERFORMING_UPDATE,
         ):
             return self._hm_entity.available_firmware
         return self._hm_entity.firmware

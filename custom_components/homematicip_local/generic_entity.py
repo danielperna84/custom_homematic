@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Final, Generic, cast
 
-from hahomematic.const import HmCallSource
+from hahomematic.const import CallSource
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
@@ -188,7 +188,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_entity)
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity | WrapperEntity):
-            await self._hm_entity.load_entity_value(call_source=HmCallSource.HA_INIT)
+            await self._hm_entity.load_entity_value(call_source=CallSource.HA_INIT)
         if (
             isinstance(self._hm_entity, GenericEntity)
             and not self._hm_entity.is_valid
@@ -215,7 +215,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
-            await self._hm_entity.load_entity_value(call_source=HmCallSource.MANUAL_OR_SCHEDULED)
+            await self._hm_entity.load_entity_value(call_source=CallSource.MANUAL_OR_SCHEDULED)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
