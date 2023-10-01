@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from hahomematic.const import HmEvent
+from hahomematic.const import Parameter
 from hahomematic.platforms.generic.action import HmAction
 from hahomematic.platforms.generic.button import HmButton
 import voluptuous as vol
@@ -19,7 +19,7 @@ from .const import CONF_SUBTYPE, CONTROL_UNITS
 from .control_unit import ControlUnit
 from .support import get_device_address_at_interface_from_identifiers
 
-ACTION_PARAMS = {HmEvent.PRESS_LONG, HmEvent.PRESS_SHORT}
+ACTION_PARAMS = {Parameter.PRESS_LONG, Parameter.PRESS_SHORT}
 ACTION_TYPES = {param.lower() for param in ACTION_PARAMS}
 
 ACTION_SCHEMA = cv.DEVICE_ACTION_BASE_SCHEMA.extend(

@@ -7,11 +7,11 @@ from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.climate import (
-    HM_PRESET_MODE_PREFIX,
+    PRESET_MODE_PREFIX,
     BaseClimateEntity,
-    HmHvacAction,
-    HmHvacMode,
-    HmPresetMode,
+    HvacAction as HmHvacAction,
+    HvacMode as HmHvacMode,
+    PresetMode,
 )
 import voluptuous as vol
 
@@ -238,7 +238,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         if (
             self._hm_entity.is_valid
             and self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES
-            or str(self._hm_entity.preset_mode).startswith(HM_PRESET_MODE_PREFIX)
+            or str(self._hm_entity.preset_mode).startswith(PRESET_MODE_PREFIX)
         ):
             return self._hm_entity.preset_mode
         if self.is_restored and self._restored_state:
@@ -252,7 +252,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         for hm_preset_mode in self._hm_entity.preset_modes:
             if hm_preset_mode in SUPPORTED_HA_PRESET_MODES:
                 preset_modes.append(hm_preset_mode.value)
-            if str(hm_preset_mode).startswith(HM_PRESET_MODE_PREFIX):
+            if str(hm_preset_mode).startswith(PRESET_MODE_PREFIX):
                 preset_modes.append(hm_preset_mode.value)
         return preset_modes
 
@@ -287,7 +287,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
                 self.hvac_mode,
             )
             return None
-        await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
+        await self._hm_entity.set_preset_mode(PresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
         self,

@@ -6,7 +6,7 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import DEFAULT_TLS, HmInterfaceName, SystemInformation
+from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 from hahomematic.support import check_password
 import voluptuous as vol
@@ -110,29 +110,29 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
     interfaces = data.get(CONF_INTERFACE, {})
     # HmIP-RF
-    if HmInterfaceName.HMIP_RF in interfaces:
-        hmip_rf_enabled = interfaces.get(HmInterfaceName.HMIP_RF) is not None
+    if InterfaceName.HMIP_RF in interfaces:
+        hmip_rf_enabled = interfaces.get(InterfaceName.HMIP_RF) is not None
     else:
         hmip_rf_enabled = True
     hmip_port = IF_HMIP_RF_TLS_PORT if use_tls else IF_HMIP_RF_PORT
 
     # BidCos-RF
-    if HmInterfaceName.BIDCOS_RF in interfaces:
-        bidcos_rf_enabled = interfaces.get(HmInterfaceName.BIDCOS_RF) is not None
+    if InterfaceName.BIDCOS_RF in interfaces:
+        bidcos_rf_enabled = interfaces.get(InterfaceName.BIDCOS_RF) is not None
     else:
         bidcos_rf_enabled = True
     bidcos_rf_port = IF_BIDCOS_RF_TLS_PORT if use_tls else IF_BIDCOS_RF_PORT
 
     # Virtual devices
-    if HmInterfaceName.VIRTUAL_DEVICES in interfaces:
-        virtual_devices_enabled = interfaces.get(HmInterfaceName.VIRTUAL_DEVICES) is not None
+    if InterfaceName.VIRTUAL_DEVICES in interfaces:
+        virtual_devices_enabled = interfaces.get(InterfaceName.VIRTUAL_DEVICES) is not None
     else:
         virtual_devices_enabled = False
     virtual_devices_port = IF_VIRTUAL_DEVICES_TLS_PORT if use_tls else IF_VIRTUAL_DEVICES_PORT
 
     # BidCos-Wired
-    if HmInterfaceName.BIDCOS_WIRED in interfaces:
-        bidcos_wired_enabled = interfaces.get(HmInterfaceName.BIDCOS_WIRED) is not None
+    if InterfaceName.BIDCOS_WIRED in interfaces:
+        bidcos_wired_enabled = interfaces.get(InterfaceName.BIDCOS_WIRED) is not None
     else:
         bidcos_wired_enabled = False
     bidcos_wired_port = IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT
@@ -341,20 +341,20 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
     if interface_input is not None:
         data[CONF_INTERFACE] = {}
         if interface_input[CONF_HMIP_RF_ENABLED] is True:
-            data[CONF_INTERFACE][HmInterfaceName.HMIP_RF] = {
+            data[CONF_INTERFACE][InterfaceName.HMIP_RF] = {
                 CONF_PORT: interface_input[CONF_HMIP_RF_PORT],
             }
         if interface_input[CONF_BIDCOS_RF_ENABLED] is True:
-            data[CONF_INTERFACE][HmInterfaceName.BIDCOS_RF] = {
+            data[CONF_INTERFACE][InterfaceName.BIDCOS_RF] = {
                 CONF_PORT: interface_input[CONF_BIDCOS_RF_PORT],
             }
         if interface_input[CONF_VIRTUAL_DEVICES_ENABLED] is True:
-            data[CONF_INTERFACE][HmInterfaceName.VIRTUAL_DEVICES] = {
+            data[CONF_INTERFACE][InterfaceName.VIRTUAL_DEVICES] = {
                 CONF_PORT: interface_input[CONF_VIRTUAL_DEVICES_PORT],
                 CONF_PATH: interface_input.get(CONF_VIRTUAL_DEVICES_PATH),
             }
         if interface_input[CONF_BIDCOS_WIRED_ENABLED] is True:
-            data[CONF_INTERFACE][HmInterfaceName.BIDCOS_WIRED] = {
+            data[CONF_INTERFACE][InterfaceName.BIDCOS_WIRED] = {
                 CONF_PORT: interface_input[CONF_BIDCOS_WIRED_PORT],
             }
 

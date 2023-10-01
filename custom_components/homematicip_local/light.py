@@ -8,8 +8,8 @@ from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.light import (
     CeDimmer,
     CeIpFixedColorLight,
-    HmLightOffArgs,
-    HmLightOnArgs,
+    LightOffArgs,
+    LightOnArgs,
 )
 import voluptuous as vol
 
@@ -205,7 +205,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[CeDimmer], LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the light on."""
-        hm_kwargs = HmLightOnArgs()
+        hm_kwargs = LightOnArgs()
         # Use hs_color from kwargs, if not applicable use current hs_color.
         if color_temp := kwargs.get(ATTR_COLOR_TEMP, self.color_temp):
             hm_kwargs["color_temp"] = color_temp
@@ -225,7 +225,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[CeDimmer], LightEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the light off."""
-        hm_kwargs = HmLightOffArgs()
+        hm_kwargs = LightOffArgs()
         # Use transition from kwargs, if not applicable use 0.
         if ramp_time := kwargs.get(ATTR_TRANSITION, 0):
             hm_kwargs["ramp_time"] = ramp_time

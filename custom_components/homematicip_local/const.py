@@ -4,7 +4,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Final
 
-from hahomematic.const import AVAILABLE_HM_PLATFORMS
+from hahomematic.const import PLATFORMS
 
 from homeassistant.const import Platform
 
@@ -91,9 +91,7 @@ BLOCK_PLATFORMS: Final[tuple[str, ...]] = ()
 def _get_hmip_local_platforms() -> list[str]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
-    hm_platforms = [
-        platform.value for platform in AVAILABLE_HM_PLATFORMS if platform not in BLOCK_PLATFORMS
-    ]
+    hm_platforms = [platform.value for platform in PLATFORMS if platform not in BLOCK_PLATFORMS]
     hmip_local_platforms: list[str] = []
     for hm_platform in hm_platforms:
         if hm_platform in platforms:

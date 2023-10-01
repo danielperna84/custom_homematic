@@ -8,11 +8,9 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any, Final, cast
 
-from hahomematic.central import HM_INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
+from hahomematic.central import INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
-    AVAILABLE_HM_HUB_PLATFORMS,
-    AVAILABLE_HM_PLATFORMS,
     CONF_PASSWORD,
     CONF_USERNAME,
     ENTITY_EVENTS,
@@ -24,18 +22,20 @@ from hahomematic.const import (
     EVENT_SECONDS_SINCE_LAST_EVENT,
     EVENT_TYPE,
     EVENT_VALUE,
+    HUB_PLATFORMS,
     IP_ANY_V4,
+    PLATFORMS,
     PORT_ANY,
-    HmDeviceFirmwareState,
-    HmEntityUsage,
-    HmEvent,
-    HmEventType,
-    HmInterfaceEventType,
-    HmInterfaceName,
-    HmManufacturer,
-    HmParamsetKey,
+    DeviceFirmwareState,
+    EntityUsage,
+    EventType,
     HmPlatform,
-    HmSystemEvent,
+    InterfaceEventType,
+    InterfaceName,
+    Manufacturer,
+    Parameter,
+    ParamsetKey,
+    SystemEvent,
     SystemInformation,
 )
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -97,9 +97,9 @@ from .const import (
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
 )
 from .support import (
-    HM_CLICK_EVENT_SCHEMA,
-    HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
-    HM_DEVICE_ERROR_EVENT_SCHEMA,
+    CLICK_EVENT_SCHEMA,
+    DEVICE_AVAILABILITY_EVENT_SCHEMA,
+    DEVICE_ERROR_EVENT_SCHEMA,
     HmBaseEntity,
     cleanup_click_event_data,
     get_device_address_at_interface_from_identifiers,
@@ -129,7 +129,7 @@ class BaseControlUnit:
                     self._central.name,
                 )
             },
-            manufacturer=HmManufacturer.EQ3,
+            manufacturer=Manufacturer.EQ3,
             model=self._central.model,
             name=self._central.name,
             sw_version=self._central.version,
@@ -173,7 +173,7 @@ class BaseControlUnit:
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
-                    interface=HmInterfaceName(interface_name),
+                    interface=InterfaceName(interface_name),
                     port=interface[CONF_PORT],
                     remote_path=interface.get(CONF_PATH),
                 )
@@ -256,7 +256,7 @@ class ControlUnit(BaseControlUnit):
                     self._central.name,
                 )
             },
-            manufacturer=HmManufacturer.EQ3,
+            manufacturer=Manufacturer.EQ3,
             model=self._central.model,
             sw_version=self._central.version,
             name=self._central.name,
@@ -284,7 +284,7 @@ class ControlUnit(BaseControlUnit):
                         virtual_remote.identifier,
                     )
                 },
-                manufacturer=HmManufacturer.EQ3,
+                manufacturer=Manufacturer.EQ3,
                 name=virtual_remote.name,
                 model=virtual_remote.device_type,
                 sw_version=virtual_remote.firmware,
@@ -318,7 +318,7 @@ class ControlUnit(BaseControlUnit):
 
     @callback
     def get_new_hm_channel_events_by_event_type(
-        self, event_type: HmEventType
+        self, event_type: EventType
     ) -> list[list[GenericEvent]]:
         """Return all channel event entities."""
         active_unique_ids: list[str] = []
@@ -345,12 +345,12 @@ class ControlUnit(BaseControlUnit):
         ]
         # init dict
         hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
-        for hm_platform in AVAILABLE_HM_PLATFORMS:
+        for hm_platform in PLATFORMS:
             hm_entities[hm_platform] = []
 
         for entity in new_entities:
             if (
-                entity.usage != HmEntityUsage.NO_CREATE
+                entity.usage != EntityUsage.NO_CREATE
                 and entity.unique_identifier not in active_unique_ids
                 and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
@@ -394,7 +394,7 @@ class ControlUnit(BaseControlUnit):
         ]
         # init dict
         hm_hub_entities: dict[HmPlatform, list[GenericHubEntity]] = {}
-        for hm_hub_platform in AVAILABLE_HM_HUB_PLATFORMS:
+        for hm_hub_platform in HUB_PLATFORMS:
             hm_hub_entities[hm_hub_platform] = []
 
         for hub_entity in new_hub_entities:
@@ -468,7 +468,7 @@ class ControlUnit(BaseControlUnit):
         del self._active_hm_hub_entities[entity_id]
 
     @callback
-    def _callback_system_event(self, system_event: HmSystemEvent, **kwargs: Any) -> None:
+    def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
@@ -476,7 +476,7 @@ class ControlUnit(BaseControlUnit):
             self._instance_name,
         )
 
-        if system_event == HmSystemEvent.DEVICES_CREATED:
+        if system_event == SystemEvent.DEVICES_CREATED:
             new_devices = kwargs["new_devices"]
             new_channel_events = []
             new_entities = []
@@ -516,7 +516,7 @@ class ControlUnit(BaseControlUnit):
                     hm_channel_events,
                 )
             self._add_virtual_remotes_to_device_registry()
-        elif system_event == HmSystemEvent.HUB_REFRESHED:
+        elif system_event == SystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
             if self._scheduler.sysvar_scan_enabled:
@@ -535,16 +535,16 @@ class ControlUnit(BaseControlUnit):
         return None
 
     @callback
-    def _callback_ha_event(self, hm_event_type: HmEventType, event_data: dict[str, Any]) -> None:
+    def _callback_ha_event(self, hm_event_type: EventType, event_data: dict[str, Any]) -> None:
         """Execute the callback used for device related events."""
 
         interface_id = event_data[EVENT_INTERFACE_ID]
-        if hm_event_type == HmEventType.INTERFACE:
+        if hm_event_type == EventType.INTERFACE:
             interface_event_type = event_data[EVENT_TYPE]
             issue_id = f"{interface_event_type}-{interface_id}"
-            event_data = cast(dict[str, Any], HM_INTERFACE_EVENT_SCHEMA(event_data))
+            event_data = cast(dict[str, Any], INTERFACE_EVENT_SCHEMA(event_data))
             data = event_data[EVENT_DATA]
-            if interface_event_type == HmInterfaceEventType.CALLBACK:
+            if interface_event_type == InterfaceEventType.CALLBACK:
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for CALLBACK")
                     return
@@ -564,7 +564,7 @@ class ControlUnit(BaseControlUnit):
                             EVENT_SECONDS_SINCE_LAST_EVENT: data[EVENT_SECONDS_SINCE_LAST_EVENT],
                         },
                     )
-            elif interface_event_type == HmInterfaceEventType.PINGPONG:
+            elif interface_event_type == InterfaceEventType.PINGPONG:
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for PINGPONG")
                     return
@@ -580,7 +580,7 @@ class ControlUnit(BaseControlUnit):
                         CONF_INSTANCE_NAME: self._instance_name,
                     },
                 )
-            elif interface_event_type == HmInterfaceEventType.PROXY:
+            elif interface_event_type == InterfaceEventType.PROXY:
                 if data[EVENT_AVAILABLE]:
                     async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
                 else:
@@ -602,17 +602,17 @@ class ControlUnit(BaseControlUnit):
             if device_entry := self._get_device_entry(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
                 event_data.update({EVENT_DEVICE_ID: device_entry.id, EVENT_NAME: name})
-            if hm_event_type in (HmEventType.IMPULSE, HmEventType.KEYPRESS):
+            if hm_event_type in (EventType.IMPULSE, EventType.KEYPRESS):
                 event_data = cleanup_click_event_data(event_data=event_data)
-                if is_valid_event(event_data=event_data, schema=HM_CLICK_EVENT_SCHEMA):
+                if is_valid_event(event_data=event_data, schema=CLICK_EVENT_SCHEMA):
                     self._hass.bus.fire(
                         event_type=hm_event_type.value,
                         event_data=event_data,
                     )
-            elif hm_event_type == HmEventType.DEVICE_AVAILABILITY:
+            elif hm_event_type == EventType.DEVICE_AVAILABILITY:
                 parameter = event_data[EVENT_PARAMETER]
                 unavailable = event_data[EVENT_VALUE]
-                if parameter in (HmEvent.STICKY_UN_REACH, HmEvent.UN_REACH):
+                if parameter in (Parameter.STICKY_UN_REACH, Parameter.UN_REACH):
                     title = f"{DOMAIN.upper()} Device not reachable"
                     event_data.update(
                         {
@@ -625,13 +625,13 @@ class ControlUnit(BaseControlUnit):
                     )
                     if is_valid_event(
                         event_data=event_data,
-                        schema=HM_DEVICE_AVAILABILITY_EVENT_SCHEMA,
+                        schema=DEVICE_AVAILABILITY_EVENT_SCHEMA,
                     ):
                         self._hass.bus.fire(
                             event_type=hm_event_type.value,
                             event_data=event_data,
                         )
-            elif hm_event_type == HmEventType.DEVICE_ERROR:
+            elif hm_event_type == EventType.DEVICE_ERROR:
                 error_parameter = event_data[EVENT_PARAMETER]
                 if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
                     return None
@@ -661,7 +661,7 @@ class ControlUnit(BaseControlUnit):
                         EVENT_ERROR: display_error,
                     }
                 )
-                if is_valid_event(event_data=event_data, schema=HM_DEVICE_ERROR_EVENT_SCHEMA):
+                if is_valid_event(event_data=event_data, schema=DEVICE_ERROR_EVENT_SCHEMA):
                     self._hass.bus.fire(
                         event_type=hm_event_type.value,
                         event_data=event_data,
@@ -903,7 +903,7 @@ class HmScheduler:
             "Scheduled fetching of master entities for %s",
             self._central.name,
         )
-        await self._central.load_and_refresh_entity_data(paramset_key=HmParamsetKey.MASTER)
+        await self._central.load_and_refresh_entity_data(paramset_key=ParamsetKey.MASTER)
 
     async def _fetch_device_firmware_update_data(self, now: datetime) -> None:
         """Fetch device firmware update data from backend."""
@@ -921,8 +921,8 @@ class HmScheduler:
         )
         await self._central.refresh_firmware_data_by_state(
             device_firmware_states=(
-                HmDeviceFirmwareState.DELIVER_FIRMWARE_IMAGE,
-                HmDeviceFirmwareState.LIVE_DELIVER_FIRMWARE_IMAGE,
+                DeviceFirmwareState.DELIVER_FIRMWARE_IMAGE,
+                DeviceFirmwareState.LIVE_DELIVER_FIRMWARE_IMAGE,
             )
         )
 
@@ -934,9 +934,9 @@ class HmScheduler:
         )
         await self._central.refresh_firmware_data_by_state(
             device_firmware_states=(
-                HmDeviceFirmwareState.READY_FOR_UPDATE,
-                HmDeviceFirmwareState.DO_UPDATE_PENDING,
-                HmDeviceFirmwareState.PERFORMING_UPDATE,
+                DeviceFirmwareState.READY_FOR_UPDATE,
+                DeviceFirmwareState.DO_UPDATE_PENDING,
+                DeviceFirmwareState.PERFORMING_UPDATE,
             )
         )
 
