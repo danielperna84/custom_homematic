@@ -1,6 +1,6 @@
 # Version 1.43.2 (2023-10-01)
 
-- Bump hahomematic to 2023.10.1
+- Bump hahomematic to 2023.10.2
   - Code cleanup
     - Remove Hm prefix from enums
     - Use enum for parameters
@@ -8,6 +8,7 @@
   - Use enum for JsonRPC and XmlRPC methods
   - Get supported JsonRPC and XmlRPC methods and check against used methods
 - Follow backend changes
+- Catch 'internal error' on \_get_auth_enabled. Relevant for for CCU2 users
 
 # Version 1.43.1 (2023-9-30)
 
