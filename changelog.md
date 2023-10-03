@@ -1,6 +1,6 @@
-# Version 1.43.2 (2023-10-01)
+# Version 1.43.2 (2023-10-03)
 
-- Bump hahomematic to 2023.10.2
+- Bump hahomematic to 2023.10.3
   - Code cleanup
     - Remove Hm prefix from enums
     - Use enum for parameters
