@@ -11,6 +11,15 @@ from homeassistant.const import Platform
 DOMAIN: Final = "homematicip_local"
 HMIP_LOCAL_MIN_VERSION: Final = "2023.10.0b0"
 
+DEFAULT_SYSVAR_SCAN_ENABLED: bool = True
+DEFAULT_SYSVAR_REGISTRY_ENABLED: bool = False
+DEFAULT_SYSVAR_SCAN_INTERVAL: Final = 30
+DEFAULT_DEVICE_FIRMWARE_CHECK_ENABLED: Final = True
+DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL: Final = 21600  # 6h
+DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL: Final = 3600  # 1h
+DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL: Final = 300  # 5m
+MASTER_SCAN_INTERVAL: Final = 3600  # 1h
+
 LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-xmlrpc-server-received-no-events"
 LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 

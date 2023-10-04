@@ -17,7 +17,6 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import UndefinedType
 
-from .config import get_default_sysvar_registry_enabled
 from .const import DOMAIN, HmEntityState, HmEntityType
 from .control_unit import ControlUnit
 from .entity_helpers import get_entity_description
@@ -291,7 +290,7 @@ class HaHomematicGenericHubEntity(Entity):
             self.entity_description = entity_description
         self._attr_name = hm_hub_entity.name
         self._attr_device_info = control_unit.device_info
-        self._attr_entity_registry_enabled_default = get_default_sysvar_registry_enabled()
+        self._attr_entity_registry_enabled_default = control_unit.config.sysvar_registry_enabled
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property

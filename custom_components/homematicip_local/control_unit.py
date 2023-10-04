@@ -62,14 +62,6 @@ from homeassistant.helpers.issue_registry import (
     async_delete_issue,
 )
 
-from .config import (
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
-    DEVICE_FIRMWARE_CHECK_ENABLED,
-    DEVICE_FIRMWARE_CHECK_INTERVAL,
-    DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
-    DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
-    MASTER_SCAN_INTERVAL,
-)
 from .const import (
     CONF_CALLBACK_HOST,
     CONF_CALLBACK_PORT,
@@ -82,6 +74,13 @@ from .const import (
     CONF_TLS,
     CONF_VERIFY_TLS,
     CONTROL_UNITS,
+    DEFAULT_DEVICE_FIRMWARE_CHECK_ENABLED,
+    DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
+    DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
+    DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
+    DEFAULT_SYSVAR_REGISTRY_ENABLED,
+    DEFAULT_SYSVAR_SCAN_ENABLED,
+    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
     EVENT_DEVICE_ID,
     EVENT_ERROR,
@@ -95,6 +94,7 @@ from .const import (
     HMIP_LOCAL_PLATFORMS,
     LEARN_MORE_URL_PING_PONG_MISMATCH,
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
+    MASTER_SCAN_INTERVAL,
 )
 from .support import (
     CLICK_EVENT_SCHEMA,
@@ -114,6 +114,7 @@ class BaseControlUnit:
 
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
+        self._config: Final = control_config
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
         self._config_data = control_config.data
@@ -159,6 +160,11 @@ class BaseControlUnit:
     def central(self) -> CentralUnit:
         """Return the Homematic(IP) Local central unit instance."""
         return self._central
+
+    @property
+    def config(self) -> ControlConfig:
+        """Return the Homematic(IP) Local central unit instance."""
+        return self._config
 
     @property
     def device_info(self) -> DeviceInfo | None:
@@ -221,11 +227,6 @@ class ControlUnit(BaseControlUnit):
         self._scheduler = HmScheduler(
             hass=self._hass,
             control_unit=self,
-            sysvar_scan_enabled=self._config_data.get(CONF_SYSVAR_SCAN_ENABLED, True),
-            sysvar_scan_interval=self._config_data.get(
-                CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
-            ),
-            device_firmware_check_enabled=DEVICE_FIRMWARE_CHECK_ENABLED,
         )
 
     async def start_central(self) -> None:
@@ -519,7 +520,7 @@ class ControlUnit(BaseControlUnit):
         elif system_event == SystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
-            if self._scheduler.sysvar_scan_enabled:
+            if self._config.sysvar_scan_enabled:
                 new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
                 for platform, hm_hub_entities in self._identify_new_hm_hub_entities(
@@ -737,13 +738,35 @@ class ControlConfig:
         data: Mapping[str, Any],
         default_port: int = PORT_ANY,
         start_direct: bool = False,
+        device_firmware_check_enabled: bool = DEFAULT_DEVICE_FIRMWARE_CHECK_ENABLED,
+        device_firmware_check_interval: int = DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
+        device_firmware_delivering_check_interval: int = DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
+        device_firmware_updating_check_interval: int = DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
+        master_scan_interval: int = MASTER_SCAN_INTERVAL,
+        sysvar_registry_enabled: bool = DEFAULT_SYSVAR_REGISTRY_ENABLED,
     ) -> None:
         """Create the required config for the ControlUnit."""
-        self.hass = hass
-        self.entry_id = entry_id
-        self.data = data
-        self.default_callback_port = default_port
-        self.start_direct = start_direct
+        self.hass: Final = hass
+        self.entry_id: Final = entry_id
+        self.data: Final = data
+        self.default_callback_port: Final = default_port
+        self.start_direct: Final = start_direct
+        self.device_firmware_check_enabled: Final = device_firmware_check_enabled
+        self.device_firmware_check_interval: Final = device_firmware_check_interval
+        self.device_firmware_delivering_check_interval: Final = (
+            device_firmware_delivering_check_interval
+        )
+        self.device_firmware_updating_check_interval: Final = (
+            device_firmware_updating_check_interval
+        )
+        self.master_scan_interval: Final = master_scan_interval
+        self.sysvar_registry_enabled: Final = sysvar_registry_enabled
+        self.sysvar_scan_enabled: Final = data.get(
+            CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
+        )
+        self.sysvar_scan_interval: Final = data.get(
+            CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+        )
 
     async def create_control_unit(self) -> ControlUnit:
         """Identify the used client."""
@@ -773,25 +796,11 @@ class HmScheduler:
         self,
         hass: HomeAssistant,
         control_unit: ControlUnit,
-        sysvar_scan_enabled: bool,
-        sysvar_scan_interval: int,
-        device_firmware_check_enabled: bool,
-        master_scan_interval: int = MASTER_SCAN_INTERVAL,
-        device_firmware_check_interval: int = DEVICE_FIRMWARE_CHECK_INTERVAL,
-        device_firmware_delivering_check_interval: int = DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
-        device_firmware_updating_check_interval: int = DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     ) -> None:
         """Initialize Homematic(IP) Local hub scheduler."""
         self._hass = hass
         self._control: ControlUnit = control_unit
         self._central: CentralUnit = control_unit.central
-        self._device_firmware_check_enabled = device_firmware_check_enabled
-        self._device_firmware_check_interval = device_firmware_check_interval
-        self._device_firmware_delivering_check_interval = device_firmware_delivering_check_interval
-        self._device_firmware_updating_check_interval = device_firmware_updating_check_interval
-        self._master_scan_interval = master_scan_interval
-        self._sysvar_scan_enabled = sysvar_scan_enabled
-        self._sysvar_scan_interval = sysvar_scan_interval
         self._initialized = False
         self._remove_device_firmware_check_listener: Callable | None = None
         self._remove_device_firmware_delivering_check_listener: Callable | None = None
@@ -805,49 +814,50 @@ class HmScheduler:
         """Return initialized state."""
         return self._initialized
 
-    @property
-    def sysvar_scan_enabled(self) -> bool:
-        """Return sysvar_scan_enabled state."""
-        return self._sysvar_scan_enabled
-
     async def init(self) -> None:
         """Execute the initial data refresh."""
         async with self._sema_init:
             if self._initialized:
                 return
             self._initialized = True
-            if self._sysvar_scan_enabled:
+            if self._control.config.sysvar_scan_enabled:
                 # sysvar_scan_interval == 0 means sysvar scanning is disabled
                 self._remove_sysvar_listener = async_track_time_interval(
                     hass=self._hass,
                     action=self._fetch_data,
-                    interval=timedelta(seconds=self._sysvar_scan_interval),
+                    interval=timedelta(seconds=self._control.config.sysvar_scan_interval),
                     cancel_on_shutdown=True,
                 )
             self._remove_master_listener = async_track_time_interval(
                 hass=self._hass,
                 action=self._fetch_master_data,
-                interval=timedelta(seconds=self._master_scan_interval),
+                interval=timedelta(seconds=self._control.config.master_scan_interval),
                 cancel_on_shutdown=True,
             )
 
-            if self._device_firmware_check_enabled:
+            if self._control.config.device_firmware_check_enabled:
                 self._remove_device_firmware_check_listener = async_track_time_interval(
                     hass=self._hass,
                     action=self._fetch_device_firmware_update_data,
-                    interval=timedelta(seconds=self._device_firmware_check_interval),
+                    interval=timedelta(
+                        seconds=self._control.config.device_firmware_check_interval
+                    ),
                     cancel_on_shutdown=True,
                 )
                 self._remove_device_firmware_delivering_check_listener = async_track_time_interval(
                     hass=self._hass,
                     action=self._fetch_device_firmware_update_data_in_delivery,
-                    interval=timedelta(seconds=self._device_firmware_delivering_check_interval),
+                    interval=timedelta(
+                        seconds=self._control.config.device_firmware_delivering_check_interval
+                    ),
                     cancel_on_shutdown=True,
                 )
                 self._remove_device_firmware_updating_check_listener = async_track_time_interval(
                     hass=self._hass,
                     action=self._fetch_device_firmware_update_data_in_update,
-                    interval=timedelta(seconds=self._device_firmware_updating_check_interval),
+                    interval=timedelta(
+                        seconds=self._control.config.device_firmware_updating_check_interval
+                    ),
                 )
             await self._central.refresh_firmware_data()
 
@@ -873,7 +883,7 @@ class HmScheduler:
 
     async def _fetch_data(self, now: datetime) -> None:
         """Fetch data from backend."""
-        if self._sysvar_scan_enabled is False:
+        if self._control.config.sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Scheduled fetching of programs and sysvars for %s is disabled",
                 self._central.name,
@@ -888,7 +898,7 @@ class HmScheduler:
 
     async def fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
-        if self._sysvar_scan_enabled is False:
+        if self._control.config.sysvar_scan_enabled is False:
             _LOGGER.warning(
                 "Manually fetching of sysvars for %s is disabled",
                 self._central.name,

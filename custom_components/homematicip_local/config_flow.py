@@ -29,7 +29,6 @@ from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .config import DEFAULT_SYSVAR_SCAN_INTERVAL
 from .const import (
     CONF_CALLBACK_HOST,
     CONF_CALLBACK_PORT,
@@ -41,6 +40,7 @@ from .const import (
     CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
     CONF_VERIFY_TLS,
+    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
 from .control_unit import ControlConfig, validate_config_and_get_system_information

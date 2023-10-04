@@ -14,7 +14,7 @@ from hahomematic_support.client_local import ClientLocal, LocalRessources
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
-from custom_components.homematicip_local.control_unit import ControlUnit
+from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 
@@ -48,6 +48,13 @@ class Factory:
         """Init the central factory."""
         self._hass = hass
         self.mock_config_entry = mock_config_entry
+        self.control_config = ControlConfig(
+            hass=hass,
+            entry_id=const.CONFIG_ENTRY_ID,
+            data=mock_config_entry.data,
+            default_port=const.DEFAULT_CALLBACK_PORT,
+            sysvar_registry_enabled=True,
+        )
         self.system_event_mock = MagicMock()
         self.entity_event_mock = MagicMock()
         self.ha_event_mock = MagicMock()
@@ -101,10 +108,7 @@ class Factory:
             ),
         )
         await client.init_client()
-        patch(
-            "custom_components.homematicip_local.generic_entity.get_default_sysvar_registry_enabled",
-            return_value=True,
-        ).start()
+
         patch("hahomematic.central.CentralUnit._get_primary_client", return_value=client).start()
         patch("hahomematic.client._ClientConfig.get_client", return_value=client).start()
         patch(
@@ -130,6 +134,11 @@ class Factory:
         patch(
             "custom_components.homematicip_local.generic_entity.get_hm_entity",
             side_effect=get_hm_entity_mock,
+        ).start()
+        control_unit = await self.control_config.create_control_unit()
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
+            return_value=control_unit,
         ).start()
 
         # Start integration in hass
