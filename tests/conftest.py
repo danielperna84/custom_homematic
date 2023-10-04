@@ -15,6 +15,7 @@ from custom_components.homematicip_local.const import DOMAIN
 from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 from homeassistant import config_entries
 from homeassistant.components import ssdp
+from homeassistant.components.recorder import Recorder
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 
@@ -193,4 +194,12 @@ async def mock_loaded_config_entry(
 @pytest.fixture
 async def factory(hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry) -> helper.Factory:
     """Return central factory."""
+    return helper.Factory(hass=hass, mock_config_entry=mock_config_entry_v2)
+
+
+@pytest.fixture
+async def factory_with_recorder(
+    recorder_mock: Recorder, hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
+) -> helper.Factory:
+    """Return central factory with recorder."""
     return helper.Factory(hass=hass, mock_config_entry=mock_config_entry_v2)

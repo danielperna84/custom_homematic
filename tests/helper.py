@@ -13,7 +13,6 @@ from hahomematic.platforms.entity import BaseParameterEntity
 from hahomematic_support.client_local import ClientLocal, LocalRessources
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.homematicip_local import config
 from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 from homeassistant.config_entries import ConfigEntryState
@@ -28,11 +27,9 @@ EXCLUDE_METHODS_FROM_MOCKS: Final = [
     "get_event_data",
     "get_on_time_and_cleanup",
     "is_state_change",
-    "is_state_change",
     "register_remove_callback",
     "register_update_callback",
     "remove_entity",
-    "set_usage",
     "set_usage",
     "unregister_remove_callback",
     "unregister_update_callback",
@@ -54,7 +51,6 @@ class Factory:
         self.system_event_mock = MagicMock()
         self.entity_event_mock = MagicMock()
         self.ha_event_mock = MagicMock()
-        config.DEFAULT_SYSVAR_REGISTRY_ENABLED = True
 
     async def setup_environment(
         self,
@@ -105,7 +101,10 @@ class Factory:
             ),
         )
         await client.init_client()
-
+        patch(
+            "custom_components.homematicip_local.generic_entity.get_default_sysvar_registry_enabled",
+            return_value=True,
+        ).start()
         patch("hahomematic.central.CentralUnit._get_primary_client", return_value=client).start()
         patch("hahomematic.client._ClientConfig.get_client", return_value=client).start()
         patch(

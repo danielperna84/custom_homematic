@@ -8,10 +8,12 @@
   - Use enum for JsonRPC and XmlRPC methods
   - Get supported JsonRPC and XmlRPC methods and check against used methods
   - Cleanup exception handling
+  - Catch 'internal error' on get_auth_enabled. Relevant for for CCU2 users
 - Follow backend changes
-- Catch 'internal error' on \_get_auth_enabled. Relevant for for CCU2 users
+- Remove recorder platform
+- Add test for recorder \_unrecorded_attributes
 
-# Version 1.43.1 (2023-9-30)
+# Version 1.43.1 (2023-09-30)
 
 - Bump hahomematic to 2023.9.8
   - Improve caching
@@ -36,6 +38,7 @@
   - Add check to BaseHomematicException
   - Reduce log level to 'warning' for get_all_device_data 'JSONDecodeError' exceptions
 - Align isort setup with hass
+- Remove recorder platform
 
 # Version 1.42.0 (2023-09-22)
 
