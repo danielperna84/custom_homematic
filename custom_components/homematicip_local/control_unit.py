@@ -78,7 +78,6 @@ from .const import (
     DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
-    DEFAULT_SYSVAR_REGISTRY_ENABLED,
     DEFAULT_SYSVAR_SCAN_ENABLED,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
@@ -743,7 +742,6 @@ class ControlConfig:
         device_firmware_delivering_check_interval: int = DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
         device_firmware_updating_check_interval: int = DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
         master_scan_interval: int = MASTER_SCAN_INTERVAL,
-        sysvar_registry_enabled: bool = DEFAULT_SYSVAR_REGISTRY_ENABLED,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass: Final = hass
@@ -760,7 +758,6 @@ class ControlConfig:
             device_firmware_updating_check_interval
         )
         self.master_scan_interval: Final = master_scan_interval
-        self.sysvar_registry_enabled: Final = sysvar_registry_enabled
         self.sysvar_scan_enabled: Final = data.get(
             CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
         )

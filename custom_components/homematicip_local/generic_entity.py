@@ -274,6 +274,7 @@ class HaHomematicGenericHubEntity(Entity):
 
     _attr_has_entity_name = True
     _attr_should_poll = False
+    _attr_entity_registry_enabled_default = False
 
     _unrecorded_attributes = frozenset({ATTR_NAME})
 
@@ -290,7 +291,6 @@ class HaHomematicGenericHubEntity(Entity):
             self.entity_description = entity_description
         self._attr_name = hm_hub_entity.name
         self._attr_device_info = control_unit.device_info
-        self._attr_entity_registry_enabled_default = control_unit.config.sysvar_registry_enabled
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
