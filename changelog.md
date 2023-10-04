@@ -1,4 +1,4 @@
-# Version 1.43.2 (2023-10-03)
+# Version 1.44.0 (2023-10-04)
 
 - Bump hahomematic to 2023.10.4
   - Code cleanup
