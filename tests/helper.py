@@ -53,7 +53,6 @@ class Factory:
             entry_id=const.CONFIG_ENTRY_ID,
             data=mock_config_entry.data,
             default_port=const.DEFAULT_CALLBACK_PORT,
-            sysvar_registry_enabled=True,
         )
         self.system_event_mock = MagicMock()
         self.entity_event_mock = MagicMock()
@@ -134,6 +133,10 @@ class Factory:
         patch(
             "custom_components.homematicip_local.generic_entity.get_hm_entity",
             side_effect=get_hm_entity_mock,
+        ).start()
+        patch(
+            "homeassistant.helpers.entity.Entity.entity_registry_enabled_default",
+            return_value=True,
         ).start()
         control_unit = await self.control_config.create_control_unit()
         patch(
