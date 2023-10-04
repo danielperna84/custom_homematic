@@ -1,3 +1,7 @@
+# Version 1.44.1 (2023-10-04)
+
+- Make default values configurable in ControlConfig
+
 # Version 1.44.0 (2023-10-04)
 
 - Bump hahomematic to 2023.10.4
