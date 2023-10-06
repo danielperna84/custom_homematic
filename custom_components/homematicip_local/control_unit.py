@@ -305,7 +305,7 @@ class ControlUnit(BaseControlUnit):
     ) -> list[list[GenericEvent]]:
         """Return all hm-update-entities."""
         active_unique_ids = tuple(
-            event.unique_identifier for event in tuple(self._active_hm_channel_events.values())
+            event.unique_identifier for event in self._active_hm_channel_events.values()
         )
 
         hm_channel_events: list[list[GenericEvent]] = []
@@ -323,7 +323,7 @@ class ControlUnit(BaseControlUnit):
     ) -> list[list[GenericEvent]]:
         """Return all channel event entities."""
         active_unique_ids = tuple(
-            event.unique_identifier for event in tuple(self._active_hm_channel_events.values())
+            event.unique_identifier for event in self._active_hm_channel_events.values()
         )
 
         hm_channel_events: list[list[GenericEvent]] = []
