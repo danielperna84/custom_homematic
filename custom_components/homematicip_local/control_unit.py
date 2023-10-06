@@ -304,12 +304,11 @@ class ControlUnit(BaseControlUnit):
         self, new_channel_events: list[dict[int, list[GenericEvent]]]
     ) -> list[list[GenericEvent]]:
         """Return all hm-update-entities."""
-        active_unique_ids: list[str] = []
-        for events in self._active_hm_channel_events.values():
-            for event in events:
-                active_unique_ids.append(event.unique_identifier)
-        hm_channel_events: list[list[GenericEvent]] = []
+        active_unique_ids = tuple(
+            event.unique_identifier for event in tuple(self._active_hm_channel_events.values())
+        )
 
+        hm_channel_events: list[list[GenericEvent]] = []
         for device_channel_events in new_channel_events:
             for channel_events in device_channel_events.values():
                 if channel_events[0].channel_unique_identifier not in active_unique_ids:
@@ -323,10 +322,9 @@ class ControlUnit(BaseControlUnit):
         self, event_type: EventType
     ) -> list[list[GenericEvent]]:
         """Return all channel event entities."""
-        active_unique_ids: list[str] = []
-        for events in self._active_hm_channel_events.values():
-            for event in events:
-                active_unique_ids.append(event.unique_identifier)
+        active_unique_ids = tuple(
+            event.unique_identifier for event in tuple(self._active_hm_channel_events.values())
+        )
 
         hm_channel_events: list[list[GenericEvent]] = []
         for device in self._central.devices:
@@ -342,9 +340,9 @@ class ControlUnit(BaseControlUnit):
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """Return all hm-entities."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_entities.values()
-        ]
+        )
         # init dict
         hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
         for hm_platform in PLATFORMS:
@@ -365,9 +363,9 @@ class ControlUnit(BaseControlUnit):
         self, new_update_entities: list[HmUpdate]
     ) -> tuple[HmUpdate, ...]:
         """Return all hm-update-entities."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_update_entities.values()
-        ]
+        )
         return tuple(
             entity
             for entity in new_update_entities
@@ -377,9 +375,9 @@ class ControlUnit(BaseControlUnit):
     @callback
     def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
         """Return all new hm-entities by platform."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_entities.values()
-        ]
+        )
         return self._central.get_entities_by_platform(
             platform=platform, existing_unique_ids=active_unique_ids
         )
@@ -389,9 +387,9 @@ class ControlUnit(BaseControlUnit):
         self, new_hub_entities: list[GenericHubEntity]
     ) -> dict[HmPlatform, list[GenericHubEntity]]:
         """Return all hm-hub-entities."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
-        ]
+        )
         # init dict
         hm_hub_entities: dict[HmPlatform, list[GenericHubEntity]] = {}
         for hm_hub_platform in HUB_PLATFORMS:
@@ -408,9 +406,9 @@ class ControlUnit(BaseControlUnit):
         self, platform: HmPlatform
     ) -> tuple[GenericHubEntity, ...]:
         """Return all new hm-hub-entities by platform."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
-        ]
+        )
 
         return self._central.get_hub_entities_by_platform(
             platform=platform, existing_unique_ids=active_unique_ids
@@ -419,9 +417,9 @@ class ControlUnit(BaseControlUnit):
     @callback
     def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
         """Return all update entities."""
-        active_unique_ids = [
+        active_unique_ids = tuple(
             entity.unique_identifier for entity in self._active_hm_update_entities.values()
-        ]
+        )
         return tuple(
             device.update_entity
             for device in self._central.devices
