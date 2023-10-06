@@ -152,8 +152,9 @@ class BaseControlUnit:
             "Stopping central unit %s",
             self._instance_name,
         )
-        await self._central.stop()
-        _LOGGER.info("Stopped central unit for %s", self._instance_name)
+        if self._central.started:
+            await self._central.stop()
+            _LOGGER.info("Stopped central unit for %s", self._instance_name)
 
     @property
     def central(self) -> CentralUnit:
@@ -237,7 +238,8 @@ class ControlUnit(BaseControlUnit):
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the central unit."""
-        self._scheduler.de_init()
+        if self._scheduler.initialized:
+            self._scheduler.de_init()
         if central := self._central:
             central.unregister_system_event_callback(callback_handler=self._callback_system_event)
             central.unregister_ha_event_callback(callback_handler=self._callback_ha_event)
