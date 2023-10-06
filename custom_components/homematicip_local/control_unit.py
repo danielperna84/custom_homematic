@@ -363,21 +363,19 @@ class ControlUnit(BaseControlUnit):
     @callback
     def _identify_new_hm_update_entities(
         self, new_update_entities: list[HmUpdate]
-    ) -> list[HmUpdate]:
+    ) -> tuple[HmUpdate, ...]:
         """Return all hm-update-entities."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_update_entities.values()
         ]
-        hm_update_entities: list[HmUpdate] = []
-
-        for update_entity in new_update_entities:
-            if update_entity.unique_identifier not in active_unique_ids:
-                hm_update_entities.append(update_entity)
-
-        return hm_update_entities
+        return tuple(
+            entity
+            for entity in new_update_entities
+            if entity.unique_identifier not in active_unique_ids
+        )
 
     @callback
-    def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> list[BaseEntity]:
+    def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
         """Return all new hm-entities by platform."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_entities.values()
@@ -406,7 +404,9 @@ class ControlUnit(BaseControlUnit):
         return hm_hub_entities
 
     @callback
-    def get_new_hm_hub_entities_by_platform(self, platform: HmPlatform) -> list[GenericHubEntity]:
+    def get_new_hm_hub_entities_by_platform(
+        self, platform: HmPlatform
+    ) -> tuple[GenericHubEntity, ...]:
         """Return all new hm-hub-entities by platform."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_hub_entities.values()
@@ -417,17 +417,17 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def get_new_hm_update_entities(self) -> list[HmUpdate]:
+    def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
         """Return all update entities."""
         active_unique_ids = [
             entity.unique_identifier for entity in self._active_hm_update_entities.values()
         ]
-        return [
+        return tuple(
             device.update_entity
             for device in self._central.devices
             if device.update_entity
             and device.update_entity.unique_identifier not in active_unique_ids
-        ]
+        )
 
     @callback
     def add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
