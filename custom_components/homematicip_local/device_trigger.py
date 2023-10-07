@@ -60,7 +60,7 @@ async def async_get_triggers(hass: HomeAssistant, device_id: str) -> list[dict[s
         if control_unit.central.has_client(interface_id=interface_id) is False:
             continue
         if hm_device := control_unit.central.get_device(address=device_address):
-            for action_event in hm_device.generic_events.values():
+            for action_event in hm_device.generic_events:
                 if not isinstance(action_event, ClickEvent):
                     continue
 
