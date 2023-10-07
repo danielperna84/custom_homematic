@@ -50,7 +50,7 @@ async def async_get_actions(hass: HomeAssistant, device_id: str) -> list[dict[st
         if control_unit.central.has_client(interface_id=interface_id) is False:
             continue
         if hm_device := control_unit.central.get_device(address=device_address):
-            for entity in hm_device.generic_entities.values():
+            for entity in hm_device.generic_entities:
                 if not isinstance(entity, HmAction | HmButton):
                     continue
                 if entity.parameter not in ACTION_PARAMS:
@@ -94,7 +94,7 @@ async def async_call_action_from_config(
         if control_unit.central.has_client(interface_id=interface_id) is False:
             continue
         if hm_device := control_unit.central.get_device(address=device_address):
-            for entity in hm_device.generic_entities.values():
+            for entity in hm_device.generic_entities:
                 if not isinstance(entity, HmAction | HmButton):
                     continue
                 if entity.parameter == action_type.upper() and entity.channel_no == action_subtype:

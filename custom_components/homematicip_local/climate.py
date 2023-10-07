@@ -216,11 +216,11 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     @property
     def hvac_modes(self) -> list[HVACMode]:
         """Return the list of available hvac modes."""
-        hvac_modes = []
-        for hm_hvac_mode in self._hm_entity.hvac_modes:
-            if hm_hvac_mode in HM_TO_HA_HVAC_MODE:
-                hvac_modes.append(HM_TO_HA_HVAC_MODE[hm_hvac_mode])
-        return hvac_modes
+        return [
+            HM_TO_HA_HVAC_MODE[hm_hvac_mode]
+            for hm_hvac_mode in self._hm_entity.hvac_modes
+            if hm_hvac_mode in HM_TO_HA_HVAC_MODE
+        ]
 
     @property
     def min_temp(self) -> float:
