@@ -304,14 +304,13 @@ class ControlUnit(BaseControlUnit):
         self, new_channel_events: list[dict[int, list[GenericEvent]]]
     ) -> list[list[GenericEvent]]:
         """Return all hm-update-entities."""
-        active_unique_ids = tuple(
-            event.unique_identifier for event in self._active_hm_channel_events.values()
-        )
-
         hm_channel_events: list[list[GenericEvent]] = []
         for device_channel_events in new_channel_events:
             for channel_events in device_channel_events.values():
-                if channel_events[0].channel_unique_identifier not in active_unique_ids:
+                if (
+                    channel_events[0].channel_unique_identifier
+                    not in self._central.subscribed_entity_unique_identifiers
+                ):
                     hm_channel_events.append(channel_events)
                     continue
 
@@ -320,29 +319,17 @@ class ControlUnit(BaseControlUnit):
     @callback
     def get_new_hm_channel_events_by_event_type(
         self, event_type: EventType
-    ) -> list[list[GenericEvent]]:
+    ) -> tuple[list[GenericEvent], ...]:
         """Return all channel event entities."""
-        active_unique_ids = tuple(
-            event.unique_identifier for event in self._active_hm_channel_events.values()
+        return self._central.get_channel_events_by_event_type(
+            event_type=event_type, exclude_subscribed=True
         )
-
-        hm_channel_events: list[list[GenericEvent]] = []
-        for device in self._central.devices:
-            for channel_events in device.get_channel_events(event_type=event_type).values():
-                if channel_events[0].channel_unique_identifier not in active_unique_ids:
-                    hm_channel_events.append(channel_events)
-                    continue
-
-        return hm_channel_events
 
     @callback
     def _identify_new_hm_entities(
         self, new_entities: list[BaseEntity]
     ) -> dict[HmPlatform, list[BaseEntity]]:
         """Return all hm-entities."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_entities.values()
-        )
         # init dict
         hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
         for hm_platform in PLATFORMS:
@@ -351,7 +338,8 @@ class ControlUnit(BaseControlUnit):
         for entity in new_entities:
             if (
                 entity.usage != EntityUsage.NO_CREATE
-                and entity.unique_identifier not in active_unique_ids
+                and entity.unique_identifier
+                not in self._central.subscribed_entity_unique_identifiers
                 and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
@@ -363,23 +351,18 @@ class ControlUnit(BaseControlUnit):
         self, new_update_entities: list[HmUpdate]
     ) -> tuple[HmUpdate, ...]:
         """Return all hm-update-entities."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_update_entities.values()
-        )
         return tuple(
             entity
             for entity in new_update_entities
-            if entity.unique_identifier not in active_unique_ids
+            if entity.unique_identifier not in self._central.subscribed_entity_unique_identifiers
         )
 
     @callback
     def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
         """Return all new hm-entities by platform."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_entities.values()
-        )
         return self._central.get_entities_by_platform(
-            platform=platform, existing_unique_ids=active_unique_ids
+            platform=platform,
+            exclude_subscribed=True,
         )
 
     @callback
@@ -387,16 +370,16 @@ class ControlUnit(BaseControlUnit):
         self, new_hub_entities: list[GenericHubEntity]
     ) -> dict[HmPlatform, list[GenericHubEntity]]:
         """Return all hm-hub-entities."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_hub_entities.values()
-        )
         # init dict
         hm_hub_entities: dict[HmPlatform, list[GenericHubEntity]] = {}
         for hm_hub_platform in HUB_PLATFORMS:
             hm_hub_entities[hm_hub_platform] = []
 
         for hub_entity in new_hub_entities:
-            if hub_entity.unique_identifier not in active_unique_ids:
+            if (
+                hub_entity.unique_identifier
+                not in self._central.subscribed_entity_unique_identifiers
+            ):
                 hm_hub_entities[hub_entity.platform].append(hub_entity)
 
         return hm_hub_entities
@@ -406,26 +389,14 @@ class ControlUnit(BaseControlUnit):
         self, platform: HmPlatform
     ) -> tuple[GenericHubEntity, ...]:
         """Return all new hm-hub-entities by platform."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_hub_entities.values()
-        )
-
         return self._central.get_hub_entities_by_platform(
-            platform=platform, existing_unique_ids=active_unique_ids
+            platform=platform, exclude_subscribed=True
         )
 
     @callback
     def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
         """Return all update entities."""
-        active_unique_ids = tuple(
-            entity.unique_identifier for entity in self._active_hm_update_entities.values()
-        )
-        return tuple(
-            device.update_entity
-            for device in self._central.devices
-            if device.update_entity
-            and device.update_entity.unique_identifier not in active_unique_ids
-        )
+        return self._central.get_update_entities(exclude_subscribed=True)
 
     @callback
     def add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
@@ -450,22 +421,26 @@ class ControlUnit(BaseControlUnit):
     @callback
     def remove_hm_entity(self, entity_id: str) -> None:
         """Remove entity from active entities."""
-        del self._active_hm_entities[entity_id]
+        if entity_id in self._active_hm_entities:
+            del self._active_hm_entities[entity_id]
 
     @callback
     def remove_hm_channel_events(self, entity_id: str) -> None:
         """Remove channel_events from active channel_events."""
-        del self._active_hm_channel_events[entity_id]
+        if entity_id in self._active_hm_channel_events:
+            del self._active_hm_channel_events[entity_id]
 
     @callback
     def remove_hm_update_entity(self, entity_id: str) -> None:
         """Remove entity from active update entities."""
-        del self._active_hm_update_entities[entity_id]
+        if entity_id in self._active_hm_update_entities:
+            del self._active_hm_update_entities[entity_id]
 
     @callback
     def remove_hm_hub_entity(self, entity_id: str) -> None:
-        """Remove entity from active hub entities."""
-        del self._active_hm_hub_entities[entity_id]
+        """Remove update entity from active hub entities."""
+        if entity_id in self._active_hm_hub_entities:
+            del self._active_hm_hub_entities[entity_id]
 
     @callback
     def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
@@ -723,7 +698,7 @@ class ControlUnitTemp(BaseControlUnit):
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
-        await self._central.clear_all_caches()
+        await self._central.clear_caches()
         await super().stop_central(*args)
 
 

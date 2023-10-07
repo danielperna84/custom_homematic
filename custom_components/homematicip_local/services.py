@@ -492,7 +492,7 @@ async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) 
     """Service to clear the cache."""
     entry_id = service.data[CONF_ENTRY_ID]
     if control := _get_control_unit(hass=hass, entry_id=entry_id):
-        await control.central.clear_all_caches()
+        await control.central.clear_caches()
 
 
 async def _async_service_fetch_system_variables(hass: HomeAssistant, service: ServiceCall) -> None:
