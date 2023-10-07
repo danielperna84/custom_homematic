@@ -1,3 +1,16 @@
+# Version 1.45.0 (2023-10-07)
+
+- Bump hahomematic to 2023.10.5
+  - Add started property to central
+  - Rename:
+    - value_list -> values
+    - effect_list -> effects
+  - Add more checks to get/set value from/tp values
+  - Use more tuple instead of list
+  - Cleanup code
+  - Collect subscribed entities in central
+- Follow backend changes
+
 # Version 1.44.1 (2023-10-04)
 
 - Make default values configurable in ControlConfig

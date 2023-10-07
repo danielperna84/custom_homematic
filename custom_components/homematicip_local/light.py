@@ -192,7 +192,7 @@ class HaHomematicLight(HaHomematicGenericRestoreEntity[CeDimmer], LightEntity):
     @property
     def effect_list(self) -> list[str] | None:
         """Return the list of supported effects."""
-        return self._hm_entity.effect_list
+        return self._hm_entity.effects
 
     @property
     def hs_color(self) -> tuple[float, float] | None:

@@ -66,7 +66,7 @@ TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
 )
 
 # filter out event error parameters, that should not be displayed in logbook
-FILTER_ERROR_EVENT_PARAMETERS: Final[list[str]] = ["ERROR_CODE"]
+FILTER_ERROR_EVENT_PARAMETERS: Final[tuple[str, ...]] = ("ERROR_CODE",)
 
 
 class HmEntityState(StrEnum):
@@ -96,7 +96,7 @@ class HmNameSource(StrEnum):
 BLOCK_PLATFORMS: Final[tuple[str, ...]] = ()
 
 
-def _get_hmip_local_platforms() -> list[str]:
+def _get_hmip_local_platforms() -> tuple[str, ...]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
     hm_platforms = [platform.value for platform in PLATFORMS if platform not in BLOCK_PLATFORMS]
@@ -105,7 +105,7 @@ def _get_hmip_local_platforms() -> list[str]:
         if hm_platform in platforms:
             hmip_local_platforms.append(hm_platform)
 
-    return hmip_local_platforms
+    return tuple(hmip_local_platforms)
 
 
-HMIP_LOCAL_PLATFORMS: Final[list[str]] = _get_hmip_local_platforms()
+HMIP_LOCAL_PLATFORMS: Final[tuple[str, ...]] = _get_hmip_local_platforms()

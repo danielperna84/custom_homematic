@@ -179,7 +179,7 @@ def get_hm_entity_mock(hm_entity: T) -> T:
             patch.object(hm_entity, method_name).start()
 
         if isinstance(hm_entity, CustomEntity):
-            for g_entity in hm_entity.data_entities.values():
+            for g_entity in hm_entity._data_entities.values():
                 g_entity._set_last_update()
         elif isinstance(hm_entity, BaseParameterEntity):
             hm_entity._set_last_update()
