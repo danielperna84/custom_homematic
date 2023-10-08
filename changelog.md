@@ -1,6 +1,6 @@
 # Version 1.45.0 (2023-10-07)
 
-- Bump hahomematic to 2023.10.5
+- Bump hahomematic to 2023.10.6
   - Add started property to central
   - Rename:
     - value_list -> values
@@ -9,6 +9,10 @@
   - Use more tuple instead of list
   - Cleanup code
   - Collect subscribed entities in central
+  - Add faultCode and faultString to xmlrpc.client.Fault
+  - Use Mapping/Set for readonly access
+  - Use enum for CE fields
+  - Use Parameter for ED
 - Follow backend changes
 
 # Version 1.44.1 (2023-10-04)
