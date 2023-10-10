@@ -15,7 +15,7 @@ from .support import DEVICE_ERROR_EVENT_SCHEMA, is_valid_event
 
 @callback
 def async_describe_events(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     async_describe_event: Callable[[str, str, Callable[[Event], dict[str, str]]], None],
 ) -> None:
     """Describe logbook events."""
