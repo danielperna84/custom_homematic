@@ -1,3 +1,11 @@
+# Version 1.46.0 (2023-10-10)
+
+- Bump hahomematic to 2023.10.7
+  - Adjust typing after move to more enums
+  - Add measure_execution_time to writing methodes
+  - Fix send sysvar #1249
+  - Add HmIPW-SCTHD
+
 # Version 1.45.0 (2023-10-07)
 
 - Bump hahomematic to 2023.10.6
