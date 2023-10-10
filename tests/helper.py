@@ -156,7 +156,7 @@ def get_and_check_state(
     ha_state = hass.states.get(entity_id)
     assert ha_state is not None
     assert ha_state.name == entity_name
-    hm_entity = control.get_hm_entity(entity_id=entity_id)
+    hm_entity = control._active_hm_entities.get(entity_id)
 
     return ha_state, hm_entity
 

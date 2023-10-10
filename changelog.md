@@ -1,3 +1,7 @@
+# Version 1.46.1 (2023-10-10)
+
+- Merge dicts to collect active entities
+
 # Version 1.46.0 (2023-10-10)
 
 - Bump hahomematic to 2023.10.7
