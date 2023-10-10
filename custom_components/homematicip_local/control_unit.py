@@ -42,7 +42,7 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import BaseEntity
 from hahomematic.platforms.event import GenericEvent
-from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
 
@@ -215,15 +215,11 @@ class ControlUnit(BaseControlUnit):
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
         super().__init__(control_config=control_config)
+        # {entity_id, entity}
+        self._active_hm_entities: dict[
+            str, HmBaseEntity | list[GenericEvent] | HmUpdate | GenericHubEntity
+        ] = {}
 
-        # {entity_id, entity}
-        self._active_hm_entities: dict[str, HmBaseEntity] = {}
-        # {entity_id, [channel_events]}
-        self._active_hm_channel_events: dict[str, list[GenericEvent]] = {}
-        # {entity_id, entity}
-        self._active_hm_update_entities: dict[str, HmUpdate] = {}
-        # {entity_id, sysvar_entity}
-        self._active_hm_hub_entities: dict[str, GenericHubEntity] = {}
         self._scheduler = HmScheduler(
             hass=self._hass,
             control_unit=self,
@@ -293,11 +289,6 @@ class ControlUnit(BaseControlUnit):
                 # Link to the homematic control unit.
                 via_device=cast(tuple[str, str], self._central.name),
             )
-
-    @callback
-    def get_hm_entity(self, entity_id: str) -> HmBaseEntity | None:
-        """Return hm-entity by requested entity_id."""
-        return self._active_hm_entities.get(entity_id)
 
     @callback
     def _identify_new_hm_channel_events(
@@ -399,48 +390,19 @@ class ControlUnit(BaseControlUnit):
         return self._central.get_update_entities(exclude_subscribed=True)
 
     @callback
-    def add_hm_entity(self, entity_id: str, hm_entity: HmBaseEntity) -> None:
+    def add_hm_entity(
+        self,
+        entity_id: str,
+        hm_entity: HmBaseEntity | list[GenericEvent] | HmUpdate | GenericHubEntity,
+    ) -> None:
         """Add entity to active entities."""
         self._active_hm_entities[entity_id] = hm_entity
-
-    @callback
-    def add_hm_channel_events(self, entity_id: str, hm_channel_events: list[GenericEvent]) -> None:
-        """Add channel events to active channel events."""
-        self._active_hm_channel_events[entity_id] = hm_channel_events
-
-    @callback
-    def add_hm_update_entity(self, entity_id: str, hm_entity: HmUpdate) -> None:
-        """Add entity to active update entities."""
-        self._active_hm_update_entities[entity_id] = hm_entity
-
-    @callback
-    def add_hm_hub_entity(self, entity_id: str, hm_hub_entity: GenericHubEntity) -> None:
-        """Add entity to active hub entities."""
-        self._active_hm_hub_entities[entity_id] = hm_hub_entity
 
     @callback
     def remove_hm_entity(self, entity_id: str) -> None:
         """Remove entity from active entities."""
         if entity_id in self._active_hm_entities:
             del self._active_hm_entities[entity_id]
-
-    @callback
-    def remove_hm_channel_events(self, entity_id: str) -> None:
-        """Remove channel_events from active channel_events."""
-        if entity_id in self._active_hm_channel_events:
-            del self._active_hm_channel_events[entity_id]
-
-    @callback
-    def remove_hm_update_entity(self, entity_id: str) -> None:
-        """Remove entity from active update entities."""
-        if entity_id in self._active_hm_update_entities:
-            del self._active_hm_update_entities[entity_id]
-
-    @callback
-    def remove_hm_hub_entity(self, entity_id: str) -> None:
-        """Remove update entity from active hub entities."""
-        if entity_id in self._active_hm_hub_entities:
-            del self._active_hm_hub_entities[entity_id]
 
     @callback
     def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
@@ -671,7 +633,7 @@ class ControlUnit(BaseControlUnit):
         device_types: list[str] = []
         platform_stats: dict[str, int] = {}
         for entity in self._active_hm_entities.values():
-            platform = entity.platform.value
+            platform = "event" if isinstance(entity, list) else entity.platform.value
             if platform not in platform_stats:
                 platform_stats[platform] = 0
             counter = platform_stats[platform]
@@ -679,18 +641,6 @@ class ControlUnit(BaseControlUnit):
             if isinstance(entity, CustomEntity | GenericEntity):
                 device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
-
-    @callback
-    def _get_active_hm_entities_by_device_address(self, device_address: str) -> list[HmBaseEntity]:
-        """Return used hm_entities by address."""
-        entities: list[HmBaseEntity] = []
-        for entity in self._active_hm_entities.values():
-            if (
-                isinstance(entity, CustomEntity | GenericEntity | WrapperEntity)
-                and device_address == entity.device.device_address
-            ):
-                entities.append(entity)
-        return entities
 
 
 class ControlUnitTemp(BaseControlUnit):

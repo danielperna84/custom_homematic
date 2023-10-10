@@ -218,7 +218,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
-        self._cu.remove_hm_entity(self.entity_id)
+        self._cu.remove_hm_entity(entity_id=self.entity_id)
 
         # Remove callback from device.
         self._hm_entity.unregister_update_callback(update_callback=self._async_device_changed)
@@ -307,11 +307,11 @@ class HaHomematicGenericHubEntity(Entity):
             self._hm_hub_entity.register_remove_callback(
                 remove_callback=self._async_hub_entity_removed
             )
-        self._cu.add_hm_hub_entity(entity_id=self.entity_id, hm_hub_entity=self._hm_hub_entity)
+        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_hub_entity)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip sysvar entity will be removed from hass."""
-        self._cu.remove_hm_hub_entity(self.entity_id)
+        self._cu.remove_hm_entity(entity_id=self.entity_id)
 
         # Remove callbacks.
         self._hm_hub_entity.unregister_update_callback(
