@@ -42,7 +42,7 @@ from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import BaseEntity
 from hahomematic.platforms.event import GenericEvent
-from hahomematic.platforms.generic.entity import GenericEntity
+from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.platforms.update import HmUpdate
 
@@ -638,7 +638,7 @@ class ControlUnit(BaseControlUnit):
                 platform_stats[platform] = 0
             counter = platform_stats[platform]
             platform_stats[platform] = counter + 1
-            if isinstance(entity, CustomEntity | GenericEntity):
+            if isinstance(entity, CustomEntity | GenericEntity | WrapperEntity):
                 device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
 
