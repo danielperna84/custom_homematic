@@ -203,12 +203,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
-            _LOGGER.debug("Device changed event fired for %s", self.name)
+            _LOGGER.debug("Device changed event fired for %s", self._hm_entity.full_name)
             self.async_write_ha_state()
         else:
             _LOGGER.debug(
                 "Device changed event for %s not fired. Entity is disabled",
-                self.name,
+                self._hm_entity.full_name,
             )
 
     async def async_update(self) -> None:

@@ -4,12 +4,12 @@ async-upnp-client
 coverage==7.3.1
 hahomematic==2023.10.7
 homeassistant==2023.10.1
-mypy==1.5.1
+mypy==1.6.0
 pip==23.2.1
 pre-commit==3.4.0
 pydevccu==0.1.6
 pylint-strict-informational==0.1
-pylint==2.17.6
+pylint==3.0.1
 pytest-asyncio==0.21.0
 pytest-cov==4.1.0
 pytest-homeassistant-custom-component==0.13.64
