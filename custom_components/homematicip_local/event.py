@@ -87,7 +87,7 @@ class HaHomematicEvent(EventEntity):
         self._hm_channel_events = hm_channel_events
         self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(".", "_")
 
-        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel_unique_identifier}"
+        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel_unique_id}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
         )
@@ -118,9 +118,10 @@ class HaHomematicEvent(EventEntity):
         """Register callbacks and load initial data."""
 
         for event in self._hm_channel_events:
-            event.register_update_callback(update_callback=self._async_device_changed)
+            event.register_update_callback(
+                update_callback=self._async_device_changed, custom_id=self.entity_id
+            )
             event.register_remove_callback(remove_callback=self._async_device_removed)
-        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_channel_events)
 
     @callback
     def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -138,11 +139,11 @@ class HaHomematicEvent(EventEntity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
-        self._cu.remove_hm_entity(entity_id=self.entity_id)
-
         # Remove callback from device.
         for event in self._hm_channel_events:
-            event.unregister_update_callback(update_callback=self._async_device_changed)
+            event.unregister_update_callback(
+                update_callback=self._async_device_changed, custom_id=self.entity_id
+            )
             event.unregister_remove_callback(remove_callback=self._async_device_removed)
 
     @callback

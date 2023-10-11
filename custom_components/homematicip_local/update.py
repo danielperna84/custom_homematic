@@ -76,7 +76,7 @@ class HaHomematicUpdate(UpdateEntity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmUpdate = hm_entity
-        self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
+        self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_id}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, hm_entity.device.identifier)},
         )
@@ -129,10 +129,10 @@ class HaHomematicUpdate(UpdateEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
-
-        self._hm_entity.register_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.register_update_callback(
+            update_callback=self._async_device_changed, custom_id=self.entity_id
+        )
         self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
-        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_entity)
 
     @callback
     def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -150,9 +150,9 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
-        self._cu.remove_hm_entity(entity_id=self.entity_id)
-
-        self._hm_entity.unregister_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.unregister_update_callback(
+            update_callback=self._async_device_changed, custom_id=self.entity_id
+        )
         self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
 
     @callback

@@ -52,7 +52,9 @@ async def test_hmsysvarswitch(factory: helper.Factory) -> None:
     ha_state, _ = helper.get_and_check_state(
         hass=hass, control=control, entity_id=entity_id, entity_name=entity_name
     )
-    hm_entity: HmSysvarSwitch = cast(HmSysvarSwitch, control._active_hm_entities.get(entity_id))
+    hm_entity: HmSysvarSwitch = cast(
+        HmSysvarSwitch, helper.get_hm_entity(control=control, entity_id=entity_id)
+    )
     assert ha_state.state == STATE_OFF
 
     assert hm_entity.send_variable.call_count == 0

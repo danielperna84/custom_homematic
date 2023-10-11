@@ -59,7 +59,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_entity: HmGenericEntity = get_hm_entity(hm_entity=hm_entity)
-        self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_identifier}"
+        self._attr_unique_id = f"{DOMAIN}_{hm_entity.unique_id}"
 
         if entity_description := get_entity_description(hm_entity=hm_entity):
             self.entity_description = entity_description
@@ -182,9 +182,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
-            self._hm_entity.register_update_callback(update_callback=self._async_device_changed)
+            self._hm_entity.register_update_callback(
+                update_callback=self._async_device_changed, custom_id=self.entity_id
+            )
             self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
-        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_entity)
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity | WrapperEntity):
             await self._hm_entity.load_entity_value(call_source=CallSource.HA_INIT)
@@ -218,10 +219,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
-        self._cu.remove_hm_entity(entity_id=self.entity_id)
-
         # Remove callback from device.
-        self._hm_entity.unregister_update_callback(update_callback=self._async_device_changed)
+        self._hm_entity.unregister_update_callback(
+            update_callback=self._async_device_changed, custom_id=self.entity_id
+        )
         self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
 
     @callback
@@ -286,7 +287,7 @@ class HaHomematicGenericHubEntity(Entity):
         """Initialize the generic entity."""
         self._cu: ControlUnit = control_unit
         self._hm_hub_entity = get_hm_entity(hm_hub_entity)
-        self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_identifier}"
+        self._attr_unique_id = f"{DOMAIN}_{hm_hub_entity.unique_id}"
         if entity_description := get_entity_description(hm_entity=hm_hub_entity):
             self.entity_description = entity_description
         self._attr_name = hm_hub_entity.name
@@ -302,20 +303,17 @@ class HaHomematicGenericHubEntity(Entity):
         """Register callbacks and load initial data."""
         if isinstance(self._hm_hub_entity, CallbackEntity):
             self._hm_hub_entity.register_update_callback(
-                update_callback=self._async_hub_entity_changed
+                update_callback=self._async_hub_entity_changed, custom_id=self.entity_id
             )
             self._hm_hub_entity.register_remove_callback(
                 remove_callback=self._async_hub_entity_removed
             )
-        self._cu.add_hm_entity(entity_id=self.entity_id, hm_entity=self._hm_hub_entity)
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip sysvar entity will be removed from hass."""
-        self._cu.remove_hm_entity(entity_id=self.entity_id)
-
         # Remove callbacks.
         self._hm_hub_entity.unregister_update_callback(
-            update_callback=self._async_hub_entity_changed
+            update_callback=self._async_hub_entity_changed, custom_id=self.entity_id
         )
         self._hm_hub_entity.unregister_remove_callback(
             remove_callback=self._async_hub_entity_removed
