@@ -165,7 +165,7 @@ def get_hm_entity(control: ControlUnit, entity_id: str):
     """Get the hm entity by entity id."""
     for entities in control.central.get_entities().values():
         for entity in entities:
-            if entity.custom_identifier == entity_id:
+            if entity.custom_id == entity_id:
                 return entity
 
 

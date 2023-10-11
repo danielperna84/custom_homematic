@@ -1,5 +1,10 @@
 # Version 1.46.1 (2023-10-10)
 
+- Bump hahomematic to 2023.10.8
+  - Register external sources with custom identifier
+  - Remove subscribed_entity_unique_identifiers
+  - Rename custom_identifier to custom_id
+  - Rename unique_identifier to unique_id
 - Merge dicts to collect active entities
 
 # Version 1.46.0 (2023-10-10)

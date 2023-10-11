@@ -293,8 +293,8 @@ class ControlUnit(BaseControlUnit):
         for device_channel_events in new_channel_events:
             for channel_events in device_channel_events.values():
                 if (
-                    channel_events[0].channel_unique_identifier
-                    not in self._central.subscribed_entity_unique_identifiers
+                    channel_events[0].channel_unique_id
+                    not in self._central.subscribed_entity_unique_ids
                 ):
                     hm_channel_events.append(channel_events)
                     continue
@@ -323,8 +323,7 @@ class ControlUnit(BaseControlUnit):
         for entity in new_entities:
             if (
                 entity.usage != EntityUsage.NO_CREATE
-                and entity.unique_identifier
-                not in self._central.subscribed_entity_unique_identifiers
+                and entity.unique_id not in self._central.subscribed_entity_unique_ids
                 and entity.platform.value in HMIP_LOCAL_PLATFORMS
             ):
                 hm_entities[entity.platform].append(entity)
@@ -339,7 +338,7 @@ class ControlUnit(BaseControlUnit):
         return tuple(
             entity
             for entity in new_update_entities
-            if entity.unique_identifier not in self._central.subscribed_entity_unique_identifiers
+            if entity.unique_id not in self._central.subscribed_entity_unique_ids
         )
 
     @callback
@@ -361,10 +360,7 @@ class ControlUnit(BaseControlUnit):
             hm_hub_entities[hm_hub_platform] = []
 
         for hub_entity in new_hub_entities:
-            if (
-                hub_entity.unique_identifier
-                not in self._central.subscribed_entity_unique_identifiers
-            ):
+            if hub_entity.unique_id not in self._central.subscribed_entity_unique_ids:
                 hm_hub_entities[hub_entity.platform].append(hub_entity)
 
         return hm_hub_entities
