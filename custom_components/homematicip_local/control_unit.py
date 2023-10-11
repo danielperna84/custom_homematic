@@ -99,7 +99,6 @@ from .support import (
     CLICK_EVENT_SCHEMA,
     DEVICE_AVAILABILITY_EVENT_SCHEMA,
     DEVICE_ERROR_EVENT_SCHEMA,
-    HmBaseEntity,
     cleanup_click_event_data,
     get_device_address_at_interface_from_identifiers,
     is_valid_event,
@@ -215,11 +214,6 @@ class ControlUnit(BaseControlUnit):
     def __init__(self, control_config: ControlConfig) -> None:
         """Init the control unit."""
         super().__init__(control_config=control_config)
-        # {entity_id, entity}
-        self._active_hm_entities: dict[
-            str, HmBaseEntity | list[GenericEvent] | HmUpdate | GenericHubEntity
-        ] = {}
-
         self._scheduler = HmScheduler(
             hass=self._hass,
             control_unit=self,
@@ -388,21 +382,6 @@ class ControlUnit(BaseControlUnit):
     def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
         """Return all update entities."""
         return self._central.get_update_entities(exclude_subscribed=True)
-
-    @callback
-    def add_hm_entity(
-        self,
-        entity_id: str,
-        hm_entity: HmBaseEntity | list[GenericEvent] | HmUpdate | GenericHubEntity,
-    ) -> None:
-        """Add entity to active entities."""
-        self._active_hm_entities[entity_id] = hm_entity
-
-    @callback
-    def remove_hm_entity(self, entity_id: str) -> None:
-        """Remove entity from active entities."""
-        if entity_id in self._active_hm_entities:
-            del self._active_hm_entities[entity_id]
 
     @callback
     def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
@@ -632,14 +611,14 @@ class ControlUnit(BaseControlUnit):
         """Return statistics data about entities per platform."""
         device_types: list[str] = []
         platform_stats: dict[str, int] = {}
-        for entity in self._active_hm_entities.values():
-            platform = "event" if isinstance(entity, list) else entity.platform.value
-            if platform not in platform_stats:
+        for platform, entities in self._central.get_entities(registered_only=True).items():
+            if entities and platform not in platform_stats:
                 platform_stats[platform] = 0
-            counter = platform_stats[platform]
-            platform_stats[platform] = counter + 1
-            if isinstance(entity, CustomEntity | GenericEntity | WrapperEntity):
-                device_types.append(entity.device.device_type)
+            for entity in entities:
+                counter = platform_stats[platform]
+                platform_stats[platform] = counter + 1
+                if isinstance(entity, CustomEntity | GenericEntity | WrapperEntity):
+                    device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
 
 
