@@ -1,4 +1,4 @@
-# Version 1.46.1 (2023-10-10)
+# Version 1.47.0 (2023-10-11)
 
 - Bump hahomematic to 2023.10.8
   - Register external sources with custom identifier
