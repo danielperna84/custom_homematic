@@ -156,9 +156,17 @@ def get_and_check_state(
     ha_state = hass.states.get(entity_id)
     assert ha_state is not None
     assert ha_state.name == entity_name
-    hm_entity = control._active_hm_entities.get(entity_id)
+    hm_entity = get_hm_entity(control=control, entity_id=entity_id)
 
     return ha_state, hm_entity
+
+
+def get_hm_entity(control: ControlUnit, entity_id: str):
+    """Get the hm entity by entity id."""
+    for entities in control.central.get_entities().values():
+        for entity in entities:
+            if entity.custom_identifier == entity_id:
+                return entity
 
 
 def get_mock(instance, **kwargs):
