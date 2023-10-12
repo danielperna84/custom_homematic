@@ -13,7 +13,6 @@ from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
     CONF_PASSWORD,
     CONF_USERNAME,
-    ENTITY_EVENTS,
     EVENT_ADDRESS,
     EVENT_AVAILABLE,
     EVENT_DATA,
@@ -22,12 +21,9 @@ from hahomematic.const import (
     EVENT_SECONDS_SINCE_LAST_EVENT,
     EVENT_TYPE,
     EVENT_VALUE,
-    HUB_PLATFORMS,
     IP_ANY_V4,
-    PLATFORMS,
     PORT_ANY,
     DeviceFirmwareState,
-    EntityUsage,
     EventType,
     HmPlatform,
     InterfaceEventType,
@@ -90,7 +86,6 @@ from .const import (
     EVENT_TITLE,
     EVENT_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
-    HMIP_LOCAL_PLATFORMS,
     LEARN_MORE_URL_PING_PONG_MISMATCH,
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
     MASTER_SCAN_INTERVAL,
@@ -285,20 +280,6 @@ class ControlUnit(BaseControlUnit):
             )
 
     @callback
-    def _identify_new_hm_channel_events(
-        self, new_channel_events: list[dict[int, list[GenericEvent]]]
-    ) -> list[list[GenericEvent]]:
-        """Return all hm-update-entities."""
-        hm_channel_events: list[list[GenericEvent]] = []
-        for device_channel_events in new_channel_events:
-            for channel_events in device_channel_events.values():
-                if channel_events[0].is_registered_externally is False:
-                    hm_channel_events.append(channel_events)
-                    continue
-
-        return hm_channel_events
-
-    @callback
     def get_new_hm_channel_events_by_event_type(
         self, event_type: EventType
     ) -> tuple[list[GenericEvent], ...]:
@@ -308,71 +289,24 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def _identify_new_hm_entities(
-        self, new_entities: list[BaseEntity]
-    ) -> dict[HmPlatform, list[BaseEntity]]:
-        """Return all hm-entities."""
-        # init dict
-        hm_entities: dict[HmPlatform, list[BaseEntity]] = {}
-        for hm_platform in PLATFORMS:
-            hm_entities[hm_platform] = []
-
-        for entity in new_entities:
-            if (
-                entity.usage != EntityUsage.NO_CREATE
-                and entity.platform.value in HMIP_LOCAL_PLATFORMS
-                and entity.is_registered_externally is False
-            ):
-                hm_entities[entity.platform].append(entity)
-
-        return hm_entities
-
-    @callback
-    def _identify_new_hm_update_entities(
-        self, new_update_entities: list[HmUpdate]
-    ) -> tuple[HmUpdate, ...]:
-        """Return all hm-update-entities."""
-        return tuple(
-            entity for entity in new_update_entities if entity.is_registered_externally is False
-        )
-
-    @callback
     def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
         """Return all new hm-entities by platform."""
-        return self._central.get_entities_by_platform(
+        return self._central.get_entities(
             platform=platform,
-            exclude_subscribed=True,
+            registered=False,
         )
-
-    @callback
-    def _identify_new_hm_hub_entities(
-        self, new_hub_entities: list[GenericHubEntity]
-    ) -> dict[HmPlatform, list[GenericHubEntity]]:
-        """Return all hm-hub-entities."""
-        # init dict
-        hm_hub_entities: dict[HmPlatform, list[GenericHubEntity]] = {}
-        for hm_hub_platform in HUB_PLATFORMS:
-            hm_hub_entities[hm_hub_platform] = []
-
-        for hub_entity in new_hub_entities:
-            if hub_entity.is_registered_externally is False:
-                hm_hub_entities[hub_entity.platform].append(hub_entity)
-
-        return hm_hub_entities
 
     @callback
     def get_new_hm_hub_entities_by_platform(
         self, platform: HmPlatform
     ) -> tuple[GenericHubEntity, ...]:
         """Return all new hm-hub-entities by platform."""
-        return self._central.get_hub_entities_by_platform(
-            platform=platform, exclude_subscribed=True
-        )
+        return self._central.get_hub_entities(platform=platform, registered=False)
 
     @callback
     def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
         """Return all update entities."""
-        return self._central.get_update_entities(exclude_subscribed=True)
+        return self._central.get_update_entities(registered=False)
 
     @callback
     def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
@@ -383,55 +317,28 @@ class ControlUnit(BaseControlUnit):
             self._instance_name,
         )
 
+        # Handle event of new device creation in Homematic(IP) Local.
         if system_event == SystemEvent.DEVICES_CREATED:
-            new_devices = kwargs["new_devices"]
-            new_channel_events = []
-            new_entities = []
-            new_update_entities = []
-            for device in new_devices:
-                for event_type in ENTITY_EVENTS:
-                    if channel_events := device.get_channel_events(event_type=event_type):
-                        new_channel_events.append(channel_events)
-                new_entities.extend(device.get_all_entities())
-                if device.update_entity:
-                    new_update_entities.append(device.update_entity)
-
-            # Handle event of new device creation in Homematic(IP) Local.
-            for platform, hm_entities in self._identify_new_hm_entities(
-                new_entities=new_entities
-            ).items():
+            for platform, hm_entities in kwargs["new_entities"].items():
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
                         self._hass,
                         signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
                         hm_entities,
                     )
-            if hm_update_entities := self._identify_new_hm_update_entities(
-                new_update_entities=new_update_entities
-            ):
-                async_dispatcher_send(
-                    self._hass,
-                    signal_new_hm_entity(entry_id=self._entry_id, platform=HmPlatform.UPDATE),
-                    hm_update_entities,
-                )
-            if hm_channel_events := self._identify_new_hm_channel_events(
-                new_channel_events=new_channel_events
-            ):
+            for channel_events in kwargs["new_channel_events"]:
                 async_dispatcher_send(
                     self._hass,
                     signal_new_hm_entity(entry_id=self._entry_id, platform=HmPlatform.EVENT),
-                    hm_channel_events,
+                    channel_events,
                 )
             self._add_virtual_remotes_to_device_registry()
         elif system_event == SystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
             if self._config.sysvar_scan_enabled:
-                new_hub_entities = kwargs["new_hub_entities"]
                 # Handle event of new hub entity creation in Homematic(IP) Local.
-                for platform, hm_hub_entities in self._identify_new_hm_hub_entities(
-                    new_hub_entities=new_hub_entities
-                ).items():
+                for platform, hm_hub_entities in kwargs["new_hub_entities"].items():
                     if hm_hub_entities and len(hm_hub_entities) > 0:
                         async_dispatcher_send(
                             self._hass,
