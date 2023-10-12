@@ -98,7 +98,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_cover(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.COVER))
+    async_add_cover(control_unit.get_new_hm_entities(platform=HmPlatform.COVER))
 
     platform = entity_platform.async_get_current_platform()
 

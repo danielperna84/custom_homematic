@@ -60,9 +60,7 @@ async def async_setup_entry(
     )
 
     for event_type in ENTITY_EVENTS:
-        async_add_event(
-            control_unit.get_new_hm_channel_events_by_event_type(event_type=event_type)
-        )
+        async_add_event(control_unit.get_new_hm_channel_events(event_type=event_type))
 
 
 class HaHomematicEvent(EventEntity):

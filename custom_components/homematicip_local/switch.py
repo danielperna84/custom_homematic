@@ -84,11 +84,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_switch(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SWITCH))
+    async_add_switch(control_unit.get_new_hm_entities(platform=HmPlatform.SWITCH))
 
-    async_add_hub_switch(
-        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_SWITCH)
-    )
+    async_add_hub_switch(control_unit.get_new_hm_hub_entities(platform=HmPlatform.HUB_SWITCH))
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(

@@ -280,16 +280,14 @@ class ControlUnit(BaseControlUnit):
             )
 
     @callback
-    def get_new_hm_channel_events_by_event_type(
-        self, event_type: EventType
-    ) -> tuple[list[GenericEvent], ...]:
+    def get_new_hm_channel_events(self, event_type: EventType) -> tuple[list[GenericEvent], ...]:
         """Return all channel event entities."""
         return self._central.get_channel_events_by_event_type(
             event_type=event_type, exclude_subscribed=True
         )
 
     @callback
-    def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
+    def get_new_hm_entities(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
         """Return all new hm-entities by platform."""
         return self._central.get_entities(
             platform=platform,
@@ -297,9 +295,7 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def get_new_hm_hub_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> tuple[GenericHubEntity, ...]:
+    def get_new_hm_hub_entities(self, platform: HmPlatform) -> tuple[GenericHubEntity, ...]:
         """Return all new hm-hub-entities by platform."""
         return self._central.get_hub_entities(platform=platform, registered=False)
 

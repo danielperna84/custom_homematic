@@ -163,9 +163,9 @@ def mock_control_unit() -> ControlUnit:
     control_unit = Mock(
         spec=ControlUnit,
     )
-    control_unit.get_new_hm_entities_by_platform.return_value = []
-    control_unit.get_new_hm_hub_entities_by_platform.return_value = []
-    control_unit.get_new_hm_channel_events_by_event_type.return_value = []
+    control_unit.get_new_hm_entities.return_value = []
+    control_unit.get_new_hm_hub_entities.return_value = []
+    control_unit.get_new_hm_channel_events.return_value = []
     control_unit.get_new_hm_update_entities.return_value = []
 
     with patch(

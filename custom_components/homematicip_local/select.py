@@ -79,11 +79,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_select(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SELECT))
+    async_add_select(control_unit.get_new_hm_entities(platform=HmPlatform.SELECT))
 
-    async_add_hub_select(
-        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_SELECT)
-    )
+    async_add_hub_select(control_unit.get_new_hm_hub_entities(platform=HmPlatform.HUB_SELECT))
 
 
 class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity):
