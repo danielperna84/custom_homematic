@@ -1,6 +1,6 @@
 # Version 1.47.0 (2023-10-11)
 
-- Bump hahomematic to 2023.10.9
+- Bump hahomematic to 2023.10.10
   - Register external sources with custom identifier
   - Remove subscribed_entity_unique_identifiers
   - Rename custom_identifier to custom_id
@@ -10,6 +10,7 @@
   - Send relevant entities instead of devices in callback
 - Merge dicts to collect active entities
 - Use filtering backend methods
+- Use backend methods instead of local wrappers
 
 # Version 1.46.0 (2023-10-10)
 

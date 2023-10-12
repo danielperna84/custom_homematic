@@ -163,10 +163,10 @@ def mock_control_unit() -> ControlUnit:
     control_unit = Mock(
         spec=ControlUnit,
     )
-    control_unit.get_new_hm_entities.return_value = []
-    control_unit.get_new_hm_hub_entities.return_value = []
-    control_unit.get_new_hm_channel_events.return_value = []
-    control_unit.get_new_hm_update_entities.return_value = []
+    control_unit.central.get_entities.return_value = []
+    control_unit.central.get_hub_entities.return_value = []
+    control_unit.central.get_channel_events.return_value = []
+    control_unit.central.get_update_entities.return_value = []
 
     with patch(
         "custom_components.homematicip_local.control_unit.ControlUnit",
