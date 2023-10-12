@@ -81,10 +81,15 @@ async def async_setup_entry(
         )
     )
 
-    async_add_number(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.NUMBER))
+    async_add_number(
+        control_unit.central.get_entities(
+            platform=HmPlatform.NUMBER,
+            registered=False,
+        )
+    )
 
     async_add_hub_number(
-        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_NUMBER)
+        control_unit.central.get_hub_entities(platform=HmPlatform.HUB_NUMBER, registered=False)
     )
 
 

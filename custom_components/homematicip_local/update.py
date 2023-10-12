@@ -54,7 +54,12 @@ async def async_setup_entry(
         )
     )
 
-    async_add_update(control_unit.get_new_hm_update_entities())
+    async_add_update(
+        control_unit.central.get_entities(
+            platform=HmPlatform.UPDATE,
+            registered=False,
+        )
+    )
 
 
 class HaHomematicUpdate(UpdateEntity):

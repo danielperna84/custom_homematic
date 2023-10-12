@@ -77,7 +77,12 @@ async def async_setup_entry(
         )
     )
 
-    async_add_siren(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.SIREN))
+    async_add_siren(
+        control_unit.central.get_entities(
+            platform=HmPlatform.SIREN,
+            registered=False,
+        )
+    )
 
 
 class HaHomematicSiren(HaHomematicGenericRestoreEntity[BaseSiren], SirenEntity):

@@ -81,11 +81,16 @@ async def async_setup_entry(
     )
 
     async_add_binary_sensor(
-        control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.BINARY_SENSOR)
+        control_unit.central.get_entities(
+            platform=HmPlatform.BINARY_SENSOR,
+            registered=False,
+        )
     )
 
     async_add_hub_binary_sensor(
-        control_unit.get_new_hm_hub_entities_by_platform(platform=HmPlatform.HUB_BINARY_SENSOR)
+        control_unit.central.get_hub_entities(
+            platform=HmPlatform.HUB_BINARY_SENSOR, registered=False
+        )
     )
 
 

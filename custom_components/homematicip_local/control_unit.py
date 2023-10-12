@@ -36,11 +36,7 @@ from hahomematic.const import (
 )
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
-from hahomematic.platforms.entity import BaseEntity
-from hahomematic.platforms.event import GenericEvent
 from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
-from hahomematic.platforms.hub.entity import GenericHubEntity
-from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
@@ -278,35 +274,6 @@ class ControlUnit(BaseControlUnit):
                 # Link to the homematic control unit.
                 via_device=cast(tuple[str, str], self._central.name),
             )
-
-    @callback
-    def get_new_hm_channel_events_by_event_type(
-        self, event_type: EventType
-    ) -> tuple[list[GenericEvent], ...]:
-        """Return all channel event entities."""
-        return self._central.get_channel_events_by_event_type(
-            event_type=event_type, exclude_subscribed=True
-        )
-
-    @callback
-    def get_new_hm_entities_by_platform(self, platform: HmPlatform) -> tuple[BaseEntity, ...]:
-        """Return all new hm-entities by platform."""
-        return self._central.get_entities(
-            platform=platform,
-            registered=False,
-        )
-
-    @callback
-    def get_new_hm_hub_entities_by_platform(
-        self, platform: HmPlatform
-    ) -> tuple[GenericHubEntity, ...]:
-        """Return all new hm-hub-entities by platform."""
-        return self._central.get_hub_entities(platform=platform, registered=False)
-
-    @callback
-    def get_new_hm_update_entities(self) -> tuple[HmUpdate, ...]:
-        """Return all update entities."""
-        return self._central.get_update_entities(registered=False)
 
     @callback
     def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:

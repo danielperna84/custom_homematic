@@ -53,7 +53,12 @@ async def async_setup_entry(
         )
     )
 
-    async_add_lock(control_unit.get_new_hm_entities_by_platform(platform=HmPlatform.LOCK))
+    async_add_lock(
+        control_unit.central.get_entities(
+            platform=HmPlatform.LOCK,
+            registered=False,
+        )
+    )
 
 
 class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
