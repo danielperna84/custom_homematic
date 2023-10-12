@@ -7,6 +7,7 @@
   - Rename unique_identifier to unique_id
   - Fix register_update_callback for update
   - Add filter options to device.get_entity\*
+  - Send relevant entities instead of devices in callback
 - Merge dicts to collect active entities
 - Use filtering backend methods
 

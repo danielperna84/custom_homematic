@@ -163,10 +163,12 @@ def get_and_check_state(
 
 def get_hm_entity(control: ControlUnit, entity_id: str):
     """Get the hm entity by entity id."""
-    for entities in control.central.get_entities().values():
-        for entity in entities:
-            if entity.custom_id == entity_id:
-                return entity
+    for entity in control.central.get_entities():
+        if entity.custom_id == entity_id:
+            return entity
+    for entity in control.central.get_hub_entities():
+        if entity.custom_id == entity_id:
+            return entity
 
 
 def get_mock(instance, **kwargs):
