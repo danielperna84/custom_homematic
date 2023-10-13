@@ -17,7 +17,7 @@ from hahomematic.const import (
 )
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import EVENT_DATA_SCHEMA, CallbackEntity
-from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 import voluptuous as vol
 
@@ -42,7 +42,7 @@ from .const import (
 )
 
 # Union for entity types used as base class for entities
-HmBaseEntity: TypeAlias = CustomEntity | GenericEntity | WrapperEntity
+HmBaseEntity: TypeAlias = CustomEntity | GenericEntity
 # Generic base type used for entities in Homematic(IP) Local
 HmGenericEntity = TypeVar("HmGenericEntity", bound=HmBaseEntity)
 # Generic base type used for sysvar entities in Homematic(IP) Local
