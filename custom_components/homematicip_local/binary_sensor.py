@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.binary_sensor import HmBinarySensor
@@ -34,11 +33,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_binary_sensor(args: Any) -> None:
+    def async_add_binary_sensor(hm_entities: tuple[HmBinarySensor, ...]) -> None:
         """Add binary_sensor from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_BINARY_SENSOR: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicBinarySensor] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicBinarySensor(
                     control_unit=control_unit,
@@ -50,12 +50,12 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_binary_sensor(args: Any) -> None:
+    def async_add_hub_binary_sensor(hm_entities: tuple[HmSysvarBinarySensor, ...]) -> None:
         """Add sysvar binary sensor from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_HUB_BINARY_SENSOR: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSysvarBinarySensor] = []
 
-        entities = []
-
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSysvarBinarySensor(
                     control_unit=control_unit, hm_sysvar_entity=hm_entity
@@ -66,29 +66,31 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.BINARY_SENSOR),
-            async_add_binary_sensor,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(
+                entry_id=entry.entry_id, platform=HmPlatform.BINARY_SENSOR
+            ),
+            target=async_add_binary_sensor,
         )
     )
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry.entry_id, HmPlatform.HUB_BINARY_SENSOR),
-            async_add_hub_binary_sensor,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry.entry_id, HmPlatform.HUB_BINARY_SENSOR),
+            target=async_add_hub_binary_sensor,
         )
     )
 
     async_add_binary_sensor(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.BINARY_SENSOR,
             registered=False,
         )
     )
 
     async_add_hub_binary_sensor(
-        control_unit.central.get_hub_entities(
+        hm_entities=control_unit.central.get_hub_entities(
             platform=HmPlatform.HUB_BINARY_SENSOR, registered=False
         )
     )

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.text import HmText
@@ -34,11 +33,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_text(args: Any) -> None:
+    def async_add_text(hm_entities: tuple[HmText, ...]) -> None:
         """Add text from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_TEXT: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicText] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicText(
                     control_unit=control_unit,
@@ -50,12 +50,12 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_text(args: Any) -> None:
+    def async_add_hub_text(hm_entities: tuple[HmSysvarText, ...]) -> None:
         """Add sysvar text from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_HUB_TEXT: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSysvarText] = []
 
-        entities = []
-
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSysvarText(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
@@ -64,29 +64,31 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.TEXT),
-            async_add_text,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.TEXT),
+            target=async_add_text,
         )
     )
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_TEXT),
-            async_add_hub_text,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_TEXT),
+            target=async_add_hub_text,
         )
     )
 
     async_add_text(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.TEXT,
             registered=False,
         )
     )
 
     async_add_hub_text(
-        control_unit.central.get_hub_entities(platform=HmPlatform.HUB_TEXT, registered=False)
+        hm_entities=control_unit.central.get_hub_entities(
+            platform=HmPlatform.HUB_TEXT, registered=False
+        )
     )
 
 

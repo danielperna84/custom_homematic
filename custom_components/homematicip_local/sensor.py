@@ -43,11 +43,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_sensor(args: Any) -> None:
+    def async_add_sensor(hm_entities: tuple[HmSensor, ...]) -> None:
         """Add sensor from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        _LOGGER.debug("ASYNC_ADD_SENSOR: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSensor] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSensor(
                     control_unit=control_unit,
@@ -59,12 +60,12 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_sensor(args: Any) -> None:
+    def async_add_hub_sensor(hm_entities: tuple[HmSysvarSensor, ...]) -> None:
         """Add sysvar sensor from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_HUB_SENSOR: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSysvarSensor] = []
 
-        entities = []
-
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSysvarSensor(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
@@ -73,29 +74,31 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SENSOR),
-            async_add_sensor,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SENSOR),
+            target=async_add_sensor,
         )
     )
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_SENSOR),
-            async_add_hub_sensor,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_SENSOR),
+            target=async_add_hub_sensor,
         )
     )
 
     async_add_sensor(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.SENSOR,
             registered=False,
         )
     )
 
     async_add_hub_sensor(
-        control_unit.central.get_hub_entities(platform=HmPlatform.HUB_SENSOR, registered=False)
+        hm_entities=control_unit.central.get_hub_entities(
+            platform=HmPlatform.HUB_SENSOR, registered=False
+        )
     )
 
 

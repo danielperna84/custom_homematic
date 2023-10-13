@@ -47,11 +47,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_siren(args: Any) -> None:
+    def async_add_siren(hm_entities: tuple[BaseSiren, ...]) -> None:
         """Add siren from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_SIREN: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSiren] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSiren(
                     control_unit=control_unit,
@@ -70,15 +71,15 @@ async def async_setup_entry(
     )
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SIREN),
-            async_add_siren,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.SIREN),
+            target=async_add_siren,
         )
     )
 
     async_add_siren(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.SIREN,
             registered=False,
         )

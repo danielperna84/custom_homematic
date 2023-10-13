@@ -36,11 +36,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_number(args: Any) -> None:
+    def async_add_number(hm_entities: BaseNumber) -> None:
         """Add number from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        _LOGGER.debug("ASYNC_ADD_NUMBER: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicNumber] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicNumber(
                     control_unit=control_unit,
@@ -52,12 +53,12 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_hub_number(args: Any) -> None:
+    def async_add_hub_number(hm_entities: tuple[HmSysvarNumber, ...]) -> None:
         """Add sysvar number from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_HUB_NUMBER: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicSysvarNumber] = []
 
-        entities = []
-
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicSysvarNumber(control_unit=control_unit, hm_sysvar_entity=hm_entity)
             )
@@ -66,30 +67,32 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.NUMBER),
-            async_add_number,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.NUMBER),
+            target=async_add_number,
         )
     )
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_NUMBER),
-            async_add_hub_number,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_NUMBER),
+            target=async_add_hub_number,
         )
     )
 
     async_add_number(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.NUMBER,
             registered=False,
         )
     )
 
     async_add_hub_number(
-        control_unit.central.get_hub_entities(platform=HmPlatform.HUB_NUMBER, registered=False)
+        hm_entities=control_unit.central.get_hub_entities(
+            platform=HmPlatform.HUB_NUMBER, registered=False
+        )
     )
 
 

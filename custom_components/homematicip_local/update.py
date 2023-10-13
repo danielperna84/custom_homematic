@@ -31,11 +31,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_update(args: Any) -> None:
+    def async_add_update(hm_entities: tuple[HmUpdate, ...]) -> None:
         """Add update from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_UPDATE: Adding %i entities", len(hm_entities))
         entities: list[HaHomematicUpdate] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicUpdate(
                     control_unit=control_unit,
@@ -47,15 +48,15 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.UPDATE),
-            async_add_update,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.UPDATE),
+            target=async_add_update,
         )
     )
 
     async_add_update(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.UPDATE,
             registered=False,
         )

@@ -87,11 +87,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_climate(args: Any) -> None:
+    def async_add_climate(hm_entities: tuple[BaseClimateEntity, ...]) -> None:
         """Add climate from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_CLIMATE: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicClimate] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicClimate(
                     control_unit=control_unit,
@@ -103,15 +104,15 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.CLIMATE),
-            async_add_climate,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.CLIMATE),
+            target=async_add_climate,
         )
     )
 
     async_add_climate(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.CLIMATE,
             registered=False,
         )
