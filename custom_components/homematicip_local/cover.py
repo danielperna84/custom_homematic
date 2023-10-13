@@ -42,11 +42,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_cover(args: Any) -> None:
+    def async_add_cover(hm_entities: tuple[HmGenericCover, ...]) -> None:
         """Add cover from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_COVER: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicBaseCover] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             if isinstance(hm_entity, CeIpBlind):
                 if (
                     hm_entity.channel_operation_mode
@@ -91,15 +92,15 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.COVER),
-            async_add_cover,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.COVER),
+            target=async_add_cover,
         )
     )
 
     async_add_cover(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.COVER,
             registered=False,
         )

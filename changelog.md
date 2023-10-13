@@ -11,6 +11,7 @@
 - Merge dicts to collect active entities
 - Use filtering backend methods
 - Use backend methods instead of local wrappers
+- Improve typing within async_setup_entry
 
 # Version 1.46.0 (2023-10-10)
 

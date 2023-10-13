@@ -55,11 +55,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_light(args: Any) -> None:
+    def async_add_light(hm_entities: tuple[CeDimmer, ...]) -> None:
         """Add light from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_LIGHT: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicLight] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicLight(
                     control_unit=control_unit,
@@ -71,15 +72,15 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LIGHT),
-            async_add_light,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LIGHT),
+            target=async_add_light,
         )
     )
 
     async_add_light(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.LIGHT,
             registered=False,
         )

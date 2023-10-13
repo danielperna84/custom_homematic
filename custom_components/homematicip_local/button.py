@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.generic.button import HmButton
@@ -34,11 +33,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_button(args: Any) -> None:
+    def async_add_button(hm_entities: tuple[HmButton, ...]) -> None:
         """Add button from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericEntity] = []
+        _LOGGER.debug("ASYNC_ADD_BUTTON: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicButton] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicButton(
                     control_unit=control_unit,
@@ -50,11 +50,12 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     @callback
-    def async_add_program_button(args: Any) -> None:
+    def async_add_program_button(hm_entities: tuple[HmProgramButton, ...]) -> None:
         """Add program button from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_PROGRAM_BUTTON: Adding %i entities", len(hm_entities))
         entities: list[HaHomematicProgramButton] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicProgramButton(control_unit=control_unit, hm_program_button=hm_entity)
             )
@@ -63,30 +64,32 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.BUTTON),
-            async_add_button,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.BUTTON),
+            target=async_add_button,
         )
     )
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_BUTTON),
-            async_add_program_button,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.HUB_BUTTON),
+            target=async_add_program_button,
         )
     )
 
     async_add_button(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.BUTTON,
             registered=False,
         )
     )
 
     async_add_program_button(
-        control_unit.central.get_hub_entities(platform=HmPlatform.HUB_BUTTON, registered=False)
+        hm_entities=control_unit.central.get_hub_entities(
+            platform=HmPlatform.HUB_BUTTON, registered=False
+        )
     )
 
 

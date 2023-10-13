@@ -36,11 +36,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_event(args: Any) -> None:
+    def async_add_event(hm_entities: tuple[list[GenericEvent], ...]) -> None:
         """Add event from Homematic(IP) Local."""
+        _LOGGER.debug("ASYNC_ADD_EVENT: Adding %i entities", len(hm_entities))
         entities: list[HaHomematicEvent] = []
 
-        for hm_channel_events in args:
+        for hm_channel_events in hm_entities:
             entities.append(
                 HaHomematicEvent(
                     control_unit=control_unit,
@@ -52,16 +53,18 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.EVENT),
-            async_add_event,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.EVENT),
+            target=async_add_event,
         )
     )
 
     for event_type in ENTITY_EVENTS:
         async_add_event(
-            control_unit.central.get_channel_events(event_type=event_type, registered=False)
+            hm_entities=control_unit.central.get_channel_events(
+                event_type=event_type, registered=False
+            )
         )
 
 

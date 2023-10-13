@@ -30,11 +30,12 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_lock(args: Any) -> None:
+    def async_add_lock(hm_entities: tuple[BaseLock, ...]) -> None:
         """Add lock from Homematic(IP) Local."""
-        entities: list[HaHomematicGenericRestoreEntity] = []
+        _LOGGER.debug("ASYNC_ADD_LOCK: Adding %i entities", len(hm_entities))
+        entities: list[HaHomematicLock] = []
 
-        for hm_entity in args:
+        for hm_entity in hm_entities:
             entities.append(
                 HaHomematicLock(
                     control_unit=control_unit,
@@ -46,15 +47,15 @@ async def async_setup_entry(
             async_add_entities(entities)
 
     entry.async_on_unload(
-        async_dispatcher_connect(
-            hass,
-            signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LOCK),
-            async_add_lock,
+        func=async_dispatcher_connect(
+            hass=hass,
+            signal=signal_new_hm_entity(entry_id=entry.entry_id, platform=HmPlatform.LOCK),
+            target=async_add_lock,
         )
     )
 
     async_add_lock(
-        control_unit.central.get_entities(
+        hm_entities=control_unit.central.get_entities(
             platform=HmPlatform.LOCK,
             registered=False,
         )
