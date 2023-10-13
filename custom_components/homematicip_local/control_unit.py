@@ -36,7 +36,7 @@ from hahomematic.const import (
 )
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
-from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.generic.entity import GenericEntity
 
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
@@ -482,7 +482,7 @@ class ControlUnit(BaseControlUnit):
             for entity in entities:
                 counter = platform_stats[platform]
                 platform_stats[platform] = counter + 1
-                if isinstance(entity, CustomEntity | GenericEntity | WrapperEntity):
+                if isinstance(entity, CustomEntity | GenericEntity):
                     device_types.append(entity.device.device_type)
         return platform_stats, sorted(set(device_types))
 

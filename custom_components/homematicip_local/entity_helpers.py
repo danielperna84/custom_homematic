@@ -7,7 +7,7 @@ from typing import Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.entity import CustomEntity
-from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.support import element_matches_key
 
@@ -710,7 +710,7 @@ def get_entity_description(
 ) -> EntityDescription | None:
     """Get the entity_description."""
     if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
-        if isinstance(hm_entity, GenericEntity | WrapperEntity):
+        if isinstance(hm_entity, GenericEntity):
             if (
                 isinstance(entity_desc, HmEntityDescription)
                 and entity_desc.translation_key is None
@@ -741,7 +741,7 @@ def _find_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Find the entity_description for platform."""
-    if isinstance(hm_entity, GenericEntity | WrapperEntity):
+    if isinstance(hm_entity, GenericEntity):
         if entity_desc := _get_entity_description_by_device_type_and_param(hm_entity=hm_entity):
             return entity_desc
 
@@ -764,7 +764,7 @@ def _find_entity_description(
 
 
 def _get_entity_description_by_device_type_and_param(
-    hm_entity: GenericEntity | WrapperEntity,
+    hm_entity: GenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter."""
     if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(  # noqa: E501
@@ -782,7 +782,7 @@ def _get_entity_description_by_device_type_and_param(
 
 
 def _get_entity_description_by_param(
-    hm_entity: GenericEntity | WrapperEntity,
+    hm_entity: GenericEntity,
 ) -> EntityDescription | None:
     """Get entity_description by device_type and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):

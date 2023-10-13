@@ -7,7 +7,7 @@ from typing import Any, Final, Generic, cast
 from hahomematic.const import CallSource
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
-from hahomematic.platforms.generic.entity import GenericEntity, WrapperEntity
+from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
 
 from homeassistant.core import State, callback
@@ -67,7 +67,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 entity_description.entity_registry_enabled_default = hm_entity.enabled_default
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
-            if isinstance(hm_entity, GenericEntity | WrapperEntity):
+            if isinstance(hm_entity, GenericEntity):
                 self._attr_translation_key = hm_entity.parameter.lower()
 
         hm_device = hm_entity.device
@@ -86,7 +86,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
-            isinstance(hm_entity, GenericEntity | WrapperEntity)
+            isinstance(hm_entity, GenericEntity)
             and hasattr(self, "entity_description")
             and hasattr(self.entity_description, "native_unit_of_measurement")
             and self.entity_description.native_unit_of_measurement != hm_entity.unit
@@ -110,7 +110,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             ATTR_ADDRESS: self._hm_entity.channel_address,
             ATTR_MODEL: self._hm_entity.device.device_type,
         }
-        if isinstance(self._hm_entity, GenericEntity | WrapperEntity):
+        if isinstance(self._hm_entity, GenericEntity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value
             attributes[ATTR_PARAMETER] = self._hm_entity.parameter
             attributes[ATTR_FUNCTION] = self._hm_entity.function
@@ -125,8 +125,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         attributes = self._static_state_attributes
 
         if (
-            isinstance(self._hm_entity, GenericEntity | WrapperEntity)
-            and self._hm_entity.is_readable
+            isinstance(self._hm_entity, GenericEntity) and self._hm_entity.is_readable
         ) or isinstance(self._hm_entity, CustomEntity):
             if self._hm_entity.is_valid:
                 attributes[ATTR_VALUE_STATE] = (
@@ -148,7 +147,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """
         entity_name = self._hm_entity.name
 
-        if isinstance(self._hm_entity, GenericEntity | WrapperEntity) and entity_name:
+        if isinstance(self._hm_entity, GenericEntity) and entity_name:
             translated_name = super().name
             if self._do_remove_name():
                 translated_name = ""
@@ -187,7 +186,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             )
             self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
         # Init value of entity.
-        if isinstance(self._hm_entity, GenericEntity | CustomEntity | WrapperEntity):
+        if isinstance(self._hm_entity, GenericEntity | CustomEntity):
             await self._hm_entity.load_entity_value(call_source=CallSource.HA_INIT)
         if (
             isinstance(self._hm_entity, GenericEntity)
