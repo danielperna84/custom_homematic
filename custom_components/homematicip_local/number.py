@@ -36,7 +36,7 @@ async def async_setup_entry(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
 
     @callback
-    def async_add_number(hm_entities: BaseNumber) -> None:
+    def async_add_number(hm_entities: tuple[BaseNumber, ...]) -> None:
         """Add number from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_NUMBER: Adding %i entities", len(hm_entities))
         entities: list[HaHomematicNumber] = []
