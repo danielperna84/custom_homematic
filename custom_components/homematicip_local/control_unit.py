@@ -34,9 +34,7 @@ from hahomematic.const import (
     SystemEvent,
     SystemInformation,
 )
-from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.device import HmDevice
-from hahomematic.platforms.generic.entity import GenericEntity
 
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
@@ -470,21 +468,6 @@ class ControlUnit(BaseControlUnit):
             return None
 
         await self._scheduler.fetch_sysvars()
-
-    @callback
-    def get_entity_stats(self) -> tuple[Mapping[str, int], list[str]]:
-        """Return statistics data about entities per platform."""
-        device_types: list[str] = []
-        platform_stats: dict[str, int] = {}
-        for platform, entities in self._central.get_entities(registered_only=True).items():
-            if entities and platform not in platform_stats:
-                platform_stats[platform] = 0
-            for entity in entities:
-                counter = platform_stats[platform]
-                platform_stats[platform] = counter + 1
-                if isinstance(entity, CustomEntity | GenericEntity):
-                    device_types.append(entity.device.device_type)
-        return platform_stats, sorted(set(device_types))
 
 
 class ControlUnitTemp(BaseControlUnit):
