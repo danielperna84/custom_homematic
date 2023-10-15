@@ -1,6 +1,7 @@
 """climate for Homematic(IP) Local."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import datetime, timedelta
 import logging
 from typing import Any
@@ -61,16 +62,16 @@ SUPPORTED_HA_PRESET_MODES = [
     PRESET_NONE,
 ]
 
-HM_TO_HA_HVAC_MODE: dict[HmHvacMode, HVACMode] = {
+HM_TO_HA_HVAC_MODE: Mapping[HmHvacMode, HVACMode] = {
     HmHvacMode.AUTO: HVACMode.AUTO,
     HmHvacMode.COOL: HVACMode.COOL,
     HmHvacMode.HEAT: HVACMode.HEAT,
     HmHvacMode.OFF: HVACMode.OFF,
 }
 
-HA_TO_HM_HVAC_MODE: dict[HVACMode, HmHvacMode] = {v: k for k, v in HM_TO_HA_HVAC_MODE.items()}
+HA_TO_HM_HVAC_MODE: Mapping[HVACMode, HmHvacMode] = {v: k for k, v in HM_TO_HA_HVAC_MODE.items()}
 
-HM_TO_HA_ACTION: dict[HmHvacAction, HVACAction] = {
+HM_TO_HA_ACTION: Mapping[HmHvacAction, HVACAction] = {
     HmHvacAction.COOL: HVACAction.COOLING,
     HmHvacAction.HEAT: HVACAction.HEATING,
     HmHvacAction.IDLE: HVACAction.IDLE,

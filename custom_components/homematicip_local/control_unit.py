@@ -472,7 +472,7 @@ class ControlUnit(BaseControlUnit):
         await self._scheduler.fetch_sysvars()
 
     @callback
-    def get_entity_stats(self) -> tuple[dict[str, int], list[str]]:
+    def get_entity_stats(self) -> tuple[Mapping[str, int], list[str]]:
         """Return statistics data about entities per platform."""
         device_types: list[str] = []
         platform_stats: dict[str, int] = {}
