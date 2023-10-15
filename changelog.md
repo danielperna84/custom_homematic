@@ -1,16 +1,18 @@
 # Version 1.47.0 (2023-10-11)
 
-- Bump hahomematic to 2023.10.11
+- Bump hahomematic to 2023.10.12
+  - Add filter options to device.get_entity\*
+  - Align method signatures
+  - Fix register_update_callback for update
+  - Ignore switch to sensor if un ignored
   - Register external sources with custom identifier
+  - Remove WrapperEntity
+  - Remove get_update_entities
   - Remove subscribed_entity_unique_identifiers
   - Rename custom_identifier to custom_id
   - Rename unique_identifier to unique_id
-  - Fix register_update_callback for update
-  - Add filter options to device.get_entity\*
   - Send relevant entities instead of devices in callback
-  - Align method signatures
-  - Remove get_update_entities
-  - Remove WrapperEntity
+  - Update un ignore documentation
 - Merge dicts to collect active entities
 - Use filtering backend methods
 - Use backend methods instead of local wrappers
