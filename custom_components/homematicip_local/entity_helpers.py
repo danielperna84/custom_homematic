@@ -1,6 +1,7 @@
 """Support for Homematic(IP) Local sensors."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from copy import copy
 import logging
 from typing import Final
@@ -58,7 +59,7 @@ CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"  # HB-UNI-Sensor-THPD-BME28
 LENGTH_MICROMETER: Final = "\u00b5m"  # HmIP-SFD
 
 
-_NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+_NUMBER_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "FREQUENCY": HmNumberEntityDescription(
         key="FREQUENCY",
         device_class=NumberDeviceClass.FREQUENCY,
@@ -71,7 +72,7 @@ _NUMBER_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
+_NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
     (
@@ -91,7 +92,7 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "AIR_PRESSURE": HmSensorEntityDescription(
         key="AIR_PRESSURE",
         native_unit_of_measurement=UnitOfPressure.HPA,
@@ -354,7 +355,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
+_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
     (
@@ -430,7 +431,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
+_SENSOR_DESCRIPTIONS_BY_UNIT: Mapping[str, EntityDescription] = {
     PERCENTAGE: HmSensorEntityDescription(
         key="PERCENTAGE",
         native_unit_of_measurement=PERCENTAGE,
@@ -455,7 +456,7 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: dict[str, EntityDescription] = {
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+_BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "ALARMSTATE": HmBinarySensorEntityDescription(
         key="ALARMSTATE",
         device_class=BinarySensorDeviceClass.SAFETY,
@@ -550,7 +551,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescript
     ),
 }
 
-_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
+_BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     tuple[str | tuple[str, ...], str], EntityDescription
 ] = {
     ("HmIP-DSD-PCB", "STATE"): HmBinarySensorEntityDescription(
@@ -593,7 +594,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: dict[
     ),
 }
 
-_BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+_BUTTOM_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "RESET_MOTION": HmButtonEntityDescription(
         key="RESET_MOTION",
         entity_category=EntityCategory.CONFIG,
@@ -606,7 +607,7 @@ _BUTTOM_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+_COVER_DESCRIPTIONS_BY_DEVICE: Mapping[str | tuple[str, ...], EntityDescription] = {
     ("HmIP-BBL", "HmIP-FBL", "HmIP-DRBLI4", "HmIPW-DRBL4"): CoverEntityDescription(
         key="BLIND",
         device_class=CoverDeviceClass.BLIND,
@@ -629,21 +630,21 @@ _COVER_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_SIREN_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+_SIREN_DESCRIPTIONS_BY_DEVICE: Mapping[str | tuple[str, ...], EntityDescription] = {
     "HmIP-SWSD": SirenEntityDescription(
         key="SWSD",
         entity_registry_enabled_default=False,
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_DEVICE: dict[str | tuple[str, ...], EntityDescription] = {
+_SWITCH_DESCRIPTIONS_BY_DEVICE: Mapping[str | tuple[str, ...], EntityDescription] = {
     "HmIP-PS": SwitchEntityDescription(
         key="OUTLET",
         device_class=SwitchDeviceClass.OUTLET,
     ),
 }
 
-_SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = {
+_SWITCH_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "INHIBIT": SwitchEntityDescription(
         key="INHIBIT",
         device_class=SwitchDeviceClass.SWITCH,
@@ -657,13 +658,17 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: dict[str | tuple[str, ...], EntityDescription] = 
     ),
 }
 
-_ENTITY_DESCRIPTION_BY_DEVICE: dict[HmPlatform, dict[str | tuple[str, ...], EntityDescription]] = {
+_ENTITY_DESCRIPTION_BY_DEVICE: Mapping[
+    HmPlatform, Mapping[str | tuple[str, ...], EntityDescription]
+] = {
     HmPlatform.COVER: _COVER_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SIREN: _SIREN_DESCRIPTIONS_BY_DEVICE,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_DEVICE,
 }
 
-_ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | tuple[str, ...], EntityDescription]] = {
+_ENTITY_DESCRIPTION_BY_PARAM: Mapping[
+    HmPlatform, Mapping[str | tuple[str, ...], EntityDescription]
+] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.BUTTON: _BUTTOM_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
@@ -671,8 +676,8 @@ _ENTITY_DESCRIPTION_BY_PARAM: dict[HmPlatform, dict[str | tuple[str, ...], Entit
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
 
-_ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
-    HmPlatform, dict[tuple[str | tuple[str, ...], str], EntityDescription]
+_ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: Mapping[
+    HmPlatform, Mapping[tuple[str | tuple[str, ...], str], EntityDescription]
 ] = {
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM,
@@ -680,7 +685,7 @@ _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: dict[
 }
 
 
-_DEFAULT_PLATFORM_DESCRIPTION: dict[HmPlatform, EntityDescription] = {
+_DEFAULT_PLATFORM_DESCRIPTION: Mapping[HmPlatform, EntityDescription] = {
     HmPlatform.BUTTON: HmButtonEntityDescription(
         key="button_default",
         icon="mdi:gesture-tap",
