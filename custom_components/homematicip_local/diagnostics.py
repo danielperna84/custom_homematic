@@ -1,10 +1,12 @@
 """Diagnostics support for Homematic(IP) Local."""
 from __future__ import annotations
 
+from collections.abc import Mapping, Set
 from dataclasses import asdict
 from typing import Any
 
-from hahomematic.const import CONF_PASSWORD, CONF_USERNAME
+from hahomematic.central import CentralUnit
+from hahomematic.const import CONF_PASSWORD, CONF_USERNAME, HmPlatform
 
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
@@ -23,12 +25,33 @@ async def async_get_config_entry_diagnostics(
     control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
     diag: dict[str, Any] = {"config": async_redact_data(entry.as_dict(), REDACT_CONFIG)}
 
-    platform_stats, device_types = control_unit.get_entity_stats()
-
-    diag["platform_stats"] = platform_stats
-    diag["devices"] = device_types
+    diag["platform_stats"] = get_entities_by_platform_stats(
+        central=control_unit.central, registered=True
+    )
+    diag["devices"] = get_devices_per_type_stats(central=control_unit.central)
     diag["system_information"] = async_redact_data(
         asdict(control_unit.central.system_information), "serial"
     )
 
     return diag
+
+
+def get_devices_per_type_stats(central: CentralUnit) -> Set[str]:
+    """Return the central statistics for devices by type."""
+    return set({d.device_type for d in central.devices})
+
+
+def get_entities_by_platform_stats(
+    central: CentralUnit, registered: bool | None = None
+) -> Mapping[HmPlatform, int]:
+    """Return the central statistics for entities by platform."""
+    _entities_by_platform: dict[HmPlatform, int] = {}
+    for entity in (
+        central.get_entities(registered=registered)
+        + central.program_buttons
+        + central.sysvar_entities
+    ):
+        if (platform := entity.platform) not in _entities_by_platform:
+            _entities_by_platform[platform] = 0
+        _entities_by_platform[platform] += 1
+    return dict(sorted(_entities_by_platform.items()))
