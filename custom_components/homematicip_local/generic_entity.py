@@ -1,6 +1,7 @@
 """Generic entity for the HomematicIP Cloud component."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 import logging
 from typing import Any, Final, Generic, cast
 
@@ -103,7 +104,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return if entity is available."""
         return self._hm_entity.available
 
-    def _get_static_state_attributes(self) -> dict[str, Any]:
+    def _get_static_state_attributes(self) -> Mapping[str, Any]:
         """Return the static attributes of the generic entity."""
         attributes: dict[str, Any] = {
             ATTR_INTERFACE_ID: self._hm_entity.device.interface_id,
@@ -122,7 +123,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes of the generic entity."""
-        attributes = self._static_state_attributes
+        attributes: dict[str, Any] = {}
+        attributes.update(self._static_state_attributes)
 
         if (
             isinstance(self._hm_entity, GenericEntity) and self._hm_entity.is_readable
