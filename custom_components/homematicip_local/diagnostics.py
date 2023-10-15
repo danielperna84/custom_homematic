@@ -1,7 +1,7 @@
 """Diagnostics support for Homematic(IP) Local."""
 from __future__ import annotations
 
-from collections.abc import Mapping, Set
+from collections.abc import Mapping
 from dataclasses import asdict
 from typing import Any
 
@@ -36,9 +36,9 @@ async def async_get_config_entry_diagnostics(
     return diag
 
 
-def get_devices_per_type_stats(central: CentralUnit) -> Set[str]:
+def get_devices_per_type_stats(central: CentralUnit) -> tuple[str, ...]:
     """Return the central statistics for devices by type."""
-    return set({d.device_type for d in central.devices})
+    return tuple(sorted({d.device_type for d in central.devices}))
 
 
 def get_entities_by_platform_stats(
