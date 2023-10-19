@@ -120,6 +120,7 @@ class BaseControlUnit:
             manufacturer=Manufacturer.EQ3,
             model=self._central.model,
             name=self._central.name,
+            serial_number=self._central.system_information.serial,
             sw_version=self._central.version,
             # Link to the homematic control unit.
             via_device=cast(tuple[str, str], self._central.name),
