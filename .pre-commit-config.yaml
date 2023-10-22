@@ -1,13 +1,13 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 23.10.0
     hooks:
       - id: black
         args:
           - --quiet
         files: ^((custom_components/homematicip_local|pylint|script|tests)/.+)?[^/]+\.py$
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.292
+    rev: v0.1.1
     hooks:
       - id: ruff
         args:
