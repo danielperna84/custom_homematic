@@ -110,21 +110,7 @@ class BaseControlUnit:
         self._instance_name = self._config_data[CONF_INSTANCE_NAME]
         self._enable_system_notifications = self._config_data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
         self._central: CentralUnit = self._create_central()
-        self._attr_device_info = DeviceInfo(
-            identifiers={
-                (
-                    DOMAIN,
-                    self._central.name,
-                )
-            },
-            manufacturer=Manufacturer.EQ3,
-            model=self._central.model,
-            name=self._central.name,
-            serial_number=self._central.system_information.serial,
-            sw_version=self._central.version,
-            # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], self._central.name),
-        )
+        self._attr_device_info: DeviceInfo | None = None
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -158,6 +144,22 @@ class BaseControlUnit:
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device specific attributes."""
+        if not self._attr_device_info:
+            self._attr_device_info = DeviceInfo(
+                identifiers={
+                    (
+                        DOMAIN,
+                        self._central.name,
+                    )
+                },
+                manufacturer=Manufacturer.EQ3,
+                model=self._central.model,
+                name=self._central.name,
+                serial_number=self._central.system_information.serial,
+                sw_version=self._central.version,
+                # Link to the homematic control unit.
+                via_device=cast(tuple[str, str], self._central.name),
+            )
         return self._attr_device_info
 
     def _create_central(self) -> CentralUnit:
