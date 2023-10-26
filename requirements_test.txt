@@ -1,22 +1,22 @@
 -r requirements_test_pre_commit.txt
 
 async-upnp-client
-coverage==7.3.1
+coverage==7.3.2
 hahomematic==2023.10.12
-homeassistant==2023.10.4
+homeassistant==2023.11.0b0
 mypy==1.6.0
 pip==23.2.1
 pre-commit==3.5.0
-pydevccu==0.1.6
+pydevccu==0.1.7
 pylint-strict-informational==0.1
 pylint==3.0.1
 pytest-asyncio==0.21.0
 pytest-cov==4.1.0
-pytest-homeassistant-custom-component==0.13.67
+pytest-homeassistant-custom-component==0.13.69
 pytest-rerunfailures==12.0
 pytest-socket==0.6.0
 pytest-timeout==2.1.0
-pytest==7.3.1
+pytest==7.4.3
 types-python-slugify==8.0.0.3
 psutil_home_assistant==0.0.1
 fnv_hash_fast==0.4.1
