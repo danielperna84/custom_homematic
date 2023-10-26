@@ -1,3 +1,7 @@
+# Version 1.47.1 (2023-10-26)
+
+- Add device address to device info
+
 # Version 1.47.0 (2023-10-11)
 
 - Bump hahomematic to 2023.10.12

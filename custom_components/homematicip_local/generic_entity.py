@@ -77,6 +77,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             manufacturer=hm_device.manufacturer,
             model=hm_device.device_type,
             name=hm_device.name,
+            serial_number=hm_device.device_address,
             sw_version=hm_device.firmware,
             suggested_area=hm_device.room,
             # Link to the homematic control unit.

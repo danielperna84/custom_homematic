@@ -9,7 +9,7 @@ from hahomematic.const import PLATFORMS
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"
-HMIP_LOCAL_MIN_VERSION: Final = "2023.10.0b0"
+HMIP_LOCAL_MIN_VERSION: Final = "2023.11.0b0"
 
 DEFAULT_SYSVAR_SCAN_ENABLED: bool = True
 DEFAULT_SYSVAR_SCAN_INTERVAL: Final = 30
