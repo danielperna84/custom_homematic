@@ -79,12 +79,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_light(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.LIGHT,
-            registered=False,
-        )
-    )
+    async_add_light(hm_entities=control_unit.get_new_entities(entity_type=CeDimmer))
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(

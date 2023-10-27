@@ -82,18 +82,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_number(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.NUMBER,
-            registered=False,
-        )
-    )
+    async_add_number(hm_entities=control_unit.get_new_entities(entity_type=BaseNumber))
 
-    async_add_hub_number(
-        hm_entities=control_unit.central.get_hub_entities(
-            platform=HmPlatform.HUB_NUMBER, registered=False
-        )
-    )
+    async_add_hub_number(hm_entities=control_unit.get_new_hub_entities(entity_type=HmSysvarNumber))
 
 
 class HaHomematicNumber(HaHomematicGenericEntity[BaseNumber], RestoreNumber):

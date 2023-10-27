@@ -86,17 +86,12 @@ async def async_setup_entry(
     )
 
     async_add_switch(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.SWITCH,
-            registered=False,
+        hm_entities=control_unit.get_new_entities(
+            entity_type=CeSwitch | HmSwitch,
         )
     )
 
-    async_add_hub_switch(
-        hm_entities=control_unit.central.get_hub_entities(
-            platform=HmPlatform.HUB_SWITCH, registered=False
-        )
-    )
+    async_add_hub_switch(hm_entities=control_unit.get_new_hub_entities(entity_type=HmSysvarSwitch))
 
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(

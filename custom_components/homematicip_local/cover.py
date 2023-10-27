@@ -99,12 +99,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_cover(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.COVER,
-            registered=False,
-        )
-    )
+    async_add_cover(hm_entities=control_unit.get_new_entities(entity_type=CeCover | CeGarage))
 
     platform = entity_platform.async_get_current_platform()
 
