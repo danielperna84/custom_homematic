@@ -78,18 +78,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_text(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.TEXT,
-            registered=False,
-        )
-    )
+    async_add_text(hm_entities=control_unit.get_new_entities(entity_type=HmText))
 
-    async_add_hub_text(
-        hm_entities=control_unit.central.get_hub_entities(
-            platform=HmPlatform.HUB_TEXT, registered=False
-        )
-    )
+    async_add_hub_text(hm_entities=control_unit.get_new_hub_entities(entity_type=HmSysvarText))
 
 
 class HaHomematicText(HaHomematicGenericRestoreEntity[HmText], TextEntity):

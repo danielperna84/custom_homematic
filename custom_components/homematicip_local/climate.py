@@ -112,12 +112,7 @@ async def async_setup_entry(
         )
     )
 
-    async_add_climate(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.CLIMATE,
-            registered=False,
-        )
-    )
+    async_add_climate(hm_entities=control_unit.get_new_entities(entity_type=BaseClimateEntity))
 
     platform = entity_platform.async_get_current_platform()
 
@@ -197,7 +192,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     @property
     def hvac_action(self) -> HVACAction | None:
         """Return the hvac action."""
-        if self._hm_entity.hvac_action in HM_TO_HA_ACTION:
+        if self._hm_entity.hvac_action and self._hm_entity.hvac_action in HM_TO_HA_ACTION:
             return HM_TO_HA_ACTION[self._hm_entity.hvac_action]
         return None
 

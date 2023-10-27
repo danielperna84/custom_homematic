@@ -6,7 +6,8 @@ from collections.abc import Callable, Mapping
 from copy import deepcopy
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Final, cast
+from types import UnionType
+from typing import Any, Final, TypeVar, cast
 
 from hahomematic.central import INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
@@ -35,6 +36,7 @@ from hahomematic.const import (
     SystemInformation,
 )
 from hahomematic.platforms.device import HmDevice
+from hahomematic.platforms.entity import CallbackEntity
 
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
@@ -94,6 +96,7 @@ from .support import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+_EntityT = TypeVar("_EntityT", bound=CallbackEntity)
 
 
 class BaseControlUnit:
@@ -471,6 +474,38 @@ class ControlUnit(BaseControlUnit):
             return None
 
         await self._scheduler.fetch_sysvars()
+
+    def get_new_entities(
+        self,
+        entity_type: type[_EntityT] | UnionType,
+    ) -> tuple[_EntityT, ...]:
+        """Return all entities by type."""
+        platform = (
+            entity_type.__args__[0]._platform  # pylint: disable=protected-access
+            if isinstance(entity_type, UnionType)
+            else entity_type._platform  # pylint: disable=protected-access
+        )
+        return cast(
+            tuple[_EntityT, ...],
+            self.central.get_entities(
+                platform=platform,
+                exclude_no_create=True,
+                registered=False,
+            ),
+        )
+
+    def get_new_hub_entities(
+        self,
+        entity_type: type[_EntityT],
+    ) -> tuple[_EntityT, ...]:
+        """Return all entities by type."""
+        return cast(
+            tuple[_EntityT, ...],
+            self.central.get_hub_entities(
+                platform=entity_type._platform,  # pylint: disable=protected-access
+                registered=False,
+            ),
+        )
 
 
 class ControlUnitTemp(BaseControlUnit):

@@ -88,18 +88,9 @@ async def async_setup_entry(
         )
     )
 
-    async_add_sensor(
-        hm_entities=control_unit.central.get_entities(
-            platform=HmPlatform.SENSOR,
-            registered=False,
-        )
-    )
+    async_add_sensor(hm_entities=control_unit.get_new_entities(entity_type=HmSensor))
 
-    async_add_hub_sensor(
-        hm_entities=control_unit.central.get_hub_entities(
-            platform=HmPlatform.HUB_SENSOR, registered=False
-        )
-    )
+    async_add_hub_sensor(hm_entities=control_unit.get_new_hub_entities(entity_type=HmSysvarSensor))
 
 
 class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
