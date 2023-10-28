@@ -1,5 +1,8 @@
-# Version 1.47.1 (2023-10-26)
+# Version 1.48.0 (2023-10-28)
 
+- Bump hahomematic to 2023.10.13
+  - Fix service enable_away_mode_by_calendar
+  - Add class method default_platform
 - Add device address to device info
 
 # Version 1.47.0 (2023-10-11)
