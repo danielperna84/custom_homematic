@@ -481,9 +481,9 @@ class ControlUnit(BaseControlUnit):
     ) -> tuple[_EntityT, ...]:
         """Return all entities by type."""
         platform = (
-            entity_type.__args__[0]._platform  # pylint: disable=protected-access
+            entity_type.__args__[0].default_platform()
             if isinstance(entity_type, UnionType)
-            else entity_type._platform  # pylint: disable=protected-access
+            else entity_type.default_platform()
         )
         return cast(
             tuple[_EntityT, ...],
@@ -502,7 +502,7 @@ class ControlUnit(BaseControlUnit):
         return cast(
             tuple[_EntityT, ...],
             self.central.get_hub_entities(
-                platform=entity_type._platform,  # pylint: disable=protected-access
+                platform=entity_type.default_platform(),
                 registered=False,
             ),
         )
