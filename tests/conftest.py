@@ -7,9 +7,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.plugins import (
-    enable_custom_integrations,  # noqa: F401
-)
+from pytest_homeassistant_custom_component.plugins import enable_custom_integrations  # noqa: F401
 
 from custom_components.homematicip_local.const import DOMAIN
 from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
@@ -178,7 +176,9 @@ def mock_control_unit() -> ControlUnit:
 
 @pytest.fixture
 async def mock_loaded_config_entry(
-    hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry, mock_control_unit: ControlUnit
+    hass: HomeAssistant,
+    mock_config_entry_v2: MockConfigEntry,
+    mock_control_unit: ControlUnit,
 ) -> ControlUnit:
     """Create mock running control unit."""
     with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(

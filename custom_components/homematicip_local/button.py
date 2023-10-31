@@ -15,11 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import (
-    ATTR_NAME,
-    HaHomematicGenericEntity,
-    HaHomematicGenericHubEntity,
-)
+from .generic_entity import ATTR_NAME, HaHomematicGenericEntity, HaHomematicGenericHubEntity
 
 _LOGGER = logging.getLogger(__name__)
 

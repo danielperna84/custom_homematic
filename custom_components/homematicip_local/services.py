@@ -12,20 +12,12 @@ from hahomematic.support import to_bool
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_MODE
-from homeassistant.core import (
-    HomeAssistant,
-    ServiceCall,
-    ServiceResponse,
-    SupportsResponse,
-)
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
-from homeassistant.helpers.service import (
-    async_register_admin_service,
-    verify_domain_control,
-)
+from homeassistant.helpers.service import async_register_admin_service, verify_domain_control
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import (

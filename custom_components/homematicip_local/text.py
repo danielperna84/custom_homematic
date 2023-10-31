@@ -16,10 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import (
-    HaHomematicGenericRestoreEntity,
-    HaHomematicGenericSysvarEntity,
-)
+from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
 
 _LOGGER = logging.getLogger(__name__)
 

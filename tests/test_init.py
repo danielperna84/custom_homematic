@@ -7,10 +7,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 import custom_components.homematicip_local
 from custom_components.homematicip_local import async_unload_entry
-from custom_components.homematicip_local.const import (
-    CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-    DOMAIN,
-)
+from custom_components.homematicip_local.const import CONF_ENABLE_SYSTEM_NOTIFICATIONS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
@@ -19,7 +16,9 @@ from tests import const
 
 
 async def test_setup_entry(
-    hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry, mock_control_unit: ControlUnit
+    hass: HomeAssistant,
+    mock_config_entry_v2: MockConfigEntry,
+    mock_control_unit: ControlUnit,
 ) -> None:
     """Test setup entry."""
     # no config_entry exists
@@ -40,7 +39,9 @@ async def test_setup_entry(
 
 
 async def test_check_min_version(
-    hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry, mock_control_unit: ControlUnit
+    hass: HomeAssistant,
+    mock_config_entry_v2: MockConfigEntry,
+    mock_control_unit: ControlUnit,
 ) -> None:
     """Test check_min_version."""
     # no config_entry exists
@@ -53,7 +54,9 @@ async def test_check_min_version(
 
 
 async def test_migrate_entry(
-    hass: HomeAssistant, mock_config_entry_v1: MockConfigEntry, mock_control_unit: ControlUnit
+    hass: HomeAssistant,
+    mock_config_entry_v1: MockConfigEntry,
+    mock_control_unit: ControlUnit,
 ) -> None:
     """Test setup entry."""
     # no config_entry exists

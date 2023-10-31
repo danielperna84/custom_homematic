@@ -1,17 +1,12 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 23.10.1
-    hooks:
-      - id: black
-        args:
-          - --quiet
-        files: ^((custom_components/homematicip_local|pylint|script|tests)/.+)?[^/]+\.py$
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.1.1
+    rev: v0.1.3
     hooks:
       - id: ruff
         args:
           - --fix
+      - id: ruff-format
+        files: ^((custom_components/homematicip_local|pylint|script|tests)/.+)?[^/]+\.py$
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.5
     hooks:

@@ -41,11 +41,7 @@ from hahomematic.platforms.entity import CallbackEntity
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import aiohttp_client, device_registry as dr
-from homeassistant.helpers.device_registry import (
-    DeviceEntry,
-    DeviceEntryType,
-    DeviceInfo,
-)
+from homeassistant.helpers.device_registry import DeviceEntry, DeviceEntryType, DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.issue_registry import (

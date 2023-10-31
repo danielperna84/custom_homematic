@@ -187,6 +187,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             self._hm_entity.register_update_callback(
                 update_callback=self._async_device_changed, custom_id=self.entity_id
             )
+            self._hm_entity.register_refresh_callback(
+                refresh_callback=self._async_device_refreshed, custom_id=self.entity_id
+            )
             self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
@@ -214,6 +217,13 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 self._hm_entity.full_name,
             )
 
+    @callback
+    def _async_device_refreshed(self, *args: Any, **kwargs: Any) -> None:
+        """Handle device state changes."""
+        # Don't update disabled entities
+        if self.enabled:
+            _LOGGER.info("Device refreshed event fired for %s", self._hm_entity.full_name)
+
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
@@ -224,6 +234,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         # Remove callback from device.
         self._hm_entity.unregister_update_callback(
             update_callback=self._async_device_changed, custom_id=self.entity_id
+        )
+        self._hm_entity.unregister_refresh_callback(
+            refresh_callback=self._async_device_refreshed, custom_id=self.entity_id
         )
         self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
 
