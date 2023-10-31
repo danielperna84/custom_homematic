@@ -23,17 +23,24 @@ from tests import const
 _LOGGER = logging.getLogger(__name__)
 
 EXCLUDE_METHODS_FROM_MOCKS: Final = [
+    "default_platform",
     "event",
+    "fire_refresh_entity_callback",
+    "fire_remove_entity_callback",
+    "fire_update_entity_callback",
     "get_event_data",
     "get_on_time_and_cleanup",
     "is_state_change",
+    "load_entity_value",
+    "register_internal_update_callback",
+    "register_refresh_callback",
     "register_remove_callback",
     "register_update_callback",
-    "remove_entity",
     "set_usage",
+    "unregister_internal_update_callback",
+    "unregister_refresh_callback",
     "unregister_remove_callback",
     "unregister_update_callback",
-    "update_entity",
     "update_value",
 ]
 T = TypeVar("T")
