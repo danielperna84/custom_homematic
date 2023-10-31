@@ -1,8 +1,3 @@
-[tool.black]
-target-version = ["py311"]
-exclude = 'generated'
-line-length = 99
-
 [tool.pylint.MAIN]
 py-version = "3.11"
 ignore = [
@@ -344,6 +339,9 @@ norecursedirs = [
 asyncio_mode = "auto"
 
 [tool.ruff]
+target-version = "py311"
+line-length = 99
+
 select = [
     "B002", # Python does not support the unary prefix increment
     "B007", # Loop control variable {name} not used within loop body
@@ -360,7 +358,7 @@ select = [
     "G", # flake8-logging-format
     "I",  # isort
     "ICN001", # import concentions; {name} should be imported as {asname}
-    "ISC001", # Implicitly concatenated string literals on one line
+    # "ISC001", # Implicitly concatenated string literals on one line
     "N804", # First argument of a class method should be named cls
     "N805", # First argument of a method should be named self
     "N815", # Variable {name} in class scope should not be mixedCase

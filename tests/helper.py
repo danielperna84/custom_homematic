@@ -113,7 +113,8 @@ class Factory:
             return_value=const.PROGRAM_DATA if add_programs else [],
         ).start()
         patch(
-            "hahomematic.central.CentralUnit._identify_callback_ip", return_value="127.0.0.1"
+            "hahomematic.central.CentralUnit._identify_callback_ip",
+            return_value="127.0.0.1",
         ).start()
 
         await central.start()
