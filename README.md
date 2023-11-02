@@ -556,6 +556,17 @@ Depending on whether an update command can be transmitted immediately or with a 
 
 If shorter update cycles are desired, these can be triggered by the service `homeassistant.update_device_firmware_data`, but this might have a negative impact on you CCU!
 
+## Frequently asked questions
+
+- Q: I can see an entity, but it is unavailable
+  A: Possible reason: the entity is deactivated. Go in to the entity configuration and activate the entity.
+- Q: I use a button of remote control as trigger in an automation, but the automation is not triggered after button press.
+  A: See [Events for Homematic(IP) devices](#events-for-homematicip-devices)
+- Q: My device is not listed under [Events for Homematic(IP) devices](#events-for-homematicip-devices)
+  A: I doesn't matter. These are just examples. If you can press it, it is a button and events ar emitted.
+- Q: I have a problem with the integration. What can i do?
+  A: Before creating an issue you should check the log files for `error` or `warning` entries related to this integration (`homematicip_local`, `hahomematic`), and read the related messages. For some messages further information can be found in this document.
+
 ## Examples in YAML
 
 Set boolean variable to true:
