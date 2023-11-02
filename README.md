@@ -558,14 +558,17 @@ If shorter update cycles are desired, these can be triggered by the service `hom
 
 ## Frequently asked questions
 
-- Q: I can see an entity, but it is unavailable
-  A: Possible reason: the entity is deactivated. Go in to the entity configuration and activate the entity.
-- Q: I use a button of remote control as trigger in an automation, but the automation is not triggered after button press.
-  A: See [Events for Homematic(IP) devices](#events-for-homematicip-devices)
-- Q: My device is not listed under [Events for Homematic(IP) devices](#events-for-homematicip-devices)
-  A: I doesn't matter. These are just examples. If you can press it, it is a button and events ar emitted.
-- Q: I have a problem with the integration. What can i do?
-  A: Before creating an issue you should check the log files for `error` or `warning` entries related to this integration (`homematicip_local`, `hahomematic`), and read the related messages. For some messages further information can be found in this document.
+Q: I can see an entity, but it is unavailable.<br>
+A: Possible reason: the entity is deactivated. Go into the entity configuration and activate the entity.
+
+Q: I'm using a button on a remote control as a trigger in an automation, but the automation doesn't fire after the button is pressed.<br>
+A: See [Events for Homematic(IP) devices](#events-for-homematicip-devices)
+
+Q: My device is not listed under [Events for Homematic(IP) devices](#events-for-homematicip-devices)<br>
+A: I doesn't matter. These are just examples. If you can press it, it is a button and events are emitted.
+
+Q: I have a problem with the integration. What can i do?<br>
+A: Before creating an issue, you should review the HA log files for `error` or `warning` entries related to this integration (`homematicip_local`, `hahomematic`) and read the corresponding messages. You can find further information about some messages in this document.
 
 ## Examples in YAML
 
