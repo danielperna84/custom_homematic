@@ -1,3 +1,8 @@
+# Version 1.48.1 (2023-11-03)
+
+- Bump hahomematic to 2023.11.0
+  - Use last_refreshed for validation check
+
 # Version 1.48.0 (2023-11-01)
 
 - Bump hahomematic to 2023.10.14
