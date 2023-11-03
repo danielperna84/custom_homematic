@@ -1,13 +1,12 @@
 # Version 1.48.0 (2023-11-01)
 
-- Bump hahomematic to 2023.11.0
+- Bump hahomematic to 2023.10.14
   - Add class method default_platform
   - Cleanup cover
   - Fix service enable_away_mode_by_calendar
   - Rename fire events
   - Replace last_updated by last_refreshed
   - Switch formatting from black to ruff-format
-  - Use last_refreshed for validation check
 - Add device address to device info
 
 # Version 1.47.0 (2023-10-11)
