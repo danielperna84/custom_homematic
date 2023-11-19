@@ -19,8 +19,10 @@ from hahomematic.const import (
     EVENT_DATA,
     EVENT_INTERFACE_ID,
     EVENT_PARAMETER,
+    EVENT_PENDING_PONGS,
     EVENT_SECONDS_SINCE_LAST_EVENT,
     EVENT_TYPE,
+    EVENT_UNKNOWN_PONGS,
     EVENT_VALUE,
     IP_ANY_V4,
     PORT_ANY,
@@ -78,7 +80,7 @@ from .const import (
     EVENT_TITLE,
     EVENT_UNAVAILABLE,
     FILTER_ERROR_EVENT_PARAMETERS,
-    LEARN_MORE_URL_PING_PONG_MISMATCH,
+    LEARN_MORE_URL_PONG_MISMATCH,
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
     MASTER_SCAN_INTERVAL,
 )
@@ -345,22 +347,52 @@ class ControlUnit(BaseControlUnit):
                             EVENT_SECONDS_SINCE_LAST_EVENT: data[EVENT_SECONDS_SINCE_LAST_EVENT],
                         },
                     )
-            elif interface_event_type == InterfaceEventType.PINGPONG:
+            elif interface_event_type == InterfaceEventType.PENDING_PONG:
                 if not self._enable_system_notifications:
-                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for PINGPONG")
+                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for PENDING_PONG")
                     return
-                async_create_issue(
-                    hass=self._hass,
-                    domain=DOMAIN,
-                    issue_id=issue_id,
-                    is_fixable=False,
-                    learn_more_url=LEARN_MORE_URL_PING_PONG_MISMATCH,
-                    severity=IssueSeverity.WARNING,
-                    translation_key="ping_pong_mismatch",
-                    translation_placeholders={
-                        CONF_INSTANCE_NAME: self._instance_name,
-                    },
-                )
+                if data[EVENT_PENDING_PONGS] == 0:
+                    async_delete_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                    )
+                else:
+                    async_create_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                        is_fixable=False,
+                        learn_more_url=LEARN_MORE_URL_PONG_MISMATCH,
+                        severity=IssueSeverity.WARNING,
+                        translation_key="pending_pong_mismatch",
+                        translation_placeholders={
+                            CONF_INSTANCE_NAME: self._instance_name,
+                        },
+                    )
+            elif interface_event_type == InterfaceEventType.UNKNOWN_PONG:
+                if not self._enable_system_notifications:
+                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for UNKNOWN_PONG")
+                    return
+                if data[EVENT_UNKNOWN_PONGS] == 0:
+                    async_delete_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                    )
+                else:
+                    async_create_issue(
+                        hass=self._hass,
+                        domain=DOMAIN,
+                        issue_id=issue_id,
+                        is_fixable=False,
+                        learn_more_url=LEARN_MORE_URL_PONG_MISMATCH,
+                        severity=IssueSeverity.WARNING,
+                        translation_key="unknown_pong_mismatch",
+                        translation_placeholders={
+                            CONF_INSTANCE_NAME: self._instance_name,
+                        },
+                    )
             elif interface_event_type == InterfaceEventType.PROXY:
                 if data[EVENT_AVAILABLE]:
                     async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)

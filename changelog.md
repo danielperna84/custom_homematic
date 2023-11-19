@@ -1,7 +1,8 @@
-# Version 1.48.1 (2023-11-03)
+# Version 1.49.0 (2023-11-19)
 
-- Bump hahomematic to 2023.11.0
+- Bump hahomematic to 2023.11.1
   - Use last_refreshed for validation check
+  - Improve ping/pong mechanism
 
 # Version 1.48.0 (2023-11-01)
 
