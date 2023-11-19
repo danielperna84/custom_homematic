@@ -20,7 +20,7 @@ DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL: Final = 300  # 5m
 MASTER_SCAN_INTERVAL: Final = 3600  # 1h
 
 LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-xmlrpc-server-received-no-events"
-LEARN_MORE_URL_PING_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
+LEARN_MORE_URL_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 
 
 CONF_CALLBACK_HOST: Final = "callback_host"
