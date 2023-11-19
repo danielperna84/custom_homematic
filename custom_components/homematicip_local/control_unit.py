@@ -345,9 +345,9 @@ class ControlUnit(BaseControlUnit):
                             EVENT_SECONDS_SINCE_LAST_EVENT: data[EVENT_SECONDS_SINCE_LAST_EVENT],
                         },
                     )
-            elif interface_event_type == InterfaceEventType.PINGPONG:
+            elif interface_event_type == InterfaceEventType.OUTSTANDING_PONG:
                 if not self._enable_system_notifications:
-                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for PINGPONG")
+                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for OUTSTANDING_PONG")
                     return
                 async_create_issue(
                     hass=self._hass,
