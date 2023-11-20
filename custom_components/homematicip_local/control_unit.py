@@ -19,10 +19,9 @@ from hahomematic.const import (
     EVENT_DATA,
     EVENT_INTERFACE_ID,
     EVENT_PARAMETER,
-    EVENT_PENDING_PONGS,
+    EVENT_PONG_MISMATCH_COUNT,
     EVENT_SECONDS_SINCE_LAST_EVENT,
     EVENT_TYPE,
-    EVENT_UNKNOWN_PONGS,
     EVENT_VALUE,
     IP_ANY_V4,
     PORT_ANY,
@@ -351,7 +350,7 @@ class ControlUnit(BaseControlUnit):
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for PENDING_PONG")
                     return
-                if data[EVENT_PENDING_PONGS] == 0:
+                if data[EVENT_PONG_MISMATCH_COUNT] == 0:
                     async_delete_issue(
                         hass=self._hass,
                         domain=DOMAIN,
@@ -374,7 +373,7 @@ class ControlUnit(BaseControlUnit):
                 if not self._enable_system_notifications:
                     _LOGGER.debug("SYSTEM NOTIFICATION disabled for UNKNOWN_PONG")
                     return
-                if data[EVENT_UNKNOWN_PONGS] == 0:
+                if data[EVENT_PONG_MISMATCH_COUNT] == 0:
                     async_delete_issue(
                         hass=self._hass,
                         domain=DOMAIN,
