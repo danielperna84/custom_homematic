@@ -1,8 +1,8 @@
-# Version 1.49.0 (2023-11-19)
+# Version 1.49.0 (2023-11-21)
 
-- Bump hahomematic to 2023.11.1
+- Bump hahomematic to 2023.11.2
   - Use last_refreshed for validation check
-  - Improve ping/pong mechanism
+  - Improve ping/pong mechanism. Fire event, if mismatch is 15 within 5 Minutes
 
 # Version 1.48.0 (2023-11-01)
 

@@ -366,30 +366,7 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="pending_pong_mismatch",
                         translation_placeholders={
-                            CONF_INSTANCE_NAME: self._instance_name,
-                        },
-                    )
-            elif interface_event_type == InterfaceEventType.UNKNOWN_PONG:
-                if not self._enable_system_notifications:
-                    _LOGGER.debug("SYSTEM NOTIFICATION disabled for UNKNOWN_PONG")
-                    return
-                if data[EVENT_PONG_MISMATCH_COUNT] == 0:
-                    async_delete_issue(
-                        hass=self._hass,
-                        domain=DOMAIN,
-                        issue_id=issue_id,
-                    )
-                else:
-                    async_create_issue(
-                        hass=self._hass,
-                        domain=DOMAIN,
-                        issue_id=issue_id,
-                        is_fixable=False,
-                        learn_more_url=LEARN_MORE_URL_PONG_MISMATCH,
-                        severity=IssueSeverity.WARNING,
-                        translation_key="unknown_pong_mismatch",
-                        translation_placeholders={
-                            CONF_INSTANCE_NAME: self._instance_name,
+                            EVENT_INTERFACE_ID: interface_id,
                         },
                     )
             elif interface_event_type == InterfaceEventType.PROXY:
