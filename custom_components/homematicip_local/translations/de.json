@@ -514,7 +514,7 @@
     },
     "pending_pong_mismatch": {
       "title": "Austehende Pong Ereignisse auf Interface {interface_id}.",
-      "description": "Es besteht eine Differenz zwischen gesendeten Ping-Ereignissen und empfangenen Pong-Ereignissen für die HA-Instanz {instance_name}.\n\nMöglicher GrÜndE:\n - Sie führen mehrere Instanzen von HA mit demselben Instanznamen aus, der für diese Integration konfiguriert ist. Fügen Sie eine Instanz erneut hinzu! Andernfalls empfängt diese HA-Instanz keine Aktualisierungsereignisse von Ihrer CCU.\n - Etwas hängt in der CCU oder wurde nicht bereinigt, also versuchen Sie einen CCU Neustart."
+      "description": "Es besteht eine Differenz zwischen gesendeten Ping-Ereignissen und empfangenen Pong-Ereignissen für die HA-Instanz {instance_name}.\n\nMöglicher GründE:\n - Sie führen mehrere Instanzen von HA mit demselben Instanznamen aus, der für diese Integration konfiguriert ist. Fügen Sie eine Instanz erneut hinzu! Andernfalls empfängt diese HA-Instanz keine Aktualisierungsereignisse von Ihrer CCU.\n - Etwas hängt in der CCU oder wurde nicht bereinigt, also versuchen Sie einen CCU Neustart."
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} nicht erreichbar.",
