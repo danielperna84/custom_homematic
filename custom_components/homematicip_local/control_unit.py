@@ -366,6 +366,7 @@ class ControlUnit(BaseControlUnit):
                         severity=IssueSeverity.WARNING,
                         translation_key="pending_pong_mismatch",
                         translation_placeholders={
+                            CONF_INSTANCE_NAME: self._instance_name,
                             EVENT_INTERFACE_ID: interface_id,
                         },
                     )
