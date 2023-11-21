@@ -510,12 +510,8 @@
       "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect."
     },
     "pending_pong_mismatch": {
-      "title": "Pending Pong events on Interface",
-      "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise one HA instance will not receive update events from your CCU.\n - Something is stuck on CCU, so try a restart."
-    },
-    "unknown_pong_mismatch": {
-      "title": "Unknown Pong events received on Interface",
-      "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise one HA instance will not receive update events from your CCU."
+      "title": "Pending Pong mismatch on interface {interface_id}",
+      "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise this HA instance will not receive update events from your CCU.\n - Something is stuck on the CCU or hasn't been cleaned up. Therefore, try a restart."
     },
     "interface_not_reachable": {
       "title": "Interface {interface_id} not reachable",
