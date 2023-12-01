@@ -1,3 +1,8 @@
+# Version 1.50.0 (2023-12-01)
+
+- Bump hahomematic to 2023.12.0
+  - Add support for away_mode and classic homematic thermostats
+
 # Version 1.49.0 (2023-11-21)
 
 - Bump hahomematic to 2023.11.4
