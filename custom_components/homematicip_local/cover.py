@@ -156,11 +156,11 @@ class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], Cove
         """Move the cover to a specific position."""
         # Hm cover is closed:1 -> open:0
         if ATTR_POSITION in kwargs:
-            position = float(kwargs[ATTR_POSITION])
+            position = int(kwargs[ATTR_POSITION])
             await self._hm_entity.set_position(position=position)
 
     async def async_set_cover_combined_position(
-        self, position: float, tilt_position: float | None = None
+        self, position: int, tilt_position: int | None = None
     ) -> None:
         """Move the cover to a specific position incl. tilt."""
         await self._hm_entity.set_position(position=position, tilt_position=tilt_position)
@@ -197,7 +197,7 @@ class HaHomematicBlind(HaHomematicBaseCover[CeBlind | CeIpBlind]):
     async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
         """Move the cover to a specific tilt position."""
         if ATTR_TILT_POSITION in kwargs:
-            tilt_position = float(kwargs[ATTR_TILT_POSITION])
+            tilt_position = int(kwargs[ATTR_TILT_POSITION])
             await self._hm_entity.set_position(tilt_position=tilt_position)
 
     async def async_open_cover_tilt(self, **kwargs: Any) -> None:
