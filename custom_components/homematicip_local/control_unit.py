@@ -179,7 +179,6 @@ class BaseControlUnit:
             )
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
-
         return CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
@@ -569,7 +568,7 @@ class ControlConfig:
             central_name=self.data.get(CONF_INSTANCE_NAME),
             username=self.data.get(CONF_USERNAME),
             password=self.data.get(CONF_PASSWORD),
-            storage_folder=self.data.get(CONF_PASSWORD),
+            storage_folder=get_storage_folder(self.hass),
             extended_validation=extended_validation,
         ):
             failures = ", ".join(config_failures)
