@@ -16,7 +16,7 @@ from custom_components.homematicip_local.config_flow import (
     CONF_HMIP_RF_ENABLED,
     CONF_INSTANCE_NAME,
     CONF_VIRTUAL_DEVICES_ENABLED,
-    InvalidPassword,
+    InvalidConfig,
     _async_validate_config_and_get_system_information,
     _get_instance_name,
     _get_serial,
@@ -383,7 +383,7 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidPassword("wrong char"),
+        side_effect=InvalidConfig("wrong char"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -416,7 +416,7 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
         await hass.async_block_till_done()
 
     assert result3["type"] == FlowResultType.FORM
-    assert result3["errors"] == {"base": "invalid_password"}
+    assert result3["errors"] == {"base": "invalid_config"}
 
 
 async def test_options_form_invalid_password(
@@ -430,7 +430,7 @@ async def test_options_form_invalid_password(
 
     with patch(
         "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidPassword("wrong char"),
+        side_effect=InvalidConfig("wrong char"),
     ), patch(
         "custom_components.homematicip_local.async_setup_entry",
         return_value=True,
@@ -462,7 +462,7 @@ async def test_options_form_invalid_password(
         await hass.async_block_till_done()
 
     assert result3["type"] == FlowResultType.FORM
-    assert result3["errors"] == {"base": "invalid_password"}
+    assert result3["errors"] == {"base": "invalid_config"}
 
 
 async def test_form_cannot_connect(hass: HomeAssistant) -> None:
@@ -667,6 +667,6 @@ async def test_async_validate_config_and_get_system_information(
 
     entry_data_v2[CONF_PASSWORD] = const.INVALID_PASSWORD
 
-    with pytest.raises(InvalidPassword) as exc:
+    with pytest.raises(InvalidConfig) as exc:
         await _async_validate_config_and_get_system_information(hass, entry_data_v2)
     assert exc

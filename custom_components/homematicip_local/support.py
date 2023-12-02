@@ -21,6 +21,7 @@ from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import CONF_TYPE
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.typing import StateType
 
 from .const import (
@@ -151,3 +152,7 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
 def get_hm_entity(hm_entity: T) -> T:
     """Return the homematic entity. Makes it mockable."""
     return hm_entity
+
+
+class InvalidConfig(HomeAssistantError):
+    """Error to indicate there is invalid config."""
