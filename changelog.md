@@ -2,6 +2,7 @@
 
 - Bump hahomematic to 2023.12.0
   - Add support for away_mode and classic homematic thermostats
+- Add validator to instance name (@ is not allowed)
 
 # Version 1.49.0 (2023-11-21)
 

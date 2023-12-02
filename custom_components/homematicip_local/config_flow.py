@@ -6,7 +6,7 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
+from hahomematic.const import DEFAULT_TLS, IDENTIFIER_SEPARATOR, InterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
 from hahomematic.support import check_password
 import voluptuous as vol
@@ -159,6 +159,10 @@ async def _async_validate_config_and_get_system_information(
     control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
     if not check_password(control_config.data.get(CONF_PASSWORD)):
         raise InvalidPassword()
+    if (
+        instance_name := control_config.data.get(CONF_INSTANCE_NAME)
+    ) and IDENTIFIER_SEPARATOR in instance_name:
+        raise InvalidInstanceName()
     return await validate_config_and_get_system_information(control_config=control_config)
 
 
@@ -215,6 +219,8 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = "invalid_auth"
         except InvalidPassword:
             errors["base"] = "invalid_password"
+        except InvalidInstanceName:
+            errors["base"] = "invalid_instance_name"
         else:
             return self.async_create_entry(title=self.data[CONF_INSTANCE_NAME], data=self.data)
 
@@ -299,6 +305,8 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             errors["base"] = "invalid_auth"
         except InvalidPassword:
             errors["base"] = "invalid_password"
+        except InvalidInstanceName:
+            errors["base"] = "invalid_instance_name"
         else:
             if system_information is not None:
                 self.hass.config_entries.async_update_entry(
@@ -317,6 +325,10 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
 
 class InvalidPassword(HomeAssistantError):
     """Error to indicate there is invalid password."""
+
+
+class InvalidInstanceName(HomeAssistantError):
+    """Error to indicate there is invalid instance name."""
 
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
