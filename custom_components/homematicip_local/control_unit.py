@@ -36,8 +36,10 @@ from hahomematic.const import (
     SystemEvent,
     SystemInformation,
 )
+from hahomematic.exceptions import BaseHomematicException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import CallbackEntity
+from hahomematic.support import check_config
 
 from homeassistant.const import CONF_HOST, CONF_PATH, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
@@ -87,6 +89,7 @@ from .support import (
     CLICK_EVENT_SCHEMA,
     DEVICE_AVAILABILITY_EVENT_SCHEMA,
     DEVICE_ERROR_EVENT_SCHEMA,
+    InvalidConfig,
     cleanup_click_event_data,
     get_device_address_at_interface_from_identifiers,
     is_valid_event,
@@ -177,27 +180,30 @@ class BaseControlUnit:
             )
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
-        return CentralConfig(
-            name=self._instance_name,
-            storage_folder=get_storage_folder(self._hass),
-            host=self._config_data[CONF_HOST],
-            username=self._config_data[CONF_USERNAME],
-            password=self._config_data[CONF_PASSWORD],
-            central_id=central_id,
-            tls=self._config_data[CONF_TLS],
-            verify_tls=self._config_data[CONF_VERIFY_TLS],
-            client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._config_data[CONF_JSON_PORT],
-            callback_host=self._config_data.get(CONF_CALLBACK_HOST)
-            if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
-            else None,
-            callback_port=self._config_data.get(CONF_CALLBACK_PORT)
-            if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
-            else None,
-            default_callback_port=self._default_callback_port,
-            interface_configs=interface_configs,
-            start_direct=self._start_direct,
-        ).create_central()
+        try:
+            return CentralConfig(
+                name=self._instance_name,
+                storage_folder=get_storage_folder(self._hass),
+                host=self._config_data[CONF_HOST],
+                username=self._config_data[CONF_USERNAME],
+                password=self._config_data[CONF_PASSWORD],
+                central_id=central_id,
+                tls=self._config_data[CONF_TLS],
+                verify_tls=self._config_data[CONF_VERIFY_TLS],
+                client_session=aiohttp_client.async_get_clientsession(self._hass),
+                json_port=self._config_data[CONF_JSON_PORT],
+                callback_host=self._config_data.get(CONF_CALLBACK_HOST)
+                if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
+                else None,
+                callback_port=self._config_data.get(CONF_CALLBACK_PORT)
+                if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
+                else None,
+                default_callback_port=self._default_callback_port,
+                interface_configs=interface_configs,
+                start_direct=self._start_direct,
+            ).create_central(extended_validation=False)
+        except BaseHomematicException:
+            pass
 
 
 class ControlUnit(BaseControlUnit):
@@ -559,6 +565,18 @@ class ControlConfig:
         self.sysvar_scan_interval: Final = data.get(
             CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
         )
+
+    def check_config(self, extended_validation: bool = True) -> None:
+        """Check config. Throws BaseHomematicException on failure."""
+        if config_failures := check_config(
+            central_name=self.data.get(CONF_INSTANCE_NAME),
+            username=self.data.get(CONF_USERNAME),
+            password=self.data.get(CONF_PASSWORD),
+            storage_folder=self.data.get(CONF_PASSWORD),
+            extended_validation=extended_validation,
+        ):
+            failures = ", ".join(config_failures)
+            raise InvalidConfig(failures)
 
     async def create_control_unit(self) -> ControlUnit:
         """Identify the used client."""

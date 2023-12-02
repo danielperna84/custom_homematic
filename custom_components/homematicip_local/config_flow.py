@@ -6,9 +6,8 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import DEFAULT_TLS, IDENTIFIER_SEPARATOR, InterfaceName, SystemInformation
+from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
-from hahomematic.support import check_password
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
@@ -25,7 +24,6 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.exceptions import HomeAssistantError
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
@@ -44,6 +42,7 @@ from .const import (
     DOMAIN,
 )
 from .control_unit import ControlConfig, validate_config_and_get_system_information
+from .support import InvalidConfig
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -156,14 +155,10 @@ async def _async_validate_config_and_get_system_information(
     hass: HomeAssistant, data: ConfigType
 ) -> SystemInformation | None:
     """Validate the user input allows us to connect."""
-    control_config = ControlConfig(hass=hass, entry_id="validate", data=data)
-    if not check_password(control_config.data.get(CONF_PASSWORD)):
-        raise InvalidPassword()
-    if (
-        instance_name := control_config.data.get(CONF_INSTANCE_NAME)
-    ) and IDENTIFIER_SEPARATOR in instance_name:
-        raise InvalidInstanceName()
-    return await validate_config_and_get_system_information(control_config=control_config)
+    if control_config := ControlConfig(hass=hass, entry_id="validate", data=data):
+        control_config.check_config()
+        return await validate_config_and_get_system_information(control_config=control_config)
+    return None
 
 
 class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -205,6 +200,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         _update_interface_input(data=self.data, interface_input=interface_input)
         errors = {}
+        description_placeholders = {}
 
         try:
             system_information = await _async_validate_config_and_get_system_information(
@@ -217,10 +213,9 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = "cannot_connect"
         except AuthFailure:
             errors["base"] = "invalid_auth"
-        except InvalidPassword:
-            errors["base"] = "invalid_password"
-        except InvalidInstanceName:
-            errors["base"] = "invalid_instance_name"
+        except InvalidConfig as ic:
+            errors["base"] = "invalid_config"
+            description_placeholders["invalid_items"] = ic.args[0]
         else:
             return self.async_create_entry(title=self.data[CONF_INSTANCE_NAME], data=self.data)
 
@@ -228,6 +223,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="central",
             data_schema=get_domain_schema(data=self.data),
             errors=errors,
+            description_placeholders=description_placeholders,
         )
 
     async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
@@ -294,6 +290,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
 
         _update_interface_input(data=self.data, interface_input=interface_input)
         errors = {}
+        description_placeholders = {}
 
         try:
             system_information = await _async_validate_config_and_get_system_information(
@@ -303,10 +300,9 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             errors["base"] = "cannot_connect"
         except AuthFailure:
             errors["base"] = "invalid_auth"
-        except InvalidPassword:
-            errors["base"] = "invalid_password"
-        except InvalidInstanceName:
-            errors["base"] = "invalid_instance_name"
+        except InvalidConfig as ic:
+            errors["base"] = "invalid_config"
+            description_placeholders["invalid_items"] = ic.args[0]
         else:
             if system_information is not None:
                 self.hass.config_entries.async_update_entry(
@@ -320,15 +316,8 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="central",
             data_schema=get_options_schema(data=self.data),
             errors=errors,
+            description_placeholders=description_placeholders,
         )
-
-
-class InvalidPassword(HomeAssistantError):
-    """Error to indicate there is invalid password."""
-
-
-class InvalidInstanceName(HomeAssistantError):
-    """Error to indicate there is invalid instance name."""
 
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
