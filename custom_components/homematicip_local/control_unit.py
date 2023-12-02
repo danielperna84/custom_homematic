@@ -36,7 +36,6 @@ from hahomematic.const import (
     SystemEvent,
     SystemInformation,
 )
-from hahomematic.exceptions import BaseHomematicException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.support import check_config
@@ -180,30 +179,28 @@ class BaseControlUnit:
             )
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
-        try:
-            return CentralConfig(
-                name=self._instance_name,
-                storage_folder=get_storage_folder(self._hass),
-                host=self._config_data[CONF_HOST],
-                username=self._config_data[CONF_USERNAME],
-                password=self._config_data[CONF_PASSWORD],
-                central_id=central_id,
-                tls=self._config_data[CONF_TLS],
-                verify_tls=self._config_data[CONF_VERIFY_TLS],
-                client_session=aiohttp_client.async_get_clientsession(self._hass),
-                json_port=self._config_data[CONF_JSON_PORT],
-                callback_host=self._config_data.get(CONF_CALLBACK_HOST)
-                if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
-                else None,
-                callback_port=self._config_data.get(CONF_CALLBACK_PORT)
-                if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
-                else None,
-                default_callback_port=self._default_callback_port,
-                interface_configs=interface_configs,
-                start_direct=self._start_direct,
-            ).create_central(extended_validation=False)
-        except BaseHomematicException:
-            pass
+
+        return CentralConfig(
+            name=self._instance_name,
+            storage_folder=get_storage_folder(self._hass),
+            host=self._config_data[CONF_HOST],
+            username=self._config_data[CONF_USERNAME],
+            password=self._config_data[CONF_PASSWORD],
+            central_id=central_id,
+            tls=self._config_data[CONF_TLS],
+            verify_tls=self._config_data[CONF_VERIFY_TLS],
+            client_session=aiohttp_client.async_get_clientsession(self._hass),
+            json_port=self._config_data[CONF_JSON_PORT],
+            callback_host=self._config_data.get(CONF_CALLBACK_HOST)
+            if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
+            else None,
+            callback_port=self._config_data.get(CONF_CALLBACK_PORT)
+            if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
+            else None,
+            default_callback_port=self._default_callback_port,
+            interface_configs=interface_configs,
+            start_direct=self._start_direct,
+        ).create_central(extended_validation=False)
 
 
 class ControlUnit(BaseControlUnit):
