@@ -2,7 +2,7 @@
   "config": {
     "abort": {},
     "error": {
-      "cannot_connect": "Failed to connect",
+      "cannot_connect": "Failed to connect. Check the HA log for further details.",
       "invalid_auth": "Invalid authentication",
       "invalid_config": "Invalid config: {invalid_items}",
       "unknown": "Unexpected error"
@@ -521,7 +521,7 @@
   "options": {
     "abort": {},
     "error": {
-      "cannot_connect": "Failed to connect",
+      "cannot_connect": "Failed to connect. Check the HA log for further details.",
       "invalid_auth": "Invalid authentication",
       "invalid_config": "Invalid config: {invalid_items}",
       "unknown": "Unexpected error"

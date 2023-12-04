@@ -2,7 +2,7 @@
   "config": {
     "abort": {},
     "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
+      "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll.",
       "invalid_auth": "Ung\u00fcltige Authentifizierung",
       "invalid_config": "Ung\u00fcltiges Konfiguration: {invalid_items}",
       "unknown": "Unerwarteter Fehler"
@@ -524,7 +524,7 @@
   "options": {
     "abort": {},
     "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
+      "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll.",
       "invalid_auth": "Ung\u00fcltige Authentifizierung",
       "invalid_config": "Ung\u00fcltige Konfiguration: {invalid_items}",
       "unknown": "Unerwarteter Fehler"
