@@ -7,7 +7,7 @@ from typing import Any, Final, cast
 from urllib.parse import urlparse
 
 from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
-from hahomematic.exceptions import AuthFailure, NoClients, NoConnection
+from hahomematic.exceptions import AuthFailure, BaseHomematicException
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
@@ -209,13 +209,13 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if system_information is not None:
                 await self.async_set_unique_id(system_information.serial)
             self._abort_if_unique_id_configured()
-        except (NoClients, NoConnection):
-            errors["base"] = "cannot_connect"
         except AuthFailure:
             errors["base"] = "invalid_auth"
         except InvalidConfig as ic:
             errors["base"] = "invalid_config"
             description_placeholders["invalid_items"] = ic.args[0]
+        except BaseHomematicException:
+            errors["base"] = "cannot_connect"
         else:
             return self.async_create_entry(title=self.data[CONF_INSTANCE_NAME], data=self.data)
 
@@ -296,13 +296,13 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
             system_information = await _async_validate_config_and_get_system_information(
                 self.hass, self.data
             )
-        except (NoClients, NoConnection):
-            errors["base"] = "cannot_connect"
         except AuthFailure:
             errors["base"] = "invalid_auth"
         except InvalidConfig as ic:
             errors["base"] = "invalid_config"
             description_placeholders["invalid_items"] = ic.args[0]
+        except BaseHomematicException:
+            errors["base"] = "cannot_connect"
         else:
             if system_information is not None:
                 self.hass.config_entries.async_update_entry(

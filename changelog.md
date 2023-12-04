@@ -5,6 +5,7 @@
   - Collect config validation errors
 - Add validator to instance name (@ is not allowed)
 - Use collected config validation errors
+- Catch more generic connection exceptions
 
 # Version 1.49.0 (2023-11-21)
 
