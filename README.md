@@ -205,7 +205,7 @@ virtual_devices_enabled:
   required: true
   description: Enable heating groups.
   type: boolean
-  default: true
+  default: false
 virtual_devices_port:
   required: false
   description: Port for heating groups.
