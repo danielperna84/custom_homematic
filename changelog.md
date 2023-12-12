@@ -1,3 +1,7 @@
+# Version 1.50.1 (2023-12-12)
+
+- Fix entity names without translations
+
 # Version 1.50.0 (2023-12-01)
 
 - Bump hahomematic to 2023.12.1
