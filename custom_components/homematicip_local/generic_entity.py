@@ -144,6 +144,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     def name(self) -> str | UndefinedType | None:
         """Return the name of the entity.
 
+        Override by CC.
         A hm entity can consist of two parts. The first part is already defined by the user,
         and the second part is the english named parameter that must be translated.
         This translated parameter will be used in the combined name.
@@ -183,7 +184,10 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     @property
     def use_device_name(self) -> bool:
-        """Return if this entity does not have its own name."""
+        """Return if this entity does not have its own name.
+
+        Override by CC.
+        """
         return not self.name
 
     async def async_added_to_hass(self) -> None:
