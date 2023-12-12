@@ -447,6 +447,9 @@
       "sunshineduration": {
         "name": "Sunshineduration"
       },
+      "taupunkt": {
+        "name": "dew point"
+      },
       "temperature": {
         "name": "Temperature"
       },

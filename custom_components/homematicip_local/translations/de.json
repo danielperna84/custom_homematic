@@ -450,6 +450,9 @@
       "sunshineduration": {
         "name": "Sonnenscheindauer"
       },
+      "taupunkt": {
+        "name": "Taupunkt"
+      },
       "temperature": {
         "name": "Temperatur"
       },

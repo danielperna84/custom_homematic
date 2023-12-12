@@ -181,6 +181,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             return False
         return False
 
+    @property
+    def use_device_name(self) -> bool:
+        """Return if this entity does not have its own name."""
+        return not self.name
+
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
