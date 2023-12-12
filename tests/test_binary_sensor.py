@@ -21,7 +21,7 @@ async def test_hmbinarysensor(
     """Test HmBinarySensor."""
 
     entity_id = "binary_sensor.hmip_swdo_i_vcu5864966"
-    entity_name = "HmIP-SWDO-I_VCU5864966 "
+    entity_name = "HmIP-SWDO-I_VCU5864966"
 
     hass, control = await factory.setup_environment(TEST_DEVICES)
     ha_state, hm_entity = helper.get_and_check_state(
