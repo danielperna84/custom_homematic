@@ -484,6 +484,12 @@ Option 3: Use the service homematicip_local.delete_device. This deletes the devi
 
 Option 4: Delete and reinstall the Integration. That will recreate all devices and entities with new names (Should only be used on freshly installs systems)
 
+### How rooms of the CCU are assigned to areas in HA
+
+It is possible to assign multiple rooms to a channel in the CCU, but HA only allows one area per device.
+Areas are assigned in HA when a single room is assigned to a Homematic device or multiple channels are only assigned to the same room.
+If a device's channels are assigned to multiple rooms or nothing is set, the area in HA remains empty
+
 ### Unignore device parameters
 
 Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
