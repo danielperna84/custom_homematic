@@ -1,5 +1,7 @@
-# Version 1.50.1 (2023-12-12)
+# Version 1.51.0 (2023-12-15)
 
+- Bump hahomematic to 2023.12.2
+  - Save all rooms to entity model
 - Fix entity names without translations
 
 # Version 1.50.0 (2023-12-01)
