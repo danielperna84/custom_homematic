@@ -1,10 +1,11 @@
-# Version 1.51.0 (2023-12-16)
+# Version 1.51.0 (2023-12-17)
 
 - Bump hahomematic to 2023.12.3
   - Save all rooms to entity model
   - Set attributes of dataclasses
   - Add another reason to ping pong mismatch
 - Fix entity names without translations
+- Add some descriptions to config flow
 
 # Version 1.50.0 (2023-12-01)
 

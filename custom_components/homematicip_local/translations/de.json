@@ -24,6 +24,11 @@
           "username": "CCU Benutzername",
           "verify_tls": "TLS Verbindung überprüfen"
         },
+        "data_description": {
+          "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
+          "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
+          "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
+        },
         "description": "Bitte Pflichtfelder ausfüllen"
       },
       "interface": {
@@ -547,6 +552,11 @@
           "username": "CCU Benutzername",
           "verify_tls": "TLS Verbindung überprüfen"
         },
+        "data_description": {
+          "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
+          "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
+          "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
+        },
         "description": "Neu-Konfiguration der CCU"
       },
       "interface": {
@@ -558,7 +568,7 @@
           "hmip_rf_enabled": "aktiviere Homematic IP",
           "hmip_rf_port": "HmIP-RF Port",
           "virtual_devices_enabled": "aktiviere Heizgruppen",
-          "virtual_devices_path": "Gruppen Path",
+          "virtual_devices_path": "Gruppen Pfad",
           "virtual_devices_port": "Gruppen Port"
         },
         "description": "Neu-Konfiguration der CCU Schnittstellen"

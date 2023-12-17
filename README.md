@@ -80,7 +80,7 @@ For CCU and descendants (RaspberryMatic, debmatic) it is **recommended** to enab
 
 The account used for communication is **required** to have admin privileges on your HomeMatic hub.
 It is important to note though, that special characters within your credentials may break the possibility to authenticate.
-Allowed characters for a CCU password are: `A-Z`, `a-z`, `0-9`, and `.!$():;#-`.
+Allowed characters for a CCU password are: `A-Z`, `a-z`, `0-9` and `.!$():;#-`.
 The CCU WebUI also supports `ÄäÖöÜüß`, but these characters are not supported by the XmlRPC servers.
 
 If you are using Homegear and have not set up authentication, please enter dummy-data to complete the configuration flow.
@@ -113,7 +113,7 @@ Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 instance_name:
   required: true
   description:
-    Name of the HA instance. This has to be unique for each configured hub. Allowed characters are A-z and 0-9.
+    Name of the HA instance. Allowed characters are a-z and 0-9.
     If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.
   type: string
 host:
@@ -122,11 +122,11 @@ host:
   type: string
 username:
   required: true
-  description: Username of the admin-user on your hub.
+  description: Case sensitive. Username of a user in admin-role on your hub.
   type: string
 password:
   required: true
-  description: Password of the admin-user on your hub.
+  description: Case sensitive. Password of the admin-user on your hub.
   type: string
 tls:
   required: true
