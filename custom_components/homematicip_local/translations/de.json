@@ -553,7 +553,6 @@
           "verify_tls": "TLS Verbindung überprüfen"
         },
         "data_description": {
-          "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
           "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
           "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
         },
