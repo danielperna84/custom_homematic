@@ -113,7 +113,7 @@ Known cases are in combination with the rf-module `HM-MOD-RPI-PCB`.
 instance_name:
   required: true
   description:
-    Name to identify your HomeMatic hub. This has to be unique for each configured hub. Allowed characters are a-z and 0-9.
+    Name of the HA instance. This has to be unique for each configured hub. Allowed characters are A-z and 0-9.
     If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.
   type: string
 host:
