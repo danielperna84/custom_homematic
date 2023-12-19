@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from copy import copy
+import dataclasses
 import logging
 from typing import Final
 
@@ -40,7 +40,7 @@ from homeassistant.const import (
     UnitOfVolume,
 )
 from homeassistant.helpers.entity import EntityDescription
-from homeassistant.helpers.typing import UNDEFINED
+from homeassistant.helpers.typing import UNDEFINED, UndefinedType
 
 from .const import HmNameSource
 from .support import (
@@ -714,32 +714,43 @@ def get_entity_description(
     hm_entity: HmGenericEntity | GenericHubEntity,
 ) -> EntityDescription | None:
     """Get the entity_description."""
-    if entity_desc := copy(_find_entity_description(hm_entity=hm_entity)):
-        if isinstance(hm_entity, GenericEntity):
-            if (
-                isinstance(entity_desc, HmEntityDescription)
-                and entity_desc.translation_key is None
-            ):
-                if entity_desc.name_source == HmNameSource.PARAMETER:
-                    entity_desc.translation_key = hm_entity.parameter.lower()
-                    entity_desc.name = None
-                elif entity_desc.name_source == HmNameSource.DEVICE_CLASS:
-                    entity_desc.translation_key = None
-                    entity_desc.name = UNDEFINED
-            else:
-                if entity_desc.translation_key is None:
-                    entity_desc.translation_key = hm_entity.parameter.lower()
-                entity_desc.name = None
-
-        else:
-            # custom entities use the customizable name from the CCU WebUI,
-            # that does not need to be translated in HA
-            entity_desc.name = hm_entity.name
-
-        entity_desc.has_entity_name = True
-        return entity_desc
+    if entity_desc := _find_entity_description(hm_entity=hm_entity):
+        name, translation_key = get_name_and_translation_key(
+            hm_entity=hm_entity, entity_desc=entity_desc
+        )
+        enabled_default = (
+            hm_entity.enabled_default if entity_desc.entity_registry_enabled_default else False
+        )
+        return dataclasses.replace(
+            entity_desc,
+            name=name,
+            translation_key=translation_key,
+            has_entity_name=True,
+            entity_registry_enabled_default=enabled_default,
+        )
 
     return None
+
+
+def get_name_and_translation_key(
+    hm_entity: HmGenericEntity | GenericHubEntity,
+    entity_desc: EntityDescription,
+) -> tuple[str | UndefinedType | None, str | None]:
+    """Get the name and translation_key."""
+    if isinstance(hm_entity, GenericEntity):
+        if isinstance(entity_desc, HmEntityDescription) and entity_desc.translation_key is None:
+            if entity_desc.name_source == HmNameSource.PARAMETER:
+                return None, hm_entity.parameter.lower()
+            if entity_desc.name_source == HmNameSource.DEVICE_CLASS:
+                return UNDEFINED, None
+
+        if entity_desc.translation_key is None:
+            entity_desc.translation_key = hm_entity.parameter.lower()
+        return None, entity_desc.translation_key
+
+    # custom entities use the customizable name from the CCU WebUI,
+    # that does not need to be translated in HA
+    return hm_entity.name, None
 
 
 def _find_entity_description(
