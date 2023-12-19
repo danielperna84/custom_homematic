@@ -117,31 +117,31 @@ def get_device_address_at_interface_from_identifiers(
     return None
 
 
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class HmEntityDescription(ABC):
     """Base class describing Homematic(IP) Local entities."""
 
     name_source: HmNameSource = HmNameSource.PARAMETER
 
 
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class HmBinarySensorEntityDescription(HmEntityDescription, BinarySensorEntityDescription):
     """Class describing Homematic(IP) Local binary sensor entities."""
 
 
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class HmButtonEntityDescription(HmEntityDescription, ButtonEntityDescription):
     """Class describing Homematic(IP) Local button entities."""
 
 
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class HmNumberEntityDescription(HmEntityDescription, NumberEntityDescription):
     """Class describing Homematic(IP) Local number entities."""
 
     multiplier: int | None = None
 
 
-@dataclass(kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
     """Class describing Homematic(IP) Local sensor entities."""
 

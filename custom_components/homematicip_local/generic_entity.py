@@ -64,8 +64,6 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
         if entity_description := get_entity_description(hm_entity=hm_entity):
             self.entity_description = entity_description
-            if entity_description.entity_registry_enabled_default:
-                entity_description.entity_registry_enabled_default = hm_entity.enabled_default
         else:
             self._attr_entity_registry_enabled_default = hm_entity.enabled_default
             if isinstance(hm_entity, GenericEntity):
