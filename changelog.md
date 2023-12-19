@@ -1,5 +1,7 @@
 # Version 1.52.0 (2023-12-19)
 
+- Bump hahomematic to 2023.12.4
+  - Add HB-LC-Bl1-Velux to cover
 - Avoid mutating entity descriptions
 
 # Version 1.51.0 (2023-12-17)
