@@ -235,7 +235,8 @@ If you are using Homegear the names are fetched using metadata available via XML
 
 ### callback_host and callback_port
 
-These two options are required for _special_ network environments. If for example Home Assistant is running within a Docker container and detects its own IP to be within the Docker network, the CCU won't be able to establish the connection to Home Assistant. In this case you have to specify which address and port the CCU should connect to. This may require forwarding connections on the Docker host machine to the relevant container.
+This integrations offers two options to seamlessly link up the CCU with Home Assistant, allowing for fine-tuning of network settings. Configuring these options becomes crucial in specific scenarios, such as when a firewall is active on the Home Assistant host. In such cases, specifying a pre-opened `callback_port` is essential. Additionally, if Home Assistant is running within a Docker container and detects its IP within the Docker network, establishing a connection with the CCU becomes challenging. To address this, it's necessary to explicitly define the address and port for CCU connectivity. This may involve forwarding connections on the Docker host machine to the relevant container, ensuring a smooth and uninterrupted connection. Find detailed setup instructions and guidelines in this README for a hassle-free integration.
+
 **These values are always empty when the integration is reconfigured.**
 
 ## System variables
