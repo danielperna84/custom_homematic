@@ -1,7 +1,6 @@
 """Helper."""
 from __future__ import annotations
 
-from abc import ABC
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -118,7 +117,7 @@ def get_device_address_at_interface_from_identifiers(
 
 
 @dataclass(frozen=True, kw_only=True)
-class HmEntityDescription(ABC):
+class HmEntityDescription:
     """Base class describing Homematic(IP) Local entities."""
 
     name_source: HmNameSource = HmNameSource.PARAMETER
