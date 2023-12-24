@@ -745,7 +745,7 @@ def get_name_and_translation_key(
                 return UNDEFINED, None
 
         if entity_desc.translation_key is None:
-            entity_desc.translation_key = hm_entity.parameter.lower()
+            return None, hm_entity.parameter.lower()
         return None, entity_desc.translation_key
 
     # custom entities use the customizable name from the CCU WebUI,
