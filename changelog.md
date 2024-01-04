@@ -1,3 +1,8 @@
+# Version 1.53.0 (2024-01-03)
+
+- Bump hahomematic to 2024.1.0
+  - Add duration=0 when ramp_time used for HmIP-RGBW
+
 # Version 1.52.0 (2023-12-19)
 
 - Bump hahomematic to 2023.12.4
