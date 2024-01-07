@@ -1,7 +1,7 @@
 # Version 1.53.0 (2024-01-05)
 
-- Bump hahomematic to 2024.1.2
-  - Add duration=0 when ramp_time used for HmIP-RGBW
+- Bump hahomematic to 2024.1.3
+  - Add duration=111600 when ramp_time used for HmIP-RGBW
   - Allow ordered execution of collector paramsets
   - Only consider relevant entities for HmIP-RGBW
 
