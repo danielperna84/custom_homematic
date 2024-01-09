@@ -11,7 +11,7 @@ jobs:
     if: github.repository_owner == 'danielperna84'
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/lock-threads@v4.0.0
+      - uses: dessant/lock-threads@v5.0.1
         with:
           github-token: ${{ github.token }}
           issue-inactive-days: "7"
