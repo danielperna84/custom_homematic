@@ -1,3 +1,9 @@
+# Version 1.54.0 (2024-01-11)
+
+- Bump hahomematic to 2024.1.6
+  - Fix unignore doc and improve unignore tests
+  - Move unignore check to entity
+
 # Version 1.53.0 (2024-01-09)
 
 - Bump hahomematic to 2024.1.5
