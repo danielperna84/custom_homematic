@@ -1,8 +1,9 @@
-# Version 1.54.0 (2024-01-11)
+# Version 1.54.0 (2024-01-12)
 
-- Bump hahomematic to 2024.1.6
+- Bump hahomematic to 2024.1.7
   - Fix unignore doc and improve unignore tests
   - Move unignore check to entity
+  - Reload master data after config pending event
 
 # Version 1.53.0 (2024-01-09)
 
