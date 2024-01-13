@@ -154,7 +154,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             if self._do_remove_name():
                 translated_name = ""
             if isinstance(translated_name, str):
-                return entity_name.replace(
+                entity_name = entity_name.replace(
                     self._hm_entity.parameter.replace("_", " ").title(), translated_name
                 )
         if entity_name == "":
