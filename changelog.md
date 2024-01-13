@@ -5,6 +5,7 @@
   - Move unignore check to entity
   - Reload master data after config pending event
   - Allow direct_call without cache wait time
+- Remove whitespace from name end
 
 # Version 1.53.0 (2024-01-09)
 
