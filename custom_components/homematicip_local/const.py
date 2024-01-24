@@ -59,7 +59,7 @@ SERVICE_VIRTUAL_KEY: Final = "virtual_key"
 
 # only used for entities from MASTER paramset
 
-TOTAL_INCREASING_SYSVAR: Final[tuple[str, ...]] = (
+TOTAL_SYSVAR: Final[tuple[str, ...]] = (
     "svEnergyCounter_",
     "svHmIPRainCounter_",
     "svHmIPSunshineCounter_",

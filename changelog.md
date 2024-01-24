@@ -1,3 +1,9 @@
+# Version 1.55.0 (2024-01-24)
+
+- Bump hahomematic to 2024.1.8
+  - Store old_value in entity model
+- Use state_class total instead of total_increasing for sensors
+
 # Version 1.54.0 (2024-01-12)
 
 - Bump hahomematic to 2024.1.7
