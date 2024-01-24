@@ -155,7 +155,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
     ),
     "FILLING_LEVEL": HmSensorEntityDescription(
         key="FILLING_LEVEL",
@@ -172,7 +172,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="GAS_ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
     ),
     "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
@@ -189,7 +189,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="IEC_ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
     ),
     "IEC_POWER": HmSensorEntityDescription(
         key="IEC_POWER",
@@ -291,7 +291,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="RAIN_COUNTER",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
         icon="mdi:weather-rainy",
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
     ),
     ("RSSI_DEVICE", "RSSI_PEER"): HmSensorEntityDescription(
         key="RSSI",
@@ -318,7 +318,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="SUNSHINEDURATION",
         native_unit_of_measurement=UnitOfTime.MINUTES,
         icon="mdi:weather-sunny",
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.TOTAL,
     ),
     "VALUE": HmSensorEntityDescription(
         key="VALUE",
