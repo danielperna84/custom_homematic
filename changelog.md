@@ -1,7 +1,10 @@
-# Version 1.55.0 (2024-01-24)
+# Version 1.55.0 (2024-01-27)
 
-- Bump hahomematic to 2024.1.8
+- Bump hahomematic to 2024.1.9
   - Store old_value in entity model
+  - Move product group identification to client
+  - Add new pattern for unignore (parameter:paramset_key@device_type:channel_no)
+  - Allow all as unignore parameter for device_type and channel_no
 - Use state_class total instead of total_increasing for sensors
 
 # Version 1.54.0 (2024-01-12)
