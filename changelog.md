@@ -7,6 +7,7 @@
   - Allow all as unignore parameter for device_type and channel_no
   - Remove old complex format for unignore
 - Use state_class total instead of total_increasing for sensors
+- Add required ClimateEntityFeature TURN_OFF/TURN_ON for HA2024.2
 
 # Version 1.54.0 (2024-01-12)
 
