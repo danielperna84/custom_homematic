@@ -140,9 +140,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:garage-open"
-        if value in ("open", "ventilation_position")
-        else "mdi:garage",
         translation_key="door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
@@ -223,7 +220,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
         translation_key="lock_state",
     ),
     (
@@ -309,9 +305,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
-        if value in ("primary_alarm", "secondary_alarm")
-        else ("mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"),
         translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
@@ -372,9 +365,6 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     ): HmSensorEntityDescription(
         key="SRH_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:window-open"
-        if value in ("open", "tilted")
-        else "mdi:window-closed",
         translation_key="srh_state",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(

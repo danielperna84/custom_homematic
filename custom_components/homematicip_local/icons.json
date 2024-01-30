@@ -1,0 +1,34 @@
+{
+  "entity": {
+    "sensor": {
+      "door_state": {
+        "default": "mdi:garage",
+        "state": {
+          "open": "mdi:garage-open",
+          "ventilation_position": "mdi:garage-open"
+        }
+      },
+      "lock_state": {
+        "default": "mdi:lock",
+        "state": {
+          "unlocked": "mdi:lock-open"
+        }
+      },
+      "smoke_detector_alarm_status": {
+        "default": "mdi:smoke-detector",
+        "state": {
+          "primary_alarm": "mdi:smoke-detector-variant-alert",
+          "secondary_alarm": "mdi:smoke-detector-variant-alert",
+          "intrusion_alarm": "mdi:shield-alert"
+        }
+      },
+      "srh_state": {
+        "default": "mdi:window-closed",
+        "state": {
+          "open": "mdi:window-open",
+          "tilted": "mdi:battery-50"
+        }
+      }
+    }
+  }
+}
