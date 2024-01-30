@@ -261,7 +261,11 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     @property
     def supported_features(self) -> ClimateEntityFeature:
         """Return the list of supported features."""
-        supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        )
         if self._hm_entity.supports_preset:
             supported_features |= ClimateEntityFeature.PRESET_MODE
         return supported_features
