@@ -1,11 +1,13 @@
-# Version 1.55.0 (2024-01-27)
+# Version 1.55.0 (2024-01-31)
 
-- Bump hahomematic to 2024.1.10
+- Bump hahomematic to 2024.1.11
   - Store old_value in entity model
   - Move product group identification to client
   - Add new pattern for unignore (parameter:paramset_key@device_type:channel_no)
   - Allow all as unignore parameter for device_type and channel_no
   - Remove old complex format for unignore
+  - Remove deprecation warnings for py3.12
+  - Fix/improve unignore search
 - Use state_class total instead of total_increasing for sensors
 - Add required ClimateEntityFeature TURN_OFF/TURN_ON for HA2024.2
 
