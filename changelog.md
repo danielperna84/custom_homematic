@@ -1,6 +1,6 @@
-# Version 1.55.0 (2024-01-31)
+# Version 1.55.0 (2024-02-01)
 
-- Bump hahomematic to 2024.1.11
+- Bump hahomematic to 2024.2.0
   - Store old_value in entity model
   - Move product group identification to client
   - Add new pattern for unignore (parameter:paramset_key@device_type:channel_no)
