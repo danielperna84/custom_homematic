@@ -56,7 +56,7 @@
         "default": "mdi:window-closed",
         "state": {
           "open": "mdi:window-open",
-          "tilted": "mdi:battery-50"
+          "tilted": "mdi:window-open"
         }
       },
       "sunshineduration": {
