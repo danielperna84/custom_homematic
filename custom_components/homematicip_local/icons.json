@@ -1,0 +1,73 @@
+{
+  "entity": {
+    "sensor": {
+      "brightness": {
+        "default": "mdi:invert-colors"
+      },
+      "button_press": {
+        "default": "mdi:gesture-tap"
+      },
+      "direction": {
+        "default": "mdi:arrow-up-down"
+      },
+      "door_state": {
+        "default": "mdi:garage",
+        "state": {
+          "open": "mdi:garage-open",
+          "ventilation_position": "mdi:garage-open"
+        }
+      },
+      "frequency": {
+        "default": "mdi:sine-wave"
+      },
+      "lock_state": {
+        "default": "mdi:lock",
+        "state": {
+          "unlocked": "mdi:lock-open"
+        }
+      },
+      "pipe_level": {
+        "default": "mdi:pipe-valve"
+      },
+      "rain_counter": {
+        "default": "mdi:weather-rainy"
+      },
+      "sec_direction": {
+        "default": "mdi:arrow-up-down"
+      },
+      "sec_key_error": {
+        "default": "mdi:lock-alert"
+      },
+      "sec_win_error": {
+        "default": "mdi:lock-alert"
+      },
+      "sec_win_status": {
+        "default": "mdi:battery-50"
+      },
+      "smoke_detector_alarm_status": {
+        "default": "mdi:smoke-detector",
+        "state": {
+          "intrusion_alarm": "mdi:shield-alert",
+          "primary_alarm": "mdi:smoke-detector-variant-alert",
+          "secondary_alarm": "mdi:smoke-detector-variant-alert"
+        }
+      },
+      "srh_state": {
+        "default": "mdi:window-closed",
+        "state": {
+          "open": "mdi:window-open",
+          "tilted": "mdi:battery-50"
+        }
+      },
+      "sunshineduration": {
+        "default": "mdi:weather-sunny"
+      },
+      "wind_dir": {
+        "default": "mdi:windsock"
+      },
+      "wind_speed": {
+        "default": "mdi:weather-windy"
+      }
+    }
+  }
+}

@@ -1,10 +1,7 @@
 """Helper."""
 from __future__ import annotations
 
-from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, datetime
-from decimal import Decimal
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
@@ -21,7 +18,6 @@ from homeassistant.components.number import NumberEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import CONF_TYPE
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.typing import StateType
 
 from .const import (
     CONF_SUBTYPE,
@@ -107,7 +103,7 @@ def is_valid_event(event_data: dict[str, Any], schema: vol.Schema) -> bool:
 
 
 def get_device_address_at_interface_from_identifiers(
-    identifiers: set[tuple[str, str]]
+    identifiers: set[tuple[str, str]],
 ) -> tuple[str, str] | None:
     """Get the device_address from device_info.identifiers."""
     for identifier in identifiers:
@@ -145,7 +141,6 @@ class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
     """Class describing Homematic(IP) Local sensor entities."""
 
     multiplier: int | None = None
-    icon_fn: Callable[[StateType | date | datetime | Decimal], str | None] | None = None
 
 
 def get_hm_entity(hm_entity: T) -> T:

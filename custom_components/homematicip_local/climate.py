@@ -148,6 +148,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     """Representation of the HomematicIP climate entity."""
 
     _attr_translation_key = "hmip_climate"
+    _enable_turn_on_off_backwards_compatibility: bool = False
 
     def __init__(
         self,

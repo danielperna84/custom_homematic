@@ -80,15 +80,15 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         "LEVEL",
     ): HmNumberEntityDescription(
         key="LEVEL",
-        icon="mdi:pipe-valve",
         multiplier=100,
         native_unit_of_measurement=PERCENTAGE,
         entity_registry_enabled_default=False,
+        translation_key="pipe_level",
     ),
     ("HMW-IO-12-Sw14-DR", "FREQUENCY"): HmNumberEntityDescription(
         key="FREQUENCY",
-        icon="mdi:sine-wave",
         native_unit_of_measurement="mHz",
+        translation_key="frequency",
     ),
 }
 
@@ -102,7 +102,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "BRIGHTNESS": HmSensorEntityDescription(
         key="BRIGHTNESS",
         state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:invert-colors",
+        translation_key="brightness",
     ),
     "CARRIER_SENSE_LEVEL": HmSensorEntityDescription(
         key="CARRIER_SENSE_LEVEL",
@@ -134,15 +134,11 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     ("ACTIVITY_STATE", "DIRECTION"): HmSensorEntityDescription(
         key="DIRECTION",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:arrow-up-down",
         translation_key="direction",
     ),
     "DOOR_STATE": HmSensorEntityDescription(
         key="DOOR_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:garage-open"
-        if value in ("open", "ventilation_position")
-        else "mdi:garage",
         translation_key="door_state",
     ),
     "DUTY_CYCLE_LEVEL": HmSensorEntityDescription(
@@ -223,7 +219,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "LOCK_STATE": HmSensorEntityDescription(
         key="LOCK_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:lock-open" if value == "unlocked" else "mdi:lock",
         translation_key="lock_state",
     ),
     (
@@ -290,8 +285,8 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "RAIN_COUNTER": HmSensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-        icon="mdi:weather-rainy",
         state_class=SensorStateClass.TOTAL,
+        translation_key="rain_counter",
     ),
     ("RSSI_DEVICE", "RSSI_PEER"): HmSensorEntityDescription(
         key="RSSI",
@@ -309,16 +304,13 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "SMOKE_DETECTOR_ALARM_STATUS": HmSensorEntityDescription(
         key="SMOKE_DETECTOR_ALARM_STATUS",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:smoke-detector-variant-alert"
-        if value in ("primary_alarm", "secondary_alarm")
-        else ("mdi:shield-alert" if value == "intrusion_alarm" else "mdi:smoke-detector"),
         translation_key="smoke_detector_alarm_status",
     ),
     "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
         native_unit_of_measurement=UnitOfTime.MINUTES,
-        icon="mdi:weather-sunny",
         state_class=SensorStateClass.TOTAL,
+        translation_key="sunshineduration",
     ),
     "VALUE": HmSensorEntityDescription(
         key="VALUE",
@@ -343,15 +335,15 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     ): HmSensorEntityDescription(
         key="WIND_DIR",
         native_unit_of_measurement=DEGREE,
-        icon="mdi:windsock",
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="wind_dir",
     ),
     "WIND_SPEED": HmSensorEntityDescription(
         key="WIND_SPEED",
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         device_class=SensorDeviceClass.WIND_SPEED,
-        icon="mdi:weather-windy",
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="wind_speed",
     ),
 }
 
@@ -372,39 +364,31 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     ): HmSensorEntityDescription(
         key="SRH_STATE",
         device_class=SensorDeviceClass.ENUM,
-        icon_fn=lambda value: "mdi:window-open"
-        if value in ("open", "tilted")
-        else "mdi:window-closed",
         translation_key="srh_state",
     ),
     ("HM-Sec-Win", "STATUS"): HmSensorEntityDescription(
         key="SEC-WIN_STATUS",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:battery-50",
         translation_key="sec_win_status",
     ),
     ("HM-Sec-Win", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-WIN_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:arrow-up-down",
         translation_key="sec_direction",
     ),
     ("HM-Sec-Win", "ERROR"): HmSensorEntityDescription(
         key="SEC-WIN_ERROR",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:lock-alert",
         translation_key="sec_win_error",
     ),
     ("HM-Sec-Key", "DIRECTION"): HmSensorEntityDescription(
         key="SEC-KEY_DIRECTION",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:arrow-up-down",
         translation_key="sec_direction",
     ),
     ("HM-Sec-Key", "ERROR"): HmSensorEntityDescription(
         key="SEC-KEY_ERROR",
         device_class=SensorDeviceClass.ENUM,
-        icon="mdi:lock-alert",
         translation_key="sec_key_error",
     ),
     (
@@ -412,22 +396,22 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         "LEVEL",
     ): HmSensorEntityDescription(
         key="LEVEL",
-        icon="mdi:pipe-valve",
         native_unit_of_measurement=PERCENTAGE,
         multiplier=100,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
+        translation_key="pipe_level",
     ),
     ("HMW-IO-12-Sw14-DR", "FREQUENCY"): HmSensorEntityDescription(
         key="FREQUENCY",
-        icon="mdi:sine-wave",
         native_unit_of_measurement="mHz",
+        translation_key="frequency",
     ),
     (("HM-CC-RT-DN", "HM-CC-VD"), "VALVE_STATE"): HmSensorEntityDescription(
         key="VALVE_STATE",
         native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:pipe-valve",
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="pipe_level",
     ),
 }
 
@@ -688,8 +672,8 @@ _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: Mapping[
 _DEFAULT_PLATFORM_DESCRIPTION: Mapping[HmPlatform, EntityDescription] = {
     HmPlatform.BUTTON: HmButtonEntityDescription(
         key="button_default",
-        icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
+        translation_key="button_press",
     ),
     HmPlatform.SWITCH: SwitchEntityDescription(
         key="switch_default",
@@ -700,8 +684,8 @@ _DEFAULT_PLATFORM_DESCRIPTION: Mapping[HmPlatform, EntityDescription] = {
     ),
     HmPlatform.HUB_BUTTON: HmButtonEntityDescription(
         key="hub_button_default",
-        icon="mdi:gesture-tap",
         entity_registry_enabled_default=False,
+        translation_key="button_press",
     ),
     HmPlatform.HUB_SWITCH: SwitchEntityDescription(
         key="hub_switch_default",
