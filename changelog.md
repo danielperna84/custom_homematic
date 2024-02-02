@@ -1,6 +1,6 @@
-# Version 1.55.0 (2024-02-01)
+# Version 1.55.0 (2024-02-02)
 
-- Bump hahomematic to 2024.2.0
+- Bump hahomematic to 2024.2.1
   - Store old_value in entity model
   - Move product group identification to client
   - Add new pattern for unignore (parameter:paramset_key@device_type:channel_no)
@@ -8,6 +8,7 @@
   - Remove old complex format for unignore
   - Remove deprecation warnings for py3.12
   - Fix/improve unignore search
+  - Accept float as input for int numbers
 - Use state_class total instead of total_increasing for sensors
 - Add required ClimateEntityFeature TURN_OFF/TURN_ON for HA2024.2
 - Replace icon_fn by icon translations for HA 2024.2
