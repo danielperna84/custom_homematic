@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -eu
 
+export "OSTYPE"=@OSTYPE
+
 # Activate pyenv and virtualenv if present, then run the specified command
 
 # pyenv, pyenv-virtualenv

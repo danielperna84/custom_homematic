@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import logging
-from typing import Any, Final, Generic, cast
+from typing import Any, Final, Generic
 
 from hahomematic.const import CallSource
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -79,7 +79,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             sw_version=hm_device.firmware,
             suggested_area=hm_device.room,
             # Link to the homematic control unit.
-            via_device=cast(tuple[str, str], hm_device.central.name),
+            via_device=(DOMAIN, hm_device.central.name),
         )
 
         self._static_state_attributes = self._get_static_state_attributes()
