@@ -12,6 +12,7 @@
 - Use state_class total instead of total_increasing for sensors
 - Add required ClimateEntityFeature TURN_OFF/TURN_ON for HA2024.2
 - Replace icon_fn by icon translations for HA 2024.2
+- Fix via_device in device_info
 
 # Version 1.54.0 (2024-01-12)
 
