@@ -596,7 +596,7 @@ _COVER_DESCRIPTIONS_BY_DEVICE: Mapping[str | tuple[str, ...], EntityDescription]
         key="BLIND",
         device_class=CoverDeviceClass.BLIND,
     ),
-    ("HmIP-BROLL", "HmIP-FROLL"): CoverEntityDescription(
+    ("HmIP-BROLL", "HmIP-BROLL-2", "HmIP-FROLL"): CoverEntityDescription(
         key="SHUTTER",
         device_class=CoverDeviceClass.SHUTTER,
     ),
