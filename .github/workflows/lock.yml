@@ -16,5 +16,5 @@ jobs:
           github-token: ${{ github.token }}
           issue-inactive-days: "7"
           issue-lock-reason: ""
-          pr-inactive-days: "21"
+          pr-inactive-days: "3"
           pr-lock-reason: ""
