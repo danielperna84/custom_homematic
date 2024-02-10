@@ -1,3 +1,8 @@
+# Version 1.56.0 (2024-02-10)
+
+- Bump hahomematic to 2024.2.2
+  - Add option to un ignore mechanism to ignore the automatic creation of custom entities by device type
+
 # Version 1.55.0 (2024-02-02)
 
 - Bump hahomematic to 2024.2.1
