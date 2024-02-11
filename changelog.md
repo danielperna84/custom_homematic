@@ -1,7 +1,9 @@
-# Version 1.56.0 (2024-02-10)
+# Version 1.56.0 (2024-02-11)
 
 - Bump hahomematic to 2024.2.2
   - Add option to un ignore mechanism to ignore the automatic creation of custom entities by device type
+  - Remove incomplete/wrong custom mapping for HBW-LC-RGBWW-IN6-DR
+  - Fix mapping of HmIP-HDM
 
 # Version 1.55.0 (2024-02-02)
 
