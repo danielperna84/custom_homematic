@@ -98,7 +98,7 @@ class HaHomematicEvent(EventEntity):
         _LOGGER.debug(
             "init: Setting up %s %s",
             self._hm_primary_entity.device.name,
-            self._hm_primary_entity.channel_name,
+            self._hm_primary_entity.name_data.channel_name,
         )
 
     @property
@@ -110,7 +110,7 @@ class HaHomematicEvent(EventEntity):
     def name(self) -> str | UndefinedType | None:
         """Return the name of the entity."""
 
-        return self._hm_primary_entity.channel_name
+        return self._hm_primary_entity.name_data.channel_name
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
