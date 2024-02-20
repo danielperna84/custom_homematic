@@ -44,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if CONTROL_UNITS not in hass.data[DOMAIN]:
         hass.data[DOMAIN][CONTROL_UNITS] = {}
 
-    control = await ControlConfig(
+    control = ControlConfig(
         hass=hass,
         entry_id=entry.entry_id,
         data=entry.data,

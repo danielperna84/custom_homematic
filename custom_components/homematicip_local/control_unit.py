@@ -572,11 +572,11 @@ class ControlConfig:
             failures = ", ".join(config_failures)
             raise InvalidConfig(failures)
 
-    async def create_control_unit(self) -> ControlUnit:
+    def create_control_unit(self) -> ControlUnit:
         """Identify the used client."""
         return ControlUnit(self)
 
-    async def create_control_unit_temp(self) -> ControlUnitTemp:
+    def create_control_unit_temp(self) -> ControlUnitTemp:
         """Identify the used client."""
         return ControlUnitTemp(self._temporary_config)
 
@@ -764,7 +764,7 @@ async def validate_config_and_get_system_information(
     control_config: ControlConfig,
 ) -> SystemInformation | None:
     """Validate the control configuration."""
-    if control_unit := await control_config.create_control_unit_temp():
+    if control_unit := control_config.create_control_unit_temp():
         return await control_unit.central.validate_config_and_get_system_information()
     return None
 
