@@ -1,3 +1,7 @@
+# Version 1.57.0 (2024-02-20)
+
+- Remove unnecessary async
+
 # Version 1.56.0 (2024-02-15)
 
 - Bump hahomematic to 2024.2.4
