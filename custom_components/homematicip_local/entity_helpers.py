@@ -170,10 +170,22 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         device_class=SensorDeviceClass.GAS,
         state_class=SensorStateClass.TOTAL,
     ),
+    "GAS_FLOW": HmSensorEntityDescription(
+        key="GAS_FLOW",
+        native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
+        device_class=SensorDeviceClass.GAS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "GAS_VOLUME": HmSensorEntityDescription(
+        key="GAS_VOLUME",
+        native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
+        device_class=SensorDeviceClass.GAS,
+        state_class=SensorStateClass.TOTAL,
     ),
     ("HUMIDITY", "ACTUAL_HUMIDITY"): HmSensorEntityDescription(
         key="HUMIDITY",
