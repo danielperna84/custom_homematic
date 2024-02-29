@@ -306,11 +306,17 @@
       "frequency": {
         "name": "Frequenz"
       },
+      "gas_flow": {
+        "name": "Gas-Fluss"
+      },
       "gas_energy_counter": {
         "name": "Gas-Energiezähler"
       },
       "gas_power": {
         "name": "Gas-Leistung"
+      },
+      "gas_volume": {
+        "name": "Gas-Volumen"
       },
       "highest_illumination": {
         "name": "Höchste Beleuchtungsstärke"
