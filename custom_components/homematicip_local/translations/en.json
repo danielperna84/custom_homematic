@@ -306,8 +306,14 @@
       "gas_energy_counter": {
         "name": "Gas Energy Counter"
       },
+      "gas_flow": {
+        "name": "Gas Flow"
+      },
       "gas_power": {
         "name": "Gas Power"
+      },
+      "gas_volume": {
+        "name": "Gas Volume"
       },
       "highest_illumination": {
         "name": "Highest Illumination"

@@ -1,6 +1,7 @@
-# Version 1.57.0 (2024-02-20)
+# Version 1.57.0 (2024-02-29)
 
 - Remove unnecessary async
+- Add GAS\_\* parameters of HmIP-ESI
 
 # Version 1.56.0 (2024-02-15)
 
