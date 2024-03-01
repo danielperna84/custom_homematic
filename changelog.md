@@ -1,7 +1,10 @@
-# Version 1.57.0 (2024-02-29)
+# Version 1.57.0 (2024-03-01)
 
+- Bump hahomematic to 2024.3.0
+  - Add HBW-LC4-IN4-DR
 - Remove unnecessary async
 - Add GAS\_\* parameters of HmIP-ESI
+- Avoid some HA deprecation warnings
 
 # Version 1.56.0 (2024-02-15)
 

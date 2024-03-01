@@ -1,4 +1,5 @@
 """Initializer helpers for Homematic(IP) Local."""
+
 from __future__ import annotations
 
 import datetime
@@ -85,10 +86,19 @@ def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
 def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
-    mock_config_entry_v2 = mock_config_entry_v1
-    mock_config_entry_v2.version = 2
-    mock_config_entry_v2.data = entry_data_v2
-    return mock_config_entry_v2
+    return MockConfigEntry(
+        entry_id=const.CONFIG_ENTRY_ID,
+        version=2,
+        domain=DOMAIN,
+        title=const.INSTANCE_NAME,
+        data=entry_data_v2,
+        options={},
+        pref_disable_new_entities=False,
+        pref_disable_polling=False,
+        source="user",
+        unique_id=const.CONFIG_ENTRY_UNIQUE_ID,
+        disabled_by=None,
+    )
 
 
 @pytest.fixture
@@ -181,9 +191,12 @@ async def mock_loaded_config_entry(
     mock_control_unit: ControlUnit,
 ) -> ControlUnit:
     """Create mock running control unit."""
-    with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
-        return_value=mock_control_unit,
+    with (
+        patch("custom_components.homematicip_local.find_free_port", return_value=8765),
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
+            return_value=mock_control_unit,
+        ),
     ):
         mock_config_entry_v2.add_to_hass(hass)
         await hass.config_entries.async_setup(mock_config_entry_v2.entry_id)

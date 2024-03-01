@@ -111,9 +111,9 @@ async def test_reload_entry(
     hass: HomeAssistant, mock_loaded_config_entry: MockConfigEntry
 ) -> None:
     """Test unload entry."""
-    mock_loaded_config_entry.title = const.INSTANCE_NAME
+    assert mock_loaded_config_entry.title == const.INSTANCE_NAME
     assert hass.data[DOMAIN]
     hass.config_entries.async_update_entry(mock_loaded_config_entry, title="Reload")
     await hass.async_block_till_done()
     assert hass.data[DOMAIN]
-    mock_loaded_config_entry.title = "Reload"
+    assert mock_loaded_config_entry.title == "Reload"
