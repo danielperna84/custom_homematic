@@ -1,4 +1,5 @@
 """HaHomematic is a Python 3 module for Home Assistant and Homematic(IP) devices."""
+
 from __future__ import annotations
 
 import logging
@@ -98,8 +99,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         data = dict(entry.data)
         data.update({CONF_ENABLE_SYSTEM_NOTIFICATIONS: True})
 
-        entry.version = 2
-        hass.config_entries.async_update_entry(entry, data=data)
+        hass.config_entries.async_update_entry(entry, version=2, data=data)
 
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True

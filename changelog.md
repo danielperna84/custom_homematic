@@ -2,6 +2,7 @@
 
 - Remove unnecessary async
 - Add GAS\_\* parameters of HmIP-ESI
+- Avoid some HA deprecation warnings
 
 # Version 1.56.0 (2024-02-15)
 
