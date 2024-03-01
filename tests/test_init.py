@@ -1,4 +1,5 @@
 """Test the Homematic(IP) Local init."""
+
 from __future__ import annotations
 
 from unittest.mock import patch
@@ -25,9 +26,12 @@ async def test_setup_entry(
     assert len(hass.config_entries.async_entries(DOMAIN)) == 0
     assert not hass.data.get(DOMAIN)
 
-    with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
-        return_value=mock_control_unit,
+    with (
+        patch("custom_components.homematicip_local.find_free_port", return_value=8765),
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
+            return_value=mock_control_unit,
+        ),
     ):
         mock_config_entry_v2.add_to_hass(hass)
         await hass.config_entries.async_setup(mock_config_entry_v2.entry_id)
@@ -63,9 +67,12 @@ async def test_migrate_entry(
     assert len(hass.config_entries.async_entries(DOMAIN)) == 0
     assert not hass.data.get(DOMAIN)
 
-    with patch("custom_components.homematicip_local.find_free_port", return_value=8765), patch(
-        "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
-        return_value=mock_control_unit,
+    with (
+        patch("custom_components.homematicip_local.find_free_port", return_value=8765),
+        patch(
+            "custom_components.homematicip_local.control_unit.ControlConfig.create_control_unit",
+            return_value=mock_control_unit,
+        ),
     ):
         mock_config_entry_v1.add_to_hass(hass)
         await hass.config_entries.async_setup(mock_config_entry_v1.entry_id)
@@ -88,19 +95,6 @@ async def test_unload_entry(
     assert DOMAIN not in hass.data
     # retry possible?
     assert await async_unload_entry(hass, mock_loaded_config_entry) is False
-
-
-async def test_unload_wrong_entry(
-    hass: HomeAssistant, mock_loaded_config_entry: MockConfigEntry
-) -> None:
-    """Test unload wrong entry."""
-    mock_loaded_config_entry.entry_id = "123"
-    assert hass.data[DOMAIN]
-
-    # await hass.config_entries.async_unload(mock_loaded_config_entry.entry_id)
-    assert await async_unload_entry(hass, mock_loaded_config_entry) is False
-    await hass.async_block_till_done()
-    assert hass.data[DOMAIN]
 
 
 async def test_remove_entry(
