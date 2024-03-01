@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.2.1
+    rev: v0.3.0
     hooks:
       - id: ruff
         args:
@@ -38,7 +38,7 @@ repos:
           - --branch=devel
           - --branch=master
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.34.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
   - repo: https://github.com/pre-commit/mirrors-prettier
