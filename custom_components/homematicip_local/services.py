@@ -1,4 +1,5 @@
 """Module with hahomematic services."""
+
 from __future__ import annotations
 
 from datetime import datetime

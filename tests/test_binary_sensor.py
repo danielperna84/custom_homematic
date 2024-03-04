@@ -1,4 +1,5 @@
 """Tests for binary_sensor entities of hahomematic."""
+
 from __future__ import annotations
 
 import pytest

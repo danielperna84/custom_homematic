@@ -1,4 +1,5 @@
 """Test the Homematic(IP) Local config flow."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -56,17 +57,20 @@ async def async_check_form(
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        return_value=SystemInformation(
-            available_interfaces=[],
-            auth_enabled=False,
-            https_redirect_enabled=False,
-            serial=const.SERIAL,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            return_value=SystemInformation(
+                available_interfaces=[],
+                auth_enabled=False,
+                https_redirect_enabled=False,
+                serial=const.SERIAL,
+            ),
         ),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -124,17 +128,20 @@ async def async_check_options_form(
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        return_value=SystemInformation(
-            available_interfaces=[],
-            auth_enabled=False,
-            https_redirect_enabled=False,
-            serial=const.SERIAL,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            return_value=SystemInformation(
+                available_interfaces=[],
+                auth_enabled=False,
+                https_redirect_enabled=False,
+                serial=const.SERIAL,
+            ),
         ),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
@@ -289,12 +296,15 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=AuthFailure("no pw"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=AuthFailure("no pw"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -336,12 +346,15 @@ async def test_options_form_invalid_auth(
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=AuthFailure("no pw"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=AuthFailure("no pw"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
@@ -381,12 +394,15 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidConfig("wrong char"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=InvalidConfig("wrong char"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -428,12 +444,15 @@ async def test_options_form_invalid_password(
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=InvalidConfig("wrong char"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=InvalidConfig("wrong char"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
@@ -473,12 +492,15 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=NoConnection("no host"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=NoConnection("no host"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
@@ -521,12 +543,15 @@ async def test_options_form_cannot_connect(
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        side_effect=NoConnection("no host"),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            side_effect=NoConnection("no host"),
+        ),
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.options.async_configure(
             result["flow_id"],
@@ -576,17 +601,20 @@ async def test_flow_hassio_discovery(
         "unique_id": const.CONFIG_ENTRY_UNIQUE_ID,
     }
 
-    with patch(
-        "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
-        return_value=SystemInformation(
-            available_interfaces=[],
-            auth_enabled=False,
-            https_redirect_enabled=False,
-            serial=const.SERIAL,
+    with (
+        patch(
+            "custom_components.homematicip_local.config_flow._async_validate_config_and_get_system_information",
+            return_value=SystemInformation(
+                available_interfaces=[],
+                auth_enabled=False,
+                https_redirect_enabled=False,
+                serial=const.SERIAL,
+            ),
         ),
-    ), patch(
-        "custom_components.homematicip_local.async_setup_entry",
-        return_value=True,
+        patch(
+            "custom_components.homematicip_local.async_setup_entry",
+            return_value=True,
+        ),
     ):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],

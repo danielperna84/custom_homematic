@@ -1,4 +1,5 @@
 """Support for Homematic(IP) Local sensors."""
+
 from __future__ import annotations
 
 from collections.abc import Mapping

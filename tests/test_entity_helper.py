@@ -1,4 +1,5 @@
 """Test the HaHomematic entity helper."""
+
 from __future__ import annotations
 
 from custom_components.homematicip_local.entity_helpers import (

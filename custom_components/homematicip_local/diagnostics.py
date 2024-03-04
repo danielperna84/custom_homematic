@@ -1,4 +1,5 @@
 """Diagnostics support for Homematic(IP) Local."""
+
 from __future__ import annotations
 
 from collections.abc import Mapping

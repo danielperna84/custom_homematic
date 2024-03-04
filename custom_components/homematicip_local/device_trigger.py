@@ -1,4 +1,5 @@
 """Provides device triggers for Home Assistant Homematic(IP) Local."""
+
 from __future__ import annotations
 
 from hahomematic.const import CLICK_EVENTS, EntityUsage
