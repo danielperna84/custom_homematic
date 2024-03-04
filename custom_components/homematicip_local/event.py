@@ -1,4 +1,5 @@
 """event for Homematic(IP) Local."""
+
 from __future__ import annotations
 
 import logging

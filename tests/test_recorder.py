@@ -1,4 +1,5 @@
 """Tests for recorder for excluded attributes of hahomematic entities."""
+
 from __future__ import annotations
 
 from hahomematic.const import EVENT_ADDRESS, EVENT_INTERFACE_ID, DeviceFirmwareState

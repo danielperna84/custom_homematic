@@ -1,4 +1,5 @@
 """HaHomematic is a Python 3 module for Home Assistant and Homematic(IP) devices."""
+
 from __future__ import annotations
 
 import asyncio

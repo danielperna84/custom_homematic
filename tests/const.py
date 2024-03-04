@@ -1,4 +1,5 @@
 """Constants for tests."""
+
 from __future__ import annotations
 
 from hahomematic.const import InterfaceName, ProgramData, SystemVariableData, SysvarType
