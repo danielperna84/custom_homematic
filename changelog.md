@@ -1,3 +1,7 @@
+# Version 1.57.1 (2024-03-05)
+
+- Fix device_class for GAS_FLOW
+
 # Version 1.57.0 (2024-03-01)
 
 - Bump hahomematic to 2024.3.0
