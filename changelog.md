@@ -1,3 +1,8 @@
+# Version 1.58.0 (2024-03-09)
+
+- Bump hahomematic to 2024.3.1
+  - Add additional parameter to HBW-LC4-IN4-DR
+
 # Version 1.57.1 (2024-03-05)
 
 - Fix device_class for GAS_FLOW

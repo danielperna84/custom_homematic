@@ -92,7 +92,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             and hasattr(self.entity_description, "native_unit_of_measurement")
             and self.entity_description.native_unit_of_measurement != hm_entity.unit
         ):
-            _LOGGER.info(
+            _LOGGER.debug(
                 "Different unit for entity: %s: entity_description: %s vs device: %s",
                 hm_entity.full_name,
                 self.entity_description.native_unit_of_measurement,
