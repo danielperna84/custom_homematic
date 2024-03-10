@@ -1,7 +1,8 @@
-# Version 1.58.0 (2024-03-09)
+# Version 1.58.0 (2024-03-10)
 
 - Bump hahomematic to 2024.3.1
   - Add additional parameter to HBW-LC4-IN4-DR
+- Fix return zero value for sysvar number
 
 # Version 1.57.1 (2024-03-05)
 
