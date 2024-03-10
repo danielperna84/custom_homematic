@@ -181,8 +181,8 @@ class HaHomematicSysvarNumber(HaHomematicGenericSysvarEntity[HmSysvarNumber], Nu
     @property
     def native_value(self) -> float | None:
         """Return the current value."""
-        if self._hm_hub_entity.value is not None:
-            return float(self._hm_hub_entity.value)
+        if (value := self._hm_hub_entity.value) is not None and isinstance(value, (int, float)):
+            return float(value)
         return None
 
     async def async_set_native_value(self, value: float) -> None:
