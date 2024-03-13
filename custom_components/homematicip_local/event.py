@@ -35,17 +35,14 @@ async def async_setup_entry(
     def async_add_event(hm_entities: tuple[list[GenericEvent], ...]) -> None:
         """Add event from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_EVENT: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicEvent] = []
 
-        for hm_channel_events in hm_entities:
-            entities.append(
-                HaHomematicEvent(
-                    control_unit=control_unit,
-                    hm_channel_events=hm_channel_events,
-                )
+        if entities := [
+            HaHomematicEvent(
+                control_unit=control_unit,
+                hm_channel_events=hm_channel_events,
             )
-
-        if entities:
+            for hm_channel_events in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

@@ -101,12 +101,8 @@ def _get_hmip_local_platforms() -> tuple[str, ...]:
     """Return relevant Homematic(IP) Local platforms."""
     platforms = list(Platform)
     hm_platforms = [platform.value for platform in PLATFORMS if platform not in BLOCK_PLATFORMS]
-    hmip_local_platforms: list[str] = []
-    for hm_platform in hm_platforms:
-        if hm_platform in platforms:
-            hmip_local_platforms.append(hm_platform)
 
-    return tuple(hmip_local_platforms)
+    return tuple(hm_platform for hm_platform in hm_platforms if hm_platform in platforms)
 
 
 HMIP_LOCAL_PLATFORMS: Final[tuple[str, ...]] = _get_hmip_local_platforms()

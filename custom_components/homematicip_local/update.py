@@ -35,17 +35,14 @@ async def async_setup_entry(
     def async_add_update(hm_entities: tuple[HmUpdate, ...]) -> None:
         """Add update from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_UPDATE: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicUpdate] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicUpdate(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicUpdate(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

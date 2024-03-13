@@ -47,31 +47,25 @@ async def async_setup_entry(
     def async_add_sensor(hm_entities: tuple[HmSensor, ...]) -> None:
         """Add sensor from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_SENSOR: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSensor] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSensor(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicSensor(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_sensor(hm_entities: tuple[HmSysvarSensor, ...]) -> None:
         """Add sysvar sensor from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_SENSOR: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarSensor] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarSensor(control_unit=control_unit, hm_sysvar_entity=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarSensor(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(
