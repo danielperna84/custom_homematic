@@ -34,31 +34,25 @@ async def async_setup_entry(
     def async_add_select(hm_entities: tuple[HmSelect, ...]) -> None:
         """Add select from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_SELECT: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSelect] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSelect(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicSelect(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_select(hm_entities: tuple[HmSysvarSelect, ...]) -> None:
         """Add sysvar select from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_SELECT: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarSelect] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarSelect(control_unit=control_unit, hm_sysvar_entity=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarSelect(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

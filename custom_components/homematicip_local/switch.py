@@ -41,31 +41,25 @@ async def async_setup_entry(
     def async_add_switch(hm_entities: tuple[CeSwitch | HmSwitch, ...]) -> None:
         """Add switch from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_SWITCH: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSwitch] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSwitch(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicSwitch(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_switch(hm_entities: tuple[HmSysvarSwitch, ...]) -> None:
         """Add sysvar switch from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_SWITCH: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarSwitch] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarSwitch(control_unit=control_unit, hm_sysvar_entity=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarSwitch(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

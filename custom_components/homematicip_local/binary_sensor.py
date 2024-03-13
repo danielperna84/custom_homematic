@@ -34,33 +34,20 @@ async def async_setup_entry(
     def async_add_binary_sensor(hm_entities: tuple[HmBinarySensor, ...]) -> None:
         """Add binary_sensor from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_BINARY_SENSOR: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicBinarySensor] = []
-
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicBinarySensor(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicBinarySensor(control_unit=control_unit, hm_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_binary_sensor(hm_entities: tuple[HmSysvarBinarySensor, ...]) -> None:
         """Add sysvar binary sensor from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_BINARY_SENSOR: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarBinarySensor] = []
-
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarBinarySensor(
-                    control_unit=control_unit, hm_sysvar_entity=hm_entity
-                )
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarBinarySensor(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

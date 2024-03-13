@@ -40,31 +40,25 @@ async def async_setup_entry(
     def async_add_number(hm_entities: tuple[BaseNumber, ...]) -> None:
         """Add number from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_NUMBER: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicNumber] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicNumber(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicNumber(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_number(hm_entities: tuple[HmSysvarNumber, ...]) -> None:
         """Add sysvar number from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_NUMBER: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarNumber] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarNumber(control_unit=control_unit, hm_sysvar_entity=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarNumber(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

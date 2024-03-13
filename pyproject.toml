@@ -369,6 +369,7 @@ lint.select = [
     "PLE", # pylint
     "PLR", # pylint
     "PLW", # pylint
+    "PERF",
     "Q000", # Double quotes found but single quotes preferred
     "RUF006", # Store a reference to the return value of asyncio.create_task
     "S102", # Use of exec detected

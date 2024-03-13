@@ -34,17 +34,14 @@ async def async_setup_entry(
     def async_add_lock(hm_entities: tuple[BaseLock, ...]) -> None:
         """Add lock from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_LOCK: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicLock] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicLock(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicLock(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

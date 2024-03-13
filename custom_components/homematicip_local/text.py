@@ -34,31 +34,25 @@ async def async_setup_entry(
     def async_add_text(hm_entities: tuple[HmText, ...]) -> None:
         """Add text from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_TEXT: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicText] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicText(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicText(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_hub_text(hm_entities: tuple[HmSysvarText, ...]) -> None:
         """Add sysvar text from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_HUB_TEXT: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSysvarText] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSysvarText(control_unit=control_unit, hm_sysvar_entity=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicSysvarText(control_unit=control_unit, hm_sysvar_entity=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

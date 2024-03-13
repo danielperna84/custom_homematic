@@ -33,31 +33,25 @@ async def async_setup_entry(
     def async_add_button(hm_entities: tuple[HmButton, ...]) -> None:
         """Add button from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_BUTTON: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicButton] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicButton(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicButton(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     @callback
     def async_add_program_button(hm_entities: tuple[HmProgramButton, ...]) -> None:
         """Add program button from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_PROGRAM_BUTTON: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicProgramButton] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicProgramButton(control_unit=control_unit, hm_program_button=hm_entity)
-            )
-
-        if entities:
+        if entities := [
+            HaHomematicProgramButton(control_unit=control_unit, hm_program_button=hm_entity)
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     entry.async_on_unload(

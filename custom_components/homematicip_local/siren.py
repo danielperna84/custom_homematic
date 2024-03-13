@@ -51,17 +51,14 @@ async def async_setup_entry(
     def async_add_siren(hm_entities: tuple[BaseSiren, ...]) -> None:
         """Add siren from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_SIREN: Adding %i entities", len(hm_entities))
-        entities: list[HaHomematicSiren] = []
 
-        for hm_entity in hm_entities:
-            entities.append(
-                HaHomematicSiren(
-                    control_unit=control_unit,
-                    hm_entity=hm_entity,
-                )
+        if entities := [
+            HaHomematicSiren(
+                control_unit=control_unit,
+                hm_entity=hm_entity,
             )
-
-        if entities:
+            for hm_entity in hm_entities
+        ]:
             async_add_entities(entities)
 
     platform = entity_platform.async_get_current_platform()

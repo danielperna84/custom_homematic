@@ -1,3 +1,8 @@
+# Version 1.59.0 (2024-03-13)
+
+- Bump hahomematic to 2024.3.2
+- Use more list comprehension
+
 # Version 1.58.0 (2024-03-10)
 
 - Bump hahomematic to 2024.3.1
