@@ -1,6 +1,9 @@
-# Version 1.59.0 (2024-03-13)
+# Version 1.59.0 (2024-04-02)
 
-- Bump hahomematic to 2024.3.2
+- Bump hahomematic to 2024.4.0
+  - Remove support for python 3.11
+  - Use more list comprehension
+  - Customize HmIP-DRG-DALI
 - Use more list comprehension
 
 # Version 1.58.0 (2024-03-10)
