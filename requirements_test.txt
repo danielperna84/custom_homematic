@@ -3,7 +3,7 @@
 async-upnp-client
 coverage==7.4.4
 hahomematic==2024.3.1
-homeassistant==2024.4.0b8
+homeassistant==2024.4.0
 mypy==1.9.0
 pip==24.0
 pre-commit==3.6.2
@@ -12,7 +12,7 @@ pylint-strict-informational==0.1
 pylint==3.1.0
 pytest-asyncio==0.23.6
 pytest-cov==5.0.0
-pytest-homeassistant-custom-component==0.13.110
+pytest-homeassistant-custom-component==0.13.111
 pytest-rerunfailures==13.0
 pytest-socket==0.7.0
 pytest-timeout==2.3.1
