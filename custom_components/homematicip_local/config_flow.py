@@ -18,6 +18,7 @@ from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
     ConfigFlowResult,
+    OptionsFlow,
 )
 from homeassistant.const import (
     CONF_HOST,
@@ -247,12 +248,12 @@ class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Get the options flow for this handler."""
         return HomematicIPLocalOptionsFlowHandler(config_entry)
 
 
-class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
+class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
     """Handle Homematic(IP) Local options."""
 
     def __init__(self, entry: ConfigEntry) -> None:
