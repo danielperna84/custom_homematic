@@ -12,9 +12,14 @@ from hahomematic.exceptions import AuthFailure, BaseHomematicException
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
 
-from homeassistant import config_entries
 from homeassistant.components import ssdp
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import (
+    CONN_CLASS_LOCAL_PUSH,
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
@@ -24,7 +29,6 @@ from homeassistant.const import (
     CONF_USERNAME,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
@@ -162,22 +166,22 @@ async def _async_validate_config_and_get_system_information(
     return None
 
 
-class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle the instance flow for Homematic(IP) Local."""
 
     VERSION = 2
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
+    CONNECTION_CLASS = CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
         """Init the ConfigFlow."""
         self.data: ConfigType = {}
         self.serial: str | None = None
 
-    async def async_step_user(self, user_input: ConfigType | None = None) -> FlowResult:
+    async def async_step_user(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         """Handle the initial step."""
         return await self.async_step_central(user_input=user_input)
 
-    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
+    async def async_step_central(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         """Handle the initial step."""
         if user_input is not None:
             self.data = _get_ccu_data(self.data, user_input=user_input)
@@ -190,7 +194,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_interface(
         self,
         interface_input: ConfigType | None = None,
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         if interface_input is None:
             _LOGGER.debug("ConfigFlow.step_interface, no user input")
@@ -227,7 +231,7 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders=description_placeholders,
         )
 
-    async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> FlowResult:
+    async def async_step_ssdp(self, discovery_info: ssdp.SsdpServiceInfo) -> ConfigFlowResult:
         """Handle a discovered HomeMatic CCU."""
         _LOGGER.debug("Homematic(IP) Local SSDP discovery %s", pformat(discovery_info))
         instance_name = _get_instance_name(friendly_name=discovery_info.upnp.get("friendlyName"))
@@ -244,12 +248,12 @@ class DomainConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> config_entries.OptionsFlow:
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Get the options flow for this handler."""
         return HomematicIPLocalOptionsFlowHandler(config_entry)
 
 
-class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
+class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
     """Handle Homematic(IP) Local options."""
 
     def __init__(self, entry: ConfigEntry) -> None:
@@ -257,11 +261,11 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
         self.entry = entry
         self.data: ConfigType = dict(self.entry.data.items())
 
-    async def async_step_init(self, user_input: ConfigType | None = None) -> FlowResult:
+    async def async_step_init(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         """Manage the Homematic(IP) Local options."""
         return await self.async_step_central(user_input=user_input)
 
-    async def async_step_central(self, user_input: ConfigType | None = None) -> FlowResult:
+    async def async_step_central(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         """Manage the Homematic(IP) Local devices options."""
         if user_input is not None:
             old_interfaces = self.data[CONF_INTERFACE]
@@ -277,7 +281,7 @@ class HomematicIPLocalOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_interface(
         self,
         interface_input: ConfigType | None = None,
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         if interface_input is None:
             _LOGGER.debug("ConfigFlow.step_interface, no user input")
