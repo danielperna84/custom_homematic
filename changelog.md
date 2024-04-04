@@ -5,6 +5,7 @@
   - Use more list comprehension
   - Customize HmIP-DRG-DALI
 - Use more list comprehension
+- Add icons to services
 
 # Version 1.58.0 (2024-03-10)
 

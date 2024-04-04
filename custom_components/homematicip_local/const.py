@@ -52,12 +52,6 @@ EVENT_NAME: Final = "name"
 EVENT_TITLE: Final = "title"
 EVENT_UNAVAILABLE: Final = "unavailable"
 
-SERVICE_PUT_PARAMSET: Final = "put_paramset"
-SERVICE_SET_DEVICE_VALUE: Final = "set_device_value"
-SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
-SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
-SERVICE_VIRTUAL_KEY: Final = "virtual_key"
-
 # only used for entities from MASTER paramset
 
 TOTAL_SYSVAR: Final[tuple[str, ...]] = (

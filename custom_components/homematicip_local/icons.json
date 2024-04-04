@@ -69,5 +69,26 @@
         "default": "mdi:weather-windy"
       }
     }
+  },
+  "services": {
+    "clear_cache": "mdi:trash-can",
+    "delete_device": "mdi:delete",
+    "disable_away_mode": "mdi:caravan",
+    "enable_away_mode_by_calendar": "mdi:caravan",
+    "enable_away_mode_by_duration": "mdi:caravan",
+    "export_device_definition": "mdi:export",
+    "fetch_system_variables": "mdi:download",
+    "force_device_availability": "mdi:devices",
+    "get_device_value": "mdi:download-box",
+    "get_paramset": "mdi:download-box",
+    "light_set_on_time": "mdi:timer-check-outline",
+    "put_paramset": "mdi:content-save",
+    "set_cover_combined_position": "mdi:blinds-horizontal",
+    "set_device_value": "mdi:content-save",
+    "set_install_mode": "mdi:plus",
+    "set_variable_value": "mdi:content-save",
+    "switch_set_on_time": "mdi:timer-check-outline",
+    "turn_on_siren": "mdi:alarm",
+    "update_device_firmware_data": "mdi:update"
   }
 }
