@@ -192,10 +192,15 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
-            self._hm_entity.register_update_callback(
-                update_callback=self._async_device_changed, custom_id=self.entity_id
+            self._hm_entity.register_entity_updated_callback(
+                entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
             )
-            self._hm_entity.register_remove_callback(remove_callback=self._async_device_removed)
+            self._hm_entity.register_entity_refreshed_callback(
+                entity_refreshed_callback=self._async_entity_refreshed, custom_id=self.entity_id
+            )
+            self._hm_entity.register_entity_removed_callback(
+                entity_removed_callback=self._async_device_removed
+            )
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
             await self._hm_entity.load_entity_value(call_source=CallSource.HA_INIT)
@@ -210,7 +215,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             )
 
     @callback
-    def _async_device_changed(self, *args: Any, **kwargs: Any) -> None:
+    def _async_entity_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
@@ -222,6 +227,18 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 self._hm_entity.full_name,
             )
 
+    def _async_entity_refreshed(self, *args: Any, **kwargs: Any) -> None:
+        """Handle device state refreshes."""
+        # Don't update disabled entities
+        if self.enabled:
+            _LOGGER.debug("Device refreshed event fired for %s", self._hm_entity.full_name)
+            self.async_write_ha_state()
+        else:
+            _LOGGER.debug(
+                "Device refreshed event for %s not fired. Entity is disabled",
+                self._hm_entity.full_name,
+            )
+
     async def async_update(self) -> None:
         """Update entities from MASTER paramset."""
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
@@ -230,10 +247,15 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
-        self._hm_entity.unregister_update_callback(
-            update_callback=self._async_device_changed, custom_id=self.entity_id
+        self._hm_entity.unregister_entity_updated_callback(
+            entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
         )
-        self._hm_entity.unregister_remove_callback(remove_callback=self._async_device_removed)
+        self._hm_entity.unregister_entity_refreshed_callback(
+            entity_refreshed_callback=self._async_entity_refreshed, custom_id=self.entity_id
+        )
+        self._hm_entity.unregister_entity_removed_callback(
+            entity_removed_callback=self._async_device_removed
+        )
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
@@ -312,21 +334,21 @@ class HaHomematicGenericHubEntity(Entity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         if isinstance(self._hm_hub_entity, CallbackEntity):
-            self._hm_hub_entity.register_update_callback(
-                update_callback=self._async_hub_entity_changed, custom_id=self.entity_id
+            self._hm_hub_entity.register_entity_updated_callback(
+                entity_updated_callback=self._async_hub_entity_changed, custom_id=self.entity_id
             )
-            self._hm_hub_entity.register_remove_callback(
-                remove_callback=self._async_hub_entity_removed
+            self._hm_hub_entity.register_entity_removed_callback(
+                entity_removed_callback=self._async_hub_entity_removed
             )
 
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip sysvar entity will be removed from hass."""
         # Remove callbacks.
-        self._hm_hub_entity.unregister_update_callback(
-            update_callback=self._async_hub_entity_changed, custom_id=self.entity_id
+        self._hm_hub_entity.unregister_entity_updated_callback(
+            entity_updated_callback=self._async_hub_entity_changed, custom_id=self.entity_id
         )
-        self._hm_hub_entity.unregister_remove_callback(
-            remove_callback=self._async_hub_entity_removed
+        self._hm_hub_entity.unregister_entity_removed_callback(
+            entity_removed_callback=self._async_hub_entity_removed
         )
 
     @callback
