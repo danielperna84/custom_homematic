@@ -28,9 +28,11 @@ async def test_sensor_trans(factory: helper.Factory) -> None:
     assert ha_state.state == STATE_UNKNOWN
 
     control.central.event(const.INTERFACE_ID, "VCU7837366:1", "Taupunkt", 1)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == "1.0"
 
     control.central.event(const.INTERFACE_ID, "VCU7837366:1", "Taupunkt", 0)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == "0.0"
 
 
@@ -47,7 +49,9 @@ async def test_sensor_to_trans(factory: helper.Factory) -> None:
     assert ha_state.state == STATE_UNKNOWN
 
     control.central.event(const.INTERFACE_ID, "VCU7837366:1", "Abs_Luftfeuchte", 1)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == "1.0"
 
     control.central.event(const.INTERFACE_ID, "VCU7837366:1", "Abs_Luftfeuchte", 0)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == "0.0"

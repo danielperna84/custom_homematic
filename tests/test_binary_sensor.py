@@ -32,12 +32,15 @@ async def test_hmbinarysensor(
     assert ha_state.state == STATE_OFF
 
     control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 1)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == STATE_ON
 
     control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", 0)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == STATE_OFF
 
     control.central.event(const.INTERFACE_ID, "VCU5864966:1", "STATE", None)
+    await hass.async_block_till_done()
     assert hass.states.get(entity_id).state == STATE_OFF
 
 
