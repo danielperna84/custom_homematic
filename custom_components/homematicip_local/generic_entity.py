@@ -214,13 +214,12 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 self._hm_entity.full_name,
             )
 
-    @callback
     def _async_entity_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
             _LOGGER.debug("Device changed event fired for %s", self._hm_entity.full_name)
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
         else:
             _LOGGER.debug(
                 "Device changed event for %s not fired. Entity is disabled",
@@ -232,7 +231,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         # Don't update disabled entities
         if self.enabled:
             _LOGGER.debug("Device refreshed event fired for %s", self._hm_entity.full_name)
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
         else:
             _LOGGER.debug(
                 "Device refreshed event for %s not fired. Entity is disabled",
@@ -351,13 +350,12 @@ class HaHomematicGenericHubEntity(Entity):
             entity_removed_callback=self._async_hub_entity_removed
         )
 
-    @callback
     def _async_hub_entity_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:
             _LOGGER.debug("Sysvar changed event fired for %s", self.name)
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
         else:
             _LOGGER.debug(
                 "Sysvar changed event for %s not fired. Sysvar entity is disabled",

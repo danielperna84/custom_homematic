@@ -121,14 +121,13 @@ class HaHomematicEvent(EventEntity):
                 entity_removed_callback=self._async_device_removed
             )
 
-    @callback
     def _async_event_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
             self._trigger_event(event_type=kwargs["parameter"])
             _LOGGER.debug("Device event fired %s", self.name)
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
         else:
             _LOGGER.debug(
                 "Device event for %s not fired. Entity is disabled",
