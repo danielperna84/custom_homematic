@@ -1,4 +1,4 @@
-# Version 1.59.0 (2024-04-02)
+# Version 1.59.0 (2024-04-0)
 
 - Bump hahomematic to 2024.4.1
   - Remove support for python 3.11
@@ -9,6 +9,7 @@
 - Use more list comprehension
 - Add icons to services
 - Use ConfigFlowResult
+- Use thread-safe method schedule_update_ha_state to write ha state
 
 # Version 1.58.0 (2024-03-10)
 

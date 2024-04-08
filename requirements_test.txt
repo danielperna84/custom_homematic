@@ -2,11 +2,11 @@
 
 async-upnp-client
 coverage==7.4.4
-hahomematic==2024.4.1
+hahomematic==2024.4.2
 homeassistant==2024.4.1
 mypy==1.9.0
 pip==24.0
-pre-commit==3.6.2
+pre-commit==3.7.0
 pydevccu==0.1.8
 pylint-strict-informational==0.1
 pylint==3.1.0
