@@ -193,10 +193,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
             self._hm_entity.register_entity_updated_callback(
-                entity_updated_callback=self._entity_changed, custom_id=self.entity_id
-            )
-            self._hm_entity.register_entity_refreshed_callback(
-                entity_refreshed_callback=self._entity_refreshed, custom_id=self.entity_id
+                entity_updated_callback=self._entity_updated, custom_id=self.entity_id
             )
             self._hm_entity.register_entity_removed_callback(
                 entity_removed_callback=self._async_device_removed
@@ -214,27 +211,17 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 self._hm_entity.full_name,
             )
 
-    def _entity_changed(self, *args: Any, **kwargs: Any) -> None:
+    def _entity_updated(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
+        update_type = "refreshed" if kwargs.get("is_refresh") is True else "updated"
         if self.enabled:
-            _LOGGER.debug("Device changed event fired for %s", self._hm_entity.full_name)
+            _LOGGER.debug("Device %s event fired for %s", update_type, self._hm_entity.full_name)
             self.schedule_update_ha_state()
         else:
             _LOGGER.debug(
-                "Device changed event for %s not fired. Entity is disabled",
-                self._hm_entity.full_name,
-            )
-
-    def _entity_refreshed(self, *args: Any, **kwargs: Any) -> None:
-        """Handle device state refreshes."""
-        # Don't update disabled entities
-        if self.enabled:
-            _LOGGER.debug("Device refreshed event fired for %s", self._hm_entity.full_name)
-            self.schedule_update_ha_state()
-        else:
-            _LOGGER.debug(
-                "Device refreshed event for %s not fired. Entity is disabled",
+                "Device %s event for %s not fired. Entity is disabled",
+                update_type,
                 self._hm_entity.full_name,
             )
 
@@ -247,10 +234,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         self._hm_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._entity_changed, custom_id=self.entity_id
-        )
-        self._hm_entity.unregister_entity_refreshed_callback(
-            entity_refreshed_callback=self._entity_refreshed, custom_id=self.entity_id
+            entity_updated_callback=self._entity_updated, custom_id=self.entity_id
         )
         self._hm_entity.unregister_entity_removed_callback(
             entity_removed_callback=self._async_device_removed
@@ -334,7 +318,7 @@ class HaHomematicGenericHubEntity(Entity):
         """Register callbacks and load initial data."""
         if isinstance(self._hm_hub_entity, CallbackEntity):
             self._hm_hub_entity.register_entity_updated_callback(
-                entity_updated_callback=self._hub_entity_changed, custom_id=self.entity_id
+                entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
             )
             self._hm_hub_entity.register_entity_removed_callback(
                 entity_removed_callback=self._async_hub_entity_removed
@@ -344,13 +328,13 @@ class HaHomematicGenericHubEntity(Entity):
         """Run when hmip sysvar entity will be removed from hass."""
         # Remove callbacks.
         self._hm_hub_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._hub_entity_changed, custom_id=self.entity_id
+            entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
         )
         self._hm_hub_entity.unregister_entity_removed_callback(
             entity_removed_callback=self._async_hub_entity_removed
         )
 
-    def _hub_entity_changed(self, *args: Any, **kwargs: Any) -> None:
+    def _hub_entity_updated(self, *args: Any, **kwargs: Any) -> None:
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:
