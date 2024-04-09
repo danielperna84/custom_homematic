@@ -13,7 +13,13 @@ from hahomematic.support import to_bool
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_MODE
-from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.core import (
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+    callback,
+)
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 import homeassistant.helpers.config_validation as cv
@@ -528,6 +534,7 @@ async def _async_service_update_device_firmware_data(
         await control.central.refresh_firmware_data()
 
 
+@callback
 def _get_interface_address(
     hass: HomeAssistant, device_id: str, channel: int | None = None
 ) -> tuple[str, str] | None:
@@ -557,6 +564,7 @@ def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
     return control_unit
 
 
+@callback
 def _get_hm_device_by_service_data(hass: HomeAssistant, service: ServiceCall) -> HmDevice | None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None

@@ -788,6 +788,7 @@ def get_cu_by_interface_id(hass: HomeAssistant, interface_id: str) -> ControlUni
     return None
 
 
+@callback
 def get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     """Return the homematic device."""
     device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
