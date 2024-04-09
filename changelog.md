@@ -1,11 +1,14 @@
-# Version 1.59.0 (2024-04-08)
+# Version 1.59.0 (2024-04-09)
 
-- Bump hahomematic to 2024.4.2
+- Bump hahomematic to 2024.4.3
   - Remove support for python 3.11
   - Use more list comprehension
   - Customize HmIP-DRG-DALI
   - Fix register refreshed entity
   - Refactor callback naming
+  - Restructure check_connection
+  - Make xml_rpc event async
+  - Block central stop until tasks are finished
 - Use more list comprehension
 - Add icons to services
 - Use ConfigFlowResult
