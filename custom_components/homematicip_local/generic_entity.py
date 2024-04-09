@@ -195,8 +195,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             self._hm_entity.register_entity_updated_callback(
                 entity_updated_callback=self._entity_updated, custom_id=self.entity_id
             )
-            self._hm_entity.register_entity_removed_callback(
-                entity_removed_callback=self._async_device_removed
+            self._hm_entity.register_device_removed_callback(
+                device_removed_callback=self._async_device_removed
             )
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
@@ -214,7 +214,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     def _entity_updated(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
-        update_type = "refreshed" if kwargs.get("is_refresh") is True else "updated"
+        update_type = (
+            "updated"
+            if self._hm_entity.last_refreshed == self._hm_entity.last_updated
+            else "refreshed"
+        )
         if self.enabled:
             _LOGGER.debug("Device %s event fired for %s", update_type, self._hm_entity.full_name)
             self.schedule_update_ha_state()
@@ -236,8 +240,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._hm_entity.unregister_entity_updated_callback(
             entity_updated_callback=self._entity_updated, custom_id=self.entity_id
         )
-        self._hm_entity.unregister_entity_removed_callback(
-            entity_removed_callback=self._async_device_removed
+        self._hm_entity.unregister_device_removed_callback(
+            device_removed_callback=self._async_device_removed
         )
 
     @callback
@@ -320,8 +324,8 @@ class HaHomematicGenericHubEntity(Entity):
             self._hm_hub_entity.register_entity_updated_callback(
                 entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
             )
-            self._hm_hub_entity.register_entity_removed_callback(
-                entity_removed_callback=self._async_hub_entity_removed
+            self._hm_hub_entity.register_device_removed_callback(
+                device_removed_callback=self._async_hub_device_removed
             )
 
     async def async_will_remove_from_hass(self) -> None:
@@ -330,8 +334,8 @@ class HaHomematicGenericHubEntity(Entity):
         self._hm_hub_entity.unregister_entity_updated_callback(
             entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
         )
-        self._hm_hub_entity.unregister_entity_removed_callback(
-            entity_removed_callback=self._async_hub_entity_removed
+        self._hm_hub_entity.unregister_device_removed_callback(
+            device_removed_callback=self._async_hub_device_removed
         )
 
     def _hub_entity_updated(self, *args: Any, **kwargs: Any) -> None:
@@ -347,7 +351,7 @@ class HaHomematicGenericHubEntity(Entity):
             )
 
     @callback
-    def _async_hub_entity_removed(self, *args: Any, **kwargs: Any) -> None:
+    def _async_hub_device_removed(self, *args: Any, **kwargs: Any) -> None:
         """Handle hm sysvar entity removal."""
         self.hass.async_create_task(self.async_remove(force_remove=True))
 
