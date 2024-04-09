@@ -214,8 +214,10 @@ class ControlUnit(BaseControlUnit):
 
     async def start_central(self) -> None:
         """Start the central unit."""
-        self._central.register_system_event_callback(callback_handler=self._callback_system_event)
-        self._central.register_ha_event_callback(callback_handler=self._callback_ha_event)
+        self._central.register_system_event_callback(
+            system_event_callback=self._system_event_callback
+        )
+        self._central.register_ha_event_callback(ha_event_callback=self._ha_event_callback)
         await super().start_central()
         self._add_central_to_device_registry()
 
@@ -224,8 +226,10 @@ class ControlUnit(BaseControlUnit):
         if self._scheduler.initialized:
             self._scheduler.de_init()
         if central := self._central:
-            central.unregister_system_event_callback(callback_handler=self._callback_system_event)
-            central.unregister_ha_event_callback(callback_handler=self._callback_ha_event)
+            central.unregister_system_event_callback(
+                system_event_callback=self._system_event_callback
+            )
+            central.unregister_ha_event_callback(ha_event_callback=self._ha_event_callback)
 
         await super().stop_central(*args)
 
@@ -278,7 +282,7 @@ class ControlUnit(BaseControlUnit):
             )
 
     @callback
-    def _callback_system_event(self, system_event: SystemEvent, **kwargs: Any) -> None:
+    def _system_event_callback(self, system_event: SystemEvent, **kwargs: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
@@ -318,7 +322,7 @@ class ControlUnit(BaseControlUnit):
         return None
 
     @callback
-    def _callback_ha_event(self, hm_event_type: EventType, event_data: dict[str, Any]) -> None:
+    def _ha_event_callback(self, hm_event_type: EventType, event_data: dict[str, Any]) -> None:
         """Execute the callback used for device related events."""
 
         interface_id = event_data[EVENT_INTERFACE_ID]

@@ -131,8 +131,8 @@ class HaHomematicUpdate(UpdateEntity):
         self._hm_entity.register_entity_updated_callback(
             entity_updated_callback=self._entity_changed, custom_id=self.entity_id
         )
-        self._hm_entity.register_entity_removed_callback(
-            entity_removed_callback=self._async_device_removed
+        self._hm_entity.register_device_removed_callback(
+            device_removed_callback=self._async_device_removed
         )
 
     def _entity_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -153,8 +153,8 @@ class HaHomematicUpdate(UpdateEntity):
         self._hm_entity.unregister_entity_updated_callback(
             entity_updated_callback=self._entity_changed, custom_id=self.entity_id
         )
-        self._hm_entity.unregister_entity_removed_callback(
-            entity_removed_callback=self._async_device_removed
+        self._hm_entity.unregister_device_removed_callback(
+            device_removed_callback=self._async_device_removed
         )
 
     @callback

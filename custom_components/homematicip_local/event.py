@@ -117,8 +117,8 @@ class HaHomematicEvent(EventEntity):
             event.register_entity_updated_callback(
                 entity_updated_callback=self._event_changed, custom_id=self.entity_id
             )
-            event.register_entity_removed_callback(
-                entity_removed_callback=self._async_device_removed
+            event.register_device_removed_callback(
+                device_removed_callback=self._async_device_removed
             )
 
     def _event_changed(self, *args: Any, **kwargs: Any) -> None:
@@ -141,8 +141,8 @@ class HaHomematicEvent(EventEntity):
             event.unregister_entity_updated_callback(
                 entity_updated_callback=self._event_changed, custom_id=self.entity_id
             )
-            event.unregister_entity_removed_callback(
-                entity_removed_callback=self._async_device_removed
+            event.unregister_device_removed_callback(
+                device_removed_callback=self._async_device_removed
             )
 
     @callback
