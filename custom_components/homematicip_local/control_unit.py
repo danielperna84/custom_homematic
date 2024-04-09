@@ -215,11 +215,11 @@ class ControlUnit(BaseControlUnit):
     async def start_central(self) -> None:
         """Start the central unit."""
         self._central.register_system_event_callback(
-            system_event_callback=self._system_event_callback
+            system_event_callback=self._async_system_event_callback
         )
-        self._central.register_ha_event_callback(ha_event_callback=self._ha_event_callback)
+        self._central.register_ha_event_callback(ha_event_callback=self._async_ha_event_callback)
         await super().start_central()
-        self._add_central_to_device_registry()
+        self._async_add_central_to_device_registry()
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the central unit."""
@@ -227,14 +227,14 @@ class ControlUnit(BaseControlUnit):
             self._scheduler.de_init()
         if central := self._central:
             central.unregister_system_event_callback(
-                system_event_callback=self._system_event_callback
+                system_event_callback=self._async_system_event_callback
             )
-            central.unregister_ha_event_callback(ha_event_callback=self._ha_event_callback)
+            central.unregister_ha_event_callback(ha_event_callback=self._async_ha_event_callback)
 
         await super().stop_central(*args)
 
     @callback
-    def _add_central_to_device_registry(self) -> None:
+    def _async_add_central_to_device_registry(self) -> None:
         """Add the central to device registry."""
         device_registry = dr.async_get(self._hass)
         device_registry.async_get_or_create(
@@ -254,7 +254,7 @@ class ControlUnit(BaseControlUnit):
         )
 
     @callback
-    def _add_virtual_remotes_to_device_registry(self) -> None:
+    def _async_add_virtual_remotes_to_device_registry(self) -> None:
         """Add the virtual remotes to device registry."""
         if not self._central.has_clients:
             _LOGGER.error(
@@ -282,7 +282,7 @@ class ControlUnit(BaseControlUnit):
             )
 
     @callback
-    def _system_event_callback(self, system_event: SystemEvent, **kwargs: Any) -> None:
+    def _async_system_event_callback(self, system_event: SystemEvent, **kwargs: Any) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
@@ -305,7 +305,7 @@ class ControlUnit(BaseControlUnit):
                     signal_new_hm_entity(entry_id=self._entry_id, platform=HmPlatform.EVENT),
                     channel_events,
                 )
-            self._add_virtual_remotes_to_device_registry()
+            self._async_add_virtual_remotes_to_device_registry()
         elif system_event == SystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
@@ -322,7 +322,9 @@ class ControlUnit(BaseControlUnit):
         return None
 
     @callback
-    def _ha_event_callback(self, hm_event_type: EventType, event_data: dict[str, Any]) -> None:
+    def _async_ha_event_callback(
+        self, hm_event_type: EventType, event_data: dict[str, Any]
+    ) -> None:
         """Execute the callback used for device related events."""
 
         interface_id = event_data[EVENT_INTERFACE_ID]
@@ -394,7 +396,7 @@ class ControlUnit(BaseControlUnit):
         else:
             device_address = event_data[EVENT_ADDRESS]
             name: str | None = None
-            if device_entry := self._get_device_entry(device_address=device_address):
+            if device_entry := self._async_get_device_entry(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
                 event_data.update({EVENT_DEVICE_ID: device_entry.id, EVENT_NAME: name})
             if hm_event_type in (EventType.IMPULSE, EventType.KEYPRESS):
@@ -463,7 +465,7 @@ class ControlUnit(BaseControlUnit):
                     )
 
     @callback
-    def _get_device_entry(self, device_address: str) -> DeviceEntry | None:
+    def _async_get_device_entry(self, device_address: str) -> DeviceEntry | None:
         """Return the device of the ha device."""
         if (hm_device := self._central.get_device(address=device_address)) is None:
             return None
@@ -789,7 +791,7 @@ def get_cu_by_interface_id(hass: HomeAssistant, interface_id: str) -> ControlUni
 
 
 @callback
-def get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+def asnyc_get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
     """Return the homematic device."""
     device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
     if not device_entry:

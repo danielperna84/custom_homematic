@@ -29,9 +29,9 @@ from homeassistant.helpers.service import async_register_admin_service, verify_d
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import (
     ControlUnit,
+    asnyc_get_hm_device_by_id,
     get_cu_by_interface_id,
     get_hm_device_by_address,
-    get_hm_device_by_id,
 )
 from .support import get_device_address_at_interface_from_identifiers
 
@@ -336,7 +336,7 @@ async def _async_service_delete_device(hass: HomeAssistant, service: ServiceCall
     """Service to delete a Homematic(IP) Local device from HA."""
     device_id = service.data[CONF_DEVICE_ID]
 
-    if (address_data := _get_interface_address(hass=hass, device_id=device_id)) is None:
+    if (address_data := _async_get_interface_address(hass=hass, device_id=device_id)) is None:
         return None
 
     interface_id: str = address_data[0]
@@ -361,7 +361,7 @@ async def _async_service_export_device_definition(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.export_device_definition()
 
         _LOGGER.debug(
@@ -375,7 +375,7 @@ async def _async_service_force_device_availability(
     hass: HomeAssistant, service: ServiceCall
 ) -> None:
     """Service to force device availability on a Homematic(IP) Local devices."""
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         hm_device.set_forced_availability(forced_availability=ForcedDeviceAvailability.FORCE_TRUE)
         _LOGGER.debug(
             "Called force_device_availability: %s, %s",
@@ -391,7 +391,7 @@ async def _async_service_get_device_value(
     channel_no = service.data[CONF_CHANNEL]
     parameter = service.data[CONF_PARAMETER]
 
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         try:
             if (
                 value := await hm_device.client.get_value(
@@ -413,7 +413,7 @@ async def _async_service_get_paramset(
     channel_no = service.data.get(CONF_CHANNEL)
     paramset_key = service.data[CONF_PARAMSET_KEY]
 
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
             f"{hm_device.device_address}:{channel_no}"
             if channel_no is not None
@@ -454,7 +454,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
             # Default is 'string'
             value = str(value)
 
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.client.set_value(
             channel_address=f"{hm_device.device_address}:{channel_no}",
             paramset_key=ParamsetKey.VALUES,
@@ -511,7 +511,7 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
     value = dict(service.data[CONF_PARAMSET])
     rx_mode = service.data.get(CONF_RX_MODE)
 
-    if hm_device := _get_hm_device_by_service_data(hass=hass, service=service):
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
             f"{hm_device.device_address}:{channel_no}"
             if channel_no is not None
@@ -535,7 +535,7 @@ async def _async_service_update_device_firmware_data(
 
 
 @callback
-def _get_interface_address(
+def _async_get_interface_address(
     hass: HomeAssistant, device_id: str, channel: int | None = None
 ) -> tuple[str, str] | None:
     """Return interface and channel_address with given device_id and channel."""
@@ -565,11 +565,13 @@ def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
 
 
 @callback
-def _get_hm_device_by_service_data(hass: HomeAssistant, service: ServiceCall) -> HmDevice | None:
+def _async_get_hm_device_by_service_data(
+    hass: HomeAssistant, service: ServiceCall
+) -> HmDevice | None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
     if device_id := service.data.get(CONF_DEVICE_ID):
-        hm_device = get_hm_device_by_id(hass=hass, device_id=device_id)
+        hm_device = asnyc_get_hm_device_by_id(hass=hass, device_id=device_id)
         if not hm_device:
             _LOGGER.warning(
                 "No device found by device_id %s for service %s.%s",
