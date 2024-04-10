@@ -129,18 +129,19 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
         self._hm_entity.register_entity_updated_callback(
-            entity_updated_callback=self._entity_changed, custom_id=self.entity_id
+            entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
         )
         self._hm_entity.register_device_removed_callback(
             device_removed_callback=self._async_device_removed
         )
 
-    def _entity_changed(self, *args: Any, **kwargs: Any) -> None:
+    @callback
+    def _async_entity_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
             _LOGGER.debug("Update state changed event fired for %s", self.name)
-            self.schedule_update_ha_state()
+            self.async_schedule_update_ha_state()
         else:
             _LOGGER.debug(
                 "Update state changed event for %s not fired. Entity is disabled",
@@ -151,7 +152,7 @@ class HaHomematicUpdate(UpdateEntity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         self._hm_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._entity_changed, custom_id=self.entity_id
+            entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
         )
         self._hm_entity.unregister_device_removed_callback(
             device_removed_callback=self._async_device_removed
