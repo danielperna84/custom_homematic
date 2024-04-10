@@ -193,7 +193,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Register callbacks and load initial data."""
         if isinstance(self._hm_entity, CallbackEntity):
             self._hm_entity.register_entity_updated_callback(
-                entity_updated_callback=self._entity_updated, custom_id=self.entity_id
+                entity_updated_callback=self._async_entity_updated, custom_id=self.entity_id
             )
             self._hm_entity.register_device_removed_callback(
                 device_removed_callback=self._async_device_removed
@@ -239,7 +239,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         self._hm_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._entity_updated, custom_id=self.entity_id
+            entity_updated_callback=self._async_entity_updated, custom_id=self.entity_id
         )
         self._hm_entity.unregister_device_removed_callback(
             device_removed_callback=self._async_device_removed
@@ -323,7 +323,7 @@ class HaHomematicGenericHubEntity(Entity):
         """Register callbacks and load initial data."""
         if isinstance(self._hm_hub_entity, CallbackEntity):
             self._hm_hub_entity.register_entity_updated_callback(
-                entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
+                entity_updated_callback=self._async_hub_entity_updated, custom_id=self.entity_id
             )
             self._hm_hub_entity.register_device_removed_callback(
                 device_removed_callback=self._async_hub_device_removed
@@ -333,7 +333,7 @@ class HaHomematicGenericHubEntity(Entity):
         """Run when hmip sysvar entity will be removed from hass."""
         # Remove callbacks.
         self._hm_hub_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._hub_entity_updated, custom_id=self.entity_id
+            entity_updated_callback=self._async_hub_entity_updated, custom_id=self.entity_id
         )
         self._hm_hub_entity.unregister_device_removed_callback(
             device_removed_callback=self._async_hub_device_removed
