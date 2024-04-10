@@ -212,7 +212,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             )
 
     @callback
-    def _entity_updated(self, *args: Any, **kwargs: Any) -> None:
+    def _async_entity_updated(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         update_type = (
@@ -340,7 +340,7 @@ class HaHomematicGenericHubEntity(Entity):
         )
 
     @callback
-    def _hub_entity_updated(self, *args: Any, **kwargs: Any) -> None:
+    def _async_hub_entity_updated(self, *args: Any, **kwargs: Any) -> None:
         """Handle sysvar entity state changes."""
         # Don't update disabled entities
         if self.enabled:

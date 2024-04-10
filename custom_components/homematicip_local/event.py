@@ -115,14 +115,14 @@ class HaHomematicEvent(EventEntity):
 
         for event in self._hm_channel_events:
             event.register_entity_updated_callback(
-                entity_updated_callback=self._event_changed, custom_id=self.entity_id
+                entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
             )
             event.register_device_removed_callback(
                 device_removed_callback=self._async_device_removed
             )
 
     @callback
-    def _event_changed(self, *args: Any, **kwargs: Any) -> None:
+    def _async_event_changed(self, *args: Any, **kwargs: Any) -> None:
         """Handle device state changes."""
         # Don't update disabled entities
         if self.enabled:
@@ -140,7 +140,7 @@ class HaHomematicEvent(EventEntity):
         # Remove callback from device.
         for event in self._hm_channel_events:
             event.unregister_entity_updated_callback(
-                entity_updated_callback=self._event_changed, custom_id=self.entity_id
+                entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
             )
             event.unregister_device_removed_callback(
                 device_removed_callback=self._async_device_removed
