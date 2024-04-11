@@ -153,7 +153,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "FILLING_LEVEL": HmSensorEntityDescription(
         key="FILLING_LEVEL",
@@ -170,7 +170,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="GAS_ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "GAS_FLOW": HmSensorEntityDescription(
         key="GAS_FLOW",
@@ -187,7 +187,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="GAS_VOLUME",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
         device_class=SensorDeviceClass.GAS,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     ("HUMIDITY", "ACTUAL_HUMIDITY"): HmSensorEntityDescription(
         key="HUMIDITY",
@@ -199,7 +199,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         key="IEC_ENERGY_COUNTER",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "IEC_POWER": HmSensorEntityDescription(
         key="IEC_POWER",
@@ -299,7 +299,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "RAIN_COUNTER": HmSensorEntityDescription(
         key="RAIN_COUNTER",
         native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         translation_key="rain_counter",
     ),
     ("RSSI_DEVICE", "RSSI_PEER"): HmSensorEntityDescription(
@@ -323,7 +323,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "SUNSHINEDURATION": HmSensorEntityDescription(
         key="SUNSHINEDURATION",
         native_unit_of_measurement=UnitOfTime.MINUTES,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         translation_key="sunshineduration",
     ),
     "VALUE": HmSensorEntityDescription(

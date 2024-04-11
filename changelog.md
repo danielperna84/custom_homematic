@@ -20,6 +20,7 @@
 - Use thread-safe method schedule_update_ha_state to write ha state
 - Add missing callback annotations
 - Add async prefix to callback annotated methods
+- Move state classes from total to total_increasing
 
 # Version 1.58.0 (2024-03-10)
 
