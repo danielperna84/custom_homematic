@@ -81,11 +81,11 @@ async def async_call_action_from_config(
 
     device_registry = dr.async_get(hass)
     if (device := device_registry.async_get(device_id)) is None:
-        return None
+        return
     if (
         data := get_device_address_at_interface_from_identifiers(identifiers=device.identifiers)
     ) is None:
-        return None
+        return
 
     device_address, interface_id = data
     for entry_id in device.config_entries:

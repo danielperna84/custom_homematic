@@ -141,7 +141,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     @property
     def name(self) -> str | UndefinedType | None:
-        """Return the name of the entity.
+        """
+        Return the name of the entity.
 
         Override by CC.
         A hm entity can consist of two parts. The first part is already defined by the user,
@@ -163,7 +164,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return entity_name
 
     def _do_remove_name(self) -> bool:
-        """Check if entity name part should be removed.
+        """
+        Check if entity name part should be removed.
 
         Here we use the HA translation support to identify if the translated name is ''
         This is guarded against failure due to future HA api changes.
@@ -183,7 +185,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
 
     @property
     def use_device_name(self) -> bool:
-        """Return if this entity does not have its own name.
+        """
+        Return if this entity does not have its own name.
 
         Override by CC.
         """

@@ -97,10 +97,10 @@ def is_valid_event(event_data: dict[str, Any], schema: vol.Schema) -> bool:
     """Validate evenc_data against a given schema."""
     try:
         schema(event_data)
-        return True
     except vol.Invalid as err:
         _LOGGER.debug("The EVENT could not be validated. %s, %s", err.path, err.msg)
-    return False
+        return False
+    return True
 
 
 def get_device_address_at_interface_from_identifiers(

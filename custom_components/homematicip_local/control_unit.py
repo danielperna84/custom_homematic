@@ -318,8 +318,8 @@ class ControlUnit(BaseControlUnit):
                             signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
                             hm_hub_entities,
                         )
-            return None
-        return None
+            return
+        return
 
     @callback
     def _async_ha_event_callback(
@@ -431,7 +431,7 @@ class ControlUnit(BaseControlUnit):
             elif hm_event_type == EventType.DEVICE_ERROR:
                 error_parameter = event_data[EVENT_PARAMETER]
                 if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
-                    return None
+                    return
                 error_parameter_display = error_parameter.replace("_", " ").title()
                 title = f"{DOMAIN.upper()} Device Error"
                 error_message: str = ""
@@ -483,7 +483,7 @@ class ControlUnit(BaseControlUnit):
         """Fetch all system variables from CCU / Homegear."""
         if not self._scheduler.initialized:
             _LOGGER.debug("Hub scheduler for %s is not initialized", self._instance_name)
-            return None
+            return
 
         await self._scheduler.fetch_sysvars()
 
@@ -699,7 +699,7 @@ class HmScheduler:
                 "Scheduled fetching of programs and sysvars for %s is disabled",
                 self._central.name,
             )
-            return None
+            return
         _LOGGER.debug(
             "Scheduled fetching of programs and sysvars for %s",
             self._central.name,
@@ -714,7 +714,7 @@ class HmScheduler:
                 "Manually fetching of sysvars for %s is disabled",
                 self._central.name,
             )
-            return None
+            return
         _LOGGER.debug("Manually fetching of sysvars for %s", self._central.name)
         await self._central.fetch_sysvar_data()
 
