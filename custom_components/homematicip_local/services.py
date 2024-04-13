@@ -337,7 +337,7 @@ async def _async_service_delete_device(hass: HomeAssistant, service: ServiceCall
     device_id = service.data[CONF_DEVICE_ID]
 
     if (address_data := _async_get_interface_address(hass=hass, device_id=device_id)) is None:
-        return None
+        return
 
     interface_id: str = address_data[0]
     device_address: str = address_data[1]

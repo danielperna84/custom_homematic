@@ -273,14 +273,14 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         """Set new target temperature."""
         temperature = kwargs.get(ATTR_TEMPERATURE)
         if temperature is None:
-            return None
+            return
         await self._hm_entity.set_temperature(temperature=temperature)
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
         if hvac_mode not in HA_TO_HM_HVAC_MODE:
             _LOGGER.warning("Hvac mode %s is not supported by integration", hvac_mode)
-            return None
+            return
         await self._hm_entity.set_hvac_mode(HA_TO_HM_HVAC_MODE[hvac_mode])
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
@@ -291,7 +291,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
                 preset_mode,
                 self.hvac_mode,
             )
-            return None
+            return
         await self._hm_entity.set_preset_mode(PresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
