@@ -1,4 +1,4 @@
-# Version **1.60.0.alt (2024-04-22)
+# Version 1.60.0.alt (2024-04-22)
 
 - Bump hahomematic to 2024.4.11b0
   - Use value from service call for target (tilt) level while cover is moving
