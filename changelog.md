@@ -1,4 +1,9 @@
-# Version 1.60.0 (2024-04-21)
+# Version **1.60.0.alt (2024-04-22)
+
+- Bump hahomematic to 2024.4.11b0
+  - Use value from service call for target (tilt) level while cover is moving
+
+# Version 1.60.0 (2024-04-16)
 
 - Bump hahomematic to 2024.4.10
   - Rename loop_safe to loop_check
