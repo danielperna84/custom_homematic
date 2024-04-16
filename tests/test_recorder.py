@@ -36,7 +36,7 @@ TEST_DEVICES: dict[str, str] = {
 # pylint: disable=protected-access
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def no_test_generic_entity_un_recorded(
     factory_with_recorder: helper.Factory,
 ) -> None:
@@ -82,7 +82,7 @@ async def no_test_generic_entity_un_recorded(
                 break
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def no_test_event_entity_un_recorded(
     factory_with_recorder: helper.Factory,
 ) -> None:
@@ -119,7 +119,7 @@ async def no_test_event_entity_un_recorded(
                 break
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def no_test_update_entity_un_recorded(
     factory_with_recorder: helper.Factory,
 ) -> None:
@@ -153,7 +153,7 @@ async def no_test_update_entity_un_recorded(
                 break
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def no_test_sysvar_entity_un_recorded(
     factory_with_recorder: helper.Factory,
 ) -> None:
