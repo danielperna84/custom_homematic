@@ -15,7 +15,7 @@ TEST_DEVICES: dict[str, str] = {
 # pylint: disable=protected-access
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_sensor_trans(factory: helper.Factory) -> None:
     """Test sensor with translation."""
     entity_id = "sensor.hb_uni_sensor1_vcu7837366_dew_point"
@@ -36,7 +36,7 @@ async def test_sensor_trans(factory: helper.Factory) -> None:
     assert hass.states.get(entity_id).state == "0.0"
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_sensor_to_trans(factory: helper.Factory) -> None:
     """Test sensor without translation."""
     entity_id = "sensor.hb_uni_sensor1_vcu7837366_abs_luftfeuchte"

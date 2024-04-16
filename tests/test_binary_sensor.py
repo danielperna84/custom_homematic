@@ -15,7 +15,7 @@ TEST_DEVICES: dict[str, str] = {
 # pylint: disable=protected-access
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_hmbinarysensor(
     factory: helper.Factory,
 ) -> None:
@@ -44,7 +44,7 @@ async def test_hmbinarysensor(
     assert hass.states.get(entity_id).state == STATE_OFF
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_hmsysvarbinarysensor(
     factory: helper.Factory,
 ) -> None:

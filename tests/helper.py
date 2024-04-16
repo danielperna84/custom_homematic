@@ -215,8 +215,10 @@ def _get_mockable_method_names(hm_entity: Any) -> list[str]:
         # Get the attribute value
         attribute_value = getattr(hm_entity, attribute)
         # Check that it is callable
-        if callable(attribute_value):
-            # Filter not public methods
-            if attribute.startswith("_") is False and attribute not in EXCLUDE_METHODS_FROM_MOCKS:
-                method_list.append(attribute)
+        if (
+            callable(attribute_value)
+            and attribute.startswith("_") is False
+            and attribute not in EXCLUDE_METHODS_FROM_MOCKS
+        ):
+            method_list.append(attribute)
     return method_list

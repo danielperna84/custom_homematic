@@ -1,3 +1,14 @@
+# Version 1.60.0 (2024-04-16)
+
+- Bump hahomematic to 2024.4.8
+  - Rename loop_safe to loop_check
+  - Reduce loop_check to minimum
+  - Update ruff rules / requirements
+  - Make entity event async
+  - Extract looper from central and reuse for json/xml_rpc
+  - Move loop_check to async_support
+  - Record last value send
+
 # Version 1.59.0 (2024-04-09)
 
 - Bump hahomematic to 2024.4.6

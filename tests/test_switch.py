@@ -18,7 +18,7 @@ TEST_DEVICES: dict[str, str] = {
 # pylint: disable=protected-access
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_switch(factory: helper.Factory) -> None:
     """Test CeSwitch."""
     entity_id = "switch.hmip_bsm_vcu2128127"
@@ -45,7 +45,7 @@ async def test_switch(factory: helper.Factory) -> None:
     assert hm_entity.turn_off.call_count == 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_hmsysvarswitch(factory: helper.Factory) -> None:
     """Test HmSysvarSwitch."""
     entity_id = "switch.centraltest_sv_alarm_ext"

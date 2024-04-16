@@ -412,7 +412,7 @@ lint.select = [
 ]
 
 lint.ignore = [
-   "D202", # No blank lines allowed after function docstring
+    "D202", # No blank lines allowed after function docstring
     "D203", # 1 blank line required before class docstring
     "D212",  # Multi-line docstring summary should start at the second line
     #"D213",  # Multi-line docstring summary should start at the second line
@@ -437,8 +437,6 @@ lint.ignore = [
     "SIM115", # Use context handler for opening files
     "TRY003", # Avoid specifying long messages outside the exception class
     "TRY400", # Use `logging.exception` instead of `logging.error`
-    "UP006", # keep type annotation style as is
-    "UP007", # keep type annotation style as is
     # Ignored due to performance: https://github.com/charliermarsh/ruff/issues/2923
     "UP038", # Use `X | Y` in `isinstance` call instead of `(X, Y)`
     # Ignored due to incompatible with mypy: https://github.com/python/mypy/issues/15238
@@ -462,7 +460,7 @@ lint.ignore = [
     # temporarily disabled
     #"PT019",
     #"PYI024", # Use typing.NamedTuple instead of collections.namedtuple
-    #"RET503",
+    "RET503",
     #"RET502",
     #"RET501",
     #"TRY002",
