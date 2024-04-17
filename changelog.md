@@ -1,7 +1,8 @@
-# Version 1.60.0.alt (2024-04-16)
+# Version 1.60.0.alt (2024-04-17)
 
-- Bump hahomematic to 2024.4.9b1
+- Bump hahomematic to 2024.4.9b2
   - Use value from service call for target (tilt) level while cover is moving
+  - Decompose combined parameter
 
 # Version 1.60.0 (2024-04-16)
 
