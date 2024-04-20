@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import logging
 from typing import Any
 
@@ -92,7 +93,7 @@ class HaHomematicEvent(EventEntity):
             EVENT_ADDRESS: self._hm_primary_entity.channel_address,
             EVENT_MODEL: self._hm_primary_entity.device.device_type,
         }
-
+        self._unregister_callbacks: list[Callable] = []
         _LOGGER.debug(
             "init: Setting up %s %s",
             self._hm_primary_entity.device.name,
@@ -114,11 +115,15 @@ class HaHomematicEvent(EventEntity):
         """Register callbacks and load initial data."""
 
         for event in self._hm_channel_events:
-            event.register_entity_updated_callback(
-                entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
+            self._unregister_callbacks.append(
+                event.register_entity_updated_callback(
+                    entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
+                )
             )
-            event.register_device_removed_callback(
-                device_removed_callback=self._async_device_removed
+            self._unregister_callbacks.append(
+                event.register_device_removed_callback(
+                    device_removed_callback=self._async_device_removed
+                )
             )
 
     @callback
@@ -138,13 +143,8 @@ class HaHomematicEvent(EventEntity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
-        for event in self._hm_channel_events:
-            event.unregister_entity_updated_callback(
-                entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
-            )
-            event.unregister_device_removed_callback(
-                device_removed_callback=self._async_device_removed
-            )
+        for unregister in self._unregister_callbacks:
+            unregister()
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:

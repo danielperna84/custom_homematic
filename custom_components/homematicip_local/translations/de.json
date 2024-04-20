@@ -748,6 +748,10 @@
           "description": "Das paramset_key-Argument für putParamset.",
           "name": "Parametersatzschlüssel"
         },
+        "wait_for_callback": {
+          "description": "Warte auf die Rückmeldung von putParamset.",
+          "name": "Warte auf Rückmeldung"
+        },
         "rx_mode": {
           "description": "Der verwendete Empfangsmodus.",
           "name": "RX Modus"
@@ -787,6 +791,10 @@
         "parameter": {
           "description": "Zu sendender Parameter, z. B. STATE.",
           "name": "Parameter"
+        },
+        "wait_for_callback": {
+          "description": "Wait for the callback of setValue.",
+          "name": "Wait for callback"
         },
         "rx_mode": {
           "description": "Der verwendete Empfangsmodus.",
