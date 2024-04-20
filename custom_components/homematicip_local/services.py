@@ -168,6 +168,7 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
             vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
             vol.Required(CONF_VALUE): cv.match_all,
+            vol.Required(CONF_WAIT_FOR_CALLBACK): cv.boolean,
             vol.Optional(CONF_VALUE_TYPE): vol.In(
                 ["boolean", "dateTime.iso8601", "double", "int", "string"]
             ),
@@ -184,6 +185,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
             vol.Optional(CONF_CHANNEL): vol.Coerce(int),
             vol.Required(CONF_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
             vol.Required(CONF_PARAMSET): dict,
+            vol.Required(CONF_WAIT_FOR_CALLBACK): cv.boolean,
             vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
         }
     ),

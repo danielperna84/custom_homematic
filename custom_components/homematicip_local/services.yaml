@@ -148,6 +148,11 @@ set_device_value:
             - "double"
             - "int"
             - "string"
+    wait_for_callback:
+      required: true
+      default: false
+      selector:
+        boolean:
     rx_mode:
       example: BURST
       selector:
@@ -206,6 +211,11 @@ put_paramset:
       example: '{"WEEK_PROGRAM_POINTER": 1}'
       selector:
         object:
+    wait_for_callback:
+      required: true
+      default: false
+      selector:
+        boolean:
     rx_mode:
       example: BURST
       selector:

@@ -742,8 +742,12 @@
           "name": "Paramset"
         },
         "paramset_key": {
-          "description": "The paramset_key argument to putParamset.",
+          "description": "The paramset_key argument.",
           "name": "Paramset key"
+        },
+        "wait_for_callback": {
+          "description": "Wait for the callback of putParamset.",
+          "name": "Wait for callback"
         },
         "rx_mode": {
           "description": "The receive mode used.",
@@ -784,6 +788,10 @@
         "parameter": {
           "description": "Parameter to send i.e STATE.",
           "name": "Parameter"
+        },
+        "wait_for_callback": {
+          "description": "Wait for the callback of setValue.",
+          "name": "Wait for callback"
         },
         "rx_mode": {
           "description": "The receive mode used.",
