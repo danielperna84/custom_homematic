@@ -50,6 +50,7 @@ CONF_PARAMSET_KEY: Final = "paramset_key"
 CONF_RX_MODE: Final = "rx_mode"
 CONF_VALUE: Final = "value"
 CONF_VALUE_TYPE: Final = "value_type"
+CONF_WAIT_FOR_CALLBACK: Final = "wait_for_callback"
 
 DEFAULT_CHANNEL: Final = 1
 
@@ -438,6 +439,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
     parameter = service.data[CONF_PARAMETER]
     value = service.data[CONF_VALUE]
     value_type = service.data.get(CONF_VALUE_TYPE)
+    wait_for_callback = service.data.get(CONF_WAIT_FOR_CALLBACK)
     rx_mode = service.data.get(CONF_RX_MODE)
     if value_type:
         # Convert value into correct XML-RPC Type.
@@ -460,6 +462,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
             paramset_key=ParamsetKey.VALUES,
             parameter=parameter,
             value=value,
+            wait_for_callback=wait_for_callback,
             rx_mode=rx_mode,
         )
 
@@ -509,6 +512,7 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
     values = dict(service.data[CONF_PARAMSET])
+    wait_for_callback = service.data.get(CONF_WAIT_FOR_CALLBACK)
     rx_mode = service.data.get(CONF_RX_MODE)
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
@@ -521,6 +525,7 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
             channel_address=channel_address,
             paramset_key=paramset_key,
             values=values,
+            wait_for_callback=wait_for_callback,
             rx_mode=rx_mode,
         )
 
