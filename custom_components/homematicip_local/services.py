@@ -508,19 +508,19 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
-    value = dict(service.data[CONF_PARAMSET])
+    values = dict(service.data[CONF_PARAMSET])
     rx_mode = service.data.get(CONF_RX_MODE)
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
-        address = (
+        channel_address = (
             f"{hm_device.device_address}:{channel_no}"
             if channel_no is not None
             else hm_device.device_address
         )
         await hm_device.client.put_paramset(
-            address=address,
+            channel_address=channel_address,
             paramset_key=paramset_key,
-            value=value,
+            values=values,
             rx_mode=rx_mode,
         )
 

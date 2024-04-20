@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import logging
 from typing import Any
 
@@ -82,6 +83,7 @@ class HaHomematicUpdate(UpdateEntity):
         self._attr_extra_state_attributes = {
             ATTR_FIRMWARE_UPDATE_STATE: hm_entity.firmware_update_state
         }
+        self._unregister_callbacks: list[Callable] = []
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
@@ -128,11 +130,15 @@ class HaHomematicUpdate(UpdateEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register callbacks and load initial data."""
-        self._hm_entity.register_entity_updated_callback(
-            entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
+        self._unregister_callbacks.append(
+            self._hm_entity.register_entity_updated_callback(
+                entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
+            )
         )
-        self._hm_entity.register_device_removed_callback(
-            device_removed_callback=self._async_device_removed
+        self._unregister_callbacks.append(
+            self._hm_entity.register_device_removed_callback(
+                device_removed_callback=self._async_device_removed
+            )
         )
 
     @callback
@@ -151,12 +157,8 @@ class HaHomematicUpdate(UpdateEntity):
     async def async_will_remove_from_hass(self) -> None:
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
-        self._hm_entity.unregister_entity_updated_callback(
-            entity_updated_callback=self._async_entity_changed, custom_id=self.entity_id
-        )
-        self._hm_entity.unregister_device_removed_callback(
-            device_removed_callback=self._async_device_removed
-        )
+        for unregister in self._unregister_callbacks:
+            unregister()
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:

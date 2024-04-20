@@ -114,6 +114,7 @@ class BaseControlUnit:
         self._enable_system_notifications = self._config_data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
         self._central: CentralUnit = self._create_central()
         self._attr_device_info: DeviceInfo | None = None
+        self._unregister_callbacks: list[Callable] = []
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -214,10 +215,17 @@ class ControlUnit(BaseControlUnit):
 
     async def start_central(self) -> None:
         """Start the central unit."""
-        self._central.register_system_event_callback(
-            system_event_callback=self._async_system_event_callback
+        self._unregister_callbacks.append(
+            self._central.register_system_event_callback(
+                system_event_callback=self._async_system_event_callback
+            )
         )
-        self._central.register_ha_event_callback(ha_event_callback=self._async_ha_event_callback)
+
+        self._unregister_callbacks.append(
+            self._central.register_ha_event_callback(
+                ha_event_callback=self._async_ha_event_callback
+            )
+        )
         await super().start_central()
         self._async_add_central_to_device_registry()
 
@@ -225,11 +233,9 @@ class ControlUnit(BaseControlUnit):
         """Stop the central unit."""
         if self._scheduler.initialized:
             self._scheduler.de_init()
-        if central := self._central:
-            central.unregister_system_event_callback(
-                system_event_callback=self._async_system_event_callback
-            )
-            central.unregister_ha_event_callback(ha_event_callback=self._async_ha_event_callback)
+
+        for unregister in self._unregister_callbacks:
+            unregister()
 
         await super().stop_central(*args)
 
