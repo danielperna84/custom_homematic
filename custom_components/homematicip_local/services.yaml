@@ -150,7 +150,6 @@ set_device_value:
             - "string"
     wait_for_callback:
       required: false
-      default: 30
       selector:
         number:
           min: 0
@@ -215,7 +214,6 @@ put_paramset:
         object:
     wait_for_callback:
       required: false
-      default: 30
       selector:
         number:
           min: 0
