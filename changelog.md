@@ -15,6 +15,7 @@
   - Add wait_for_callback to collector
   - Wait for target value in wait_for_state_change_or_timeout
 - Add option to services to wait for set_value/put_paramset callback
+- Add wait_for_callback to set_cover_combined_position
 
 # Version 1.59.0 (2024-04-09)
 

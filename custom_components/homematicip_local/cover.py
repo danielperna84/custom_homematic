@@ -7,6 +7,7 @@ from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.cover import CeBlind, CeCover, CeGarage, CeIpBlind
+from hahomematic.platforms.entity import CallParameterCollector
 import voluptuous as vol
 
 from homeassistant.components.cover import (
@@ -20,12 +21,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
+from .services import CONF_WAIT_FOR_CALLBACK
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,6 +112,7 @@ async def async_setup_entry(
         {
             vol.Required(ATTR_POSITION): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
             vol.Optional(ATTR_TILT_POSITION): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
+            vol.Optional(CONF_WAIT_FOR_CALLBACK): cv.positive_int,
         },
         "async_set_cover_combined_position",
     )
@@ -161,10 +165,16 @@ class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], Cove
             await self._hm_entity.set_position(position=position)
 
     async def async_set_cover_combined_position(
-        self, position: int, tilt_position: int | None = None
+        self, position: int, tilt_position: int | None = None, wait_for_callback: int | None = None
     ) -> None:
         """Move the cover to a specific position incl. tilt."""
-        await self._hm_entity.set_position(position=position, tilt_position=tilt_position)
+        collector = CallParameterCollector(device=self._hm_entity.device)
+        await self._hm_entity.set_position(
+            position=position, tilt_position=tilt_position, collector=collector
+        )
+        await collector.send_data(
+            wait_for_callback=wait_for_callback,
+        )
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""

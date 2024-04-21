@@ -749,8 +749,8 @@
           "name": "Parametersatzschlüssel"
         },
         "wait_for_callback": {
-          "description": "Warte auf die Rückmeldung von putParamset.",
-          "name": "Warte auf Rückmeldung"
+          "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+          "name": "Warte auf die Rückmeldung"
         },
         "rx_mode": {
           "description": "Der verwendete Empfangsmodus.",
@@ -769,6 +769,10 @@
         "tilt_position": {
           "description": "Neigungsposition der Jalousie.",
           "name": "Neigungsposition"
+        },
+        "wait_for_callback": {
+          "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+          "name": "Warte auf die Rückmeldung"
         }
       },
       "name": "Stellt die kombinierte Position der Jalousie ein"
@@ -793,8 +797,8 @@
           "name": "Parameter"
         },
         "wait_for_callback": {
-          "description": "Wait for the callback of setValue.",
-          "name": "Wait for callback"
+          "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+          "name": "Warte auf die Rückmeldung"
         },
         "rx_mode": {
           "description": "Der verwendete Empfangsmodus.",

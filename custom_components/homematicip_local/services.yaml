@@ -350,6 +350,12 @@ set_cover_combined_position:
           min: 0
           max: 100
           unit_of_measurement: "%"
+    wait_for_callback:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 600
 update_device_firmware_data:
   fields:
     entry_id:
