@@ -12,6 +12,7 @@
   - Return affected entity keys for service calls
   - Add callback to unregister on register return
   - Add option to wait for set_value/put_paramset callback
+- Add option to services to wait for set_value/put_paramset callback
 
 # Version 1.59.0 (2024-04-09)
 

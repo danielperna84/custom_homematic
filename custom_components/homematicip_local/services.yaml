@@ -149,10 +149,12 @@ set_device_value:
             - "int"
             - "string"
     wait_for_callback:
-      required: true
-      default: false
+      required: false
+      default: 30
       selector:
-        boolean:
+        number:
+          min: 0
+          max: 600
     rx_mode:
       example: BURST
       selector:
@@ -212,10 +214,12 @@ put_paramset:
       selector:
         object:
     wait_for_callback:
-      required: true
-      default: false
+      required: false
+      default: 30
       selector:
-        boolean:
+        number:
+          min: 0
+          max: 600
     rx_mode:
       example: BURST
       selector:
