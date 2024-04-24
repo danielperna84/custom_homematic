@@ -1,6 +1,6 @@
-# Version 1.60.0 (2024-04-21)
+# Version 1.60.0 (2024-04-24)
 
-- Bump hahomematic to 2024.4.10
+- Bump hahomematic to 2024.4.11
   - Rename loop_safe to loop_check
   - Reduce loop_check to minimum
   - Update ruff rules / requirements
@@ -14,7 +14,12 @@
   - Add option to wait for set_value/put_paramset callback
   - Add wait_for_callback to collector
   - Wait for target value in wait_for_state_change_or_timeout
+  - Add command queue
+  - Move open/close from IpBlind to Blind
+  - Use central_client_factory fixture
+  - Ensure central.stop() is called in tests
 - Add option to services to wait for set_value/put_paramset callback
+- Add wait_for_callback to set_cover_combined_position
 
 # Version 1.59.0 (2024-04-09)
 
