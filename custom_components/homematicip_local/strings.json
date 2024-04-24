@@ -746,7 +746,7 @@
           "name": "Paramset key"
         },
         "wait_for_callback": {
-          "description": "Wait for the callback of putParamset.",
+          "description": "Wait for the callback of the service call.",
           "name": "Wait for callback"
         },
         "rx_mode": {
@@ -766,6 +766,10 @@
         "tilt_position": {
           "description": "Tilt position of the cover.",
           "name": "Tilt position"
+        },
+        "wait_for_callback": {
+          "description": "Wait for the callback of the service call.",
+          "name": "Wait for callback"
         }
       },
       "name": "Set cover combined position"
@@ -790,7 +794,7 @@
           "name": "Parameter"
         },
         "wait_for_callback": {
-          "description": "Wait for the callback of setValue.",
+          "description": "Wait for the callback of the service call.",
           "name": "Wait for callback"
         },
         "rx_mode": {
