@@ -1,6 +1,12 @@
 # Version 1.60.0 (2024-04-24)
 
-- Bump hahomematic to 2024.4.11
+## Breaking change:
+
+- tilt level is set to 50% to be open instead of 100%
+
+## Changes:
+
+- Bump hahomematic to 2024.4.12
   - Rename loop_safe to loop_check
   - Reduce loop_check to minimum
   - Update ruff rules / requirements
@@ -18,6 +24,8 @@
   - Move open/close from IpBlind to Blind
   - Use central_client_factory fixture
   - Ensure central.stop() is called in tests
+  - Fix missing param in unregister_entity_updated_callback
+  - Set open tilt level to 50%
 - Add option to services to wait for set_value/put_paramset callback
 - Add wait_for_callback to set_cover_combined_position
 
