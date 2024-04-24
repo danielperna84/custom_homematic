@@ -2,7 +2,7 @@
 
 async-upnp-client
 coverage==7.4.4
-hahomematic==2024.4.11
+hahomematic==2024.4.12
 homeassistant==2024.4.4
 mypy==1.9.0
 pip==24.0
