@@ -1,3 +1,7 @@
+# Version 1.60.1 (2024-04-26)
+
+- Add missing parameter for set_cover_combined_position
+
 # Version 1.60.0 (2024-04-24)
 
 ## Breaking change:

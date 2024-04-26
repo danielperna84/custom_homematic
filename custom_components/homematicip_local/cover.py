@@ -174,6 +174,8 @@ class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], Cove
         )
         await collector.send_data(
             wait_for_callback=wait_for_callback,
+            use_command_queue=False,
+            use_put_paramset=True,
         )
 
     async def async_open_cover(self, **kwargs: Any) -> None:
