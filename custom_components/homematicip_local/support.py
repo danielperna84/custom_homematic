@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
@@ -93,7 +94,7 @@ def cleanup_click_event_data(event_data: dict[str, Any]) -> dict[str, Any]:
     return event_data
 
 
-def is_valid_event(event_data: dict[str, Any], schema: vol.Schema) -> bool:
+def is_valid_event(event_data: Mapping[str, Any], schema: vol.Schema) -> bool:
     """Validate evenc_data against a given schema."""
     try:
         schema(event_data)
