@@ -198,13 +198,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         if isinstance(self._hm_entity, CallbackEntity):
             self._unregister_callbacks.append(
                 self._hm_entity.register_entity_updated_callback(
-                    entity_updated_callback=self._async_entity_updated, custom_id=self.entity_id
+                    cb=self._async_entity_updated, custom_id=self.entity_id
                 )
             )
             self._unregister_callbacks.append(
-                self._hm_entity.register_device_removed_callback(
-                    device_removed_callback=self._async_device_removed
-                )
+                self._hm_entity.register_device_removed_callback(cb=self._async_device_removed)
             )
         # Init value of entity.
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
@@ -329,13 +327,13 @@ class HaHomematicGenericHubEntity(Entity):
         if isinstance(self._hm_hub_entity, CallbackEntity):
             self._unregister_callbacks.append(
                 self._hm_hub_entity.register_entity_updated_callback(
-                    entity_updated_callback=self._async_hub_entity_updated,
+                    cb=self._async_hub_entity_updated,
                     custom_id=self.entity_id,
                 )
             )
             self._unregister_callbacks.append(
                 self._hm_hub_entity.register_device_removed_callback(
-                    device_removed_callback=self._async_hub_device_removed
+                    cb=self._async_hub_device_removed
                 )
             )
 

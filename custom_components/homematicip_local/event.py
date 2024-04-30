@@ -117,13 +117,11 @@ class HaHomematicEvent(EventEntity):
         for event in self._hm_channel_events:
             self._unregister_callbacks.append(
                 event.register_entity_updated_callback(
-                    entity_updated_callback=self._async_event_changed, custom_id=self.entity_id
+                    cb=self._async_event_changed, custom_id=self.entity_id
                 )
             )
             self._unregister_callbacks.append(
-                event.register_device_removed_callback(
-                    device_removed_callback=self._async_device_removed
-                )
+                event.register_device_removed_callback(cb=self._async_device_removed)
             )
 
     @callback
