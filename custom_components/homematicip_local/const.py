@@ -52,6 +52,49 @@ EVENT_NAME: Final = "name"
 EVENT_TITLE: Final = "title"
 EVENT_UNAVAILABLE: Final = "unavailable"
 
+SERVICE_CLEAR_CACHE: Final = "clear_cache"
+SERVICE_DELETE_DEVICE: Final = "delete_device"
+SERVICE_DISABLE_AWAY_MODE: Final = "disable_away_mode"
+SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR: Final = "enable_away_mode_by_calendar"
+SERVICE_ENABLE_AWAY_MODE_BY_DURATION: Final = "enable_away_mode_by_duration"
+SERVICE_EXPORT_DEVICE_DEFINITION: Final = "export_device_definition"
+SERVICE_FETCH_SYSTEM_VARIABLES: Final = "fetch_system_variables"
+SERVICE_FORCE_DEVICE_AVAILABILITY: Final = "force_device_availability"
+SERVICE_GET_DEVICE_VALUE: Final = "get_device_value"
+SERVICE_GET_PARAMSET: Final = "get_paramset"
+SERVICE_LIGHT_SET_ON_TIME: Final = "light_set_on_time"
+SERVICE_PUT_PARAMSET: Final = "put_paramset"
+SERVICE_SET_COVER_COMBINED_POSITION: Final = "set_cover_combined_position"
+SERVICE_SET_DEVICE_VALUE: Final = "set_device_value"
+SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
+SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
+SERVICE_SWITCH_SET_ON_TIME: Final = "switch_set_on_time"
+SERVICE_TURN_ON_SIREN: Final = "turn_on_siren"
+SERVICE_UPDATE_DEVICE_FIRMWARE_DATA: Final = "update_device_firmware_data"
+
+HMIP_LOCAL_SERVICES: Final = (
+    SERVICE_CLEAR_CACHE,
+    SERVICE_DELETE_DEVICE,
+    SERVICE_DISABLE_AWAY_MODE,
+    SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
+    SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
+    SERVICE_EXPORT_DEVICE_DEFINITION,
+    SERVICE_FETCH_SYSTEM_VARIABLES,
+    SERVICE_FORCE_DEVICE_AVAILABILITY,
+    SERVICE_GET_DEVICE_VALUE,
+    SERVICE_GET_PARAMSET,
+    SERVICE_LIGHT_SET_ON_TIME,
+    SERVICE_PUT_PARAMSET,
+    SERVICE_SET_COVER_COMBINED_POSITION,
+    SERVICE_SET_DEVICE_VALUE,
+    SERVICE_SET_INSTALL_MODE,
+    SERVICE_SET_VARIABLE_VALUE,
+    SERVICE_SWITCH_SET_ON_TIME,
+    SERVICE_TURN_ON_SIREN,
+    SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
+)
+
+
 # only used for entities from MASTER paramset
 
 TOTAL_SYSVAR: Final[tuple[str, ...]] = (

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 import logging
-from typing import Any
+from typing import Any, Final
 
 from hahomematic.const import DeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
@@ -21,7 +21,7 @@ from .const import CONTROL_UNITS, DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
-ATTR_FIRMWARE_UPDATE_STATE = "firmware_update_state"
+ATTR_FIRMWARE_UPDATE_STATE: Final = "firmware_update_state"
 
 
 async def async_setup_entry(

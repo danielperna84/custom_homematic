@@ -25,7 +25,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from .const import CONTROL_UNITS, DOMAIN, SERVICE_SET_COVER_COMBINED_POSITION
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 from .services import CONF_WAIT_FOR_CALLBACK
@@ -33,8 +33,6 @@ from .services import CONF_WAIT_FOR_CALLBACK
 _LOGGER = logging.getLogger(__name__)
 
 HmGenericCover = TypeVar("HmGenericCover", bound=CeCover | CeGarage)
-
-SERVICE_SET_COVER_COMBINED_POSITION = "set_cover_combined_position"
 
 
 async def async_setup_entry(

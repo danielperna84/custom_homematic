@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from datetime import datetime, timedelta
 import logging
-from typing import Any
+from typing import Any, Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.climate import (
@@ -40,22 +40,24 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from .const import (
+    CONTROL_UNITS,
+    DOMAIN,
+    SERVICE_DISABLE_AWAY_MODE,
+    SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
+    SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
+)
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-SERVICE_DISABLE_AWAY_MODE = "disable_away_mode"
-SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR = "enable_away_mode_by_calendar"
-SERVICE_ENABLE_AWAY_MODE_BY_DURATION = "enable_away_mode_by_duration"
+ATTR_AWAY_END: Final = "end"
+ATTR_AWAY_HOURS: Final = "hours"
+ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
+ATTR_AWAY_START: Final = "start"
 
-ATTR_AWAY_END = "end"
-ATTR_AWAY_HOURS = "hours"
-ATTR_AWAY_TEMPERATURE = "away_temperature"
-ATTR_AWAY_START = "start"
-
-SUPPORTED_HA_PRESET_MODES = [
+SUPPORTED_HA_PRESET_MODES: Final = [
     PRESET_AWAY,
     PRESET_BOOST,
     PRESET_COMFORT,

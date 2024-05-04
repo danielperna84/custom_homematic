@@ -26,7 +26,23 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.service import async_register_admin_service, verify_domain_control
 
-from .const import CONTROL_UNITS, DOMAIN
+from .const import (
+    CONTROL_UNITS,
+    DOMAIN,
+    HMIP_LOCAL_SERVICES,
+    SERVICE_CLEAR_CACHE,
+    SERVICE_DELETE_DEVICE,
+    SERVICE_EXPORT_DEVICE_DEFINITION,
+    SERVICE_FETCH_SYSTEM_VARIABLES,
+    SERVICE_FORCE_DEVICE_AVAILABILITY,
+    SERVICE_GET_DEVICE_VALUE,
+    SERVICE_GET_PARAMSET,
+    SERVICE_PUT_PARAMSET,
+    SERVICE_SET_DEVICE_VALUE,
+    SERVICE_SET_INSTALL_MODE,
+    SERVICE_SET_VARIABLE_VALUE,
+    SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
+)
 from .control_unit import (
     ControlUnit,
     asnyc_get_hm_device_by_id,
@@ -53,35 +69,6 @@ CONF_VALUE_TYPE: Final = "value_type"
 CONF_WAIT_FOR_CALLBACK: Final = "wait_for_callback"
 
 DEFAULT_CHANNEL: Final = 1
-
-SERVICE_CLEAR_CACHE: Final = "clear_cache"
-SERVICE_DELETE_DEVICE: Final = "delete_device"
-SERVICE_EXPORT_DEVICE_DEFINITION: Final = "export_device_definition"
-SERVICE_FETCH_SYSTEM_VARIABLES: Final = "fetch_system_variables"
-SERVICE_FORCE_DEVICE_AVAILABILITY: Final = "force_device_availability"
-SERVICE_GET_DEVICE_VALUE: Final = "get_device_value"
-SERVICE_GET_PARAMSET: Final = "get_paramset"
-SERVICE_PUT_PARAMSET: Final = "put_paramset"
-SERVICE_SET_DEVICE_VALUE: Final = "set_device_value"
-SERVICE_SET_INSTALL_MODE: Final = "set_install_mode"
-SERVICE_SET_VARIABLE_VALUE: Final = "set_variable_value"
-SERVICE_UPDATE_DEVICE_FIRMWARE_DATA: Final = "update_device_firmware_data"
-
-HMIP_LOCAL_SERVICES = [
-    SERVICE_CLEAR_CACHE,
-    SERVICE_DELETE_DEVICE,
-    SERVICE_EXPORT_DEVICE_DEFINITION,
-    SERVICE_FETCH_SYSTEM_VARIABLES,
-    SERVICE_FORCE_DEVICE_AVAILABILITY,
-    SERVICE_GET_DEVICE_VALUE,
-    SERVICE_GET_PARAMSET,
-    SERVICE_PUT_PARAMSET,
-    SERVICE_SET_DEVICE_VALUE,
-    SERVICE_SET_INSTALL_MODE,
-    SERVICE_SET_VARIABLE_VALUE,
-    SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
-]
-
 
 BASE_SCHEMA_DEVICE = vol.Schema(
     {
