@@ -9,13 +9,12 @@ from hahomematic.platforms.generic.text import HmText
 from hahomematic.platforms.hub.text import HmSysvarText
 
 from homeassistant.components.text import TextEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from . import HomematicConfigEntry
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity, HaHomematicGenericSysvarEntity
 
@@ -24,11 +23,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local text platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_text(hm_entities: tuple[HmText, ...]) -> None:

@@ -15,7 +15,6 @@ from hahomematic.const import (
 from hahomematic.platforms.event import GenericEvent
 
 from homeassistant.components.event import EventDeviceClass, EventEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -23,7 +22,8 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import UndefinedType
 
-from .const import CONTROL_UNITS, DOMAIN, EVENT_MODEL
+from . import HomematicConfigEntry
+from .const import DOMAIN, EVENT_MODEL
 from .control_unit import ControlUnit, signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,11 +31,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local event platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_event(hm_entities: tuple[list[GenericEvent], ...]) -> None:

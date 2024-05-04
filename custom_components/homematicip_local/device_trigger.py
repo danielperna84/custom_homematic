@@ -15,7 +15,7 @@ from homeassistant.helpers.trigger import TriggerActionType, TriggerInfo
 from homeassistant.helpers.typing import ConfigType
 
 from . import DOMAIN
-from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE, CONTROL_UNITS
+from .const import CONF_EVENT_TYPE, CONF_INTERFACE_ID, CONF_SUBTYPE
 from .control_unit import ControlUnit
 from .support import cleanup_click_event_data, get_device_address_at_interface_from_identifiers
 
@@ -46,27 +46,28 @@ async def async_get_triggers(hass: HomeAssistant, device_id: str) -> list[dict[s
     device_address, interface_id = data
     triggers = []
     for entry_id in device.config_entries:
-        if entry_id not in hass.data[DOMAIN][CONTROL_UNITS]:
-            continue
-        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if control_unit.central.has_client(interface_id=interface_id) is False:
-            continue
-        if hm_device := control_unit.central.get_device(address=device_address):
-            for action_event in hm_device.generic_events:
-                if not isinstance(action_event, ClickEvent):
-                    continue
+        if entry := hass.config_entries.async_get_entry(entry_id=entry_id):
+            control_unit: ControlUnit = entry.runtime_data
+            if control_unit.central.has_client(interface_id=interface_id) is False:
+                continue
+            if hm_device := control_unit.central.get_device(address=device_address):
+                for action_event in hm_device.generic_events:
+                    if not isinstance(action_event, ClickEvent):
+                        continue
 
-                if action_event.usage == EntityUsage.NO_CREATE:
-                    continue
+                    if action_event.usage == EntityUsage.NO_CREATE:
+                        continue
 
-                trigger = {
-                    CONF_PLATFORM: "device",
-                    CONF_DOMAIN: DOMAIN,
-                    CONF_DEVICE_ID: device_id,
-                    CONF_EVENT_TYPE: action_event.event_type.value,
-                }
-                trigger.update(cleanup_click_event_data(event_data=action_event.get_event_data()))
-                triggers.append(trigger)
+                    trigger = {
+                        CONF_PLATFORM: "device",
+                        CONF_DOMAIN: DOMAIN,
+                        CONF_DEVICE_ID: device_id,
+                        CONF_EVENT_TYPE: action_event.event_type.value,
+                    }
+                    trigger.update(
+                        cleanup_click_event_data(event_data=action_event.get_event_data())
+                    )
+                    triggers.append(trigger)
 
     return triggers
 

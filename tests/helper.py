@@ -14,7 +14,6 @@ from hahomematic.platforms.entity import BaseParameterEntity
 from hahomematic_support.client_local import ClientLocal, LocalRessources
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.homematicip_local.const import CONTROL_UNITS, DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
@@ -145,9 +144,7 @@ class Factory:
         await self._hass.async_block_till_done()
         assert self.mock_config_entry.state == ConfigEntryState.LOADED
 
-        control: ControlUnit = self._hass.data[DOMAIN][CONTROL_UNITS][
-            self.mock_config_entry.entry_id
-        ]
+        control: ControlUnit = self.mock_config_entry.runtime_data
         await self._hass.async_block_till_done()
         if control._scheduler:
             control._scheduler.de_init()

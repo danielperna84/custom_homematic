@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TypeAlias
 
 from awesomeversion import AwesomeVersion
 from hahomematic.support import cleanup_cache_dirs, find_free_port
@@ -15,20 +16,20 @@ from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import (
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-    CONTROL_UNITS,
     DEFAULT_CALLBACK_PORT,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
     HMIP_LOCAL_PLATFORMS,
 )
-from .control_unit import ControlConfig, get_storage_folder
-from .services import async_setup_services, async_unload_services
+from .control_unit import ControlConfig, ControlUnit, get_storage_folder
+from .services import async_get_config_entries, async_setup_services, async_unload_services
 
 HA_VERSION = AwesomeVersion(HA_VERSION_STR)
+HomematicConfigEntry: TypeAlias = ConfigEntry[ControlUnit]
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -> bool:
     """Set up Homematic(IP) Local from a config entry."""
     min_version = AwesomeVersion(HMIP_LOCAL_MIN_VERSION)
     if min_version > HA_VERSION:
@@ -44,16 +45,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         default_callback_port = find_free_port()
         hass.data[DOMAIN][DEFAULT_CALLBACK_PORT] = default_callback_port
 
-    if CONTROL_UNITS not in hass.data[DOMAIN]:
-        hass.data[DOMAIN][CONTROL_UNITS] = {}
-
     control = ControlConfig(
         hass=hass,
         entry_id=entry.entry_id,
         data=entry.data,
         default_port=default_callback_port,
     ).create_control_unit()
-    hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id] = control
+    entry.runtime_data = control
     await hass.config_entries.async_forward_entry_setups(entry, HMIP_LOCAL_PLATFORMS)
     await control.start_central()
     await async_setup_services(hass)
@@ -66,16 +64,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    if DOMAIN not in hass.data:
-        return False
-
-    if control := hass.data[DOMAIN][CONTROL_UNITS].get(entry.entry_id):
+    if control := entry.runtime_data:
         await async_unload_services(hass)
         await control.stop_central()
         unload_ok = await hass.config_entries.async_unload_platforms(entry, HMIP_LOCAL_PLATFORMS)
-        if unload_ok:
-            hass.data[DOMAIN][CONTROL_UNITS].pop(entry.entry_id)
-        if len(hass.data[DOMAIN][CONTROL_UNITS]) == 0:
+        if len(async_get_config_entries(hass=hass)) == 0:
             del hass.data[DOMAIN]
         return unload_ok
 

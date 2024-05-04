@@ -10,13 +10,13 @@ from hahomematic.platforms.generic.number import BaseNumber
 from hahomematic.platforms.hub.number import HmSysvarNumber
 
 from homeassistant.components.number import NumberEntity, NumberMode, RestoreNumber
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN, HmEntityState
+from . import HomematicConfigEntry
+from .const import HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import (
     ATTR_VALUE_STATE,
@@ -30,11 +30,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local number platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_number(hm_entities: tuple[BaseNumber, ...]) -> None:

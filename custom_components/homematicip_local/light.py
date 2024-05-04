@@ -25,14 +25,14 @@ from homeassistant.components.light import (
     LightEntity,
     LightEntityFeature,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN, SERVICE_LIGHT_SET_ON_TIME
+from . import HomematicConfigEntry
+from .const import SERVICE_LIGHT_SET_ON_TIME
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
@@ -47,11 +47,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local light platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_light(hm_entities: tuple[CeDimmer, ...]) -> None:

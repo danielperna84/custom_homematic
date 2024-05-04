@@ -17,7 +17,6 @@ from homeassistant.components.cover import (
     ATTR_TILT_POSITION,
     CoverEntity,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_CLOSED, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
@@ -25,7 +24,8 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN, SERVICE_SET_COVER_COMBINED_POSITION
+from . import HomematicConfigEntry
+from .const import SERVICE_SET_COVER_COMBINED_POSITION
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 from .services import CONF_WAIT_FOR_CALLBACK
@@ -37,11 +37,11 @@ HmGenericCover = TypeVar("HmGenericCover", bound=CeCover | CeGarage)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local cover platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_cover(hm_entities: tuple[HmGenericCover, ...]) -> None:
