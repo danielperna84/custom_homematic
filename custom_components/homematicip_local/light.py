@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.light import (
@@ -32,17 +32,15 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from .const import CONTROL_UNITS, DOMAIN, SERVICE_LIGHT_SET_ON_TIME
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
-ATTR_ON_TIME = "on_time"
+ATTR_ON_TIME: Final = "on_time"
 
-ATTR_COLOR = "color"
-ATTR_CHANNEL_COLOR = "channel_color"
-ATTR_CHANNEL_BRIGHTNESS = "channel_brightness"
-
-SERVICE_LIGHT_SET_ON_TIME = "light_set_on_time"
+ATTR_COLOR: Final = "color"
+ATTR_CHANNEL_COLOR: Final = "channel_color"
+ATTR_CHANNEL_BRIGHTNESS: Final = "channel_brightness"
 
 _LOGGER = logging.getLogger(__name__)
 

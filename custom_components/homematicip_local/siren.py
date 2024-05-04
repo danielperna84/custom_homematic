@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.siren import BaseSiren, SirenOnArgs
@@ -23,14 +23,13 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from .const import CONTROL_UNITS, DOMAIN, SERVICE_TURN_ON_SIREN
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTR_LIGHT = "light"
-SERVICE_TURN_ON_SIREN = "turn_on_siren"
+ATTR_LIGHT: Final = "light"
 
 TURN_ON_SIREN_SCHEMA = {
     vol.Optional(ATTR_TONE): cv.string,
