@@ -1,5 +1,10 @@
-# Version 1.61.0 (2024-05-04)
+# Version 1.61.0 (2024-05-05)
 
+- Bump hahomematic to 2024.5.0
+  - Make some items from value_property to property
+  - Rename callbacks
+  - Fix Homegear reconnect
+  - Add COLOR_BEHAVIOUR to HmIP-BSL
 - Ensure unload of platform services
 
 # Version 1.60.1 (2024-04-26)

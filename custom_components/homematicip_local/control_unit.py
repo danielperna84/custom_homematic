@@ -26,15 +26,15 @@ from hahomematic.const import (
     EVENT_VALUE,
     IP_ANY_V4,
     PORT_ANY,
+    BackendSystemEvent,
     DeviceFirmwareState,
-    EventType,
     HmPlatform,
+    HomematicEventType,
     InterfaceEventType,
     InterfaceName,
     Manufacturer,
     Parameter,
     ParamsetKey,
-    SystemEvent,
     SystemInformation,
 )
 from hahomematic.platforms.device import HmDevice
@@ -216,15 +216,11 @@ class ControlUnit(BaseControlUnit):
     async def start_central(self) -> None:
         """Start the central unit."""
         self._unregister_callbacks.append(
-            self._central.register_system_event_callback(
-                system_event_callback=self._async_system_event_callback
-            )
+            self._central.register_backend_system_callback(cb=self._async_backend_system_callback)
         )
 
         self._unregister_callbacks.append(
-            self._central.register_ha_event_callback(
-                ha_event_callback=self._async_ha_event_callback
-            )
+            self._central.register_homematic_callback(cb=self._async_homematic_callback)
         )
         await super().start_central()
         self._async_add_central_to_device_registry()
@@ -288,7 +284,9 @@ class ControlUnit(BaseControlUnit):
             )
 
     @callback
-    def _async_system_event_callback(self, system_event: SystemEvent, **kwargs: Any) -> None:
+    def _async_backend_system_callback(
+        self, system_event: BackendSystemEvent, **kwargs: Any
+    ) -> None:
         """Execute the callback for system based events."""
         _LOGGER.debug(
             "callback_system_event: Received system event %s for event for %s",
@@ -297,7 +295,7 @@ class ControlUnit(BaseControlUnit):
         )
 
         # Handle event of new device creation in Homematic(IP) Local.
-        if system_event == SystemEvent.DEVICES_CREATED:
+        if system_event == BackendSystemEvent.DEVICES_CREATED:
             for platform, hm_entities in kwargs["new_entities"].items():
                 if hm_entities and len(hm_entities) > 0:
                     async_dispatcher_send(
@@ -312,7 +310,7 @@ class ControlUnit(BaseControlUnit):
                     channel_events,
                 )
             self._async_add_virtual_remotes_to_device_registry()
-        elif system_event == SystemEvent.HUB_REFRESHED:
+        elif system_event == BackendSystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
             if self._config.sysvar_scan_enabled:
@@ -328,13 +326,13 @@ class ControlUnit(BaseControlUnit):
         return
 
     @callback
-    def _async_ha_event_callback(
-        self, hm_event_type: EventType, event_data: dict[str, Any]
+    def _async_homematic_callback(
+        self, hm_event_type: HomematicEventType, event_data: dict[str, Any]
     ) -> None:
         """Execute the callback used for device related events."""
 
         interface_id = event_data[EVENT_INTERFACE_ID]
-        if hm_event_type == EventType.INTERFACE:
+        if hm_event_type == HomematicEventType.INTERFACE:
             interface_event_type = event_data[EVENT_TYPE]
             issue_id = f"{interface_event_type}-{interface_id}"
             event_data = cast(dict[str, Any], INTERFACE_EVENT_SCHEMA(event_data))
@@ -405,14 +403,14 @@ class ControlUnit(BaseControlUnit):
             if device_entry := self._async_get_device_entry(device_address=device_address):
                 name = device_entry.name_by_user or device_entry.name
                 event_data.update({EVENT_DEVICE_ID: device_entry.id, EVENT_NAME: name})
-            if hm_event_type in (EventType.IMPULSE, EventType.KEYPRESS):
+            if hm_event_type in (HomematicEventType.IMPULSE, HomematicEventType.KEYPRESS):
                 event_data = cleanup_click_event_data(event_data=event_data)
                 if is_valid_event(event_data=event_data, schema=CLICK_EVENT_SCHEMA):
                     self._hass.bus.fire(
                         event_type=hm_event_type.value,
                         event_data=event_data,
                     )
-            elif hm_event_type == EventType.DEVICE_AVAILABILITY:
+            elif hm_event_type == HomematicEventType.DEVICE_AVAILABILITY:
                 parameter = event_data[EVENT_PARAMETER]
                 unavailable = event_data[EVENT_VALUE]
                 if parameter in (Parameter.STICKY_UN_REACH, Parameter.UN_REACH):
@@ -434,7 +432,7 @@ class ControlUnit(BaseControlUnit):
                             event_type=hm_event_type.value,
                             event_data=event_data,
                         )
-            elif hm_event_type == EventType.DEVICE_ERROR:
+            elif hm_event_type == HomematicEventType.DEVICE_ERROR:
                 error_parameter = event_data[EVENT_PARAMETER]
                 if error_parameter in FILTER_ERROR_EVENT_PARAMETERS:
                     return
