@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import logging
 from typing import Any, Final
 
-from hahomematic.const import DeviceFirmwareState, HmPlatform
+from hahomematic.const import CALLBACK_TYPE, DeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
@@ -83,7 +82,7 @@ class HaHomematicUpdate(UpdateEntity):
         self._attr_extra_state_attributes = {
             ATTR_FIRMWARE_UPDATE_STATE: hm_entity.firmware_update_state
         }
-        self._unregister_callbacks: list[Callable] = []
+        self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
 
     @property
@@ -156,7 +155,8 @@ class HaHomematicUpdate(UpdateEntity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         for unregister in self._unregister_callbacks:
-            unregister()
+            if unregister is not None:
+                unregister()
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:

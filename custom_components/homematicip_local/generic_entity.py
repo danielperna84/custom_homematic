@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 import logging
 from typing import Any, Final, Generic
 
-from hahomematic.const import CallSource
+from hahomematic.const import CALLBACK_TYPE, CallSource
 from hahomematic.platforms.custom.entity import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.platforms.generic.entity import GenericEntity
@@ -84,7 +84,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         )
 
         self._static_state_attributes = self._get_static_state_attributes()
-        self._unregister_callbacks: list[Callable] = []
+        self._unregister_callbacks: list[CALLBACK_TYPE] = []
 
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
         if (
@@ -245,7 +245,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         for unregister in self._unregister_callbacks:
-            unregister()
+            if unregister is not None:
+                unregister()
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:
@@ -314,7 +315,7 @@ class HaHomematicGenericHubEntity(Entity):
             self.entity_description = entity_description
         self._attr_name = hm_hub_entity.name
         self._attr_device_info = control_unit.device_info
-        self._unregister_callbacks: list[Callable] = []
+        self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug("init sysvar: Setting up %s", self.name)
 
     @property
@@ -341,7 +342,8 @@ class HaHomematicGenericHubEntity(Entity):
         """Run when hmip sysvar entity will be removed from hass."""
         # Remove callbacks.
         for unregister in self._unregister_callbacks:
-            unregister()
+            if unregister is not None:
+                unregister()
 
     @callback
     def _async_hub_entity_updated(self, *args: Any, **kwargs: Any) -> None:
