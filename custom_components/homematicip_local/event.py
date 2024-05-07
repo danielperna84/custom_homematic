@@ -2,11 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import logging
 from typing import Any
 
-from hahomematic.const import ENTITY_EVENTS, EVENT_ADDRESS, EVENT_INTERFACE_ID, HmPlatform
+from hahomematic.const import (
+    CALLBACK_TYPE,
+    ENTITY_EVENTS,
+    EVENT_ADDRESS,
+    EVENT_INTERFACE_ID,
+    HmPlatform,
+)
 from hahomematic.platforms.event import GenericEvent
 
 from homeassistant.components.event import EventDeviceClass, EventEntity
@@ -93,7 +98,7 @@ class HaHomematicEvent(EventEntity):
             EVENT_ADDRESS: self._hm_primary_entity.channel_address,
             EVENT_MODEL: self._hm_primary_entity.device.device_type,
         }
-        self._unregister_callbacks: list[Callable] = []
+        self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug(
             "init: Setting up %s %s",
             self._hm_primary_entity.device.name,
@@ -142,7 +147,8 @@ class HaHomematicEvent(EventEntity):
         """Run when hmip device will be removed from hass."""
         # Remove callback from device.
         for unregister in self._unregister_callbacks:
-            unregister()
+            if unregister is not None:
+                unregister()
 
     @callback
     def _async_device_removed(self, *args: Any, **kwargs: Any) -> None:

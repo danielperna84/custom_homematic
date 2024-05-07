@@ -13,6 +13,7 @@ from typing import Any, Final, TypeVar, cast
 from hahomematic.central import INTERFACE_EVENT_SCHEMA, CentralConfig, CentralUnit
 from hahomematic.client import InterfaceConfig
 from hahomematic.const import (
+    CALLBACK_TYPE,
     CONF_PASSWORD,
     CONF_USERNAME,
     EVENT_ADDRESS,
@@ -114,7 +115,7 @@ class BaseControlUnit:
         self._enable_system_notifications = self._config_data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
         self._central: CentralUnit = self._create_central()
         self._attr_device_info: DeviceInfo | None = None
-        self._unregister_callbacks: list[Callable] = []
+        self._unregister_callbacks: list[CALLBACK_TYPE] = []
 
     async def start_central(self) -> None:
         """Start the central unit."""
@@ -231,7 +232,8 @@ class ControlUnit(BaseControlUnit):
             self._scheduler.de_init()
 
         for unregister in self._unregister_callbacks:
-            unregister()
+            if unregister is not None:
+                unregister()
 
         await super().stop_central(*args)
 

@@ -1,3 +1,8 @@
+# Version 1.61.0 (2024-05-07)
+
+- Bump hahomematic to 2024.5.1
+  - Improve callback register/unregister
+
 # Version 1.61.0 (2024-05-05)
 
 - Bump hahomematic to 2024.5.0
