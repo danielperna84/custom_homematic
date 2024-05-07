@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 from typing import TypeAlias
 
@@ -13,10 +14,10 @@ from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_registry import async_migrate_entries
+from homeassistant.util.hass_dict import HassKey
 
 from .const import (
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-    DEFAULT_CALLBACK_PORT,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
     HMIP_LOCAL_PLATFORMS,
@@ -26,6 +27,16 @@ from .services import async_get_config_entries, async_setup_services, async_unlo
 
 HA_VERSION = AwesomeVersion(HA_VERSION_STR)
 HomematicConfigEntry: TypeAlias = ConfigEntry[ControlUnit]
+
+
+@dataclass
+class HomematicData:
+    """Common data for shared homematic ip local data."""
+
+    default_callback_port: int | None = None
+
+
+HM_KEY: HassKey[HomematicData] = HassKey(DOMAIN)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -40,10 +51,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomematicConfigEntry) ->
         _LOGGER.warning("Homematic(IP) Local setup blocked")
         return False
 
-    hass.data.setdefault(DOMAIN, {})
-    if (default_callback_port := hass.data[DOMAIN].get(DEFAULT_CALLBACK_PORT)) is None:
+    hass.data.setdefault(HM_KEY, HomematicData())
+    if (default_callback_port := hass.data[HM_KEY].default_callback_port) is None:
         default_callback_port = find_free_port()
-        hass.data[DOMAIN][DEFAULT_CALLBACK_PORT] = default_callback_port
+        hass.data[HM_KEY].default_callback_port = default_callback_port
 
     control = ControlConfig(
         hass=hass,
@@ -69,7 +80,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await control.stop_central()
         unload_ok = await hass.config_entries.async_unload_platforms(entry, HMIP_LOCAL_PLATFORMS)
         if len(async_get_config_entries(hass=hass)) == 0:
-            del hass.data[DOMAIN]
+            del hass.data[HM_KEY]
         return unload_ok
 
     return False

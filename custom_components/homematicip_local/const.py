@@ -38,8 +38,6 @@ CONF_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 CONF_TLS: Final = "tls"
 CONF_VERIFY_TLS: Final = "verify_tls"
 
-DEFAULT_CALLBACK_PORT: Final = "default_callback_port"
-
 EVENT_DEVICE_ID: Final = "device_id"
 EVENT_ERROR: Final = "error"
 EVENT_ERROR_VALUE: Final = "error_value"
