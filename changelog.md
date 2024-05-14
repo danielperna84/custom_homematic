@@ -1,7 +1,10 @@
-# Version 1.61.0 (2024-05-07)
+# Version 1.62.0 (2024-05-14)
 
-- Bump hahomematic to 2024.5.1
+- Bump hahomematic to 2024.5.2
   - Improve callback register/unregister
+  - Move command_queue handling from device to channel
+  - Add level sensors to cover/blind
+  - Allow changing level or tilt while blind is moving by @sleiner
 
 # Version 1.61.0 (2024-05-05)
 
