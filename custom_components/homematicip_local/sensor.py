@@ -183,7 +183,7 @@ class HaHomematicSysvarSensor(HaHomematicGenericSysvarEntity[HmSysvarSensor], Se
                 SysvarType.INTEGER,
             ):
                 self._attr_state_class = (
-                    SensorStateClass.TOTAL
+                    SensorStateClass.TOTAL_INCREASING
                     if hm_sysvar_entity.ccu_var_name.startswith(TOTAL_SYSVAR)
                     else SensorStateClass.MEASUREMENT
                 )
