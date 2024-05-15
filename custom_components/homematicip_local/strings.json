@@ -228,6 +228,9 @@
       },
       "level_2": {
         "name": "Level 2"
+      },
+      "pipe_level": {
+        "name": "valve opening"
       }
     },
     "sensor": {
@@ -260,6 +263,12 @@
       },
       "concentration": {
         "name": "Concentration"
+      },
+      "cover_level": {
+        "name": "Position"
+      },
+      "cover_tilt": {
+        "name": "Slat level"
       },
       "current": {
         "name": "Current"
@@ -339,6 +348,9 @@
       "level_2": {
         "name": "Level 2"
       },
+      "light_level": {
+        "name": "Brighness"
+      },
       "lock_state": {
         "name": "Lock State",
         "state": {
@@ -385,6 +397,9 @@
       },
       "passage_counter_value": {
         "name": "Passage Counter Value"
+      },
+      "pipe_level": {
+        "name": "valve opening"
       },
       "power": {
         "name": "Power"
