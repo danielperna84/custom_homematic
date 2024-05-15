@@ -599,7 +599,7 @@
           "name": "Gerät"
         }
       },
-      "name": "Lösche eine Gerät"
+      "name": "Lösche ein Gerät"
     },
     "disable_away_mode": {
       "description": "Deaktiviert den Klima-Abwesenheitsmodus.",
