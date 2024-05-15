@@ -399,7 +399,7 @@
         "name": "Passage Counter Value"
       },
       "pipe_level": {
-        "name": "valve opening"
+        "name": "Valve opening degree"
       },
       "power": {
         "name": "Power"

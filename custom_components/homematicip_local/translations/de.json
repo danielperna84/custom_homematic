@@ -402,7 +402,7 @@
         "name": "Durchgangszählerwert"
       },
       "pipe_level": {
-        "name": "Ventilöffnung"
+        "name": "Ventil-Öffnungsgrad"
       },
       "power": {
         "name": "Leistung"
