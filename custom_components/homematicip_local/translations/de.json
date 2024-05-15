@@ -231,6 +231,9 @@
       },
       "level_2": {
         "name": "Level 2"
+      },
+      "pipe_level": {
+        "name": "Ventilöffnung"
       }
     },
     "sensor": {
@@ -263,6 +266,12 @@
       },
       "concentration": {
         "name": "Konzentration"
+      },
+      "cover_level": {
+        "name": "Position"
+      },
+      "cover_tilt": {
+        "name": "Lamellenposition"
       },
       "current": {
         "name": "Strom"
@@ -342,6 +351,9 @@
       "level_2": {
         "name": "Level 2"
       },
+      "light_level": {
+        "name": "Helligkeit"
+      },
       "lock_state": {
         "name": "Schliesszustand",
         "state": {
@@ -388,6 +400,9 @@
       },
       "passage_counter_value": {
         "name": "Durchgangszählerwert"
+      },
+      "pipe_level": {
+        "name": "Ventil-Öffnungsgrad"
       },
       "power": {
         "name": "Leistung"

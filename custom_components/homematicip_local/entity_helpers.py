@@ -406,7 +406,7 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         translation_key="sec_key_error",
     ),
     (
-        ("HmIP-eTRV", "HmIP-HEATING"),
+        ("HmIP-eTRV", "HmIP-HEATING", "HmIP-FALMOT-C12", "HmIPW-FALMOT-C12"),
         "LEVEL",
     ): HmSensorEntityDescription(
         key="LEVEL",
@@ -415,6 +415,49 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         translation_key="pipe_level",
+    ),
+    (
+        ("HmIP-BROLL", "HmIP-FROLL", "HmIP-BBL", "HmIP-DRBLI4", "HmIPW-DRBL4", "HmIP-FBL"),
+        "LEVEL",
+    ): HmSensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
+        multiplier=100,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+        translation_key="cover_level",
+    ),
+    (
+        (
+            "HmIP-BSL",
+            "HmIP-BDT",
+            "HmIP-DRDI3",
+            "HmIP-FDT",
+            "HmIPW-PDT",
+            "HmIP-RGBW",
+            "HmIP-SCTH230",
+            "HmIPW-DRD3",
+            "HmIPW-WRC6",
+        ),
+        "LEVEL",
+    ): HmSensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
+        multiplier=100,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+        translation_key="light_level",
+    ),
+    (
+        ("HmIP-BBL", "HmIP-DRBLI4", "HmIPW-DRBL4", "HmIP-FBL"),
+        "LEVEL_2",
+    ): HmSensorEntityDescription(
+        key="LEVEL",
+        native_unit_of_measurement=PERCENTAGE,
+        multiplier=100,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+        translation_key="cover_tilt",
     ),
     ("HMW-IO-12-Sw14-DR", "FREQUENCY"): HmSensorEntityDescription(
         key="FREQUENCY",
