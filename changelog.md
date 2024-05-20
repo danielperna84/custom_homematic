@@ -1,10 +1,13 @@
 # Version 1.62.0 (2024-05-15)
 
-- Bump hahomematic to 2024.5.2
+- Bump hahomematic to 2024.5.3
   - Improve callback register/unregister
   - Move command_queue handling from device to channel
   - Add level sensors to cover/blind
   - Allow changing level or tilt while blind is moving by @sleiner
+  - Fix value assignment to lock enums
+  - Set open tilt level back to 100%
+  - Use PEP 695 typing
 - Add individual translations for LEVEL
 
 # Version 1.61.0 (2024-05-05)
