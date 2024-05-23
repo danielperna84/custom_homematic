@@ -1,6 +1,6 @@
 # Version 1.62.0 (2024-05-15)
 
-- Bump hahomematic to 2024.5.3
+- Bump hahomematic to 2024.5.4
   - Improve callback register/unregister
   - Move command_queue handling from device to channel
   - Add level sensors to cover/blind
@@ -8,6 +8,7 @@
   - Fix value assignment to lock enums
   - Set open tilt level back to 100%
   - Use PEP 695 typing
+  - Enable CE visible entities by default
 - Add individual translations for LEVEL
 
 # Version 1.61.0 (2024-05-05)
