@@ -115,6 +115,10 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "CODE_ID": HmSensorEntityDescription(
         key="CODE_ID",
     ),
+    "COLOR": HmSensorEntityDescription(
+        key="COLOR",
+        entity_registry_enabled_default=False,
+    ),
     "CONCENTRATION": HmSensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
