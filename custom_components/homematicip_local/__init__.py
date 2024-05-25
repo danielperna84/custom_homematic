@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
-from typing import TypeAlias
 
 from awesomeversion import AwesomeVersion
 from hahomematic.support import cleanup_cache_dirs, find_free_port
@@ -26,7 +25,7 @@ from .control_unit import ControlConfig, ControlUnit, get_storage_folder
 from .services import async_get_config_entries, async_setup_services, async_unload_services
 
 HA_VERSION = AwesomeVersion(HA_VERSION_STR)
-HomematicConfigEntry: TypeAlias = ConfigEntry[ControlUnit]
+type HomematicConfigEntry = ConfigEntry[ControlUnit]
 
 
 @dataclass
