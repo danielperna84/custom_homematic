@@ -430,6 +430,18 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     (
         (
             "HmIP-BSL",
+            "HmIP-RGBW",
+            "HmIPW-WRC6",
+        ),
+        "COLOR",
+    ): HmSensorEntityDescription(
+        key="COLOR",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
+    (
+        (
+            "HmIP-BSL",
             "HmIP-BDT",
             "HmIP-DRDI3",
             "HmIP-FDT",
@@ -760,7 +772,7 @@ def get_entity_description(
             hm_entity=hm_entity, entity_desc=entity_desc
         )
         enabled_default = (
-            hm_entity.enabled_default if entity_desc.entity_registry_enabled_default else False
+            entity_desc.entity_registry_enabled_default if hm_entity.enabled_default else False
         )
         return dataclasses.replace(
             entity_desc,

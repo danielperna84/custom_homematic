@@ -10,6 +10,7 @@
   - Use PEP 695 typing
   - Enable CE visible entities by default
 - Add individual translations for LEVEL
+- Adjust entity activation
 
 # Version 1.61.0 (2024-05-05)
 
