@@ -115,10 +115,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "CODE_ID": HmSensorEntityDescription(
         key="CODE_ID",
     ),
-    "COLOR": HmSensorEntityDescription(
-        key="COLOR",
-        entity_registry_enabled_default=False,
-    ),
     "CONCENTRATION": HmSensorEntityDescription(
         key="CONCENTRATION",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
@@ -430,6 +426,18 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
         translation_key="cover_level",
+    ),
+    (
+        (
+            "HmIP-BSL",
+            "HmIP-RGBW",
+            "HmIPW-WRC6",
+        ),
+        "COLOR",
+    ): HmSensorEntityDescription(
+        key="COLOR",
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
     ),
     (
         (
@@ -764,7 +772,7 @@ def get_entity_description(
             hm_entity=hm_entity, entity_desc=entity_desc
         )
         enabled_default = (
-            hm_entity.enabled_default if entity_desc.entity_registry_enabled_default else False
+            entity_desc.entity_registry_enabled_default if hm_entity.enabled_default else False
         )
         return dataclasses.replace(
             entity_desc,
