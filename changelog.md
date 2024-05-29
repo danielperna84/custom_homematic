@@ -1,3 +1,8 @@
+# Version 1.62.1 (2024-05-29)
+
+- Bump hahomematic to 2024.5.5
+  - Fix address for bidcos wired virtual device
+
 # Version 1.62.0 (2024-05-15)
 
 - Bump hahomematic to 2024.5.4
@@ -207,7 +212,7 @@
 
 - Bump hahomematic to 2023.10.7
   - Adjust typing after move to more enums
-  - Add measure_execution_time to writing methodes
+  - Add measure_execution_time to writing methods
   - Fix send sysvar #1249
   - Add HmIPW-SCTHD
 
@@ -943,7 +948,7 @@ Rounding support for Concentration of HmIP-SCTH230 will be re-added with HA 2023
 # Version 1.19.2 (2022-10-08)
 
 - Bump hahomematic to 2022.10.2
-  - Make connection checker more resilent
+  - Make connection checker more resilient
 
 # Version 1.19.1 (2022-10-07)
 
