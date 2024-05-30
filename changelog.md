@@ -1,7 +1,8 @@
-# Version 1.62.1 (2024-05-29)
+# Version 1.62.1 (2024-05-30)
 
 - Bump hahomematic to 2024.5.5
   - Fix address for bidcos wired virtual device
+- Add entity registry migration for fixed hmw entries
 
 # Version 1.62.0 (2024-05-15)
 
