@@ -9,7 +9,9 @@ from hahomematic.support import cleanup_cache_dirs, find_free_port
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION_STR
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.entity_registry import async_migrate_entries
 
 from .const import (
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -98,8 +100,23 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if entry.version == 1:
         data = dict(entry.data)
         data.update({CONF_ENABLE_SYSTEM_NOTIFICATIONS: True})
-
         hass.config_entries.async_update_entry(entry, version=2, data=data)
+    if entry.version == 2:
 
+        @callback
+        def update_entity_unique_id(entity_entry: er.RegistryEntry) -> dict[str, str] | None:
+            """Update unique ID of entity entry."""
+            if entity_entry.unique_id.startswith(f"{DOMAIN}_bidcos_wir"):
+                return {
+                    "new_unique_id": entity_entry.unique_id.replace(
+                        f"{DOMAIN}_bidcos_wir",
+                        f"{DOMAIN}_{entry.unique_id}_bidcos_wir",
+                    )
+                }
+            return None
+
+        await async_migrate_entries(hass, entry.entry_id, update_entity_unique_id)
+
+        hass.config_entries.async_update_entry(entry, version=3)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
