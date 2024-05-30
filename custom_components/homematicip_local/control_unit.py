@@ -38,7 +38,6 @@ from hahomematic.const import (
     ParamsetKey,
     SystemInformation,
 )
-from hahomematic.platforms.device import HmDevice
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.support import check_config
 
@@ -65,7 +64,6 @@ from .const import (
     CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
     CONF_VERIFY_TLS,
-    CONTROL_UNITS,
     DEFAULT_DEVICE_FIRMWARE_CHECK_ENABLED,
     DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
@@ -92,7 +90,6 @@ from .support import (
     DEVICE_ERROR_EVENT_SCHEMA,
     InvalidConfig,
     cleanup_click_event_data,
-    get_device_address_at_interface_from_identifiers,
     is_valid_event,
 )
 
@@ -785,40 +782,3 @@ async def validate_config_and_get_system_information(
 def get_storage_folder(hass: HomeAssistant) -> str:
     """Return the base path where to store files for this integration."""
     return f"{hass.config.config_dir}/{DOMAIN}"
-
-
-def get_cu_by_interface_id(hass: HomeAssistant, interface_id: str) -> ControlUnit | None:
-    """Get ControlUnit by interface_id."""
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
-        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if control_unit and control_unit.central.has_client(interface_id=interface_id):
-            return control_unit
-    return None
-
-
-@callback
-def asnyc_get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
-    """Return the homematic device."""
-    device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
-    if not device_entry:
-        return None
-    if (
-        data := get_device_address_at_interface_from_identifiers(
-            identifiers=device_entry.identifiers
-        )
-    ) is None:
-        return None
-
-    device_address, interface_id = data
-    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
-        return control_unit.central.get_device(address=device_address)
-    return None
-
-
-def get_hm_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
-    """Return the homematic device."""
-    for entry_id in hass.data[DOMAIN][CONTROL_UNITS]:
-        control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry_id]
-        if hm_device := control_unit.central.get_device(address=device_address):
-            return hm_device
-    return None

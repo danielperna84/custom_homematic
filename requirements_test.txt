@@ -3,8 +3,9 @@
 async-upnp-client
 coverage==7.5.0
 hahomematic==2024.5.5
-homeassistant==2024.5.5
+homeassistant==2024.6.0b1
 mypy==1.10.0
+mypy-dev==1.11.0a3
 pip==24.0
 pre-commit==3.7.1
 pydevccu==0.1.8
@@ -12,11 +13,11 @@ pylint-strict-informational==0.1
 pylint==3.2.2
 pytest-asyncio==0.23.6
 pytest-cov==5.0.0
-pytest-homeassistant-custom-component==0.13.125
+pytest-homeassistant-custom-component==0.13.126
 pytest-rerunfailures==14.0
 pytest-socket==0.7.0
 pytest-timeout==2.3.1
-pytest==8.1.1
+pytest==8.2.0
 types-python-slugify==8.0.2.20240310
 psutil_home_assistant==0.0.1
 fnv_hash_fast==0.5.0

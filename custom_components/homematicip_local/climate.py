@@ -32,7 +32,6 @@ from homeassistant.components.climate import (
     HVACAction,
     HVACMode,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
@@ -40,9 +39,8 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from . import HomematicConfigEntry
 from .const import (
-    CONTROL_UNITS,
-    DOMAIN,
     SERVICE_DISABLE_AWAY_MODE,
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
@@ -84,11 +82,11 @@ HM_TO_HA_ACTION: Mapping[HmHvacAction, HVACAction] = {
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local climate platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_climate(hm_entities: tuple[BaseClimateEntity, ...]) -> None:

@@ -10,7 +10,7 @@ from hahomematic.const import PLATFORMS
 from homeassistant.const import Platform
 
 DOMAIN: Final = "homematicip_local"
-HMIP_LOCAL_MIN_VERSION: Final = "2024.4.0dev0"
+HMIP_LOCAL_MIN_VERSION: Final = "2024.6.0dev0"
 
 DEFAULT_SYSVAR_SCAN_ENABLED: bool = True
 DEFAULT_SYSVAR_SCAN_INTERVAL: Final = 30
@@ -37,10 +37,6 @@ CONF_SYSVAR_SCAN_ENABLED: Final = "sysvar_scan_enabled"
 CONF_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 CONF_TLS: Final = "tls"
 CONF_VERIFY_TLS: Final = "verify_tls"
-
-CONTROL_UNITS: Final = "control_units"
-
-DEFAULT_CALLBACK_PORT: Final = "default_callback_port"
 
 EVENT_DEVICE_ID: Final = "device_id"
 EVENT_ERROR: Final = "error"

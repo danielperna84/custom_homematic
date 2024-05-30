@@ -17,13 +17,13 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import CONTROL_UNITS, DOMAIN, TOTAL_SYSVAR, HmEntityState
+from . import HomematicConfigEntry
+from .const import TOTAL_SYSVAR, HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import (
     ATTR_VALUE_STATE,
@@ -37,11 +37,11 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local sensor platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_sensor(hm_entities: tuple[HmSensor, ...]) -> None:
@@ -183,7 +183,7 @@ class HaHomematicSysvarSensor(HaHomematicGenericSysvarEntity[HmSysvarSensor], Se
                 SysvarType.INTEGER,
             ):
                 self._attr_state_class = (
-                    SensorStateClass.TOTAL
+                    SensorStateClass.TOTAL_INCREASING
                     if hm_sysvar_entity.ccu_var_name.startswith(TOTAL_SYSVAR)
                     else SensorStateClass.MEASUREMENT
                 )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
 from hahomematic.exceptions import ClientException
@@ -12,6 +12,7 @@ from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
 import voluptuous as vol
 
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_DEVICE_ID, CONF_MODE
 from homeassistant.core import (
     HomeAssistant,
@@ -27,7 +28,6 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.service import async_register_admin_service, verify_domain_control
 
 from .const import (
-    CONTROL_UNITS,
     DOMAIN,
     HMIP_LOCAL_SERVICES,
     SERVICE_CLEAR_CACHE,
@@ -43,13 +43,11 @@ from .const import (
     SERVICE_SET_VARIABLE_VALUE,
     SERVICE_UPDATE_DEVICE_FIRMWARE_DATA,
 )
-from .control_unit import (
-    ControlUnit,
-    asnyc_get_hm_device_by_id,
-    get_cu_by_interface_id,
-    get_hm_device_by_address,
-)
+from .control_unit import ControlUnit
 from .support import get_device_address_at_interface_from_identifiers
+
+if TYPE_CHECKING:
+    from . import HomematicConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -315,7 +313,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 async def async_unload_services(hass: HomeAssistant) -> None:
     """Unload Homematic(IP) Local services."""
-    if hass.data[DOMAIN][CONTROL_UNITS]:
+    if len(async_get_loaded_config_entries(hass=hass)) > 0:
         return
 
     for hmip_local_service in HMIP_LOCAL_SERVICES:
@@ -335,7 +333,7 @@ async def _async_service_delete_device(hass: HomeAssistant, service: ServiceCall
     if (
         interface_id
         and device_address
-        and (control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id))
+        and (control_unit := _async_get_cu_by_interface_id(hass=hass, interface_id=interface_id))
     ):
         await control_unit.central.delete_device(
             interface_id=interface_id, device_address=device_address
@@ -462,7 +460,7 @@ async def _async_service_set_variable_value(hass: HomeAssistant, service: Servic
     name = service.data[CONF_NAME]
     value = service.data[CONF_VALUE]
 
-    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+    if control := _async_get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.set_system_variable(name=name, value=value)
 
 
@@ -473,7 +471,7 @@ async def _async_service_set_install_mode(hass: HomeAssistant, service: ServiceC
     time: int = service.data.get(CONF_TIME, 60)
     device_address = service.data.get(CONF_ADDRESS)
 
-    if control_unit := get_cu_by_interface_id(hass=hass, interface_id=interface_id):
+    if control_unit := _async_get_cu_by_interface_id(hass=hass, interface_id=interface_id):
         await control_unit.central.set_install_mode(
             interface_id, t=time, mode=mode, device_address=device_address
         )
@@ -482,14 +480,14 @@ async def _async_service_set_install_mode(hass: HomeAssistant, service: ServiceC
 async def _async_service_clear_cache(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to clear the cache."""
     entry_id = service.data[CONF_ENTRY_ID]
-    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+    if control := _async_get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.clear_caches()
 
 
 async def _async_service_fetch_system_variables(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to fetch system variables from backend."""
     entry_id = service.data[CONF_ENTRY_ID]
-    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+    if control := _async_get_control_unit(hass=hass, entry_id=entry_id):
         await control.fetch_all_system_variables()
 
 
@@ -524,7 +522,7 @@ async def _async_service_update_device_firmware_data(
 ) -> None:
     """Service to clear the cache."""
     entry_id = service.data[CONF_ENTRY_ID]
-    if control := _get_control_unit(hass=hass, entry_id=entry_id):
+    if control := _async_get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.refresh_firmware_data()
 
 
@@ -549,9 +547,10 @@ def _async_get_interface_address(
     return interface_id, address
 
 
-def _get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
+@callback
+def _async_get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
     """Get ControlUnit by entry_id."""
-    control_unit: ControlUnit | None = hass.data[DOMAIN][CONTROL_UNITS].get(entry_id)
+    control_unit: ControlUnit | None = hass.config_entries.async_get_entry(entry_id=entry_id)
     if control_unit is None:
         _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
         return None
@@ -565,7 +564,7 @@ def _async_get_hm_device_by_service_data(
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
     if device_id := service.data.get(CONF_DEVICE_ID):
-        hm_device = asnyc_get_hm_device_by_id(hass=hass, device_id=device_id)
+        hm_device = _asnyc_get_hm_device_by_id(hass=hass, device_id=device_id)
         if not hm_device:
             _LOGGER.warning(
                 "No device found by device_id %s for service %s.%s",
@@ -574,7 +573,7 @@ def _async_get_hm_device_by_service_data(
                 service.service,
             )
     elif device_address := service.data.get(CONF_DEVICE_ADDRESS):
-        hm_device = get_hm_device_by_address(hass=hass, device_address=device_address)
+        hm_device = _async_get_hm_device_by_address(hass=hass, device_address=device_address)
         if not hm_device:
             _LOGGER.warning(
                 "No device found by device_address %s for service %s.%s",
@@ -584,3 +583,66 @@ def _async_get_hm_device_by_service_data(
             )
 
     return hm_device
+
+
+@callback
+def async_get_config_entries(hass: HomeAssistant) -> list[HomematicConfigEntry]:
+    """Get config entries for HomematicIP local."""
+    return hass.config_entries.async_entries(
+        domain=DOMAIN, include_ignore=False, include_disabled=False
+    )
+
+
+@callback
+def async_get_loaded_config_entries(hass: HomeAssistant) -> list[HomematicConfigEntry]:
+    """Get config entries for HomematicIP local."""
+    return [
+        entry
+        for entry in hass.config_entries.async_entries(
+            domain=DOMAIN, include_ignore=False, include_disabled=False
+        )
+        if entry.state == ConfigEntryState.LOADED
+    ]
+
+
+@callback
+def _async_get_control_units(hass: HomeAssistant) -> list[ControlUnit]:
+    """Get control units for HomematicIP local."""
+    return [entry.runtime_data for entry in async_get_config_entries(hass=hass)]
+
+
+@callback
+def _async_get_hm_device_by_address(hass: HomeAssistant, device_address: str) -> HmDevice | None:
+    """Return the homematic device."""
+    for control_unit in _async_get_control_units(hass=hass):
+        if hm_device := control_unit.central.get_device(address=device_address):
+            return hm_device
+    return None
+
+
+@callback
+def _async_get_cu_by_interface_id(hass: HomeAssistant, interface_id: str) -> ControlUnit | None:
+    """Get ControlUnit by interface_id."""
+    for control_unit in _async_get_control_units(hass=hass):
+        if control_unit.central.has_client(interface_id=interface_id):
+            return control_unit
+    return None
+
+
+@callback
+def _asnyc_get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice | None:
+    """Return the homematic device."""
+    device_entry: DeviceEntry | None = dr.async_get(hass).async_get(device_id)
+    if not device_entry:
+        return None
+    if (
+        data := get_device_address_at_interface_from_identifiers(
+            identifiers=device_entry.identifiers
+        )
+    ) is None:
+        return None
+    device_address, interface_id = data
+    for control_unit in _async_get_control_units(hass=hass):
+        if hm_device := control_unit.central.get_device(address=device_address):
+            return hm_device
+    return None

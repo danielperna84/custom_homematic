@@ -9,14 +9,14 @@ from hahomematic.const import CALLBACK_TYPE, DeviceFirmwareState, HmPlatform
 from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONTROL_UNITS, DOMAIN
+from . import HomematicConfigEntry
+from .const import DOMAIN
 from .control_unit import ControlUnit, signal_new_hm_entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,11 +25,11 @@ ATTR_FIRMWARE_UPDATE_STATE: Final = "firmware_update_state"
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HomematicConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Homematic(IP) Local update platform."""
-    control_unit: ControlUnit = hass.data[DOMAIN][CONTROL_UNITS][entry.entry_id]
+    control_unit: ControlUnit = entry.runtime_data
 
     @callback
     def async_add_update(hm_entities: tuple[HmUpdate, ...]) -> None:
