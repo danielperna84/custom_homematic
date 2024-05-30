@@ -67,7 +67,7 @@ def entry_data_v2(entry_data_v1) -> dict[str, Any]:
 def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
-    return MockConfigEntry(
+    entry = MockConfigEntry(
         entry_id=const.CONFIG_ENTRY_ID,
         version=1,
         domain=DOMAIN,
@@ -80,13 +80,15 @@ def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
         unique_id=const.CONFIG_ENTRY_UNIQUE_ID,
         disabled_by=None,
     )
+    entry.runtime_data = "123"
+    return entry
 
 
 @pytest.fixture
 def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
-    return MockConfigEntry(
+    entry = MockConfigEntry(
         entry_id=const.CONFIG_ENTRY_ID,
         version=2,
         domain=DOMAIN,
@@ -99,6 +101,8 @@ def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.
         unique_id=const.CONFIG_ENTRY_UNIQUE_ID,
         disabled_by=None,
     )
+    entry.runtime_data = "123"
+    return entry
 
 
 @pytest.fixture
@@ -175,6 +179,9 @@ def mock_control_unit() -> ControlUnit:
     control_unit.central.get_hub_entities.return_value = []
     control_unit.central.get_channel_events.return_value = []
     control_unit.central.get_update_entities.return_value = []
+
+    control_unit.get_new_entities.return_value = []
+    control_unit.get_new_hub_entities.return_value = []
 
     with patch(
         "custom_components.homematicip_local.control_unit.ControlUnit",

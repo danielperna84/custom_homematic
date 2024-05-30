@@ -5,6 +5,7 @@ coverage==7.5.0
 hahomematic==2024.5.5
 homeassistant==2024.6.0b1
 mypy==1.10.0
+mypy-dev==1.11.0a3
 pip==24.0
 pre-commit==3.7.1
 pydevccu==0.1.8

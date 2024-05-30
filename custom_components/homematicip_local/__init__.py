@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+from typing import TypeAlias
 
 from awesomeversion import AwesomeVersion
 from hahomematic.support import cleanup_cache_dirs, find_free_port
@@ -22,10 +23,10 @@ from .const import (
     HMIP_LOCAL_PLATFORMS,
 )
 from .control_unit import ControlConfig, ControlUnit, get_storage_folder
-from .services import async_get_config_entries, async_setup_services, async_unload_services
+from .services import async_get_loaded_config_entries, async_setup_services, async_unload_services
 
 HA_VERSION = AwesomeVersion(HA_VERSION_STR)
-type HomematicConfigEntry = ConfigEntry[ControlUnit]
+HomematicConfigEntry: TypeAlias = ConfigEntry[ControlUnit]
 
 
 @dataclass
@@ -72,31 +73,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: HomematicConfigEntry) ->
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -> bool:
     """Unload a config entry."""
-    if control := entry.runtime_data:
-        await async_unload_services(hass)
+    await async_unload_services(hass)
+    if hasattr(entry, "runtime_data") and (control := entry.runtime_data):
         await control.stop_central()
-        unload_ok = await hass.config_entries.async_unload_platforms(entry, HMIP_LOCAL_PLATFORMS)
-        if len(async_get_config_entries(hass=hass)) == 0:
-            del hass.data[HM_KEY]
-        return unload_ok
-
-    return False
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, HMIP_LOCAL_PLATFORMS)
+    if len(async_get_loaded_config_entries(hass=hass)) == 0:
+        del hass.data[HM_KEY]
+    return unload_ok
 
 
-async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def async_remove_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -> None:
     """Handle removal of an entry."""
     storage_folder = get_storage_folder(hass=hass)
     cleanup_cache_dirs(instance_name=entry.data["instance_name"], storage_folder=storage_folder)
 
 
-async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def update_listener(hass: HomeAssistant, entry: HomematicConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -> bool:
     """Migrate old entry."""
     _LOGGER.debug("Migrating from version %s", entry.version)
 

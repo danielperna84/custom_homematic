@@ -12,6 +12,7 @@ from hahomematic.platforms.device import HmDevice
 from hahomematic.support import to_bool
 import voluptuous as vol
 
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_DEVICE_ID, CONF_MODE
 from homeassistant.core import (
     HomeAssistant,
@@ -312,7 +313,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
 async def async_unload_services(hass: HomeAssistant) -> None:
     """Unload Homematic(IP) Local services."""
-    if len(async_get_config_entries(hass=hass)) > 0:
+    if len(async_get_loaded_config_entries(hass=hass)) > 0:
         return
 
     for hmip_local_service in HMIP_LOCAL_SERVICES:
@@ -590,6 +591,18 @@ def async_get_config_entries(hass: HomeAssistant) -> list[HomematicConfigEntry]:
     return hass.config_entries.async_entries(
         domain=DOMAIN, include_ignore=False, include_disabled=False
     )
+
+
+@callback
+def async_get_loaded_config_entries(hass: HomeAssistant) -> list[HomematicConfigEntry]:
+    """Get config entries for HomematicIP local."""
+    return [
+        entry
+        for entry in hass.config_entries.async_entries(
+            domain=DOMAIN, include_ignore=False, include_disabled=False
+        )
+        if entry.state == ConfigEntryState.LOADED
+    ]
 
 
 @callback
