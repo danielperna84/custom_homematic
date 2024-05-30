@@ -1,8 +1,11 @@
-# Version 1.62.1 (2024-05-30)
+# Version 1.63.0 (2024-06-01)
 
 - Bump hahomematic to 2024.5.5
   - Fix address for bidcos wired virtual device
+  - Catch TypeError on SysVar import
 - Add entity registry migration for fixed hmw entries
+- Use entry.runtime_data instead of hass.data
+- Use HassKey for hass.data
 
 # Version 1.62.0 (2024-05-15)
 
