@@ -81,7 +81,7 @@ class HaHomematicText(HaHomematicGenericRestoreEntity[HmText], TextEntity):
     def native_value(self) -> str | None:
         """Return the value reported by the text."""
         if self._hm_entity.is_valid:
-            return self._hm_entity.value
+            return self._hm_entity.value  # type: ignore[no-any-return]
         if (
             self.is_restored
             and self._restored_state

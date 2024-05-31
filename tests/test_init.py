@@ -89,11 +89,13 @@ async def test_unload_entry(
 ) -> None:
     """Test unload entry."""
     assert hass.data[DOMAIN]
-    await hass.config_entries.async_unload(mock_loaded_config_entry.entry_id)
+    assert mock_loaded_config_entry.state == ConfigEntryState.LOADED
+    assert await hass.config_entries.async_unload(mock_loaded_config_entry.entry_id) is True
+    assert mock_loaded_config_entry.state == ConfigEntryState.NOT_LOADED
     await hass.async_block_till_done()
     # assert DOMAIN not in hass.data
     # retry possible?
-    # assert await async_unload_entry(hass, mock_loaded_config_entry) is False
+    # assert await hass.config_entries.async_unload(mock_loaded_config_entry.entry_id) is False
 
 
 async def test_remove_entry(
@@ -101,7 +103,9 @@ async def test_remove_entry(
 ) -> None:
     """Test unload entry."""
     assert hass.data[DOMAIN]
+    assert mock_loaded_config_entry.state == ConfigEntryState.LOADED
     await hass.config_entries.async_remove(mock_loaded_config_entry.entry_id)
+    assert mock_loaded_config_entry.state == ConfigEntryState.NOT_LOADED
     await hass.async_block_till_done()
     # assert DOMAIN not in hass.data
 

@@ -88,7 +88,7 @@ class HaHomematicBinarySensor(HaHomematicGenericRestoreEntity[HmBinarySensor], B
             not in (STATE_UNKNOWN, STATE_UNAVAILABLE)
         ):
             return restored_state == STATE_ON
-        return self._hm_entity.default
+        return self._hm_entity.default  # type: ignore[no-any-return]
 
 
 class HaHomematicSysvarBinarySensor(

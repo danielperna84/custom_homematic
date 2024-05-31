@@ -136,7 +136,7 @@ class HaHomematicSensor(HaHomematicGenericEntity[HmSensor], RestoreSensor):
                 and self._hm_entity.hmtype in (ParameterType.ENUM, ParameterType.STRING)
             ):
                 return self._hm_entity.value.lower()  # type: ignore[no-any-return]
-            return self._hm_entity.value
+            return self._hm_entity.value  # type: ignore[no-any-return]
         if self.is_restored:
             return self._restored_native_value  # type: ignore[no-any-return]
         return None
