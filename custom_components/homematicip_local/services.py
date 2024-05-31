@@ -550,11 +550,12 @@ def _async_get_interface_address(
 @callback
 def _async_get_control_unit(hass: HomeAssistant, entry_id: str) -> ControlUnit | None:
     """Get ControlUnit by entry_id."""
-    control_unit: ControlUnit | None = hass.config_entries.async_get_entry(entry_id=entry_id)
-    if control_unit is None:
-        _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
-        return None
-    return control_unit
+    entry: HomematicConfigEntry | None = hass.config_entries.async_get_entry(entry_id=entry_id)
+    if entry and (control_unit := entry.runtime_data):
+        return control_unit
+
+    _LOGGER.warning("Config entry %s is deactivated or not available", entry_id)
+    return None
 
 
 @callback
