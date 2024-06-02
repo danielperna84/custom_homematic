@@ -8,4 +8,4 @@ mypy==1.10.0
 pre-commit==3.7.1
 pydevccu==0.1.8
 pylint==3.2.2
-pytest-homeassistant-custom-component==0.13.127
+pytest-homeassistant-custom-component==0.13.128
