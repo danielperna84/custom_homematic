@@ -1,4 +1,4 @@
-# Version 1.63.0 (2024-06-01)
+# Version 1.63.0 (2024-06-03)
 
 - Bump hahomematic to 2024.6.0
   - Fix address for bidcos wired virtual device

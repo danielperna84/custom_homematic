@@ -2,10 +2,10 @@
 
 async-upnp-client==0.38.3
 hahomematic==2024.6.0
-homeassistant==2024.6.0b4
+homeassistant==2024.6.0b6
 mypy-dev==1.11.0a3
 mypy==1.10.0
 pre-commit==3.7.1
 pydevccu==0.1.8
 pylint==3.2.2
-pytest-homeassistant-custom-component==0.13.128
+pytest-homeassistant-custom-component==0.13.130
