@@ -1,3 +1,8 @@
+# Version 1.63.1 (2024-06-22)
+
+- Use entry.runtime_data instead of hass.data
+- Use HassKey for hass.data
+
 # Version 1.63.0 (2024-06-03)
 
 - Bump hahomematic to 2024.6.0
@@ -5,8 +10,6 @@
   - Catch TypeError on SysVar import
   - Add time units to HmIP-RGBW calls
 - Add entity registry migration for fixed hmw entries
-- Use entry.runtime_data instead of hass.data
-- Use HassKey for hass.data
 
 # Version 1.62.0 (2024-05-15)
 
