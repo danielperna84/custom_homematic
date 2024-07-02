@@ -606,16 +606,6 @@
       },
       "name": "Lösche den Cache"
     },
-    "delete_device": {
-      "description": "Löscht ein Gerät aus Home-Assistant, aber nicht aus der Zentrale.",
-      "fields": {
-        "device_id": {
-          "description": "Wähle ein Gerät.",
-          "name": "Gerät"
-        }
-      },
-      "name": "Lösche ein Gerät"
-    },
     "disable_away_mode": {
       "description": "Deaktiviert den Klima-Abwesenheitsmodus.",
       "name": "Deaktiviert den Klima-Abwesenheitsmodus"

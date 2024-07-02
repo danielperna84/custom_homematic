@@ -49,7 +49,6 @@ EVENT_TITLE: Final = "title"
 EVENT_UNAVAILABLE: Final = "unavailable"
 
 SERVICE_CLEAR_CACHE: Final = "clear_cache"
-SERVICE_DELETE_DEVICE: Final = "delete_device"
 SERVICE_DISABLE_AWAY_MODE: Final = "disable_away_mode"
 SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR: Final = "enable_away_mode_by_calendar"
 SERVICE_ENABLE_AWAY_MODE_BY_DURATION: Final = "enable_away_mode_by_duration"
@@ -70,7 +69,6 @@ SERVICE_UPDATE_DEVICE_FIRMWARE_DATA: Final = "update_device_firmware_data"
 
 HMIP_LOCAL_SERVICES: Final = (
     SERVICE_CLEAR_CACHE,
-    SERVICE_DELETE_DEVICE,
     SERVICE_DISABLE_AWAY_MODE,
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,

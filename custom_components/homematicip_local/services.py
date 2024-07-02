@@ -31,7 +31,6 @@ from .const import (
     DOMAIN,
     HMIP_LOCAL_SERVICES,
     SERVICE_CLEAR_CACHE,
-    SERVICE_DELETE_DEVICE,
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_FETCH_SYSTEM_VARIABLES,
     SERVICE_FORCE_DEVICE_AVAILABILITY,
@@ -79,12 +78,6 @@ BASE_SCHEMA_DEVICE = vol.Schema(
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
     {
         vol.Required(CONF_ENTRY_ID): cv.string,
-    }
-)
-
-SCHEMA_SERVICE_DELETE_DEVICE = vol.Schema(
-    {
-        vol.Required(CONF_DEVICE_ID): cv.string,
     }
 )
 
@@ -193,8 +186,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         if service_name == SERVICE_CLEAR_CACHE:
             await _async_service_clear_cache(hass=hass, service=service)
-        elif service_name == SERVICE_DELETE_DEVICE:
-            await _async_service_delete_device(hass=hass, service=service)
         elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
         elif service_name == SERVICE_FETCH_SYSTEM_VARIABLES:
@@ -223,14 +214,6 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_CLEAR_CACHE,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_CLEAR_CACHE,
-    )
-
-    async_register_admin_service(
-        hass=hass,
-        domain=DOMAIN,
-        service=SERVICE_DELETE_DEVICE,
-        service_func=async_call_hmip_local_service,
-        schema=SCHEMA_SERVICE_DELETE_DEVICE,
     )
 
     async_register_admin_service(
@@ -318,31 +301,6 @@ async def async_unload_services(hass: HomeAssistant) -> None:
 
     for hmip_local_service in HMIP_LOCAL_SERVICES:
         hass.services.async_remove(domain=DOMAIN, service=hmip_local_service)
-
-
-async def _async_service_delete_device(hass: HomeAssistant, service: ServiceCall) -> None:
-    """Service to delete a Homematic(IP) Local device from HA."""
-    device_id = service.data[CONF_DEVICE_ID]
-
-    if (address_data := _async_get_interface_address(hass=hass, device_id=device_id)) is None:
-        return
-
-    interface_id: str = address_data[0]
-    device_address: str = address_data[1]
-
-    if (
-        interface_id
-        and device_address
-        and (control_unit := _async_get_cu_by_interface_id(hass=hass, interface_id=interface_id))
-    ):
-        await control_unit.central.delete_device(
-            interface_id=interface_id, device_address=device_address
-        )
-        _LOGGER.debug(
-            "Called delete_device: %s, %s",
-            interface_id,
-            device_address,
-        )
 
 
 async def _async_service_export_device_definition(
@@ -524,27 +482,6 @@ async def _async_service_update_device_firmware_data(
     entry_id = service.data[CONF_ENTRY_ID]
     if control := _async_get_control_unit(hass=hass, entry_id=entry_id):
         await control.central.refresh_firmware_data()
-
-
-@callback
-def _async_get_interface_address(
-    hass: HomeAssistant, device_id: str, channel: int | None = None
-) -> tuple[str, str] | None:
-    """Return interface and channel_address with given device_id and channel."""
-    device_registry = dr.async_get(hass)
-    device_entry: DeviceEntry | None = device_registry.async_get(device_id)
-    if not device_entry:
-        return None
-    if (
-        data := get_device_address_at_interface_from_identifiers(
-            identifiers=device_entry.identifiers
-        )
-    ) is None:
-        return None
-
-    device_address, interface_id = data
-    address = f"{device_address}:{channel}" if channel is not None else device_address
-    return interface_id, address
 
 
 @callback
