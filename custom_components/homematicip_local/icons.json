@@ -72,7 +72,6 @@
   },
   "services": {
     "clear_cache": "mdi:trash-can",
-    "delete_device": "mdi:delete",
     "disable_away_mode": "mdi:caravan",
     "enable_away_mode_by_calendar": "mdi:caravan",
     "enable_away_mode_by_duration": "mdi:caravan",

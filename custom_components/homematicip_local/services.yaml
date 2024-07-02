@@ -8,14 +8,6 @@ clear_cache:
         config_entry:
           integration: homematicip_local
 
-delete_device:
-  fields:
-    device_id:
-      required: true
-      selector:
-        device:
-          integration: homematicip_local
-
 export_device_definition:
   fields:
     device_id:

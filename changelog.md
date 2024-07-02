@@ -1,3 +1,7 @@
+# Version 1.64.0 (2024-07-02)
+
+- Remove service delete_device. Use delete on the device entry instead.
+
 # Version 1.63.1 (2024-06-22)
 
 - Use entry.runtime_data instead of hass.data

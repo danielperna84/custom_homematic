@@ -1,4 +1,4 @@
-"""Config flow for hahomematic integration."""
+"""Config flow for Homematic(IP) local integration."""
 
 from __future__ import annotations
 

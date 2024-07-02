@@ -285,10 +285,6 @@ The Homematic(IP) Local integration makes various custom services available.
 
 Clears the cache for a central unit from Home Assistant. Requires a restart.
 
-### `homematicip_local.delete_device`
-
-Delete a device from Home Assistant.
-
 ### `homematicip_local.disable_away_mode`
 
 Disable the away mode for `climate` devices. This only works with HomematicIP devices.
@@ -414,6 +410,11 @@ A sample usage is shown in the blueprint [Show device errors](https://github.com
 The `ERROR*` parameters are evaluated for this event type in the backend.
 
 ## Additional information
+
+### How can a device be removed from Home Assistant
+
+Go to the devices page of the integration and select a device. Click the three-dot menu at the button and press Delete.
+This will only delete the device from Home Assistant and not from the CCU.
 
 ### What is the meaning of `XmlRPC-Server received no events`?
 

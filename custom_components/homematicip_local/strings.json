@@ -603,16 +603,6 @@
       },
       "name": "Clear the cache"
     },
-    "delete_device": {
-      "description": "Delete a device from HA.",
-      "fields": {
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        }
-      },
-      "name": "Delete a device"
-    },
     "disable_away_mode": {
       "description": "Disable climate away mode.",
       "name": "Disable climate away mode"
