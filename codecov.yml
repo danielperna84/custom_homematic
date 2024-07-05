@@ -1,0 +1,43 @@
+codecov:
+  branch: dev
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 0.09
+      required:
+        target: auto
+        threshold: 1
+        paths:
+          - custom_components/homematicip_local/config_flow.py
+          - custom_components/homematicip_local/device_action.py
+          - custom_components/homematicip_local/device_condition.py
+          - custom_components/homematicip_local/device_trigger.py
+          - custom_components/homematicip_local/diagnostics.py
+          - custom_components/homematicip_local/logbook.py
+    patch:
+      default:
+        target: auto
+      required:
+        target: 100
+        threshold: 0
+        paths:
+          - custom_components/homematicip_local/config_flow.py
+          - custom_components/homematicip_local/device_action.py
+          - custom_components/homematicip_local/device_condition.py
+          - custom_components/homematicip_local/device_trigger.py
+          - custom_components/homematicip_local/diagnostics.py
+          - custom_components/homematicip_local/logbook.py
+comment: false
+
+# To make partial tests possible,
+# we need to carry forward.
+flag_management:
+  default_rules:
+    carryforward: false
+  individual_flags:
+    - name: full-suite
+      paths:
+        - ".*"
+      carryforward: true
