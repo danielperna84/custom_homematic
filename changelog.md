@@ -1,6 +1,7 @@
 # Version 1.64.0 (2024-07-02)
 
-- Remove service delete_device. Use delete on the device entry instead.
+- Remove service delete_device. Use delete on the device entry instead
+- Fix triggers and action when using meta integrations
 
 # Version 1.63.1 (2024-06-22)
 

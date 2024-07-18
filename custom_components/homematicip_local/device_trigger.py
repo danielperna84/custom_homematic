@@ -46,7 +46,9 @@ async def async_get_triggers(hass: HomeAssistant, device_id: str) -> list[dict[s
     device_address, interface_id = data
     triggers = []
     for entry_id in device.config_entries:
-        if entry := hass.config_entries.async_get_entry(entry_id=entry_id):
+        if (
+            entry := hass.config_entries.async_get_entry(entry_id=entry_id)
+        ) and entry.domain == DOMAIN:
             control_unit: ControlUnit = entry.runtime_data
             if control_unit.central.has_client(interface_id=interface_id) is False:
                 continue
