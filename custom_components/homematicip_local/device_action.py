@@ -45,7 +45,9 @@ async def async_get_actions(hass: HomeAssistant, device_id: str) -> list[dict[st
     device_address, interface_id = data
     actions = []
     for entry_id in device.config_entries:
-        if entry := hass.config_entries.async_get_entry(entry_id=entry_id):
+        if (
+            entry := hass.config_entries.async_get_entry(entry_id=entry_id)
+        ) and entry.domain == DOMAIN:
             control_unit: ControlUnit = entry.runtime_data
             if control_unit.central.has_client(interface_id=interface_id) is False:
                 continue
@@ -88,9 +90,10 @@ async def async_call_action_from_config(
 
     device_address, interface_id = data
     for entry_id in device.config_entries:
-        if entry := hass.config_entries.async_get_entry(entry_id=entry_id):
+        if (
+            entry := hass.config_entries.async_get_entry(entry_id=entry_id)
+        ) and entry.domain == DOMAIN:
             control_unit: ControlUnit = entry.runtime_data
-
             if control_unit.central.has_client(interface_id=interface_id) is False:
                 continue
             if hm_device := control_unit.central.get_device(address=device_address):
