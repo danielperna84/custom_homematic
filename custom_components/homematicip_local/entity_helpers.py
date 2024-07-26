@@ -15,6 +15,7 @@ from hahomematic.support import element_matches_key
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
+from homeassistant.components.lock import LockEntityDescription
 from homeassistant.components.number import NumberDeviceClass
 from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
@@ -181,7 +182,6 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     "GAS_POWER": HmSensorEntityDescription(
         key="GAS_POWER",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
-        state_class=SensorStateClass.MEASUREMENT,
     ),
     "GAS_VOLUME": HmSensorEntityDescription(
         key="GAS_VOLUME",
@@ -711,6 +711,15 @@ _SWITCH_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     ),
 }
 
+_LOCK_DESCRIPTIONS_BY_POSTFIX: Mapping[str | tuple[str, ...], EntityDescription] = {
+    "BUTTON_LOCK": LockEntityDescription(
+        key="BUTTON_LOCK",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+        translation_key="button_lock",
+    ),
+}
+
 _ENTITY_DESCRIPTION_BY_DEVICE: Mapping[
     HmPlatform, Mapping[str | tuple[str, ...], EntityDescription]
 ] = {
@@ -727,6 +736,12 @@ _ENTITY_DESCRIPTION_BY_PARAM: Mapping[
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
+}
+
+_ENTITY_DESCRIPTION_BY_POSTFIX: Mapping[
+    HmPlatform, Mapping[str | tuple[str, ...], EntityDescription]
+] = {
+    HmPlatform.LOCK: _LOCK_DESCRIPTIONS_BY_POSTFIX,
 }
 
 _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM: Mapping[
@@ -764,7 +779,7 @@ _DEFAULT_PLATFORM_DESCRIPTION: Mapping[HmPlatform, EntityDescription] = {
 
 
 def get_entity_description(
-    hm_entity: HmGenericEntity | GenericHubEntity,
+    hm_entity: HmGenericEntity | GenericHubEntity | CustomEntity,
 ) -> EntityDescription | None:
     """Get the entity_description."""
     if entity_desc := _find_entity_description(hm_entity=hm_entity):
@@ -786,7 +801,7 @@ def get_entity_description(
 
 
 def get_name_and_translation_key(
-    hm_entity: HmGenericEntity | GenericHubEntity,
+    hm_entity: HmGenericEntity | GenericHubEntity | CustomEntity,
     entity_desc: EntityDescription,
 ) -> tuple[str | UndefinedType | None, str | None]:
     """Get the name and translation_key."""
@@ -801,13 +816,18 @@ def get_name_and_translation_key(
             return None, hm_entity.parameter.lower()
         return None, entity_desc.translation_key
 
+    if isinstance(hm_entity, CustomEntity):
+        if entity_desc.translation_key is None and hm_entity.name_data.parameter_name:
+            return None, hm_entity.name_data.parameter_name.lower()
+        return None, entity_desc.translation_key
+
     # custom entities use the customizable name from the CCU WebUI,
     # that does not need to be translated in HA
     return hm_entity.name, None
 
 
 def _find_entity_description(
-    hm_entity: HmGenericEntity | GenericHubEntity,
+    hm_entity: HmGenericEntity | GenericHubEntity | CustomEntity,
 ) -> EntityDescription | None:
     """Find the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
@@ -824,10 +844,12 @@ def _find_entity_description(
         ):
             return entity_desc
 
-    if isinstance(hm_entity, CustomEntity) and (
-        entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity)
-    ):
-        return entity_desc
+    if isinstance(hm_entity, CustomEntity):
+        if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
+            return entity_desc
+
+        if entity_desc := _get_entity_description_by_postfix(hm_entity=hm_entity):
+            return entity_desc
 
     return _DEFAULT_PLATFORM_DESCRIPTION.get(hm_entity.platform)
 
@@ -856,7 +878,18 @@ def _get_entity_description_by_param(
     """Get entity_description by device_type and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):
         for params, entity_desc in platform_param_descriptions.items():
-            if _param_in_list(params=params, parameter=hm_entity.parameter):
+            if hm_entity.name and _param_in_list(params=params, parameter=hm_entity.name):
+                return entity_desc
+    return None
+
+
+def _get_entity_description_by_postfix(
+    hm_entity: CustomEntity,
+) -> EntityDescription | None:
+    """Get entity_description by device_type and parameter."""
+    if platform_postfix_descriptions := _ENTITY_DESCRIPTION_BY_POSTFIX.get(hm_entity.platform):
+        for postfix, entity_desc in platform_postfix_descriptions.items():
+            if _param_in_list(params=postfix, parameter=hm_entity.entity_name_postfix):
                 return entity_desc
     return None
 

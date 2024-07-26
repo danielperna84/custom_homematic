@@ -219,6 +219,11 @@
         }
       }
     },
+    "lock": {
+      "button_lock": {
+        "name": "Button Lock"
+      }
+    },
     "number": {
       "frequency": {
         "name": "Frequency"

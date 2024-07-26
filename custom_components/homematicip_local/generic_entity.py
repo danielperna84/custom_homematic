@@ -160,6 +160,16 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
                 entity_name = entity_name.replace(
                     self._hm_entity.parameter.replace("_", " ").title(), translated_name
                 )
+
+        if isinstance(self._hm_entity, CustomEntity) and entity_name:
+            translated_name = super().name
+            if self._do_remove_name():
+                translated_name = ""
+            if isinstance(translated_name, str) and self._hm_entity.name_data.parameter_name:
+                entity_name = entity_name.replace(
+                    self._hm_entity.name_data.parameter_name.replace("_", " ").title(),
+                    translated_name,
+                )
         if entity_name == "":
             return None
         return entity_name
@@ -223,7 +233,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         # Don't update disabled entities
         update_type = (
             "updated"
-            if self._hm_entity.last_refreshed == self._hm_entity.last_updated
+            if self._hm_entity.refreshed_at == self._hm_entity.modified_at
             else "refreshed"
         )
         if self.enabled:
