@@ -1,7 +1,10 @@
 # Version 1.64.0 (2024-07-02)
 
+- Bump hahomematic to 2024.7.0
+  - Add button lock CE
 - Remove service delete_device. Use delete on the device entry instead
 - Fix triggers and action when using meta integrations
+- Add translation to button lock
 
 # Version 1.63.1 (2024-06-22)
 

@@ -222,6 +222,11 @@
         }
       }
     },
+    "lock": {
+      "button_lock": {
+        "name": "Bediensperre"
+      }
+    },
     "number": {
       "frequency": {
         "name": "Frequenz"
