@@ -57,7 +57,15 @@ async def async_setup_entry(
 class HaHomematicLock(HaHomematicGenericRestoreEntity[BaseLock], LockEntity):
     """Representation of the HomematicIP lock entity."""
 
-    _attr_supported_features = LockEntityFeature.OPEN
+    def __init__(
+        self,
+        control_unit: ControlUnit,
+        hm_entity: BaseLock,
+    ) -> None:
+        """Initialize the lock entity."""
+        super().__init__(control_unit=control_unit, hm_entity=hm_entity)
+        if hm_entity.supports_open:
+            self._attr_supported_features = LockEntityFeature.OPEN
 
     @property
     def is_locked(self) -> bool | None:
