@@ -1,904 +1,904 @@
 {
-  "config": {
-    "abort": {},
-    "error": {
-      "cannot_connect": "Failed to connect. Check the HA log for further details.",
-      "invalid_auth": "Invalid authentication",
-      "invalid_config": "Invalid config: {invalid_items}",
-      "unknown": "Unexpected error"
-    },
-    "flow_title": "{name}/{host}",
-    "step": {
-      "central": {
-        "data": {
-          "callback_host": "Callback Hostname/IP-Address",
-          "callback_port": "Callback XML-RPC Port",
-          "enable_system_notifications": "Enable system notifications",
-          "host": "CCU Hostname/IP-Address",
-          "instance_name": "Integration instance name",
-          "json_port": "JSON-RPC Port",
-          "password": "CCU Password",
-          "sysvar_scan_enabled": "enable Sysvar scan",
-          "sysvar_scan_interval": "Sysvar/Program scan interval",
-          "tls": "use TLS",
-          "username": "CCU Username",
-          "verify_tls": "verify TLS connection"
+    "config": {
+        "abort": {},
+        "error": {
+            "cannot_connect": "Failed to connect. Check the HA log for further details.",
+            "invalid_auth": "Invalid authentication",
+            "invalid_config": "Invalid config: {invalid_items}",
+            "unknown": "Unexpected error"
         },
-        "data_description": {
-          "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
-          "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-          "username": "Case sensitive. User must be in admin role."
-        },
-        "description": "Please fill the required fields."
-      },
-      "interface": {
-        "data": {
-          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "bidcos_rf_port": "HM-RF Port",
-          "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port",
-          "hmip_rf_enabled": "enable Homematic IP",
-          "hmip_rf_port": "HmIP-RF Port",
-          "virtual_devices_enabled": "enable Groups (Heating-Group)",
-          "virtual_devices_path": "Groups Path",
-          "virtual_devices_port": "Groups Port"
-        },
-        "description": "Configure the interfaces to CCU"
-      }
-    }
-  },
-  "device_automation": {
-    "action_type": {
-      "press_long": "Long press Button \"{subtype}\"",
-      "press_short": "Short press Button \"{subtype}\""
-    },
-    "trigger_type": {
-      "press": "Button \"{subtype}\" pressed",
-      "press_cont": "Button \"{subtype}\" continuously pressed",
-      "press_lock": "Lock button \"{subtype}\" pressed",
-      "press_long": "Button \"{subtype}\" long pressed",
-      "press_long_release": "Button \"{subtype}\" long press released",
-      "press_long_start": "Button \"{subtype}\" started long press",
-      "press_short": "Button \"{subtype}\" pressed",
-      "press_unlock": "Unlock button \"{subtype}\" pressed"
-    }
-  },
-  "entity": {
-    "binary_sensor": {
-      "acoustic_alarm_active": {
-        "name": "Acoustic Alarm Active"
-      },
-      "alarmstate": {
-        "name": "Alarmstate"
-      },
-      "blocked_permanent": {
-        "name": "Blocked permanent"
-      },
-      "blocked_temporary": {
-        "name": "Blocked temporary"
-      },
-      "current_passage_direction": {
-        "name": "Passage Direction"
-      },
-      "dew_point_alarm": {
-        "name": "Dew Point Alarm"
-      },
-      "duty_cycle": {
-        "name": "Duty Cycle"
-      },
-      "dutycycle": {
-        "name": "Duty Cycle"
-      },
-      "emergency_operation": {
-        "name": "Emergency Operation"
-      },
-      "error_jammed": {
-        "name": "Error Jammed"
-      },
-      "heater_state": {
-        "name": "Heater State"
-      },
-      "humidity_alarm": {
-        "name": "Humidity Alarm"
-      },
-      "last_passage_direction": {
-        "name": "Last Passage Direction"
-      },
-      "low_bat": {
-        "name": "Battery"
-      },
-      "lowbat": {
-        "name": "Battery"
-      },
-      "lowbat_sensor": {
-        "name": "Battery"
-      },
-      "moisture_detected": {
-        "name": "Moisture Detected"
-      },
-      "motion": {
-        "name": "Motion"
-      },
-      "optical_alarm_active": {
-        "name": "Optical Alarm Active"
-      },
-      "power_mains_failure": {
-        "name": "Power Mains Failure"
-      },
-      "presence_detection_state": {
-        "name": "Presence Detection State"
-      },
-      "process": {
-        "name": "Process"
-      },
-      "raining": {
-        "name": "Raining"
-      },
-      "sabotage": {
-        "name": "Sabotage"
-      },
-      "sabotage_sticky": {
-        "name": "Sabotage sticky"
-      },
-      "state": {
-        "name": ""
-      },
-      "user_authorization_01": {
-        "name": "User authorization 1"
-      },
-      "user_authorization_02": {
-        "name": "User authorization 2"
-      },
-      "user_authorization_03": {
-        "name": "User authorization 3"
-      },
-      "user_authorization_04": {
-        "name": "User authorization 4"
-      },
-      "user_authorization_05": {
-        "name": "User authorization 5"
-      },
-      "user_authorization_06": {
-        "name": "User authorization 6"
-      },
-      "user_authorization_07": {
-        "name": "User authorization 7"
-      },
-      "user_authorization_08": {
-        "name": "User authorization 8"
-      },
-      "waterlevel_detected": {
-        "name": "Waterlevel Detected"
-      },
-      "window_state": {
-        "name": "Window State"
-      },
-      "working": {
-        "name": "Working"
-      }
-    },
-    "button": {
-      "reset_motion": {
-        "name": "Reset Motion"
-      },
-      "reset_presence": {
-        "name": "Reset Presence"
-      }
-    },
-    "climate": {
-      "hmip_climate": {
-        "state_attributes": {
-          "preset_mode": {
-            "state": {
-              "week_program_1": "WP 1",
-              "week_program_2": "WP 2",
-              "week_program_3": "WP 3",
-              "week_program_4": "WP 4",
-              "week_program_5": "WP 5",
-              "week_program_6": "WP 6"
+        "flow_title": "{name}/{host}",
+        "step": {
+            "central": {
+                "data": {
+                    "callback_host": "Callback Hostname/IP-Address",
+                    "callback_port": "Callback XML-RPC Port",
+                    "enable_system_notifications": "Enable system notifications",
+                    "host": "CCU Hostname/IP-Address",
+                    "instance_name": "Integration instance name",
+                    "json_port": "JSON-RPC Port",
+                    "password": "CCU Password",
+                    "sysvar_scan_enabled": "enable Sysvar scan",
+                    "sysvar_scan_interval": "Sysvar/Program scan interval",
+                    "tls": "use TLS",
+                    "username": "CCU Username",
+                    "verify_tls": "verify TLS connection"
+                },
+                "data_description": {
+                    "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
+                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
+                    "username": "Case sensitive. User must be in admin role."
+                },
+                "description": "Please fill the required fields."
+            },
+            "interface": {
+                "data": {
+                    "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
+                    "bidcos_rf_port": "HM-RF Port",
+                    "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
+                    "bidcos_wired_port": "BidCos-Wired Port",
+                    "hmip_rf_enabled": "enable Homematic IP",
+                    "hmip_rf_port": "HmIP-RF Port",
+                    "virtual_devices_enabled": "enable Groups (Heating-Group)",
+                    "virtual_devices_path": "Groups Path",
+                    "virtual_devices_port": "Groups Port"
+                },
+                "description": "Configure the interfaces to CCU"
             }
-          }
         }
-      }
     },
-    "event": {
-      "homematic_keypress": {
-        "state_attributes": {
-          "event_type": {
+    "device_automation": {
+        "action_type": {
+            "press_long": "Long press Button \"{subtype}\"",
+            "press_short": "Short press Button \"{subtype}\""
+        },
+        "trigger_type": {
+            "press": "Button \"{subtype}\" pressed",
+            "press_cont": "Button \"{subtype}\" continuously pressed",
+            "press_lock": "Lock button \"{subtype}\" pressed",
+            "press_long": "Button \"{subtype}\" long pressed",
+            "press_long_release": "Button \"{subtype}\" long press released",
+            "press_long_start": "Button \"{subtype}\" started long press",
+            "press_short": "Button \"{subtype}\" pressed",
+            "press_unlock": "Unlock button \"{subtype}\" pressed"
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "acoustic_alarm_active": {
+                "name": "Acoustic Alarm Active"
+            },
+            "alarmstate": {
+                "name": "Alarmstate"
+            },
+            "blocked_permanent": {
+                "name": "Blocked permanent"
+            },
+            "blocked_temporary": {
+                "name": "Blocked temporary"
+            },
+            "current_passage_direction": {
+                "name": "Passage Direction"
+            },
+            "dew_point_alarm": {
+                "name": "Dew Point Alarm"
+            },
+            "duty_cycle": {
+                "name": "Duty Cycle"
+            },
+            "dutycycle": {
+                "name": "Duty Cycle"
+            },
+            "emergency_operation": {
+                "name": "Emergency Operation"
+            },
+            "error_jammed": {
+                "name": "Error Jammed"
+            },
+            "heater_state": {
+                "name": "Heater State"
+            },
+            "humidity_alarm": {
+                "name": "Humidity Alarm"
+            },
+            "last_passage_direction": {
+                "name": "Last Passage Direction"
+            },
+            "low_bat": {
+                "name": "Battery"
+            },
+            "lowbat": {
+                "name": "Battery"
+            },
+            "lowbat_sensor": {
+                "name": "Battery"
+            },
+            "moisture_detected": {
+                "name": "Moisture Detected"
+            },
+            "motion": {
+                "name": "Motion"
+            },
+            "optical_alarm_active": {
+                "name": "Optical Alarm Active"
+            },
+            "power_mains_failure": {
+                "name": "Power Mains Failure"
+            },
+            "presence_detection_state": {
+                "name": "Presence Detection State"
+            },
+            "process": {
+                "name": "Process"
+            },
+            "raining": {
+                "name": "Raining"
+            },
+            "sabotage": {
+                "name": "Sabotage"
+            },
+            "sabotage_sticky": {
+                "name": "Sabotage sticky"
+            },
             "state": {
-              "press": "Pressed",
-              "press_cont": "Continuously pressed",
-              "press_lock": "Lock pressed",
-              "press_long": "Long pressed",
-              "press_long_release": "Long press released",
-              "press_long_start": "Long press started",
-              "press_short": "Short pressed",
-              "press_unlock": "Unlock pressed"
+                "name": ""
+            },
+            "user_authorization_01": {
+                "name": "User authorization 1"
+            },
+            "user_authorization_02": {
+                "name": "User authorization 2"
+            },
+            "user_authorization_03": {
+                "name": "User authorization 3"
+            },
+            "user_authorization_04": {
+                "name": "User authorization 4"
+            },
+            "user_authorization_05": {
+                "name": "User authorization 5"
+            },
+            "user_authorization_06": {
+                "name": "User authorization 6"
+            },
+            "user_authorization_07": {
+                "name": "User authorization 7"
+            },
+            "user_authorization_08": {
+                "name": "User authorization 8"
+            },
+            "waterlevel_detected": {
+                "name": "Waterlevel Detected"
+            },
+            "window_state": {
+                "name": "Window State"
+            },
+            "working": {
+                "name": "Working"
             }
-          }
+        },
+        "button": {
+            "reset_motion": {
+                "name": "Reset Motion"
+            },
+            "reset_presence": {
+                "name": "Reset Presence"
+            }
+        },
+        "climate": {
+            "hmip_climate": {
+                "state_attributes": {
+                    "preset_mode": {
+                        "state": {
+                            "week_program_1": "WP 1",
+                            "week_program_2": "WP 2",
+                            "week_program_3": "WP 3",
+                            "week_program_4": "WP 4",
+                            "week_program_5": "WP 5",
+                            "week_program_6": "WP 6"
+                        }
+                    }
+                }
+            }
+        },
+        "event": {
+            "homematic_keypress": {
+                "state_attributes": {
+                    "event_type": {
+                        "state": {
+                            "press": "Pressed",
+                            "press_cont": "Continuously pressed",
+                            "press_lock": "Lock pressed",
+                            "press_long": "Long pressed",
+                            "press_long_release": "Long press released",
+                            "press_long_start": "Long press started",
+                            "press_short": "Short pressed",
+                            "press_unlock": "Unlock pressed"
+                        }
+                    }
+                }
+            }
+        },
+        "lock": {
+            "button_lock": {
+                "name": "Button Lock"
+            }
+        },
+        "number": {
+            "frequency": {
+                "name": "Frequency"
+            },
+            "level": {
+                "name": "Level"
+            },
+            "level_2": {
+                "name": "Level 2"
+            },
+            "pipe_level": {
+                "name": "valve opening"
+            }
+        },
+        "sensor": {
+            "activity_state": {
+                "name": "Activity State"
+            },
+            "actual_humidity": {
+                "name": "Humidity"
+            },
+            "actual_temperature": {
+                "name": "Temperature"
+            },
+            "air_pressure": {
+                "name": "Air Pressure"
+            },
+            "average_illumination": {
+                "name": "Average Illumination"
+            },
+            "battery_state": {
+                "name": "Battery State"
+            },
+            "brightness": {
+                "name": "Brightness"
+            },
+            "carrier_sense_level": {
+                "name": "Carrier Sense Level"
+            },
+            "color": {
+                "name": "Color"
+            },
+            "concentration": {
+                "name": "Concentration"
+            },
+            "cover_level": {
+                "name": "Position"
+            },
+            "cover_tilt": {
+                "name": "Slat level"
+            },
+            "current": {
+                "name": "Current"
+            },
+            "current_illumination": {
+                "name": "Illumination"
+            },
+            "dewpoint": {
+                "name": "Dewpoint"
+            },
+            "direction": {
+                "name": "Direction",
+                "state": {
+                    "down": "Down",
+                    "none": "",
+                    "undefined": "Undefined",
+                    "up": "Up"
+                }
+            },
+            "door_state": {
+                "name": "Door State",
+                "state": {
+                    "closed": "Closed",
+                    "open": "Open",
+                    "position_unknown": "Position unknown",
+                    "ventilation_position": "Ventilation position"
+                }
+            },
+            "duty_cycle_level": {
+                "name": "Duty Cycle Level"
+            },
+            "energy_counter": {
+                "name": "Energy Counter"
+            },
+            "error": {
+                "name": "Error"
+            },
+            "filling_level": {
+                "name": "Filling Level"
+            },
+            "frequency": {
+                "name": "Frequency"
+            },
+            "gas_energy_counter": {
+                "name": "Gas Energy Counter"
+            },
+            "gas_flow": {
+                "name": "Gas Flow"
+            },
+            "gas_power": {
+                "name": "Gas Power"
+            },
+            "gas_volume": {
+                "name": "Gas Volume"
+            },
+            "highest_illumination": {
+                "name": "Highest Illumination"
+            },
+            "humidity": {
+                "name": "Humidity"
+            },
+            "iec_energy_counter": {
+                "name": "IEC Energy Counter"
+            },
+            "iec_power": {
+                "name": "IEC Power"
+            },
+            "illumination": {
+                "name": "Illumination"
+            },
+            "ip_address": {
+                "name": "IP Address"
+            },
+            "level": {
+                "name": "Level"
+            },
+            "level_2": {
+                "name": "Level 2"
+            },
+            "light_level": {
+                "name": "Brighness"
+            },
+            "lock_state": {
+                "name": "Lock State",
+                "state": {
+                    "locked": "Locked",
+                    "unknown": "Unknown",
+                    "unlocked": "Unlocked"
+                }
+            },
+            "lowest_illumination": {
+                "name": "Lowest Illumination"
+            },
+            "lux": {
+                "name": "Lux"
+            },
+            "mass_concentration_pm_1": {
+                "name": "Mass Concentration PM 1"
+            },
+            "mass_concentration_pm_10": {
+                "name": "Mass Concentration PM 10"
+            },
+            "mass_concentration_pm_10_24h_average": {
+                "name": "Mass Concentration PM 10 24h Average"
+            },
+            "mass_concentration_pm_1_24h_average": {
+                "name": "Mass Concentration PM 1 24h Average"
+            },
+            "mass_concentration_pm_2_5": {
+                "name": "Mass Concentration PM 2.5"
+            },
+            "mass_concentration_pm_2_5_24h_average": {
+                "name": "Mass Concentration PM 2.5 24h Average"
+            },
+            "number_concentration_pm_1": {
+                "name": "Number Concentration PM 1"
+            },
+            "number_concentration_pm_10": {
+                "name": "Number Concentration PM 10"
+            },
+            "number_concentration_pm_2_5": {
+                "name": "Number Concentration PM 2.5"
+            },
+            "operating_voltage": {
+                "name": "Operating Voltage"
+            },
+            "passage_counter_value": {
+                "name": "Passage Counter Value"
+            },
+            "pipe_level": {
+                "name": "Valve opening degree"
+            },
+            "power": {
+                "name": "Power"
+            },
+            "rain_counter": {
+                "name": "Rain Counter"
+            },
+            "rssi_device": {
+                "name": "RSSI Device"
+            },
+            "rssi_peer": {
+                "name": "RSSI Peer"
+            },
+            "sec_direction": {
+                "name": "Direction",
+                "state": {
+                    "down": "Opening",
+                    "none": "",
+                    "undefined": "Undefined",
+                    "up": "Closing"
+                }
+            },
+            "sec_key_error": {
+                "name": "Error",
+                "state": {
+                    "clutch_failure": "Clutch failure",
+                    "motor_aborted": "Motor aborted",
+                    "no_error": "No error"
+                }
+            },
+            "sec_win_error": {
+                "name": "Error",
+                "state": {
+                    "motor_tilt_error": "Motor tilt error",
+                    "motor_turn_error": "Motor turn error",
+                    "no_error": "No error"
+                }
+            },
+            "sec_win_status": {
+                "name": "",
+                "state": {
+                    "charge": "Charge",
+                    "discharge": "Discharge",
+                    "state_unknown": "State unknown",
+                    "trickle_charge": "Trickle charge"
+                }
+            },
+            "smoke_detector_alarm_status": {
+                "name": "Smoke Detector Alarm Status",
+                "state": {
+                    "idle_off": "Idle off",
+                    "intrusion_alarm": "Intrusion alarm",
+                    "primary_alarm": "Primary alarm",
+                    "secondary_alarm": "Secondary alarm"
+                }
+            },
+            "srh_state": {
+                "name": "",
+                "state": {
+                    "closed": "Closed",
+                    "open": "Open",
+                    "tilted": "Tilted"
+                }
+            },
+            "state": {
+                "name": ""
+            },
+            "status": {
+                "name": ""
+            },
+            "sunshineduration": {
+                "name": "Sunshineduration"
+            },
+            "taupunkt": {
+                "name": "dew point"
+            },
+            "temperature": {
+                "name": "Temperature"
+            },
+            "typical_particle_size": {
+                "name": "Typical Particle Size"
+            },
+            "value": {
+                "name": "Value"
+            },
+            "valve_state": {
+                "name": "Valve State"
+            },
+            "vapor_concentration": {
+                "name": "Vapor Concentration"
+            },
+            "voltage": {
+                "name": "Voltage"
+            },
+            "wind_dir": {
+                "name": "Wind Dir"
+            },
+            "wind_dir_range": {
+                "name": "Wind Dir Range"
+            },
+            "wind_direction": {
+                "name": "Wind Direction"
+            },
+            "wind_direction_range": {
+                "name": "Wind Direction Range"
+            },
+            "wind_speed": {
+                "name": "Wind Speed"
+            },
+            "wkp_code_state": {
+                "name": "Code Status",
+                "state": {
+                    "idle": "idle",
+                    "known_code_id_received": "known code id received",
+                    "unknown_code_detected": "unknown code detected"
+                }
+            }
+        },
+        "switch": {
+            "inhibit": {
+                "name": "Inhibit"
+            },
+            "motion_detection_active": {
+                "name": "Motion Detection Active"
+            },
+            "presence_detection_active": {
+                "name": "Presence Detection Active"
+            },
+            "state": {
+                "name": ""
+            }
         }
-      }
     },
-    "lock": {
-      "button_lock": {
-        "name": "Button Lock"
-      }
+    "issues": {
+        "interface_not_reachable": {
+            "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect.\n\nCheck the Home Assistant log files for more details.",
+            "title": "Interface {interface_id} not reachable"
+        },
+        "pending_pong_mismatch": {
+            "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise this HA instance will not receive update events from your CCU.\n - Something is stuck on the CCU or hasn't been cleaned up. Therefore, try a restart.\n - Your setup is misconfigured and HA is not able to receive events from the CCU.",
+            "title": "Pending Pong mismatch on interface {interface_id}"
+        },
+        "xmlrpc_server_receives_no_events": {
+            "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect.",
+            "title": "XmlRPC-Server received no events."
+        }
     },
-    "number": {
-      "frequency": {
-        "name": "Frequency"
-      },
-      "level": {
-        "name": "Level"
-      },
-      "level_2": {
-        "name": "Level 2"
-      },
-      "pipe_level": {
-        "name": "valve opening"
-      }
+    "options": {
+        "abort": {},
+        "error": {
+            "cannot_connect": "Failed to connect. Check the HA log for further details.",
+            "invalid_auth": "Invalid authentication",
+            "invalid_config": "Invalid config: {invalid_items}",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "central": {
+                "data": {
+                    "callback_host": "Callback Hostname/IP-Address",
+                    "callback_port": "Callback XML-RPC Port",
+                    "enable_system_notifications": "Enable system notifications",
+                    "host": "CCU Hostname/IP-Address",
+                    "json_port": "JSON-RPC Port",
+                    "password": "CCU Password",
+                    "sysvar_scan_enabled": "enable Sysvar scan",
+                    "sysvar_scan_interval": "Sysvar/Program scan interval",
+                    "tls": "use TLS",
+                    "username": "CCU Username",
+                    "verify_tls": "verify TLS connection"
+                },
+                "data_description": {
+                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
+                    "username": "Case sensitive. User must be in admin role."
+                },
+                "description": "Re-Configure the CCU"
+            },
+            "interface": {
+                "data": {
+                    "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
+                    "bidcos_rf_port": "HM-RF Port",
+                    "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
+                    "bidcos_wired_port": "BidCos-Wired Port",
+                    "hmip_rf_enabled": "enable Homematic IP",
+                    "hmip_rf_port": "HmIP-RF Port",
+                    "virtual_devices_enabled": "enable Groups (Heating-Group)",
+                    "virtual_devices_path": "Groups Path",
+                    "virtual_devices_port": "Groups Port"
+                },
+                "description": "Re-Configure the interfaces to CCU"
+            }
+        }
     },
-    "sensor": {
-      "activity_state": {
-        "name": "Activity State"
-      },
-      "actual_humidity": {
-        "name": "Humidity"
-      },
-      "actual_temperature": {
-        "name": "Temperature"
-      },
-      "air_pressure": {
-        "name": "Air Pressure"
-      },
-      "average_illumination": {
-        "name": "Average Illumination"
-      },
-      "battery_state": {
-        "name": "Battery State"
-      },
-      "brightness": {
-        "name": "Brightness"
-      },
-      "carrier_sense_level": {
-        "name": "Carrier Sense Level"
-      },
-      "color": {
-        "name": "Color"
-      },
-      "concentration": {
-        "name": "Concentration"
-      },
-      "cover_level": {
-        "name": "Position"
-      },
-      "cover_tilt": {
-        "name": "Slat level"
-      },
-      "current": {
-        "name": "Current"
-      },
-      "current_illumination": {
-        "name": "Illumination"
-      },
-      "dewpoint": {
-        "name": "Dewpoint"
-      },
-      "direction": {
-        "name": "Direction",
-        "state": {
-          "down": "Down",
-          "none": "",
-          "undefined": "Undefined",
-          "up": "Up"
+    "services": {
+        "clear_cache": {
+            "description": "Clear the cache. Requires a restart.",
+            "fields": {
+                "entry_id": {
+                    "description": "Name(s) of homematic central to clear the cache.",
+                    "name": "Central"
+                }
+            },
+            "name": "Clear the cache"
+        },
+        "disable_away_mode": {
+            "description": "Disable climate away mode.",
+            "name": "Disable climate away mode"
+        },
+        "enable_away_mode_by_calendar": {
+            "description": "Enable climate away mode by calendar.",
+            "fields": {
+                "away_temperature": {
+                    "description": "The temperature for the away mode.",
+                    "name": "Set point temperature"
+                },
+                "end": {
+                    "description": "The time when the away mode should automatically be disabled.",
+                    "name": "End time"
+                },
+                "start": {
+                    "description": "The time when the away mode should automatically be enabled.",
+                    "name": "Start time"
+                }
+            },
+            "name": "Enable climate away mode by calendar"
+        },
+        "enable_away_mode_by_duration": {
+            "description": "Enable climate away mode by duration.",
+            "fields": {
+                "away_temperature": {
+                    "description": "The temperature for the away mode.",
+                    "name": "Set point temperature"
+                },
+                "hours": {
+                    "description": "The number of hours after the away mode should automatically be disabled.",
+                    "name": "Hours"
+                }
+            },
+            "name": "Enable climate away mode by duration"
+        },
+        "export_device_definition": {
+            "description": "Export a device definition to 'Your home-assistant config directory'/homematicip_local/export*.",
+            "fields": {
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                }
+            },
+            "name": "Export device definition"
+        },
+        "fetch_system_variables": {
+            "description": "Fetch system variables from backend.",
+            "fields": {
+                "entry_id": {
+                    "description": "Name(s) of homematic central to fetch system variables from.",
+                    "name": "Central"
+                }
+            },
+            "name": "Fetch system variables"
+        },
+        "force_device_availability": {
+            "description": "Force a device to be available, this will override the real state.",
+            "fields": {
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                }
+            },
+            "name": "Force device availability"
+        },
+        "get_device_value": {
+            "description": "Get a device value on RPC XML interface.",
+            "fields": {
+                "channel": {
+                    "description": "Channel for calling a parameter.",
+                    "name": "Channel"
+                },
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                },
+                "parameter": {
+                    "description": "Parameter to get i.e STATE.",
+                    "name": "Parameter"
+                }
+            },
+            "name": "Get device value"
+        },
+        "get_paramset": {
+            "description": "Call to getParamset in the RPC XML interface.",
+            "fields": {
+                "channel": {
+                    "description": "Channel for calling a paramset.",
+                    "name": "Channel"
+                },
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                },
+                "paramset_key": {
+                    "description": "The paramset_key argument to getParamset.",
+                    "name": "Paramset key"
+                }
+            },
+            "name": "Get paramset"
+        },
+        "light_set_on_time": {
+            "description": "Set on time for a light entity. Must be followed by a light.turn_on.",
+            "fields": {
+                "on_time": {
+                    "description": "On time for a light in seconds. Use 0 to reset the on time.",
+                    "name": "On Time"
+                }
+            },
+            "name": "Set light on time"
+        },
+        "put_paramset": {
+            "description": "Call to putParamset on the RPC XML interface.",
+            "fields": {
+                "channel": {
+                    "description": "Channel for calling a paramset.",
+                    "name": "Channel"
+                },
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                },
+                "paramset": {
+                    "description": "A paramset dictionary.",
+                    "name": "Paramset"
+                },
+                "paramset_key": {
+                    "description": "The paramset_key argument.",
+                    "name": "Paramset key"
+                },
+                "rx_mode": {
+                    "description": "The receive mode used.",
+                    "name": "RX mode"
+                },
+                "wait_for_callback": {
+                    "description": "Wait for the callback of the service call.",
+                    "name": "Wait for callback"
+                }
+            },
+            "name": "Put paramset"
+        },
+        "set_cover_combined_position": {
+            "description": "Move a blind to a specific position and tilt position.",
+            "fields": {
+                "position": {
+                    "description": "Position of the cover.",
+                    "name": "Position"
+                },
+                "tilt_position": {
+                    "description": "Tilt position of the cover.",
+                    "name": "Tilt position"
+                },
+                "wait_for_callback": {
+                    "description": "Wait for the callback of the service call.",
+                    "name": "Wait for callback"
+                }
+            },
+            "name": "Set cover combined position"
+        },
+        "set_device_value": {
+            "description": "Set a device parameter via the XML-RPC interface.",
+            "fields": {
+                "channel": {
+                    "description": "Channel for calling a parameter.",
+                    "name": "Channel"
+                },
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                },
+                "parameter": {
+                    "description": "Parameter to send i.e STATE.",
+                    "name": "Parameter"
+                },
+                "rx_mode": {
+                    "description": "The receive mode used.",
+                    "name": "RX mode"
+                },
+                "value": {
+                    "description": "New value.",
+                    "name": "Value"
+                },
+                "value_type": {
+                    "description": "Type for new value.",
+                    "name": "Value type"
+                },
+                "wait_for_callback": {
+                    "description": "Wait for the callback of the service call.",
+                    "name": "Wait for callback"
+                }
+            },
+            "name": "Set device value"
+        },
+        "set_install_mode": {
+            "description": "Set a RPC XML interface into installation mode.",
+            "fields": {
+                "address": {
+                    "description": "Address of homematic device or BidCoS-RF to learn.",
+                    "name": "Address"
+                },
+                "interface_id": {
+                    "description": "Select the given interface into install mode.",
+                    "name": "Interface"
+                },
+                "mode": {
+                    "description": "1= Normal mode / 2= Remove exists old links.",
+                    "name": "Mode"
+                },
+                "time": {
+                    "description": "Time to run in install mode.",
+                    "name": "Time"
+                }
+            },
+            "name": "Set install mode"
+        },
+        "set_variable_value": {
+            "description": "Write a value to a variable.",
+            "fields": {
+                "entry_id": {
+                    "description": "Name(s) of homematic central to set value.",
+                    "name": "Central"
+                },
+                "name": {
+                    "description": "Name of the variable to set.",
+                    "name": "Name"
+                },
+                "value": {
+                    "description": "New value",
+                    "name": "Value"
+                }
+            },
+            "name": "Set variable value"
+        },
+        "switch_set_on_time": {
+            "description": "Set on time for a switch entity. Must be followed by a switch.turn_on.",
+            "fields": {
+                "on_time": {
+                    "description": "On time for a switch in seconds. Use 0 to reset the on time.",
+                    "name": "On Time"
+                }
+            },
+            "name": "Set switch on time"
+        },
+        "turn_on_siren": {
+            "description": "Turn siren on.",
+            "fields": {
+                "duration": {
+                    "description": "The duration in seconds of the noise to emit when turning the siren on.",
+                    "name": "Duration"
+                },
+                "light": {
+                    "description": "The light to emit when turning the siren on.",
+                    "name": "Light"
+                },
+                "tone": {
+                    "description": "The tone to emit when turning the siren on.",
+                    "name": "Tone"
+                }
+            },
+            "name": "Turn on siren"
+        },
+        "update_device_firmware_data": {
+            "description": "Update device firmware data for all homematic data.",
+            "fields": {
+                "entry_id": {
+                    "description": "Name(s) of homematic central to update the device firmware data for.",
+                    "name": "Central"
+                }
+            },
+            "name": "Update device firmware data"
         }
-      },
-      "door_state": {
-        "name": "Door State",
-        "state": {
-          "closed": "Closed",
-          "open": "Open",
-          "position_unknown": "Position unknown",
-          "ventilation_position": "Ventilation position"
-        }
-      },
-      "duty_cycle_level": {
-        "name": "Duty Cycle Level"
-      },
-      "energy_counter": {
-        "name": "Energy Counter"
-      },
-      "error": {
-        "name": "Error"
-      },
-      "filling_level": {
-        "name": "Filling Level"
-      },
-      "frequency": {
-        "name": "Frequency"
-      },
-      "gas_energy_counter": {
-        "name": "Gas Energy Counter"
-      },
-      "gas_flow": {
-        "name": "Gas Flow"
-      },
-      "gas_power": {
-        "name": "Gas Power"
-      },
-      "gas_volume": {
-        "name": "Gas Volume"
-      },
-      "highest_illumination": {
-        "name": "Highest Illumination"
-      },
-      "humidity": {
-        "name": "Humidity"
-      },
-      "iec_energy_counter": {
-        "name": "IEC Energy Counter"
-      },
-      "iec_power": {
-        "name": "IEC Power"
-      },
-      "illumination": {
-        "name": "Illumination"
-      },
-      "ip_address": {
-        "name": "IP Address"
-      },
-      "level": {
-        "name": "Level"
-      },
-      "level_2": {
-        "name": "Level 2"
-      },
-      "light_level": {
-        "name": "Brighness"
-      },
-      "lock_state": {
-        "name": "Lock State",
-        "state": {
-          "locked": "Locked",
-          "unknown": "Unknown",
-          "unlocked": "Unlocked"
-        }
-      },
-      "lowest_illumination": {
-        "name": "Lowest Illumination"
-      },
-      "lux": {
-        "name": "Lux"
-      },
-      "mass_concentration_pm_1": {
-        "name": "Mass Concentration PM 1"
-      },
-      "mass_concentration_pm_10": {
-        "name": "Mass Concentration PM 10"
-      },
-      "mass_concentration_pm_10_24h_average": {
-        "name": "Mass Concentration PM 10 24h Average"
-      },
-      "mass_concentration_pm_1_24h_average": {
-        "name": "Mass Concentration PM 1 24h Average"
-      },
-      "mass_concentration_pm_2_5": {
-        "name": "Mass Concentration PM 2.5"
-      },
-      "mass_concentration_pm_2_5_24h_average": {
-        "name": "Mass Concentration PM 2.5 24h Average"
-      },
-      "number_concentration_pm_1": {
-        "name": "Number Concentration PM 1"
-      },
-      "number_concentration_pm_10": {
-        "name": "Number Concentration PM 10"
-      },
-      "number_concentration_pm_2_5": {
-        "name": "Number Concentration PM 2.5"
-      },
-      "operating_voltage": {
-        "name": "Operating Voltage"
-      },
-      "passage_counter_value": {
-        "name": "Passage Counter Value"
-      },
-      "pipe_level": {
-        "name": "Valve opening degree"
-      },
-      "power": {
-        "name": "Power"
-      },
-      "rain_counter": {
-        "name": "Rain Counter"
-      },
-      "rssi_device": {
-        "name": "RSSI Device"
-      },
-      "rssi_peer": {
-        "name": "RSSI Peer"
-      },
-      "sec_direction": {
-        "name": "Direction",
-        "state": {
-          "down": "Opening",
-          "none": "",
-          "undefined": "Undefined",
-          "up": "Closing"
-        }
-      },
-      "sec_key_error": {
-        "name": "Error",
-        "state": {
-          "clutch_failure": "Clutch failure",
-          "motor_aborted": "Motor aborted",
-          "no_error": "No error"
-        }
-      },
-      "sec_win_error": {
-        "name": "Error",
-        "state": {
-          "motor_tilt_error": "Motor tilt error",
-          "motor_turn_error": "Motor turn error",
-          "no_error": "No error"
-        }
-      },
-      "sec_win_status": {
-        "name": "",
-        "state": {
-          "charge": "Charge",
-          "discharge": "Discharge",
-          "state_unknown": "State unknown",
-          "trickle_charge": "Trickle charge"
-        }
-      },
-      "smoke_detector_alarm_status": {
-        "name": "Smoke Detector Alarm Status",
-        "state": {
-          "idle_off": "Idle off",
-          "intrusion_alarm": "Intrusion alarm",
-          "primary_alarm": "Primary alarm",
-          "secondary_alarm": "Secondary alarm"
-        }
-      },
-      "srh_state": {
-        "name": "",
-        "state": {
-          "closed": "Closed",
-          "open": "Open",
-          "tilted": "Tilted"
-        }
-      },
-      "state": {
-        "name": ""
-      },
-      "status": {
-        "name": ""
-      },
-      "sunshineduration": {
-        "name": "Sunshineduration"
-      },
-      "taupunkt": {
-        "name": "dew point"
-      },
-      "temperature": {
-        "name": "Temperature"
-      },
-      "typical_particle_size": {
-        "name": "Typical Particle Size"
-      },
-      "value": {
-        "name": "Value"
-      },
-      "valve_state": {
-        "name": "Valve State"
-      },
-      "vapor_concentration": {
-        "name": "Vapor Concentration"
-      },
-      "voltage": {
-        "name": "Voltage"
-      },
-      "wind_dir": {
-        "name": "Wind Dir"
-      },
-      "wind_dir_range": {
-        "name": "Wind Dir Range"
-      },
-      "wind_direction": {
-        "name": "Wind Direction"
-      },
-      "wind_direction_range": {
-        "name": "Wind Direction Range"
-      },
-      "wind_speed": {
-        "name": "Wind Speed"
-      },
-      "wkp_code_state": {
-        "name": "Code Status",
-        "state": {
-          "idle": "idle",
-          "known_code_id_received": "known code id received",
-          "unknown_code_detected": "unknown code detected"
-        }
-      }
-    },
-    "switch": {
-      "inhibit": {
-        "name": "Inhibit"
-      },
-      "motion_detection_active": {
-        "name": "Motion Detection Active"
-      },
-      "presence_detection_active": {
-        "name": "Presence Detection Active"
-      },
-      "state": {
-        "name": ""
-      }
     }
-  },
-  "issues": {
-    "interface_not_reachable": {
-      "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect.\n\nCheck the Home Assistant log files for more details.",
-      "title": "Interface {interface_id} not reachable"
-    },
-    "pending_pong_mismatch": {
-      "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise this HA instance will not receive update events from your CCU.\n - Something is stuck on the CCU or hasn't been cleaned up. Therefore, try a restart.\n - Your setup is misconfigured and HA is not able to receive events from the CCU.",
-      "title": "Pending Pong mismatch on interface {interface_id}"
-    },
-    "xmlrpc_server_receives_no_events": {
-      "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect.",
-      "title": "XmlRPC-Server received no events."
-    }
-  },
-  "options": {
-    "abort": {},
-    "error": {
-      "cannot_connect": "Failed to connect. Check the HA log for further details.",
-      "invalid_auth": "Invalid authentication",
-      "invalid_config": "Invalid config: {invalid_items}",
-      "unknown": "Unexpected error"
-    },
-    "step": {
-      "central": {
-        "data": {
-          "callback_host": "Callback Hostname/IP-Address",
-          "callback_port": "Callback XML-RPC Port",
-          "enable_system_notifications": "Enable system notifications",
-          "host": "CCU Hostname/IP-Address",
-          "json_port": "JSON-RPC Port",
-          "password": "CCU Password",
-          "sysvar_scan_enabled": "enable Sysvar scan",
-          "sysvar_scan_interval": "Sysvar/Program scan interval",
-          "tls": "use TLS",
-          "username": "CCU Username",
-          "verify_tls": "verify TLS connection"
-        },
-        "data_description": {
-          "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-          "username": "Case sensitive. User must be in admin role."
-        },
-        "description": "Re-Configure the CCU"
-      },
-      "interface": {
-        "data": {
-          "bidcos_rf_enabled": "enable Homematic (Bidcos-RF)",
-          "bidcos_rf_port": "HM-RF Port",
-          "bidcos_wired_enabled": "enable BidCos-Wired (HM-Wired)",
-          "bidcos_wired_port": "BidCos-Wired Port",
-          "hmip_rf_enabled": "enable Homematic IP",
-          "hmip_rf_port": "HmIP-RF Port",
-          "virtual_devices_enabled": "enable Groups (Heating-Group)",
-          "virtual_devices_path": "Groups Path",
-          "virtual_devices_port": "Groups Port"
-        },
-        "description": "Re-Configure the interfaces to CCU"
-      }
-    }
-  },
-  "services": {
-    "clear_cache": {
-      "description": "Clear the cache. Requires a restart.",
-      "fields": {
-        "entry_id": {
-          "description": "Name(s) of homematic central to clear the cache.",
-          "name": "Central"
-        }
-      },
-      "name": "Clear the cache"
-    },
-    "disable_away_mode": {
-      "description": "Disable climate away mode.",
-      "name": "Disable climate away mode"
-    },
-    "enable_away_mode_by_calendar": {
-      "description": "Enable climate away mode by calendar.",
-      "fields": {
-        "away_temperature": {
-          "description": "The temperature for the away mode.",
-          "name": "Set point temperature"
-        },
-        "end": {
-          "description": "The time when the away mode should automatically be disabled.",
-          "name": "End time"
-        },
-        "start": {
-          "description": "The time when the away mode should automatically be enabled.",
-          "name": "Start time"
-        }
-      },
-      "name": "Enable climate away mode by calendar"
-    },
-    "enable_away_mode_by_duration": {
-      "description": "Enable climate away mode by duration.",
-      "fields": {
-        "away_temperature": {
-          "description": "The temperature for the away mode.",
-          "name": "Set point temperature"
-        },
-        "hours": {
-          "description": "The number of hours after the away mode should automatically be disabled.",
-          "name": "Hours"
-        }
-      },
-      "name": "Enable climate away mode by duration"
-    },
-    "export_device_definition": {
-      "description": "Export a device definition to 'Your home-assistant config directory'/homematicip_local/export*.",
-      "fields": {
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        }
-      },
-      "name": "Export device definition"
-    },
-    "fetch_system_variables": {
-      "description": "Fetch system variables from backend.",
-      "fields": {
-        "entry_id": {
-          "description": "Name(s) of homematic central to fetch system variables from.",
-          "name": "Central"
-        }
-      },
-      "name": "Fetch system variables"
-    },
-    "force_device_availability": {
-      "description": "Force a device to be available, this will override the real state.",
-      "fields": {
-        "device_address": {
-          "description": "Enter a device address.",
-          "name": "Device address"
-        },
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        }
-      },
-      "name": "Force device availability"
-    },
-    "get_device_value": {
-      "description": "Get a device value on RPC XML interface.",
-      "fields": {
-        "channel": {
-          "description": "Channel for calling a parameter.",
-          "name": "Channel"
-        },
-        "device_address": {
-          "description": "Enter a device address.",
-          "name": "Device address"
-        },
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        },
-        "parameter": {
-          "description": "Parameter to get i.e STATE.",
-          "name": "Parameter"
-        }
-      },
-      "name": "Get device value"
-    },
-    "get_paramset": {
-      "description": "Call to getParamset in the RPC XML interface.",
-      "fields": {
-        "channel": {
-          "description": "Channel for calling a paramset.",
-          "name": "Channel"
-        },
-        "device_address": {
-          "description": "Enter a device address.",
-          "name": "Device address"
-        },
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        },
-        "paramset_key": {
-          "description": "The paramset_key argument to getParamset.",
-          "name": "Paramset key"
-        }
-      },
-      "name": "Get paramset"
-    },
-    "light_set_on_time": {
-      "description": "Set on time for a light entity. Must be followed by a light.turn_on.",
-      "fields": {
-        "on_time": {
-          "description": "On time for a light in seconds. Use 0 to reset the on time.",
-          "name": "On Time"
-        }
-      },
-      "name": "Set light on time"
-    },
-    "put_paramset": {
-      "description": "Call to putParamset on the RPC XML interface.",
-      "fields": {
-        "channel": {
-          "description": "Channel for calling a paramset.",
-          "name": "Channel"
-        },
-        "device_address": {
-          "description": "Enter a device address.",
-          "name": "Device address"
-        },
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        },
-        "paramset": {
-          "description": "A paramset dictionary.",
-          "name": "Paramset"
-        },
-        "paramset_key": {
-          "description": "The paramset_key argument.",
-          "name": "Paramset key"
-        },
-        "wait_for_callback": {
-          "description": "Wait for the callback of the service call.",
-          "name": "Wait for callback"
-        },
-        "rx_mode": {
-          "description": "The receive mode used.",
-          "name": "RX mode"
-        }
-      },
-      "name": "Put paramset"
-    },
-    "set_cover_combined_position": {
-      "description": "Move a blind to a specific position and tilt position.",
-      "fields": {
-        "position": {
-          "description": "Position of the cover.",
-          "name": "Position"
-        },
-        "tilt_position": {
-          "description": "Tilt position of the cover.",
-          "name": "Tilt position"
-        },
-        "wait_for_callback": {
-          "description": "Wait for the callback of the service call.",
-          "name": "Wait for callback"
-        }
-      },
-      "name": "Set cover combined position"
-    },
-    "set_device_value": {
-      "description": "Set a device parameter via the XML-RPC interface.",
-      "fields": {
-        "channel": {
-          "description": "Channel for calling a parameter.",
-          "name": "Channel"
-        },
-        "device_address": {
-          "description": "Enter a device address.",
-          "name": "Device address"
-        },
-        "device_id": {
-          "description": "Select a device.",
-          "name": "Device"
-        },
-        "parameter": {
-          "description": "Parameter to send i.e STATE.",
-          "name": "Parameter"
-        },
-        "wait_for_callback": {
-          "description": "Wait for the callback of the service call.",
-          "name": "Wait for callback"
-        },
-        "rx_mode": {
-          "description": "The receive mode used.",
-          "name": "RX mode"
-        },
-        "value": {
-          "description": "New value.",
-          "name": "Value"
-        },
-        "value_type": {
-          "description": "Type for new value.",
-          "name": "Value type"
-        }
-      },
-      "name": "Set device value"
-    },
-    "set_install_mode": {
-      "description": "Set a RPC XML interface into installation mode.",
-      "fields": {
-        "address": {
-          "description": "Address of homematic device or BidCoS-RF to learn.",
-          "name": "Address"
-        },
-        "interface_id": {
-          "description": "Select the given interface into install mode.",
-          "name": "Interface"
-        },
-        "mode": {
-          "description": "1= Normal mode / 2= Remove exists old links.",
-          "name": "Mode"
-        },
-        "time": {
-          "description": "Time to run in install mode.",
-          "name": "Time"
-        }
-      },
-      "name": "Set install mode"
-    },
-    "set_variable_value": {
-      "description": "Write a value to a variable.",
-      "fields": {
-        "entry_id": {
-          "description": "Name(s) of homematic central to set value.",
-          "name": "Central"
-        },
-        "name": {
-          "description": "Name of the variable to set.",
-          "name": "Name"
-        },
-        "value": {
-          "description": "New value",
-          "name": "Value"
-        }
-      },
-      "name": "Set variable value"
-    },
-    "switch_set_on_time": {
-      "description": "Set on time for a switch entity. Must be followed by a switch.turn_on.",
-      "fields": {
-        "on_time": {
-          "description": "On time for a switch in seconds. Use 0 to reset the on time.",
-          "name": "On Time"
-        }
-      },
-      "name": "Set switch on time"
-    },
-    "turn_on_siren": {
-      "description": "Turn siren on.",
-      "fields": {
-        "duration": {
-          "description": "The duration in seconds of the noise to emit when turning the siren on.",
-          "name": "Duration"
-        },
-        "light": {
-          "description": "The light to emit when turning the siren on.",
-          "name": "Light"
-        },
-        "tone": {
-          "description": "The tone to emit when turning the siren on.",
-          "name": "Tone"
-        }
-      },
-      "name": "Turn on siren"
-    },
-    "update_device_firmware_data": {
-      "description": "Update device firmware data for all homematic data.",
-      "fields": {
-        "entry_id": {
-          "description": "Name(s) of homematic central to update the device firmware data for.",
-          "name": "Central"
-        }
-      },
-      "name": "Update device firmware data"
-    }
-  }
 }
