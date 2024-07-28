@@ -1,0 +1,3 @@
+*.md
+custom_components/homematicip_local/translations/*.json
+custom_components/homematicip_local/strings.json
