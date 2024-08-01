@@ -304,6 +304,7 @@ _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
     ),
     ("RSSI_DEVICE", "RSSI_PEER"): HmSensorEntityDescription(
         key="RSSI",
+        device_class=SensorDeviceClass.SIGNAL_STRENGTH,
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -878,7 +879,7 @@ def _get_entity_description_by_param(
     """Get entity_description by device_type and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):
         for params, entity_desc in platform_param_descriptions.items():
-            if hm_entity.name and _param_in_list(params=params, parameter=hm_entity.name):
+            if _param_in_list(params=params, parameter=hm_entity.parameter):
                 return entity_desc
     return None
 
