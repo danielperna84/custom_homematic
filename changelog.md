@@ -6,6 +6,7 @@
 - Remove service delete_device. Use delete on the device entry instead
 - Fix triggers and action when using meta integrations
 - Add translation to button lock
+- Add device class to RSSI
 
 # Version 1.63.1 (2024-06-22)
 
