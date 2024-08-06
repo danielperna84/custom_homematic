@@ -437,7 +437,6 @@ _SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         "COLOR",
     ): HmSensorEntityDescription(
         key="COLOR",
-        state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
     (
