@@ -592,18 +592,18 @@
                     "virtual_devices_enabled": "enable Groups (Heating-Group)",
                     "virtual_devices_path": "Groups Path",
                     "virtual_devices_port": "Groups Port",
-                    "advanced_config": "Advanced Config"
+                    "advanced_config": "advanced Config"
                 },
                 "description": "Re-Configure the interfaces to CCU"
             },
             "un_ignore": {
                 "data": {
-                    "un_ignore": "Un ignore parameters"
+                    "un_ignore": "UN-IGNORE Parameters"
                 },
                 "data_description": {
-                    "un_ignore": "Check documentation for un ignore"
+                    "un_ignore": "Check documentation for UN-IGNORE"
                 },
-                "description": "Configure the un ignore parameters"
+                "description": "Configure the UN-IGNORE parameters"
             }
         }
     },

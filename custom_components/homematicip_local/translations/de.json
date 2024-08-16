@@ -595,18 +595,18 @@
                     "virtual_devices_enabled": "aktiviere Heizgruppen",
                     "virtual_devices_path": "Gruppen Pfad",
                     "virtual_devices_port": "Gruppen Port",
-                    "advanced_config": "Erweiterte Konfiguration"
+                    "advanced_config": "erweiterte Konfiguration"
                 },
                 "description": "Neu-Konfiguration der CCU Schnittstellen"
             },
             "un_ignore": {
                 "data": {
-                    "un_ignore": "Un ignore parameter"
+                    "un_ignore": "UN-IGNORE Parameter"
                 },
                 "data_description": {
-                    "un_ignore": "Schauen Sie in die Dokumentation für un ignore"
+                    "un_ignore": "Schauen Sie in die Dokumentation für UN-IGNORE"
                 },
-                "description": "Konfiguration der un ignore parameter"
+                "description": "Konfiguration der UN-IGNORE Parameter"
             }
         }
     },

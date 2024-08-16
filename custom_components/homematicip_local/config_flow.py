@@ -143,9 +143,15 @@ def get_domain_schema(data: ConfigType) -> Schema:
 
 def get_un_ignore_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -> Schema:
     """Return the un_ignore schema."""
+    existing_parameters: list[str] = [
+        p for p in data.get(CONF_UN_IGNORE, []) if p in all_un_ignore_parameters
+    ]
     return vol.Schema(
         {
-            vol.Required(CONF_UN_IGNORE, default=data.get(CONF_UN_IGNORE)): SelectSelector(
+            vol.Required(
+                CONF_UN_IGNORE,
+                default=existing_parameters,
+            ): SelectSelector(
                 config=SelectSelectorConfig(
                     mode=SelectSelectorMode.DROPDOWN,
                     multiple=True,
