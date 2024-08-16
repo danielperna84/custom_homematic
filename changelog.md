@@ -1,8 +1,10 @@
 # Version 1.65.0 (2024-08-16)
 
-- Bump hahomematic to 2024.8.3
+- Bump hahomematic to 2024.8.4
   - Add CED for ELV-SH-WUA / HmIP-WUA
   - Refactor get_parameters for unignore_candidates
+  - Make load only relevant paramset descriptions configurable
+  - Add UN_IGNORE_WILDCARD to get_parameters
 - Use SELECTORs in config flow
 - Make unignore configurable in the UI
 
