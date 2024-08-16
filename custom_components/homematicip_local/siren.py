@@ -31,12 +31,6 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_LIGHT: Final = "light"
 
-TURN_ON_SIREN_SCHEMA = {
-    vol.Optional(ATTR_TONE): cv.string,
-    vol.Optional(ATTR_LIGHT): cv.string,
-    vol.Optional(ATTR_DURATION): cv.positive_int,
-}
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -63,7 +57,11 @@ async def async_setup_entry(
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
         SERVICE_TURN_ON_SIREN,
-        TURN_ON_SIREN_SCHEMA,
+        {
+            vol.Optional(ATTR_TONE): cv.string,
+            vol.Optional(ATTR_LIGHT): cv.string,
+            vol.Optional(ATTR_DURATION): cv.positive_int,
+        },
         "async_turn_on",
     )
 

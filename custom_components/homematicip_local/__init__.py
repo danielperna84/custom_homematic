@@ -18,6 +18,7 @@ from homeassistant.util.hass_dict import HassKey
 
 from .const import (
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
+    CONF_UN_IGNORE,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
     HMIP_LOCAL_PLATFORMS,
@@ -148,5 +149,9 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
         await async_migrate_entries(hass, entry.entry_id, update_entity_unique_id)
 
         hass.config_entries.async_update_entry(entry, version=3)
+    if entry.version == 3:
+        data = dict(entry.data)
+        data.update({CONF_UN_IGNORE: ""})
+        hass.config_entries.async_update_entry(entry, version=4, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True

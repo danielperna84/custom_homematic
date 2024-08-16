@@ -63,6 +63,7 @@ from .const import (
     CONF_SYSVAR_SCAN_ENABLED,
     CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
+    CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
     DEFAULT_DEVICE_FIRMWARE_CHECK_ENABLED,
     DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
@@ -197,6 +198,7 @@ class BaseControlUnit:
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
             start_direct=self._start_direct,
+            un_ignore_list=self._config_data.get(CONF_UN_IGNORE),
         ).create_central(extended_validation=False)
 
 
