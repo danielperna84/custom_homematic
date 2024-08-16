@@ -580,7 +580,7 @@
                 },
                 "data_description": {
                     "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben"
                 },
                 "description": "Neu-Konfiguration der CCU"
             },
@@ -594,9 +594,19 @@
                     "hmip_rf_port": "HmIP-RF Port",
                     "virtual_devices_enabled": "aktiviere Heizgruppen",
                     "virtual_devices_path": "Gruppen Pfad",
-                    "virtual_devices_port": "Gruppen Port"
+                    "virtual_devices_port": "Gruppen Port",
+                    "advanced_config": "erweiterte Konfiguration"
                 },
                 "description": "Neu-Konfiguration der CCU Schnittstellen"
+            },
+            "un_ignore": {
+                "data": {
+                    "un_ignore": "UN-IGNORE Parameter"
+                },
+                "data_description": {
+                    "un_ignore": "Schauen Sie in die Dokumentation für UN-IGNORE"
+                },
+                "description": "Konfiguration der UN-IGNORE Parameter"
             }
         }
     },

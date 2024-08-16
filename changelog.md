@@ -1,3 +1,11 @@
+# Version 1.65.0 (2024-08-16)
+
+- Bump hahomematic to 2024.8.3
+  - Add CED for ELV-SH-WUA / HmIP-WUA
+  - Refactor get_parameters for unignore_candidates
+- Use SELECTORs in config flow
+- Make unignore configurable in the UI
+
 # Version 1.64.0 (2024-08-05)
 
 - Bump hahomematic to 2024.8.1

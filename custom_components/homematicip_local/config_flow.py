@@ -7,7 +7,13 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
+from hahomematic.const import (
+    DEFAULT_TLS,
+    InterfaceName,
+    Operations,
+    ParamsetKey,
+    SystemInformation,
+)
 from hahomematic.exceptions import AuthFailure, BaseHomematicException
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
@@ -29,10 +35,22 @@ from homeassistant.const import (
     CONF_USERNAME,
 )
 from homeassistant.core import HomeAssistant, callback
-import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.selector import (
+    BooleanSelector,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
+    CONF_ADVANCED_CONFIG,
     CONF_CALLBACK_HOST,
     CONF_CALLBACK_PORT,
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -42,11 +60,12 @@ from .const import (
     CONF_SYSVAR_SCAN_ENABLED,
     CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
+    CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
     DOMAIN,
 )
-from .control_unit import ControlConfig, validate_config_and_get_system_information
+from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_system_information
 from .support import InvalidConfig
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,6 +80,7 @@ CONF_VIRTUAL_DEVICES_PATH: Final = "virtual_devices_path"
 CONF_BIDCOS_WIRED_ENABLED: Final = "bidcos_wired_enabled"
 CONF_BIDCOS_WIRED_PORT: Final = "bidcos_wired_port"
 
+
 IF_BIDCOS_RF_PORT: Final = 2001
 IF_BIDCOS_RF_TLS_PORT: Final = 42001
 IF_BIDCOS_WIRED_PORT: Final = 2000
@@ -71,6 +91,22 @@ IF_VIRTUAL_DEVICES_PORT: Final = 9292
 IF_VIRTUAL_DEVICES_TLS_PORT: Final = 49292
 IF_VIRTUAL_DEVICES_PATH: Final = "/groups"
 
+TEXT_SELECTOR = TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT))
+PASSWORD_SELECTOR = TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))
+BOOLEAN_SELECTOR = BooleanSelector()
+PORT_SELECTOR = vol.All(
+    NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX, min=1, max=65535)),
+    vol.Coerce(int),
+)
+SCAN_INTERVAL_SELECTOR = vol.All(
+    NumberSelector(
+        NumberSelectorConfig(
+            mode=NumberSelectorMode.BOX, min=5, step="any", unit_of_measurement="sec"
+        )
+    ),
+    vol.Coerce(int),
+)
+
 
 def get_domain_schema(data: ConfigType) -> Schema:
     """Return the interface schema with or without tls ports."""
@@ -78,27 +114,51 @@ def get_domain_schema(data: ConfigType) -> Schema:
         {
             vol.Required(
                 CONF_INSTANCE_NAME, default=data.get(CONF_INSTANCE_NAME) or UNDEFINED
-            ): cv.string,
-            vol.Required(CONF_HOST, default=data.get(CONF_HOST)): cv.string,
-            vol.Required(CONF_USERNAME, default=data.get(CONF_USERNAME)): cv.string,
-            vol.Required(CONF_PASSWORD, default=data.get(CONF_PASSWORD)): cv.string,
-            vol.Required(CONF_TLS, default=data.get(CONF_TLS, DEFAULT_TLS)): cv.boolean,
-            vol.Required(CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)): cv.boolean,
-            vol.Optional(CONF_CALLBACK_HOST): cv.string,
-            vol.Optional(CONF_CALLBACK_PORT): cv.port,
-            vol.Optional(CONF_JSON_PORT): cv.port,
+            ): TEXT_SELECTOR,
+            vol.Required(CONF_HOST, default=data.get(CONF_HOST)): TEXT_SELECTOR,
+            vol.Required(CONF_USERNAME, default=data.get(CONF_USERNAME)): TEXT_SELECTOR,
+            vol.Required(CONF_PASSWORD, default=data.get(CONF_PASSWORD)): PASSWORD_SELECTOR,
+            vol.Required(CONF_TLS, default=data.get(CONF_TLS, DEFAULT_TLS)): BOOLEAN_SELECTOR,
+            vol.Required(
+                CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
+            ): BOOLEAN_SELECTOR,
+            vol.Optional(CONF_CALLBACK_HOST): TEXT_SELECTOR,
+            vol.Optional(CONF_CALLBACK_PORT): PORT_SELECTOR,
+            vol.Optional(CONF_JSON_PORT): PORT_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_ENABLED,
                 default=data.get(CONF_SYSVAR_SCAN_ENABLED, True),
-            ): cv.boolean,
+            ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_INTERVAL,
                 default=data.get(CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL),
-            ): vol.All(vol.Coerce(int), vol.Range(min=5)),
+            ): SCAN_INTERVAL_SELECTOR,
             vol.Required(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
                 default=data.get(CONF_ENABLE_SYSTEM_NOTIFICATIONS, True),
-            ): cv.boolean,
+            ): BOOLEAN_SELECTOR,
+        }
+    )
+
+
+def get_un_ignore_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -> Schema:
+    """Return the un_ignore schema."""
+    existing_parameters: list[str] = [
+        p for p in data.get(CONF_UN_IGNORE, []) if p in all_un_ignore_parameters
+    ]
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_UN_IGNORE,
+                default=existing_parameters,
+            ): SelectSelector(
+                config=SelectSelectorConfig(
+                    mode=SelectSelectorMode.DROPDOWN,
+                    multiple=True,
+                    sort=True,
+                    options=all_un_ignore_parameters,
+                )
+            ),
         }
     )
 
@@ -110,7 +170,7 @@ def get_options_schema(data: ConfigType) -> Schema:
     return options_schema
 
 
-def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
+def get_interface_schema(use_tls: bool, data: ConfigType, from_config_flow: bool) -> Schema:
     """Return the interface schema with or without tls ports."""
     interfaces = data.get(CONF_INTERFACE, {})
     # HmIP-RF
@@ -140,20 +200,30 @@ def get_interface_schema(use_tls: bool, data: ConfigType) -> Schema:
     else:
         bidcos_wired_enabled = False
     bidcos_wired_port = IF_BIDCOS_WIRED_TLS_PORT if use_tls else IF_BIDCOS_WIRED_PORT
-
-    return vol.Schema(
+    advanced_config = bool(data.get(CONF_UN_IGNORE))
+    interface_schema = vol.Schema(
         {
-            vol.Required(CONF_HMIP_RF_ENABLED, default=hmip_rf_enabled): bool,
-            vol.Required(CONF_HMIP_RF_PORT, default=hmip_port): int,
-            vol.Required(CONF_BIDCOS_RF_ENABLED, default=bidcos_rf_enabled): bool,
-            vol.Required(CONF_BIDCOS_RF_PORT, default=bidcos_rf_port): int,
-            vol.Required(CONF_VIRTUAL_DEVICES_ENABLED, default=virtual_devices_enabled): bool,
-            vol.Required(CONF_VIRTUAL_DEVICES_PORT, default=virtual_devices_port): int,
-            vol.Required(CONF_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH): str,
-            vol.Required(CONF_BIDCOS_WIRED_ENABLED, default=bidcos_wired_enabled): bool,
-            vol.Required(CONF_BIDCOS_WIRED_PORT, default=bidcos_wired_port): int,
+            vol.Required(CONF_HMIP_RF_ENABLED, default=hmip_rf_enabled): BOOLEAN_SELECTOR,
+            vol.Required(CONF_HMIP_RF_PORT, default=hmip_port): PORT_SELECTOR,
+            vol.Required(CONF_BIDCOS_RF_ENABLED, default=bidcos_rf_enabled): BOOLEAN_SELECTOR,
+            vol.Required(CONF_BIDCOS_RF_PORT, default=bidcos_rf_port): PORT_SELECTOR,
+            vol.Required(
+                CONF_VIRTUAL_DEVICES_ENABLED, default=virtual_devices_enabled
+            ): BOOLEAN_SELECTOR,
+            vol.Required(CONF_VIRTUAL_DEVICES_PORT, default=virtual_devices_port): PORT_SELECTOR,
+            vol.Required(
+                CONF_VIRTUAL_DEVICES_PATH, default=IF_VIRTUAL_DEVICES_PATH
+            ): TEXT_SELECTOR,
+            vol.Required(
+                CONF_BIDCOS_WIRED_ENABLED, default=bidcos_wired_enabled
+            ): BOOLEAN_SELECTOR,
+            vol.Required(CONF_BIDCOS_WIRED_PORT, default=bidcos_wired_port): PORT_SELECTOR,
+            vol.Required(CONF_ADVANCED_CONFIG, default=advanced_config): BOOLEAN_SELECTOR,
         }
     )
+    if from_config_flow:
+        del interface_schema.schema[CONF_ADVANCED_CONFIG]
+    return interface_schema
 
 
 async def _async_validate_config_and_get_system_information(
@@ -169,7 +239,7 @@ async def _async_validate_config_and_get_system_information(
 class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle the instance flow for Homematic(IP) Local."""
 
-    VERSION = 3
+    VERSION = 4
     CONNECTION_CLASS = CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
@@ -200,10 +270,17 @@ class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
             _LOGGER.debug("ConfigFlow.step_interface, no user input")
             return self.async_show_form(
                 step_id="interface",
-                data_schema=get_interface_schema(self.data[CONF_TLS], self.data),
+                data_schema=get_interface_schema(
+                    use_tls=self.data[CONF_TLS], data=self.data, from_config_flow=True
+                ),
             )
 
         _update_interface_input(data=self.data, interface_input=interface_input)
+        return await self._validate_and_finish_config_flow()
+
+    async def _validate_and_finish_config_flow(self) -> ConfigFlowResult:
+        """Validate and finish the config flow."""
+
         errors = {}
         description_placeholders = {}
 
@@ -259,6 +336,7 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
     def __init__(self, entry: ConfigEntry) -> None:
         """Initialize Homematic(IP) Local options flow."""
         self.entry = entry
+        self._control_unit: ControlUnit = entry.runtime_data
         self.data: ConfigType = dict(self.entry.data.items())
 
     async def async_step_init(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
@@ -268,9 +346,7 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
     async def async_step_central(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         """Manage the Homematic(IP) Local devices options."""
         if user_input is not None:
-            old_interfaces = self.data[CONF_INTERFACE]
             self.data = _get_ccu_data(self.data, user_input=user_input)
-            self.data[CONF_INTERFACE] = old_interfaces
             return await self.async_step_interface()
 
         return self.async_show_form(
@@ -283,17 +359,41 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
         interface_input: ConfigType | None = None,
     ) -> ConfigFlowResult:
         """Handle the initial step."""
-        if interface_input is None:
-            _LOGGER.debug("ConfigFlow.step_interface, no user input")
+        if interface_input is not None:
+            _update_interface_input(data=self.data, interface_input=interface_input)
+            if interface_input.get(CONF_ADVANCED_CONFIG):
+                return await self.async_step_un_ignore()
+            return await self._validate_and_finish_options_flow()
+
+        _LOGGER.debug("ConfigFlow.step_interface, no user input")
+        return self.async_show_form(
+            step_id="interface",
+            data_schema=get_interface_schema(
+                use_tls=self.data[CONF_TLS],
+                data=self.data,
+                from_config_flow=False,
+            ),
+        )
+
+    async def async_step_un_ignore(
+        self,
+        un_ignore_input: ConfigType | None = None,
+    ) -> ConfigFlowResult:
+        """Handle the un_ignore step."""
+        if un_ignore_input is None:
+            _LOGGER.debug("ConfigFlow.step_un_ignore, no user input")
             return self.async_show_form(
-                step_id="interface",
-                data_schema=get_interface_schema(
-                    use_tls=self.data[CONF_TLS],
-                    data=self.data,
+                step_id="un_ignore",
+                data_schema=get_un_ignore_schema(
+                    data=self.data, all_un_ignore_parameters=self._get_un_ignore_parameters()
                 ),
             )
+        _update_un_ignore_input(data=self.data, un_ignore_input=un_ignore_input)
+        return await self._validate_and_finish_options_flow()
 
-        _update_interface_input(data=self.data, interface_input=interface_input)
+    async def _validate_and_finish_options_flow(self) -> ConfigFlowResult:
+        """Validate and finish the options flow."""
+
         errors = {}
         description_placeholders = {}
 
@@ -324,6 +424,17 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
             description_placeholders=description_placeholders,
         )
 
+    def _get_un_ignore_parameters(self) -> list[str]:
+        """Return all un_ignore parameters."""
+        return list(
+            self._control_unit.central.get_parameters(
+                paramset_key=ParamsetKey.VALUES,
+                operations=(Operations.READ, Operations.EVENT),
+                full_format=False,
+                un_ignore_candidates_only=True,
+            )
+        )
+
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
     return {
@@ -339,7 +450,8 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT),
         CONF_JSON_PORT: user_input.get(CONF_JSON_PORT),
         CONF_ENABLE_SYSTEM_NOTIFICATIONS: user_input[CONF_ENABLE_SYSTEM_NOTIFICATIONS],
-        CONF_INTERFACE: {},
+        CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
+        CONF_UN_IGNORE: data.get(CONF_UN_IGNORE, []),
     }
 
 
@@ -363,6 +475,13 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
             data[CONF_INTERFACE][InterfaceName.BIDCOS_WIRED] = {
                 CONF_PORT: interface_input[CONF_BIDCOS_WIRED_PORT],
             }
+        if interface_input[CONF_ADVANCED_CONFIG] is False:
+            data[CONF_UN_IGNORE] = []
+
+
+def _update_un_ignore_input(data: ConfigType, un_ignore_input: ConfigType) -> None:
+    if un_ignore_input is not None:
+        data[CONF_UN_IGNORE] = un_ignore_input[CONF_UN_IGNORE]
 
 
 def _get_instance_name(friendly_name: Any | None) -> str | None:

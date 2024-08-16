@@ -24,6 +24,7 @@ LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/dan
 LEARN_MORE_URL_PONG_MISMATCH: Final = "https://github.com/danielperna84/custom_homematic#what-is-the-meaning-of-pingpong-mismatch-on-interface"
 
 
+CONF_ADVANCED_CONFIG: Final = "advanced_config"
 CONF_CALLBACK_HOST: Final = "callback_host"
 CONF_CALLBACK_PORT: Final = "callback_port"
 CONF_ENABLE_SYSTEM_NOTIFICATIONS: Final = "enable_system_notifications"
@@ -36,6 +37,7 @@ CONF_SUBTYPE: Final = "subtype"
 CONF_SYSVAR_SCAN_ENABLED: Final = "sysvar_scan_enabled"
 CONF_SYSVAR_SCAN_INTERVAL: Final = "sysvar_scan_interval"
 CONF_TLS: Final = "tls"
+CONF_UN_IGNORE: Final = "un_ignore"
 CONF_VERIFY_TLS: Final = "verify_tls"
 
 EVENT_DEVICE_ID: Final = "device_id"
