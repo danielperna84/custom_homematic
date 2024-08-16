@@ -427,10 +427,32 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
     def _get_un_ignore_parameters(self) -> list[str]:
         """Return all un_ignore parameters."""
         return list(
+            # 1. request simple parameter list for values parameters
+            # 2. request full_format parameter list with channel wildcard for values parameters
+            # 3. request full_format parameter list for values parameters
+            # 4. request full_format parameter list for master parameters
             self._control_unit.central.get_parameters(
                 paramset_key=ParamsetKey.VALUES,
                 operations=(Operations.READ, Operations.EVENT),
-                full_format=False,
+                un_ignore_candidates_only=True,
+            )
+            + self._control_unit.central.get_parameters(
+                paramset_key=ParamsetKey.VALUES,
+                operations=(Operations.READ, Operations.EVENT),
+                full_format=True,
+                un_ignore_candidates_only=True,
+                use_channel_wildcard=True,
+            )
+            + self._control_unit.central.get_parameters(
+                paramset_key=ParamsetKey.VALUES,
+                operations=(Operations.READ, Operations.EVENT),
+                full_format=True,
+                un_ignore_candidates_only=True,
+            )
+            + self._control_unit.central.get_parameters(
+                paramset_key=ParamsetKey.MASTER,
+                operations=(Operations.READ,),
+                full_format=True,
                 un_ignore_candidates_only=True,
             )
         )
