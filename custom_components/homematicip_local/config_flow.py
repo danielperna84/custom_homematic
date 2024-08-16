@@ -444,8 +444,8 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT),
         CONF_JSON_PORT: user_input.get(CONF_JSON_PORT),
         CONF_ENABLE_SYSTEM_NOTIFICATIONS: user_input[CONF_ENABLE_SYSTEM_NOTIFICATIONS],
-        CONF_INTERFACE: data[CONF_INTERFACE],
-        CONF_UN_IGNORE: data[CONF_UN_IGNORE],
+        CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
+        CONF_UN_IGNORE: data.get(CONF_UN_IGNORE, []),
     }
 
 

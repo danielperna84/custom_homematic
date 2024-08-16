@@ -56,11 +56,12 @@ def entry_data_v1() -> dict[str, Any]:
 
 
 @pytest.fixture
-def entry_data_v2(entry_data_v1) -> dict[str, Any]:
+def entry_data_v4(entry_data_v1) -> dict[str, Any]:
     """Create data for config entry."""
-    entry_data_v2 = entry_data_v1
-    entry_data_v2["enable_system_notifications"] = True
-    return entry_data_v2
+    entry_data_v4 = entry_data_v1
+    entry_data_v4["enable_system_notifications"] = True
+    entry_data_v4["un_ignore"] = []
+    return entry_data_v4
 
 
 @pytest.fixture
@@ -85,7 +86,7 @@ def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
 
 
 @pytest.fixture
-def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.ConfigEntry:  # )
+def mock_config_entry_v2(mock_config_entry_v1, entry_data_v4) -> config_entries.ConfigEntry:  # )
     """Create a mock config entry for Homematic(IP) Local."""
 
     entry = MockConfigEntry(
@@ -93,7 +94,7 @@ def mock_config_entry_v2(mock_config_entry_v1, entry_data_v2) -> config_entries.
         version=2,
         domain=DOMAIN,
         title=const.INSTANCE_NAME,
-        data=entry_data_v2,
+        data=entry_data_v4,
         options={},
         pref_disable_new_entities=False,
         pref_disable_polling=False,
