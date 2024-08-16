@@ -80,7 +80,7 @@ async def test_migrate_entry(
         assert len(config_entries) == 1
         config_entry = config_entries[0]
         assert config_entry.state == ConfigEntryState.LOADED
-        assert config_entry.version == 3
+        assert config_entry.version == 4
         assert config_entry.data[CONF_ENABLE_SYSTEM_NOTIFICATIONS] is True
 
 
