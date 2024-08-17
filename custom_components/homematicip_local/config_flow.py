@@ -7,13 +7,7 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import (
-    DEFAULT_TLS,
-    InterfaceName,
-    Operations,
-    ParamsetKey,
-    SystemInformation,
-)
+from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, BaseHomematicException
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
@@ -80,7 +74,6 @@ CONF_VIRTUAL_DEVICES_PATH: Final = "virtual_devices_path"
 CONF_BIDCOS_WIRED_ENABLED: Final = "bidcos_wired_enabled"
 CONF_BIDCOS_WIRED_PORT: Final = "bidcos_wired_port"
 
-
 IF_BIDCOS_RF_PORT: Final = 2001
 IF_BIDCOS_RF_TLS_PORT: Final = 42001
 IF_BIDCOS_WIRED_PORT: Final = 2000
@@ -137,28 +130,6 @@ def get_domain_schema(data: ConfigType) -> Schema:
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
                 default=data.get(CONF_ENABLE_SYSTEM_NOTIFICATIONS, True),
             ): BOOLEAN_SELECTOR,
-        }
-    )
-
-
-def get_un_ignore_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -> Schema:
-    """Return the un_ignore schema."""
-    existing_parameters: list[str] = [
-        p for p in data.get(CONF_UN_IGNORE, []) if p in all_un_ignore_parameters
-    ]
-    return vol.Schema(
-        {
-            vol.Required(
-                CONF_UN_IGNORE,
-                default=existing_parameters,
-            ): SelectSelector(
-                config=SelectSelectorConfig(
-                    mode=SelectSelectorMode.DROPDOWN,
-                    multiple=True,
-                    sort=True,
-                    options=all_un_ignore_parameters,
-                )
-            ),
         }
     )
 
@@ -224,6 +195,28 @@ def get_interface_schema(use_tls: bool, data: ConfigType, from_config_flow: bool
     if from_config_flow:
         del interface_schema.schema[CONF_ADVANCED_CONFIG]
     return interface_schema
+
+
+def get_un_ignore_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -> Schema:
+    """Return the un_ignore schema."""
+    existing_parameters: list[str] = [
+        p for p in data.get(CONF_UN_IGNORE, []) if p in all_un_ignore_parameters
+    ]
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_UN_IGNORE,
+                default=existing_parameters,
+            ): SelectSelector(
+                config=SelectSelectorConfig(
+                    mode=SelectSelectorMode.DROPDOWN,
+                    multiple=True,
+                    sort=False,
+                    options=all_un_ignore_parameters,
+                )
+            ),
+        }
+    )
 
 
 async def _async_validate_config_and_get_system_information(
@@ -385,7 +378,10 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
             return self.async_show_form(
                 step_id="un_ignore",
                 data_schema=get_un_ignore_schema(
-                    data=self.data, all_un_ignore_parameters=self._get_un_ignore_parameters()
+                    data=self.data,
+                    all_un_ignore_parameters=self._control_unit.central.get_un_ignore_candidates(
+                        include_master=False
+                    ),
                 ),
             )
         _update_un_ignore_input(data=self.data, un_ignore_input=un_ignore_input)
@@ -422,39 +418,6 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
             data_schema=get_options_schema(data=self.data),
             errors=errors,
             description_placeholders=description_placeholders,
-        )
-
-    def _get_un_ignore_parameters(self) -> list[str]:
-        """Return all un_ignore parameters."""
-        return list(
-            # 1. request simple parameter list for values parameters
-            # 2. request full_format parameter list with channel wildcard for values parameters
-            # 3. request full_format parameter list for values parameters
-            # 4. request full_format parameter list for master parameters
-            self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                un_ignore_candidates_only=True,
-            )
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                full_format=True,
-                un_ignore_candidates_only=True,
-                use_channel_wildcard=True,
-            )
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                full_format=True,
-                un_ignore_candidates_only=True,
-            )
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.MASTER,
-                operations=(Operations.READ,),
-                full_format=True,
-                un_ignore_candidates_only=True,
-            )
         )
 
 
