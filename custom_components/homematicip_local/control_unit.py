@@ -199,6 +199,7 @@ class BaseControlUnit:
             interface_configs=interface_configs,
             start_direct=self._start_direct,
             un_ignore_list=self._config_data.get(CONF_UN_IGNORE),
+            load_all_paramset_descriptions=False,
         ).create_central(extended_validation=False)
 
 

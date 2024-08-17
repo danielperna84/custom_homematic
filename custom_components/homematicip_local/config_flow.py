@@ -7,13 +7,7 @@ from pprint import pformat
 from typing import Any, Final, cast
 from urllib.parse import urlparse
 
-from hahomematic.const import (
-    DEFAULT_TLS,
-    InterfaceName,
-    Operations,
-    ParamsetKey,
-    SystemInformation,
-)
+from hahomematic.const import DEFAULT_TLS, InterfaceName, SystemInformation
 from hahomematic.exceptions import AuthFailure, BaseHomematicException
 import voluptuous as vol
 from voluptuous.schema_builder import UNDEFINED, Schema
@@ -217,7 +211,7 @@ def get_un_ignore_schema(data: ConfigType, all_un_ignore_parameters: list[str]) 
                 config=SelectSelectorConfig(
                     mode=SelectSelectorMode.DROPDOWN,
                     multiple=True,
-                    sort=True,
+                    sort=False,
                     options=all_un_ignore_parameters,
                 )
             ),
@@ -384,7 +378,10 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
             return self.async_show_form(
                 step_id="un_ignore",
                 data_schema=get_un_ignore_schema(
-                    data=self.data, all_un_ignore_parameters=self._get_un_ignore_parameters()
+                    data=self.data,
+                    all_un_ignore_parameters=self._control_unit.central.get_un_ignore_candidates(
+                        include_master=False
+                    ),
                 ),
             )
         _update_un_ignore_input(data=self.data, un_ignore_input=un_ignore_input)
@@ -421,39 +418,6 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
             data_schema=get_options_schema(data=self.data),
             errors=errors,
             description_placeholders=description_placeholders,
-        )
-
-    def _get_un_ignore_parameters(self) -> list[str]:
-        """Return all un_ignore parameters."""
-        return list(
-            # 1. request simple parameter list for values parameters
-            self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                un_ignore_candidates_only=True,
-            )
-            # 2. request full_format parameter list with channel wildcard for values parameters
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                full_format=True,
-                un_ignore_candidates_only=True,
-                use_channel_wildcard=True,
-            )
-            # 3. request full_format parameter list for values parameters
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.VALUES,
-                operations=(Operations.READ, Operations.EVENT),
-                full_format=True,
-                un_ignore_candidates_only=True,
-            )
-            # 4. request full_format parameter list for master parameters
-            + self._control_unit.central.get_parameters(
-                paramset_key=ParamsetKey.MASTER,
-                operations=(Operations.READ,),
-                full_format=True,
-                un_ignore_candidates_only=True,
-            )
         )
 
 
