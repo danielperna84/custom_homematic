@@ -601,7 +601,7 @@
                     "un_ignore": "UN-IGNORE Parameters"
                 },
                 "data_description": {
-                    "un_ignore": "Check documentation for UN-IGNORE"
+                    "un_ignore": "Check the documentation for information about UN-IGNORE"
                 },
                 "description": "Configure the UN-IGNORE parameters"
             }
