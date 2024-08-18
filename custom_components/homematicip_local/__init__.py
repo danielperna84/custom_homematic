@@ -151,7 +151,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
         hass.config_entries.async_update_entry(entry, version=3)
     if entry.version == 3:
         data = dict(entry.data)
-        data.update({CONF_UN_IGNORE: ""})
+        data.update({CONF_UN_IGNORE: []})
         hass.config_entries.async_update_entry(entry, version=4, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
