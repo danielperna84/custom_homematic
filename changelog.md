@@ -1,6 +1,6 @@
-# Version 1.65.0 (2024-08-16)
+# Version 1.65.0 (2024-08-18)
 
-- Bump hahomematic to 2024.8.5
+- Bump hahomematic to 2024.8.6
   - Add CED for ELV-SH-WUA / HmIP-WUA
   - Refactor get_parameters for unignore_candidates
   - Make load only relevant paramset descriptions configurable
