@@ -586,6 +586,7 @@
             },
             "interface": {
                 "data": {
+                    "advanced_config": "erweiterte Konfiguration",
                     "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
                     "bidcos_rf_port": "HM-RF Port",
                     "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
@@ -594,8 +595,7 @@
                     "hmip_rf_port": "HmIP-RF Port",
                     "virtual_devices_enabled": "aktiviere Heizgruppen",
                     "virtual_devices_path": "Gruppen Pfad",
-                    "virtual_devices_port": "Gruppen Port",
-                    "advanced_config": "erweiterte Konfiguration"
+                    "virtual_devices_port": "Gruppen Port"
                 },
                 "description": "Neu-Konfiguration der CCU Schnittstellen"
             },

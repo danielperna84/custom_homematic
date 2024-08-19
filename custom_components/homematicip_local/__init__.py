@@ -88,8 +88,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -
 
 async def async_remove_entry(hass: HomeAssistant, entry: HomematicConfigEntry) -> None:
     """Handle removal of an entry."""
-    storage_folder = get_storage_folder(hass=hass)
-    cleanup_cache_dirs(instance_name=entry.data["instance_name"], storage_folder=storage_folder)
+    cleanup_cache_dirs(
+        instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
+    )
 
 
 async def async_remove_config_entry_device(
@@ -151,7 +152,10 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
         hass.config_entries.async_update_entry(entry, version=3)
     if entry.version == 3:
         data = dict(entry.data)
-        data.update({CONF_UN_IGNORE: ""})
+        data.update({CONF_UN_IGNORE: []})
+        cleanup_cache_dirs(
+            instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
+        )
         hass.config_entries.async_update_entry(entry, version=4, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
