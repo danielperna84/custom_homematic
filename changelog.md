@@ -8,6 +8,8 @@
   - Refactor folder handling
 - Use SELECTORs in config flow
 - Make unignore configurable in the UI
+- Clear cache on schema migration
+- Load al paramset descriptions into cache
 
 # Version 1.64.0 (2024-08-05)
 

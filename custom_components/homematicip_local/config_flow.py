@@ -380,7 +380,7 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
                 data_schema=get_un_ignore_schema(
                     data=self.data,
                     all_un_ignore_parameters=self._control_unit.central.get_un_ignore_candidates(
-                        include_master=False
+                        include_master=True
                     ),
                 ),
             )
