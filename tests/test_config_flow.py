@@ -678,7 +678,7 @@ def test_config_flow_helper() -> None:
 
 
 async def test_async_validate_config_and_get_system_information(
-    hass: HomeAssistant, entry_data_v4
+    hass: HomeAssistant, entry_data_v5
 ) -> None:
     """Test backend validation."""
     with patch(
@@ -690,11 +690,11 @@ async def test_async_validate_config_and_get_system_information(
             serial=const.SERIAL,
         ),
     ):
-        result = await _async_validate_config_and_get_system_information(hass, entry_data_v4)
+        result = await _async_validate_config_and_get_system_information(hass, entry_data_v5)
         assert result.serial == const.SERIAL
 
-    entry_data_v4[CONF_PASSWORD] = const.INVALID_PASSWORD
+    entry_data_v5[CONF_PASSWORD] = const.INVALID_PASSWORD
 
     with pytest.raises(InvalidConfig) as exc:
-        await _async_validate_config_and_get_system_information(hass, entry_data_v4)
+        await _async_validate_config_and_get_system_information(hass, entry_data_v5)
     assert exc

@@ -568,12 +568,9 @@
                 "data": {
                     "callback_host": "Callback Hostname/IP-Adresse",
                     "callback_port": "Callback XML-RPC Port",
-                    "enable_system_notifications": "aktiviere Systembenachrichtigungen",
                     "host": "CCU Hostname/IP-Adresse",
                     "json_port": "JSON-RPC Port",
                     "password": "CCU Passwort",
-                    "sysvar_scan_enabled": "aktiviere Sysvar Scan",
-                    "sysvar_scan_interval": "Sysvar/Program Scan Interval",
                     "tls": "verwende TLS",
                     "username": "CCU Benutzername",
                     "verify_tls": "TLS Verbindung überprüfen"
@@ -599,14 +596,17 @@
                 },
                 "description": "Neu-Konfiguration der CCU Schnittstellen"
             },
-            "un_ignore": {
+            "advanced": {
                 "data": {
+                    "enable_system_notifications": "aktiviere Systembenachrichtigungen",
+                    "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+                    "sysvar_scan_interval": "Sysvar/Program Scan Interval",
                     "un_ignore": "UN-IGNORE Parameter"
                 },
                 "data_description": {
                     "un_ignore": "Schauen Sie in die Dokumentation für Informationen über UN-IGNORE"
                 },
-                "description": "Konfiguration der UN-IGNORE Parameter"
+                "description": "Konfiguration der erweiterten Parameter"
             }
         }
     },

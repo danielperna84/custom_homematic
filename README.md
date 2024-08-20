@@ -227,6 +227,39 @@ hs485d_port:
   default: 2000
 ```
 
+#### Advanced
+
+```yaml
+sysvar_scan_enabled:
+  required: true
+  description: Enable system variable/program scanning.
+  type: boolean
+  default: true
+sysvar_scan_interval:
+  required: true
+  description:
+    Interval in seconds between system variable/program scans. The minimum value is 5.
+    Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular.
+    Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended.
+  type: integer
+  default: 30
+enable_system_notifications:
+  required: true
+  description:
+    Control if system notification should be displayed. Affects CALLBACK and PINGPONG notifications.
+    It's not recommended to disable this option, because this would hide problems on your system.
+    A better option is to solve the communication problems in your environment.
+  type: integer
+  default: true
+un_ignore:
+  required: false
+  description:
+    Add additional datapoints/parameters to your instance. See Unignore device parameters
+  type: list of strings
+  default: []
+```
+
+
 ### JSON-RPC Port
 
 The JSON-RPC Port is used to fetch names and room information from the CCU. The default value is `80`. But if you enable TLS the port `443` will be used. You only have to enter a custom value here if you have set up the JSON-RPC API to be available on a different port.  
@@ -492,7 +525,7 @@ If a device's channels are assigned to multiple rooms or nothing is set, the are
 
 ### Unignore device parameters
 
-Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. You use this at your own risk!!!
+Not all parameters of a HomeMatic or HomematicIP device are created as entity. These parameters are filtered out to provide a better user experience for the majority of the users. If you need more parameters as entities have a look at [this](https://github.com/danielperna84/hahomematic/blob/devel/docs/unignore.md) description. Starting with version 1.65.0 this can be configured in the reconfiguration flow under advanced options. You use this at your own risk!!!
 
 BUT remember: Some parameters are already created as entities, but are **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)**.
 
