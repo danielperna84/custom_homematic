@@ -1,12 +1,14 @@
 # Version 1.65.0 (2024-08-20)
 
-- Bump hahomematic to 2024.8.9
+- Bump hahomematic to 2024.8.10
   - Add CED for ELV-SH-WUA / HmIP-WUA
   - Refactor get_parameters for unignore_candidates
   - Make load only relevant paramset descriptions configurable
   - Add UN_IGNORE_WILDCARD to get_parameters
   - Refactor folder handling
   - Avoid excessive memory usage in cache
+  - Cleanup ParamsetDescriptionCache
+  - Cleanup DeviceDescriptionCache
 - Use SELECTORs in config flow
 - Make unignore configurable in the UI
 - Clear cache on schema migration
