@@ -54,6 +54,7 @@ from homeassistant.helpers.issue_registry import (
 )
 
 from .const import (
+    CONF_ADVANCED_CONFIG,
     CONF_CALLBACK_HOST,
     CONF_CALLBACK_PORT,
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
@@ -110,7 +111,9 @@ class BaseControlUnit:
         self._default_callback_port = control_config.default_callback_port
         self._start_direct = control_config.start_direct
         self._instance_name = self._config_data[CONF_INSTANCE_NAME]
-        self._enable_system_notifications = self._config_data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
+        self._enable_system_notifications = self._config_data[CONF_ADVANCED_CONFIG].get(
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS, True
+        )
         self._central: CentralUnit = self._create_central()
         self._attr_device_info: DeviceInfo | None = None
         self._unregister_callbacks: list[CALLBACK_TYPE] = []
@@ -198,7 +201,7 @@ class BaseControlUnit:
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
             start_direct=self._start_direct,
-            un_ignore_list=self._config_data.get(CONF_UN_IGNORE),
+            un_ignore_list=self._config_data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE),
             load_all_paramset_descriptions=True,
         ).create_central(extended_validation=False)
 
@@ -566,10 +569,10 @@ class ControlConfig:
             device_firmware_updating_check_interval
         )
         self.master_scan_interval: Final = master_scan_interval
-        self.sysvar_scan_enabled: Final = data.get(
+        self.sysvar_scan_enabled: Final = data[CONF_ADVANCED_CONFIG].get(
             CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
         )
-        self.sysvar_scan_interval: Final = data.get(
+        self.sysvar_scan_interval: Final = data[CONF_ADVANCED_CONFIG].get(
             CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
         )
 

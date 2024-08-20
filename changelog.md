@@ -1,4 +1,4 @@
-# Version 1.65.0 (2024-08-19)
+# Version 1.65.0 (2024-08-20)
 
 - Bump hahomematic to 2024.8.8
   - Add CED for ELV-SH-WUA / HmIP-WUA
@@ -10,6 +10,7 @@
 - Make unignore configurable in the UI
 - Clear cache on schema migration
 - Load al paramset descriptions into cache
+- Refactor config flow. some options are now on the advanced page.
 
 # Version 1.64.0 (2024-08-05)
 

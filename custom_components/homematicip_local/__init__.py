@@ -17,7 +17,10 @@ from homeassistant.helpers.entity_registry import async_migrate_entries
 from homeassistant.util.hass_dict import HassKey
 
 from .const import (
+    CONF_ADVANCED_CONFIG,
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
+    CONF_SYSVAR_SCAN_ENABLED,
+    CONF_SYSVAR_SCAN_INTERVAL,
     CONF_UN_IGNORE,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
@@ -153,9 +156,27 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
     if entry.version == 3:
         data = dict(entry.data)
         data.update({CONF_UN_IGNORE: []})
+        hass.config_entries.async_update_entry(entry, version=4, data=data)
+    if entry.version == 4:
+        data = dict(entry.data)
+        data.update({CONF_ADVANCED_CONFIG: {}})
+        data[CONF_ADVANCED_CONFIG].update(
+            {CONF_SYSVAR_SCAN_ENABLED: data.get(CONF_SYSVAR_SCAN_ENABLED)}
+        )
+        data[CONF_ADVANCED_CONFIG].update(
+            {CONF_SYSVAR_SCAN_INTERVAL: data.get(CONF_SYSVAR_SCAN_INTERVAL)}
+        )
+        data[CONF_ADVANCED_CONFIG].update(
+            {CONF_ENABLE_SYSTEM_NOTIFICATIONS: data.get(CONF_ENABLE_SYSTEM_NOTIFICATIONS)}
+        )
+        data[CONF_ADVANCED_CONFIG].update({CONF_UN_IGNORE: data.get(CONF_UN_IGNORE)})
+        del data[CONF_SYSVAR_SCAN_ENABLED]
+        del data[CONF_SYSVAR_SCAN_INTERVAL]
+        del data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
+        del data[CONF_UN_IGNORE]
         cleanup_cache_dirs(
             instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
         )
-        hass.config_entries.async_update_entry(entry, version=4, data=data)
+        hass.config_entries.async_update_entry(entry, version=5, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
