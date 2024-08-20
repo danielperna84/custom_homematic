@@ -13,13 +13,10 @@
                 "data": {
                     "callback_host": "Callback Hostname/IP-Address",
                     "callback_port": "Callback XML-RPC Port",
-                    "enable_system_notifications": "Enable system notifications",
                     "host": "CCU Hostname/IP-Address",
                     "instance_name": "Integration instance name",
                     "json_port": "JSON-RPC Port",
                     "password": "CCU Password",
-                    "sysvar_scan_enabled": "enable Sysvar scan",
-                    "sysvar_scan_interval": "Sysvar/Program scan interval",
                     "tls": "use TLS",
                     "username": "CCU Username",
                     "verify_tls": "verify TLS connection"
