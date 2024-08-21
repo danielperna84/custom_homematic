@@ -235,6 +235,15 @@
                 "name": "valve opening"
             }
         },
+        "select": {
+            "heating_cooling": {
+                "name": "Operating mode",
+                "state": {
+                    "heating": "heating",
+                    "cooling": "cooling"
+                }
+            }
+        },
         "sensor": {
             "activity_state": {
                 "name": "Activity State"

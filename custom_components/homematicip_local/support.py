@@ -17,6 +17,7 @@ import voluptuous as vol
 from homeassistant.components.binary_sensor import BinarySensorEntityDescription
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.number import NumberEntityDescription
+from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import CONF_TYPE
 from homeassistant.exceptions import HomeAssistantError
@@ -136,6 +137,11 @@ class HmNumberEntityDescription(HmEntityDescription, NumberEntityDescription):
     """Class describing Homematic(IP) Local number entities."""
 
     multiplier: int | None = None
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmSelectEntityDescription(HmEntityDescription, SelectEntityDescription):
+    """Class describing Homematic(IP) Local select entities."""
 
 
 @dataclass(frozen=True, kw_only=True)

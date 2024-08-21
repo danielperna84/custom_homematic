@@ -238,6 +238,15 @@
                 "name": "Ventilöffnung"
             }
         },
+        "select": {
+            "heating_cooling": {
+                "name": "Betriebsmodus",
+                "state": {
+                    "heating": "Heizung",
+                    "cooling": "Kühlung"
+                }
+            }
+        },
         "sensor": {
             "activity_state": {
                 "name": "Aktivitätszustand"

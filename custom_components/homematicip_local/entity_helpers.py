@@ -52,6 +52,7 @@ from .support import (
     HmEntityDescription,
     HmGenericEntity,
     HmNumberEntityDescription,
+    HmSelectEntityDescription,
     HmSensorEntityDescription,
 )
 
@@ -93,6 +94,15 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         native_unit_of_measurement="mHz",
         translation_key="frequency",
     ),
+}
+
+_SELECT_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
+    "HEATING_COOLING": HmSelectEntityDescription(
+        key="HEATING_COOLING",
+        entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
+        translation_key="heating_cooling",
+    )
 }
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
@@ -734,6 +744,7 @@ _ENTITY_DESCRIPTION_BY_PARAM: Mapping[
     HmPlatform.BINARY_SENSOR: _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.BUTTON: _BUTTOM_DESCRIPTIONS_BY_PARAM,
     HmPlatform.NUMBER: _NUMBER_DESCRIPTIONS_BY_PARAM,
+    HmPlatform.SELECT: _SELECT_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SENSOR: _SENSOR_DESCRIPTIONS_BY_PARAM,
     HmPlatform.SWITCH: _SWITCH_DESCRIPTIONS_BY_PARAM,
 }
