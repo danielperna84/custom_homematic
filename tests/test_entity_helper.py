@@ -30,7 +30,7 @@ def test_entity_helper() -> None:
                 for ed in edt:
                     add_parameter(ed, params, platform)
 
-    assert len(params) == 5
+    assert len(params) == 6
 
 
 def add_parameter(ed, params, platform):
