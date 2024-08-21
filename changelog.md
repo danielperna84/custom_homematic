@@ -14,6 +14,7 @@
 - Clear cache on schema migration
 - Load al paramset descriptions into cache
 - Refactor config flow. some options are now on the advanced page.
+- Add HEATING_COOLING translations
 
 # Version 1.64.0 (2024-08-05)
 

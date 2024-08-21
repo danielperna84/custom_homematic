@@ -82,14 +82,14 @@ class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity)
     def options(self) -> list[str]:
         """Return the options."""
         if options := self._hm_entity.values:
-            return list(options)
+            return [option.lower() for option in options]
         return []
 
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
         if self._hm_entity.is_valid:
-            return self._hm_entity.value
+            return self._hm_entity.value.lower() if self._hm_entity.value is not None else None
         if (
             self.is_restored
             and self._restored_state
@@ -104,7 +104,7 @@ class HaHomematicSelect(HaHomematicGenericRestoreEntity[HmSelect], SelectEntity)
 
     async def async_select_option(self, option: str) -> None:
         """Select an option."""
-        await self._hm_entity.send_value(option)
+        await self._hm_entity.send_value(option.upper())
 
 
 class HaHomematicSysvarSelect(HaHomematicGenericSysvarEntity[HmSysvarSelect], SelectEntity):
