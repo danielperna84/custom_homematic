@@ -56,7 +56,10 @@ from .const import (
     CONF_TLS,
     CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
+    DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_SYSVAR_SCAN_ENABLED,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEFAULT_UN_IGNORE,
     DOMAIN,
 )
 from .control_unit import ControlConfig, ControlUnit, validate_config_and_get_system_information
@@ -189,14 +192,16 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
     """Return the advanced schema."""
     existing_parameters: list[str] = [
         p
-        for p in data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE, [])
+        for p in data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
         if p in all_un_ignore_parameters
     ]
     return vol.Schema(
         {
             vol.Required(
                 CONF_SYSVAR_SCAN_ENABLED,
-                default=data[CONF_ADVANCED_CONFIG].get(CONF_SYSVAR_SCAN_ENABLED, True),
+                default=data[CONF_ADVANCED_CONFIG].get(
+                    CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
+                ),
             ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_INTERVAL,
@@ -206,7 +211,9 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
             ): SCAN_INTERVAL_SELECTOR,
             vol.Required(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-                default=data[CONF_ADVANCED_CONFIG].get(CONF_ENABLE_SYSTEM_NOTIFICATIONS, True),
+                default=data[CONF_ADVANCED_CONFIG].get(
+                    CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
+                ),
             ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_UN_IGNORE,
