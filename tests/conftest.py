@@ -45,7 +45,7 @@ def entry_data_v1() -> dict[str, Any]:
         "password": const.PASSWORD,
         "tls": False,
         "verify_tls": False,
-        "sysvar_scan_enabled": True,
+        "sysvar_scan_enabled": False,
         "sysvar_scan_interval": 30,
         "callback_host": None,
         "callback_port": None,

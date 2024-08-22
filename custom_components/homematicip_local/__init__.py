@@ -22,6 +22,10 @@ from .const import (
     CONF_SYSVAR_SCAN_ENABLED,
     CONF_SYSVAR_SCAN_INTERVAL,
     CONF_UN_IGNORE,
+    DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_SYSVAR_SCAN_ENABLED,
+    DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEFAULT_UN_IGNORE,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
     HMIP_LOCAL_PLATFORMS,
@@ -159,17 +163,29 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
         hass.config_entries.async_update_entry(entry, version=4, data=data)
     if entry.version == 4:
         data = dict(entry.data)
-        data.update({CONF_ADVANCED_CONFIG: {}})
-        data[CONF_ADVANCED_CONFIG].update(
-            {CONF_SYSVAR_SCAN_ENABLED: data.get(CONF_SYSVAR_SCAN_ENABLED)}
+
+        advanced_config = {
+            CONF_SYSVAR_SCAN_ENABLED: data.get(
+                CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
+            ),
+            CONF_SYSVAR_SCAN_INTERVAL: data.get(
+                CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+            ),
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS: data.get(
+                CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
+            ),
+            CONF_UN_IGNORE: data.get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE),
+        }
+        default_advanced_config = {
+            CONF_SYSVAR_SCAN_ENABLED: DEFAULT_SYSVAR_SCAN_ENABLED,
+            CONF_SYSVAR_SCAN_INTERVAL: DEFAULT_SYSVAR_SCAN_INTERVAL,
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS: DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+            CONF_UN_IGNORE: DEFAULT_UN_IGNORE,
+        }
+        data[CONF_ADVANCED_CONFIG] = (
+            {} if advanced_config == default_advanced_config else advanced_config
         )
-        data[CONF_ADVANCED_CONFIG].update(
-            {CONF_SYSVAR_SCAN_INTERVAL: data.get(CONF_SYSVAR_SCAN_INTERVAL)}
-        )
-        data[CONF_ADVANCED_CONFIG].update(
-            {CONF_ENABLE_SYSTEM_NOTIFICATIONS: data.get(CONF_ENABLE_SYSTEM_NOTIFICATIONS)}
-        )
-        data[CONF_ADVANCED_CONFIG].update({CONF_UN_IGNORE: data.get(CONF_UN_IGNORE)})
+
         del data[CONF_SYSVAR_SCAN_ENABLED]
         del data[CONF_SYSVAR_SCAN_INTERVAL]
         del data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]

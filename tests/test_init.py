@@ -83,7 +83,7 @@ async def test_migrate_entry(
         assert config_entry.version == 5
         assert config_entry.data[CONF_ADVANCED_CONFIG] == {
             "enable_system_notifications": True,
-            "sysvar_scan_enabled": True,
+            "sysvar_scan_enabled": False,
             "sysvar_scan_interval": 30,
             "un_ignore": [],
         }
