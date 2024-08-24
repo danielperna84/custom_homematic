@@ -118,8 +118,12 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(
                 CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
             ): BOOLEAN_SELECTOR,
-            vol.Optional(CONF_CALLBACK_HOST): TEXT_SELECTOR,
-            vol.Optional(CONF_CALLBACK_PORT): PORT_SELECTOR,
+            vol.Optional(
+                CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST) or UNDEFINED
+            ): TEXT_SELECTOR,
+            vol.Optional(
+                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT) or UNDEFINED
+            ): PORT_SELECTOR,
             vol.Optional(CONF_JSON_PORT): PORT_SELECTOR,
         }
     )
@@ -440,8 +444,8 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         CONF_PASSWORD: user_input[CONF_PASSWORD],
         CONF_TLS: user_input[CONF_TLS],
         CONF_VERIFY_TLS: user_input[CONF_VERIFY_TLS],
-        CONF_CALLBACK_HOST: user_input.get(CONF_CALLBACK_HOST),
-        CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT),
+        CONF_CALLBACK_HOST: user_input.get(CONF_CALLBACK_HOST) or UNDEFINED,
+        CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT) or UNDEFINED,
         CONF_JSON_PORT: user_input.get(CONF_JSON_PORT),
         CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
         CONF_ADVANCED_CONFIG: data.get(CONF_ADVANCED_CONFIG, {}),
