@@ -192,26 +192,26 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
     """Return the advanced schema."""
     existing_parameters: list[str] = [
         p
-        for p in data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
+        for p in data.get(CONF_ADVANCED_CONFIG, {}).get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
         if p in all_un_ignore_parameters
     ]
     return vol.Schema(
         {
             vol.Required(
                 CONF_SYSVAR_SCAN_ENABLED,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
                 ),
             ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_INTERVAL,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
                 ),
             ): SCAN_INTERVAL_SELECTOR,
             vol.Required(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
                 ),
             ): BOOLEAN_SELECTOR,
