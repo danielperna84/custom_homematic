@@ -203,7 +203,7 @@ class BaseControlUnit:
             start_direct=self._start_direct,
             un_ignore_list=self._config_data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE),
             load_all_paramset_descriptions=True,
-        ).create_central(extended_validation=False)
+        ).create_central()
 
 
 class ControlUnit(BaseControlUnit):
