@@ -203,7 +203,7 @@ class BaseControlUnit:
             start_direct=self._start_direct,
             un_ignore_list=self._config_data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE),
             load_all_paramset_descriptions=True,
-        ).create_central(extended_validation=False)
+        ).create_central()
 
 
 class ControlUnit(BaseControlUnit):
@@ -576,14 +576,17 @@ class ControlConfig:
             CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
         )
 
-    def check_config(self, extended_validation: bool = True) -> None:
+    def check_config(self) -> None:
         """Check config. Throws BaseHomematicException on failure."""
         if config_failures := check_config(
-            central_name=self.data.get(CONF_INSTANCE_NAME),
-            username=self.data.get(CONF_USERNAME),
-            password=self.data.get(CONF_PASSWORD),
+            central_name=self.data[CONF_INSTANCE_NAME],
+            host=self.data[CONF_HOST],
+            username=self.data[CONF_USERNAME],
+            password=self.data[CONF_PASSWORD],
+            callback_host=self.data.get(CONF_CALLBACK_HOST),
+            callback_port=self.data.get(CONF_CALLBACK_PORT),
+            json_port=self.data.get(CONF_JSON_PORT),
             storage_folder=get_storage_folder(self.hass),
-            extended_validation=extended_validation,
         ):
             failures = ", ".join(config_failures)
             raise InvalidConfig(failures)
