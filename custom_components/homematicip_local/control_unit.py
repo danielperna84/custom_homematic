@@ -191,7 +191,7 @@ class BaseControlUnit:
             tls=self._config_data[CONF_TLS],
             verify_tls=self._config_data[CONF_VERIFY_TLS],
             client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._config_data[CONF_JSON_PORT],
+            json_port=self._config_data.get(CONF_JSON_PORT),
             callback_host=self._config_data.get(CONF_CALLBACK_HOST)
             if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
             else None,

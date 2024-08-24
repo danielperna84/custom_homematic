@@ -18,6 +18,7 @@
 - Make unignore configurable in the UI
 - Refactor config flow. some options are now on the advanced page.
 - Use SELECTORs in config flow
+- Write optional parameters in Config Flow only when filled
 
 # Version 1.64.0 (2024-08-05)
 
