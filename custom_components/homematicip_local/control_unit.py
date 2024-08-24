@@ -70,8 +70,10 @@ from .const import (
     DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
+    DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
     DEFAULT_SYSVAR_SCAN_ENABLED,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEFAULT_UN_IGNORE,
     DOMAIN,
     EVENT_DEVICE_ID,
     EVENT_ERROR,
@@ -112,7 +114,7 @@ class BaseControlUnit:
         self._start_direct = control_config.start_direct
         self._instance_name = self._config_data[CONF_INSTANCE_NAME]
         self._enable_system_notifications = self._config_data.get(CONF_ADVANCED_CONFIG, {}).get(
-            CONF_ENABLE_SYSTEM_NOTIFICATIONS, True
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
         )
         self._central: CentralUnit = self._create_central()
         self._attr_device_info: DeviceInfo | None = None
@@ -201,7 +203,9 @@ class BaseControlUnit:
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
             start_direct=self._start_direct,
-            un_ignore_list=self._config_data.get(CONF_ADVANCED_CONFIG, {}).get(CONF_UN_IGNORE),
+            un_ignore_list=self._config_data.get(CONF_ADVANCED_CONFIG, {}).get(
+                CONF_UN_IGNORE, DEFAULT_UN_IGNORE
+            ),
             load_all_paramset_descriptions=True,
         ).create_central()
 
