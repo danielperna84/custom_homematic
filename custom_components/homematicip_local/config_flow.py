@@ -433,19 +433,24 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
 
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
-    return {
+    ccu_data = {
         CONF_INSTANCE_NAME: user_input.get(CONF_INSTANCE_NAME, data.get(CONF_INSTANCE_NAME)),
         CONF_HOST: user_input[CONF_HOST],
         CONF_USERNAME: user_input[CONF_USERNAME],
         CONF_PASSWORD: user_input[CONF_PASSWORD],
         CONF_TLS: user_input[CONF_TLS],
         CONF_VERIFY_TLS: user_input[CONF_VERIFY_TLS],
-        CONF_CALLBACK_HOST: user_input.get(CONF_CALLBACK_HOST),
-        CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT),
-        CONF_JSON_PORT: user_input.get(CONF_JSON_PORT),
         CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
         CONF_ADVANCED_CONFIG: data.get(CONF_ADVANCED_CONFIG, {}),
     }
+    if callback_host := user_input.get(CONF_CALLBACK_HOST):
+        ccu_data[CONF_CALLBACK_HOST] = callback_host
+    if callback_port := user_input.get(CONF_CALLBACK_PORT):
+        ccu_data[CONF_CALLBACK_PORT] = callback_port
+    if json_port := user_input.get(CONF_JSON_PORT):
+        ccu_data[CONF_JSON_PORT] = json_port
+
+    return ccu_data
 
 
 def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> None:
