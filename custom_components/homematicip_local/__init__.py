@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass
 import logging
 from typing import TypeAlias
@@ -186,10 +187,15 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
             {} if advanced_config == default_advanced_config else advanced_config
         )
 
-        del data[CONF_SYSVAR_SCAN_ENABLED]
-        del data[CONF_SYSVAR_SCAN_INTERVAL]
-        del data[CONF_ENABLE_SYSTEM_NOTIFICATIONS]
-        del data[CONF_UN_IGNORE]
+        def del_param(name: str) -> None:
+            with contextlib.suppress(Exception):
+                del data[name]
+
+        del_param(name=CONF_SYSVAR_SCAN_ENABLED)
+        del_param(name=CONF_SYSVAR_SCAN_INTERVAL)
+        del_param(name=CONF_ENABLE_SYSTEM_NOTIFICATIONS)
+        del_param(name=CONF_UN_IGNORE)
+
         cleanup_cache_dirs(
             instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
         )

@@ -16,6 +16,7 @@
 - Clear cache on schema migration
 - Load al paramset descriptions into cache
 - Make unignore configurable in the UI
+- Move mapping access to control config
 - Refactor config flow. some options are now on the advanced page.
 - Use SELECTORs in config flow
 - Write optional parameters in Config Flow only when filled
