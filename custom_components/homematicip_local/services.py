@@ -409,6 +409,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
             value=value,
             wait_for_callback=wait_for_callback,
             rx_mode=rx_mode,
+            check_against_pd=True,
         )
 
 
@@ -472,6 +473,7 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
             values=values,
             wait_for_callback=wait_for_callback,
             rx_mode=rx_mode,
+            check_against_pd=True,
         )
 
 
