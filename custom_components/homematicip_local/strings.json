@@ -24,7 +24,10 @@
                 "data_description": {
                     "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
                     "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role."
+                    "username": "Case sensitive. User must be in admin role.",
+                    "callback_host": "To reset the callback host it must be set to one blank character.",
+                    "callback_port": "To reset the callback port it must be set to 0.",
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0."
                 },
                 "description": "Please fill the required fields."
             },
@@ -580,7 +583,10 @@
                 },
                 "data_description": {
                     "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role."
+                    "username": "Case sensitive. User must be in admin role.",
+                    "callback_host": "To reset the callback host it must be set to one blank character.",
+                    "callback_port": "To reset the callback port it must be set to 0.",
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0."
                 },
                 "description": "Re-Configure the CCU"
             },

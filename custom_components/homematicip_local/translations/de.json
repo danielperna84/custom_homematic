@@ -24,7 +24,10 @@
                 "data_description": {
                     "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
                     "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben.",
+                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
+                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden."
                 },
                 "description": "Bitte Pflichtfelder ausfüllen"
             },
@@ -583,7 +586,10 @@
                 },
                 "data_description": {
                     "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben"
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben",
+                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
+                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden."
                 },
                 "description": "Neu-Konfiguration der CCU"
             },

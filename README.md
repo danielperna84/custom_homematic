@@ -270,8 +270,8 @@ If you are using Homegear the names are fetched using metadata available via XML
 
 These two options are required for _special_ network environments. If for example Home Assistant is running within a Docker container and detects its own IP to be within the Docker network, the CCU won't be able to establish the connection to Home Assistant. In this case you have to specify which address and port the CCU should connect to. This may require forwarding connections on the Docker host machine to the relevant container.
 
-**To reset the callback_host it must be set to one blank character.**
-**To reset the callback_port it must be set to 0.**
+**To reset the callback host it must be set to one blank character.**
+**To reset the callback port it must be set to 0.**
 
 ## System variables
 
