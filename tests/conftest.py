@@ -164,7 +164,6 @@ def control_config(hass: HomeAssistant, entry_data_v2) -> ControlConfig:
         entry_id=const.CONFIG_ENTRY_ID,
         data=entry_data_v2,
         default_port=const.DEFAULT_CALLBACK_PORT,
-        sysvar_registry_enabled=True,
     )
 
 

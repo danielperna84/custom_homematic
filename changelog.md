@@ -1,4 +1,4 @@
-# Version 1.65.0 (2024-08-20)
+# Version 1.65.0 (2024-08-25)
 
 - Bump hahomematic to 2024.8.12
     - Add additional validation on config parameters
@@ -14,6 +14,7 @@
     - Use only relevant IP for XmlRPC Server listening on
 - Add HEATING_COOLING translations
 - Clear cache on schema migration
+- Keep optional values in config flow
 - Load al paramset descriptions into cache
 - Make unignore configurable in the UI
 - Move mapping access to control config
