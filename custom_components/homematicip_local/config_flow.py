@@ -94,6 +94,10 @@ PORT_SELECTOR = vol.All(
     NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX, min=1, max=65535)),
     vol.Coerce(int),
 )
+PORT_SELECTOR_OPTIONAL = vol.All(
+    NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX, min=0, max=65535)),
+    vol.Coerce(int),
+)
 SCAN_INTERVAL_SELECTOR = vol.All(
     NumberSelector(
         NumberSelectorConfig(
@@ -118,9 +122,11 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(
                 CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
             ): BOOLEAN_SELECTOR,
-            vol.Optional(CONF_CALLBACK_HOST): TEXT_SELECTOR,
-            vol.Optional(CONF_CALLBACK_PORT): PORT_SELECTOR,
-            vol.Optional(CONF_JSON_PORT): PORT_SELECTOR,
+            vol.Optional(CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST)): TEXT_SELECTOR,
+            vol.Optional(
+                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT)
+            ): PORT_SELECTOR_OPTIONAL,
+            vol.Optional(CONF_JSON_PORT, default=data.get(CONF_JSON_PORT)): PORT_SELECTOR_OPTIONAL,
         }
     )
 
@@ -443,7 +449,7 @@ def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
         CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
         CONF_ADVANCED_CONFIG: data.get(CONF_ADVANCED_CONFIG, {}),
     }
-    if callback_host := user_input.get(CONF_CALLBACK_HOST):
+    if (callback_host := user_input.get(CONF_CALLBACK_HOST)) and callback_host.strip() != "":
         ccu_data[CONF_CALLBACK_HOST] = callback_host
     if callback_port := user_input.get(CONF_CALLBACK_PORT):
         ccu_data[CONF_CALLBACK_PORT] = callback_port
