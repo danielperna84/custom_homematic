@@ -122,11 +122,15 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(
                 CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
             ): BOOLEAN_SELECTOR,
-            vol.Optional(CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST)): TEXT_SELECTOR,
             vol.Optional(
-                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT)
+                CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST) or UNDEFINED
+            ): TEXT_SELECTOR,
+            vol.Optional(
+                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT) or UNDEFINED
             ): PORT_SELECTOR_OPTIONAL,
-            vol.Optional(CONF_JSON_PORT, default=data.get(CONF_JSON_PORT)): PORT_SELECTOR_OPTIONAL,
+            vol.Optional(
+                CONF_JSON_PORT, default=data.get(CONF_JSON_PORT) or UNDEFINED
+            ): PORT_SELECTOR_OPTIONAL,
         }
     )
 
