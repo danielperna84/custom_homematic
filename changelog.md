@@ -1,22 +1,26 @@
-# Version 1.65.0 (2024-08-20)
+# Version 1.65.0 (2024-08-25)
 
-- Bump hahomematic to 2024.8.11
-  - Add CED for ELV-SH-WUA / HmIP-WUA
-  - Add UN_IGNORE_WILDCARD to get_parameters
-  - Avoid excessive memory usage in cache
-  - Cleanup DeviceDescriptionCache
-  - Cleanup ParamsetDescriptionCache
-  - Make HEATING_COOLING visible for thermostats
-  - Make load only relevant paramset descriptions configurable
-  - Refactor folder handling
-  - Refactor get_parameters for unignore_candidates
-  - Use only relevant IP for XmlRPC Server listening on
+- Bump hahomematic to 2024.8.12
+    - Add additional validation on config parameters
+    - Add CED for ELV-SH-WUA / HmIP-WUA
+    - Add UN_IGNORE_WILDCARD to get_parameters
+    - Avoid excessive memory usage in cache
+    - Cleanup DeviceDescriptionCache
+    - Cleanup ParamsetDescriptionCache
+    - Make HEATING_COOLING visible for thermostats
+    - Make load only relevant paramset descriptions configurable
+    - Refactor folder handling
+    - Refactor get_parameters for unignore_candidates
+    - Use only relevant IP for XmlRPC Server listening on
 - Add HEATING_COOLING translations
 - Clear cache on schema migration
+- Keep optional values in config flow
 - Load al paramset descriptions into cache
 - Make unignore configurable in the UI
+- Move mapping access to control config
 - Refactor config flow. some options are now on the advanced page.
 - Use SELECTORs in config flow
+- Write optional parameters in Config Flow only when filled
 
 # Version 1.64.0 (2024-08-05)
 

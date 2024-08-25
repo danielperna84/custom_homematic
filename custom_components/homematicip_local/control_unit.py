@@ -70,8 +70,10 @@ from .const import (
     DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
+    DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
     DEFAULT_SYSVAR_SCAN_ENABLED,
     DEFAULT_SYSVAR_SCAN_INTERVAL,
+    DEFAULT_UN_IGNORE,
     DOMAIN,
     EVENT_DEVICE_ID,
     EVENT_ERROR,
@@ -107,13 +109,10 @@ class BaseControlUnit:
         self._config: Final = control_config
         self._hass = control_config.hass
         self._entry_id = control_config.entry_id
-        self._config_data = control_config.data
         self._default_callback_port = control_config.default_callback_port
         self._start_direct = control_config.start_direct
-        self._instance_name = self._config_data[CONF_INSTANCE_NAME]
-        self._enable_system_notifications = self._config_data[CONF_ADVANCED_CONFIG].get(
-            CONF_ENABLE_SYSTEM_NOTIFICATIONS, True
-        )
+        self._instance_name = control_config.instance_name
+        self._enable_system_notifications = control_config.enable_system_notifications
         self._central: CentralUnit = self._create_central()
         self._attr_device_info: DeviceInfo | None = None
         self._unregister_callbacks: list[CALLBACK_TYPE] = []
@@ -169,8 +168,8 @@ class BaseControlUnit:
     def _create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         interface_configs: set[InterfaceConfig] = set()
-        for interface_name in self._config_data[CONF_INTERFACE]:
-            interface = self._config_data[CONF_INTERFACE][interface_name]
+        for interface_name in self.config.interface_config:
+            interface = self.config.interface_config[interface_name]
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
@@ -184,26 +183,26 @@ class BaseControlUnit:
         return CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
-            host=self._config_data[CONF_HOST],
-            username=self._config_data[CONF_USERNAME],
-            password=self._config_data[CONF_PASSWORD],
+            host=self.config.host,
+            username=self.config.username,
+            password=self.config.password,
             central_id=central_id,
-            tls=self._config_data[CONF_TLS],
-            verify_tls=self._config_data[CONF_VERIFY_TLS],
+            tls=self.config.tls,
+            verify_tls=self.config.verify_tls,
             client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._config_data[CONF_JSON_PORT],
-            callback_host=self._config_data.get(CONF_CALLBACK_HOST)
-            if self._config_data.get(CONF_CALLBACK_HOST) != IP_ANY_V4
+            json_port=self.config.json_port,
+            callback_host=self.config.callback_host
+            if self.config.callback_host != IP_ANY_V4
             else None,
-            callback_port=self._config_data.get(CONF_CALLBACK_PORT)
-            if self._config_data.get(CONF_CALLBACK_PORT) != PORT_ANY
+            callback_port=self.config.callback_port
+            if self.config.callback_port != PORT_ANY
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
             start_direct=self._start_direct,
-            un_ignore_list=self._config_data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE),
+            un_ignore_list=self.config.un_ignore,
             load_all_paramset_descriptions=True,
-        ).create_central(extended_validation=False)
+        ).create_central()
 
 
 class ControlUnit(BaseControlUnit):
@@ -557,7 +556,7 @@ class ControlConfig:
         """Create the required config for the ControlUnit."""
         self.hass: Final = hass
         self.entry_id: Final = entry_id
-        self.data: Final = data
+        self._data: Final = data
         self.default_callback_port: Final = default_port
         self.start_direct: Final = start_direct
         self.device_firmware_check_enabled: Final = device_firmware_check_enabled
@@ -569,21 +568,45 @@ class ControlConfig:
             device_firmware_updating_check_interval
         )
         self.master_scan_interval: Final = master_scan_interval
-        self.sysvar_scan_enabled: Final = data[CONF_ADVANCED_CONFIG].get(
+
+        # central
+        self.instance_name = data[CONF_INSTANCE_NAME]
+        self.host = data[CONF_HOST]
+        self.username = data[CONF_USERNAME]
+        self.password = data[CONF_PASSWORD]
+        self.tls = data[CONF_TLS]
+        self.verify_tls = data[CONF_VERIFY_TLS]
+        self.callback_host = data.get(CONF_CALLBACK_HOST)
+        self.callback_port = data.get(CONF_CALLBACK_PORT)
+        self.json_port = data.get(CONF_JSON_PORT)
+
+        # interface_config
+        self.interface_config = data.get(CONF_INTERFACE, {})
+
+        # advanced_config
+        advanced_config = data.get(CONF_ADVANCED_CONFIG, {})
+        self.enable_system_notifications = advanced_config.get(
+            CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
+        )
+        self.sysvar_scan_enabled: Final = advanced_config.get(
             CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
         )
-        self.sysvar_scan_interval: Final = data[CONF_ADVANCED_CONFIG].get(
+        self.sysvar_scan_interval: Final = advanced_config.get(
             CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
         )
+        self.un_ignore: Final = advanced_config.get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
 
-    def check_config(self, extended_validation: bool = True) -> None:
+    def check_config(self) -> None:
         """Check config. Throws BaseHomematicException on failure."""
         if config_failures := check_config(
-            central_name=self.data.get(CONF_INSTANCE_NAME),
-            username=self.data.get(CONF_USERNAME),
-            password=self.data.get(CONF_PASSWORD),
+            central_name=self.instance_name,
+            host=self.host,
+            username=self.username,
+            password=self.password,
+            callback_host=self.callback_host,
+            callback_port=self.callback_port,
+            json_port=self.json_port,
             storage_folder=get_storage_folder(self.hass),
-            extended_validation=extended_validation,
         ):
             failures = ", ".join(config_failures)
             raise InvalidConfig(failures)
@@ -599,7 +622,7 @@ class ControlConfig:
     @property
     def _temporary_config(self) -> ControlConfig:
         """Return a config for validation."""
-        temporary_data: dict[str, Any] = deepcopy(dict(self.data))
+        temporary_data: dict[str, Any] = deepcopy(dict(self._data))
         temporary_data[CONF_INSTANCE_NAME] = "temporary_instance"
         return ControlConfig(
             hass=self.hass,

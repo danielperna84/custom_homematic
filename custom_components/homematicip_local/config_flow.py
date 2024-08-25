@@ -94,6 +94,10 @@ PORT_SELECTOR = vol.All(
     NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX, min=1, max=65535)),
     vol.Coerce(int),
 )
+PORT_SELECTOR_OPTIONAL = vol.All(
+    NumberSelector(NumberSelectorConfig(mode=NumberSelectorMode.BOX, min=0, max=65535)),
+    vol.Coerce(int),
+)
 SCAN_INTERVAL_SELECTOR = vol.All(
     NumberSelector(
         NumberSelectorConfig(
@@ -118,13 +122,11 @@ def get_domain_schema(data: ConfigType) -> Schema:
             vol.Required(
                 CONF_VERIFY_TLS, default=data.get(CONF_VERIFY_TLS, False)
             ): BOOLEAN_SELECTOR,
+            vol.Optional(CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST)): TEXT_SELECTOR,
             vol.Optional(
-                CONF_CALLBACK_HOST, default=data.get(CONF_CALLBACK_HOST) or UNDEFINED
-            ): TEXT_SELECTOR,
-            vol.Optional(
-                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT) or UNDEFINED
-            ): PORT_SELECTOR,
-            vol.Optional(CONF_JSON_PORT): PORT_SELECTOR,
+                CONF_CALLBACK_PORT, default=data.get(CONF_CALLBACK_PORT)
+            ): PORT_SELECTOR_OPTIONAL,
+            vol.Optional(CONF_JSON_PORT, default=data.get(CONF_JSON_PORT)): PORT_SELECTOR_OPTIONAL,
         }
     )
 
@@ -196,26 +198,26 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
     """Return the advanced schema."""
     existing_parameters: list[str] = [
         p
-        for p in data[CONF_ADVANCED_CONFIG].get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
+        for p in data.get(CONF_ADVANCED_CONFIG, {}).get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
         if p in all_un_ignore_parameters
     ]
     return vol.Schema(
         {
             vol.Required(
                 CONF_SYSVAR_SCAN_ENABLED,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
                 ),
             ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_INTERVAL,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
                 ),
             ): SCAN_INTERVAL_SELECTOR,
             vol.Required(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
-                default=data[CONF_ADVANCED_CONFIG].get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
                 ),
             ): BOOLEAN_SELECTOR,
@@ -437,19 +439,24 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
 
 
 def _get_ccu_data(data: ConfigType, user_input: ConfigType) -> ConfigType:
-    return {
+    ccu_data = {
         CONF_INSTANCE_NAME: user_input.get(CONF_INSTANCE_NAME, data.get(CONF_INSTANCE_NAME)),
         CONF_HOST: user_input[CONF_HOST],
         CONF_USERNAME: user_input[CONF_USERNAME],
         CONF_PASSWORD: user_input[CONF_PASSWORD],
         CONF_TLS: user_input[CONF_TLS],
         CONF_VERIFY_TLS: user_input[CONF_VERIFY_TLS],
-        CONF_CALLBACK_HOST: user_input.get(CONF_CALLBACK_HOST) or UNDEFINED,
-        CONF_CALLBACK_PORT: user_input.get(CONF_CALLBACK_PORT) or UNDEFINED,
-        CONF_JSON_PORT: user_input.get(CONF_JSON_PORT),
         CONF_INTERFACE: data.get(CONF_INTERFACE, {}),
         CONF_ADVANCED_CONFIG: data.get(CONF_ADVANCED_CONFIG, {}),
     }
+    if (callback_host := user_input.get(CONF_CALLBACK_HOST)) and callback_host.strip() != "":
+        ccu_data[CONF_CALLBACK_HOST] = callback_host
+    if callback_port := user_input.get(CONF_CALLBACK_PORT):
+        ccu_data[CONF_CALLBACK_PORT] = callback_port
+    if json_port := user_input.get(CONF_JSON_PORT):
+        ccu_data[CONF_JSON_PORT] = json_port
+
+    return ccu_data
 
 
 def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> None:
