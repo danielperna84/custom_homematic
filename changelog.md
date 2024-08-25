@@ -1,10 +1,11 @@
 # Version 1.65.0 (2024-08-25)
 
-- Bump hahomematic to 2024.8.12
-    - Add additional validation on config parameters
+- Bump hahomematic to 2024.8.13
     - Add CED for ELV-SH-WUA / HmIP-WUA
     - Add UN_IGNORE_WILDCARD to get_parameters
+    - Add additional validation on config parameters
     - Avoid excessive memory usage in cache
+    - Check/convert values of manual executed put_paramset/set_value
     - Cleanup DeviceDescriptionCache
     - Cleanup ParamsetDescriptionCache
     - Make HEATING_COOLING visible for thermostats
@@ -20,6 +21,7 @@
 - Move mapping access to control config
 - Refactor config flow. some options are now on the advanced page.
 - Use SELECTORs in config flow
+- Validate put_paramset/set_value against device descriptions
 - Write optional parameters in Config Flow only when filled
 
 # Version 1.64.0 (2024-08-05)
