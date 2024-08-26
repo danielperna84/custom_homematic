@@ -22,12 +22,12 @@
                     "verify_tls": "verify TLS connection"
                 },
                 "data_description": {
-                    "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
-                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role.",
                     "callback_host": "To reset the callback host it must be set to one blank character.",
                     "callback_port": "To reset the callback port it must be set to 0.",
-                    "json_port": "To reset the JSON-RPC Port it must be set to 0."
+                    "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0.",
+                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
+                    "username": "Case sensitive. User must be in admin role."
                 },
                 "description": "Please fill the required fields."
             },
@@ -242,8 +242,8 @@
             "heating_cooling": {
                 "name": "Operating mode",
                 "state": {
-                    "heating": "heating",
-                    "cooling": "cooling"
+                    "cooling": "cooling",
+                    "heating": "heating"
                 }
             }
         },
@@ -570,6 +570,18 @@
             "unknown": "Unexpected error"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "enable_system_notifications": "Enable system notifications",
+                    "sysvar_scan_enabled": "enable Sysvar scan",
+                    "sysvar_scan_interval": "Sysvar/Program scan interval",
+                    "un_ignore": "UN-IGNORE Parameters"
+                },
+                "data_description": {
+                    "un_ignore": "Check the documentation for information about UN-IGNORE"
+                },
+                "description": "Configure the advanced parameters"
+            },
             "central": {
                 "data": {
                     "callback_host": "Callback Hostname/IP-Address",
@@ -582,11 +594,11 @@
                     "verify_tls": "verify TLS connection"
                 },
                 "data_description": {
-                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role.",
                     "callback_host": "To reset the callback host it must be set to one blank character.",
                     "callback_port": "To reset the callback port it must be set to 0.",
-                    "json_port": "To reset the JSON-RPC Port it must be set to 0."
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0.",
+                    "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
+                    "username": "Case sensitive. User must be in admin role."
                 },
                 "description": "Re-Configure the CCU"
             },
@@ -604,18 +616,6 @@
                     "virtual_devices_port": "Groups Port"
                 },
                 "description": "Re-Configure the interfaces to CCU"
-            },
-            "advanced": {
-                "data": {
-                    "enable_system_notifications": "Enable system notifications",
-                    "sysvar_scan_enabled": "enable Sysvar scan",
-                    "sysvar_scan_interval": "Sysvar/Program scan interval",
-                    "un_ignore": "UN-IGNORE Parameters"
-                },
-                "data_description": {
-                    "un_ignore": "Check the documentation for information about UN-IGNORE"
-                },
-                "description": "Configure the advanced parameters"
             }
         }
     },
