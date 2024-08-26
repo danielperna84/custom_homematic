@@ -22,12 +22,12 @@
                     "verify_tls": "TLS Verbindung überprüfen"
                 },
                 "data_description": {
-                    "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
-                    "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben.",
                     "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
                     "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
-                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden."
+                    "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
                 },
                 "description": "Bitte Pflichtfelder ausfüllen"
             },
@@ -245,8 +245,8 @@
             "heating_cooling": {
                 "name": "Betriebsmodus",
                 "state": {
-                    "heating": "Heizung",
-                    "cooling": "Kühlung"
+                    "cooling": "Kühlung",
+                    "heating": "Heizung"
                 }
             }
         },
@@ -573,6 +573,18 @@
             "unknown": "Unerwarteter Fehler"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "enable_system_notifications": "aktiviere Systembenachrichtigungen",
+                    "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+                    "sysvar_scan_interval": "Sysvar/Program Scan Interval",
+                    "un_ignore": "UN-IGNORE Parameter"
+                },
+                "data_description": {
+                    "un_ignore": "Schauen Sie in die Dokumentation für Informationen über UN-IGNORE"
+                },
+                "description": "Konfiguration der erweiterten Parameter"
+            },
             "central": {
                 "data": {
                     "callback_host": "Callback Hostname/IP-Adresse",
@@ -585,11 +597,11 @@
                     "verify_tls": "TLS Verbindung überprüfen"
                 },
                 "data_description": {
-                    "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben",
                     "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
                     "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
-                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden."
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben"
                 },
                 "description": "Neu-Konfiguration der CCU"
             },
@@ -607,18 +619,6 @@
                     "virtual_devices_port": "Gruppen Port"
                 },
                 "description": "Neu-Konfiguration der CCU Schnittstellen"
-            },
-            "advanced": {
-                "data": {
-                    "enable_system_notifications": "aktiviere Systembenachrichtigungen",
-                    "sysvar_scan_enabled": "aktiviere Sysvar Scan",
-                    "sysvar_scan_interval": "Sysvar/Program Scan Interval",
-                    "un_ignore": "UN-IGNORE Parameter"
-                },
-                "data_description": {
-                    "un_ignore": "Schauen Sie in die Dokumentation für Informationen über UN-IGNORE"
-                },
-                "description": "Konfiguration der erweiterten Parameter"
             }
         }
     },
