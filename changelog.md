@@ -4,6 +4,7 @@
   - Add paramset_key to entity_key
   - Switch typing of paramset_key from str to ParamsetKey
   - Mark only level as relevant entity for DALI 
+- Use select for paramset_key with actions calls
   
 # Version 1.65.0 (2024-08-25)
 

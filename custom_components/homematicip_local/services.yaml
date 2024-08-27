@@ -83,8 +83,10 @@ get_paramset:
       required: true
       example: MASTER
       selector:
-        text:
-
+        select:
+          options:
+            - "MASTER"
+            - "VALUES"
 set_variable_value:
   fields:
     entry_id:
@@ -198,7 +200,10 @@ put_paramset:
       required: true
       example: MASTER
       selector:
-        text:
+        select:
+          options:
+            - "MASTER"
+            - "VALUES"
     paramset:
       required: true
       example: '{"WEEK_PROGRAM_POINTER": 1}'
