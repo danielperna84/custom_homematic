@@ -1,3 +1,10 @@
+# Version 1.65.1 (2024-08-27)
+
+- Bump hahomematic to 2024.8.14
+  - Add paramset_key to entity_key
+  - Switch typing of paramset_key from str to ParamsetKey
+  - Mark only level as relevant entity for DALI 
+  
 # Version 1.65.0 (2024-08-25)
 
 - Bump hahomematic to 2024.8.13
