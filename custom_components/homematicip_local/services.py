@@ -116,7 +116,7 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
     BASE_SCHEMA_DEVICE.extend(
         {
             vol.Optional(CONF_CHANNEL): vol.Coerce(int),
-            vol.Required(CONF_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+            vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
         }
     ),
 )
@@ -161,7 +161,7 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     BASE_SCHEMA_DEVICE.extend(
         {
             vol.Optional(CONF_CHANNEL): vol.Coerce(int),
-            vol.Required(CONF_PARAMSET_KEY): vol.All(cv.string, vol.Upper),
+            vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
             vol.Required(CONF_PARAMSET): dict,
             vol.Optional(CONF_WAIT_FOR_CALLBACK): cv.positive_int,
             vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
@@ -357,7 +357,7 @@ async def _async_service_get_paramset(
 ) -> ServiceResponse:
     """Service to call the getParamset method on a Homematic(IP) Local connection."""
     channel_no = service.data.get(CONF_CHANNEL)
-    paramset_key = service.data[CONF_PARAMSET_KEY]
+    paramset_key = ParamsetKey(service.data[CONF_PARAMSET_KEY])
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
@@ -453,7 +453,7 @@ async def _async_service_fetch_system_variables(hass: HomeAssistant, service: Se
 async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call the putParamset method on a Homematic(IP) Local connection."""
     channel_no = service.data.get(CONF_CHANNEL)
-    paramset_key = service.data[CONF_PARAMSET_KEY]
+    paramset_key = ParamsetKey(service.data[CONF_PARAMSET_KEY])
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
