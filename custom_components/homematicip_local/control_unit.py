@@ -201,7 +201,6 @@ class BaseControlUnit:
             interface_configs=interface_configs,
             start_direct=self._start_direct,
             un_ignore_list=self.config.un_ignore,
-            load_all_paramset_descriptions=True,
         ).create_central()
 
 

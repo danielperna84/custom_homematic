@@ -151,7 +151,10 @@ set_device_value:
     rx_mode:
       example: BURST
       selector:
-        text:
+        select:
+          options:
+            - "BURST"
+            - "WAKEUP"
 
 set_install_mode:
   fields:
@@ -218,7 +221,10 @@ put_paramset:
     rx_mode:
       example: BURST
       selector:
-        text:
+        select:
+          options:
+            - "BURST"
+            - "WAKEUP"
 
 enable_away_mode_by_calendar:
   target:

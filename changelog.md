@@ -1,10 +1,14 @@
-# Version 1.65.1 (2024-08-27)
+# Version 1.65.1 (2024-08-30)
 
-- Bump hahomematic to 2024.8.14
-  - Add paramset_key to entity_key
-  - Switch typing of paramset_key from str to ParamsetKey
-  - Mark only level as relevant entity for DALI 
+- Bump hahomematic to 2024.8.15
+  - Avoid permanent cache save on remove device
+  - Check rx_mode
+  - Ensure only one load/save of cache file at time
+  - Small definition fix for DALI
+  - Use TypedDict for device_description
+  - Use TypedDict for parameter_data
 - Use select for paramset_key with actions calls
+- Use selector for rx_mode in service description
   
 # Version 1.65.0 (2024-08-25)
 
