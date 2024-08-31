@@ -60,6 +60,7 @@ SERVICE_EXPORT_DEVICE_DEFINITION: Final = "export_device_definition"
 SERVICE_FETCH_SYSTEM_VARIABLES: Final = "fetch_system_variables"
 SERVICE_FORCE_DEVICE_AVAILABILITY: Final = "force_device_availability"
 SERVICE_GET_DEVICE_VALUE: Final = "get_device_value"
+SERVICE_GET_LINK_PEERS: Final = "get_link_peers"
 SERVICE_GET_PARAMSET: Final = "get_paramset"
 SERVICE_LIGHT_SET_ON_TIME: Final = "light_set_on_time"
 SERVICE_PUT_PARAMSET: Final = "put_paramset"
@@ -82,6 +83,7 @@ HMIP_LOCAL_SERVICES: Final = (
     SERVICE_GET_DEVICE_VALUE,
     SERVICE_GET_PARAMSET,
     SERVICE_LIGHT_SET_ON_TIME,
+    SERVICE_GET_LINK_PEERS,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_COVER_COMBINED_POSITION,
     SERVICE_SET_DEVICE_VALUE,

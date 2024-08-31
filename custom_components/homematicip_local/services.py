@@ -35,6 +35,7 @@ from .const import (
     SERVICE_FETCH_SYSTEM_VARIABLES,
     SERVICE_FORCE_DEVICE_AVAILABILITY,
     SERVICE_GET_DEVICE_VALUE,
+    SERVICE_GET_LINK_PEERS,
     SERVICE_GET_PARAMSET,
     SERVICE_PUT_PARAMSET,
     SERVICE_SET_DEVICE_VALUE,
@@ -106,6 +107,16 @@ SCHEMA_SERVICE_GET_DEVICE_VALUE = vol.All(
         {
             vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
+        }
+    ),
+)
+
+SCHEMA_SERVICE_GET_LINK_PEERS = vol.All(
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
+    BASE_SCHEMA_DEVICE.extend(
+        {
+            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
         }
     ),
 )
@@ -194,6 +205,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_force_device_availability(hass=hass, service=service)
         elif service_name == SERVICE_GET_DEVICE_VALUE:
             return await _async_service_get_device_value(hass=hass, service=service)
+        elif service_name == SERVICE_GET_LINK_PEERS:
+            return await _async_service_get_link_peers(hass=hass, service=service)
         elif service_name == SERVICE_GET_PARAMSET:
             return await _async_service_get_paramset(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
@@ -245,6 +258,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         service=SERVICE_GET_DEVICE_VALUE,
         service_func=async_call_hmip_local_service,
         schema=SCHEMA_SERVICE_GET_DEVICE_VALUE,
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+
+    hass.services.async_register(
+        domain=DOMAIN,
+        service=SERVICE_GET_LINK_PEERS,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_GET_LINK_PEERS,
         supports_response=SupportsResponse.OPTIONAL,
     )
 
@@ -349,6 +370,26 @@ async def _async_service_get_device_value(
                 return {"result": value}
         except ClientException as cex:
             raise HomeAssistantError(cex) from cex
+    return None
+
+
+async def _async_service_get_link_peers(
+    hass: HomeAssistant, service: ServiceCall
+) -> ServiceResponse:
+    """Service to call the getLinkPeers method on a Homematic(IP) Local connection."""
+    channel_no = service.data.get(CONF_CHANNEL)
+
+    if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
+        address = (
+            f"{hm_device.device_address}:{channel_no}"
+            if channel_no is not None
+            else hm_device.device_address
+        )
+        try:
+            return {address: await hm_device.client.get_link_peers(address=address)}
+        except ClientException as cex:
+            raise HomeAssistantError(cex) from cex
+
     return None
 
 

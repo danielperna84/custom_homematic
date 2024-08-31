@@ -61,6 +61,25 @@ get_device_value:
       selector:
         text:
 
+get_link_peers:
+  fields:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
+    device_address:
+      example: "0008789453:3"
+      required: false
+      selector:
+        text:
+    channel:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 99
+
 get_paramset:
   fields:
     device_id:
@@ -87,6 +106,7 @@ get_paramset:
           options:
             - "MASTER"
             - "VALUES"
+            -
 set_variable_value:
   fields:
     entry_id:

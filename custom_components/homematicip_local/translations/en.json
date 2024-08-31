@@ -722,6 +722,24 @@
             },
             "name": "Get device value"
         },
+         "get_link_peers": {
+            "description": "Call to getLinkPeers in the RPC XML interface.",
+            "fields": {
+                "channel": {
+                    "description": "Channel for calling a paramset.",
+                    "name": "Channel"
+                },
+                "device_address": {
+                    "description": "Enter a device address.",
+                    "name": "Device address"
+                },
+                "device_id": {
+                    "description": "Select a device.",
+                    "name": "Device"
+                }
+            },
+            "name": "Get link peers"
+        },
         "get_paramset": {
             "description": "Call to getParamset in the RPC XML interface.",
             "fields": {
