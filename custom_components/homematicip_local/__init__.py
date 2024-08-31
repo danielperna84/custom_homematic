@@ -200,5 +200,11 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
             instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
         )
         hass.config_entries.async_update_entry(entry, version=5, data=data)
+    if entry.version == 5:
+        data = dict(entry.data)
+        cleanup_cache_dirs(
+            instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
+        )
+        hass.config_entries.async_update_entry(entry, version=6, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True
