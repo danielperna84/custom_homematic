@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Final
 
-from hahomematic.const import CALLBACK_TYPE, DeviceFirmwareState, HmPlatform
+from hahomematic.const import CALLBACK_TYPE, HmPlatform
 from hahomematic.platforms.update import HmUpdate
 
 from homeassistant.components.update import UpdateEntity, UpdateEntityFeature
@@ -80,7 +80,7 @@ class HaHomematicUpdate(UpdateEntity):
             identifiers={(DOMAIN, hm_entity.device.identifier)},
         )
         self._attr_extra_state_attributes = {
-            ATTR_FIRMWARE_UPDATE_STATE: hm_entity.firmware_update_state
+            ATTR_FIRMWARE_UPDATE_STATE: hm_entity.device.firmware_update_state
         }
         self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug("init: Setting up %s", hm_entity.full_name)
@@ -98,21 +98,12 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def in_progress(self) -> bool | int | None:
         """Update installation progress."""
-        return self._hm_entity.firmware_update_state in (
-            DeviceFirmwareState.DO_UPDATE_PENDING,
-            DeviceFirmwareState.PERFORMING_UPDATE,
-        )
+        return self._hm_entity.in_progress()
 
     @property
     def latest_version(self) -> str | None:
         """Latest version available for install."""
-        if self._hm_entity.firmware_update_state in (
-            DeviceFirmwareState.READY_FOR_UPDATE,
-            DeviceFirmwareState.DO_UPDATE_PENDING,
-            DeviceFirmwareState.PERFORMING_UPDATE,
-        ):
-            return self._hm_entity.available_firmware
-        return self._hm_entity.firmware
+        return self._hm_entity.latest_firmware
 
     @property
     def name(self) -> str | None:

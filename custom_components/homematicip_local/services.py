@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Final, cast
 
 from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
 from hahomematic.exceptions import ClientException
@@ -386,7 +386,9 @@ async def _async_service_get_link_peers(
             else hm_device.device_address
         )
         try:
-            return {address: await hm_device.client.get_link_peers(address=address)}
+            return cast(
+                ServiceResponse, {address: await hm_device.client.get_link_peers(address=address)}
+            )
         except ClientException as cex:
             raise HomeAssistantError(cex) from cex
 
