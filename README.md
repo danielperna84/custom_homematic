@@ -358,6 +358,11 @@ Use this only to reactivate devices with flaky communication to gain control aga
 
 Get a device parameter via the XML-RPC interface.
 
+### `homematicip_local.get_link_peers`
+
+Call to `getLinkPeers` on the XML-RPC interface.
+Returns a dict of link partners
+
 ### `homematicip_local.get_paramset`
 
 Call to `getParamset` on the XML-RPC interface.

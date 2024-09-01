@@ -1,12 +1,22 @@
-# Version 1.65.1 (2024-08-30)
+# Version 1.66.0 (2024-09-01)
 
-- Bump hahomematic to 2024.8.15
+- Bump hahomematic to 2024.9.0
+  - Add check for link paramsets
+  - Add getLinkPeers XmlRPC method
+  - Add paramset_key to entity_key
   - Avoid permanent cache save on remove device
   - Check rx_mode
+  - Do not create update entities that are not updatable (manually remove obsolete update entities)
   - Ensure only one load/save of cache file at time
+  - Load all paramsets
+  - Mark only level as relevant entity for DALI
+  - Only try device update refresh if device is updatable
+  - Refactor update entity
   - Small definition fix for DALI
+  - Switch typing of paramset_key from str to ParamsetKey
   - Use TypedDict for device_description
   - Use TypedDict for parameter_data
+- Add service get_link_peers
 - Use select for paramset_key with actions calls
 - Use selector for rx_mode in service description
   

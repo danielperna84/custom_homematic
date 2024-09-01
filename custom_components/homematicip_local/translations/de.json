@@ -725,6 +725,24 @@
             },
             "name": "Gerätewert abrufen"
         },
+        "get_link_peers": {
+            "description": "Abruf von getLinkPeers in der RPC-XML-Schnittstelle.",
+            "fields": {
+                "channel": {
+                    "description": "Kanal zum Abruf eines Parametersatzes.",
+                    "name": "Kanal"
+                },
+                "device_address": {
+                    "description": "Geben Sie eine Geräteadresse ein.",
+                    "name": "Geräteadresse"
+                },
+                "device_id": {
+                    "description": "Wähle ein Gerät.",
+                    "name": "Gerät"
+                }
+            },
+            "name": "Verbindungsgegenstellen lesen"
+        },
         "get_paramset": {
             "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
             "fields": {
