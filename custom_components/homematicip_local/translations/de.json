@@ -743,6 +743,20 @@
             },
             "name": "Verbindungsgegenstellen lesen"
         },
+        "get_link_paramset": {
+            "description": "Abruf von getParamset für eine Verknüpfung in der RPC-XML-Schnittstelle.",
+            "fields": {
+                "channel_address": {
+                    "description": "Kanaladresse des Parametersatzes.",
+                    "name": "Kanaladresse"
+                },
+                "sender_channel_address": {
+                    "description": "Kanaladresse des verknüpften Senders.",
+                    "name": "Sender Kanaladresse"
+                }
+            },
+            "name": "Parametersatz lesen"
+        },
         "get_paramset": {
             "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
             "fields": {
@@ -774,6 +788,32 @@
                 }
             },
             "name": "Stellt die Einschaltdauer eines Lichts ein"
+        },
+        "put_link_paramset": {
+            "description": "Aufruf von putParamset einer Verknüpfung auf der RPC-XML-Schnittstelle.",
+            "fields": {
+                "channel_address": {
+                    "description": "Kanaladresse des Parametersatzes.",
+                    "name": "Kanaladresse"
+                },
+                "sender_channel_address": {
+                    "description": "Kanaladresse des verknüpften Senders.",
+                    "name": "Sender Kanaladresse"
+                },
+                "paramset": {
+                    "description": "Ein Paramset-Wörterbuch.",
+                    "name": "\"Parametersatz"
+                },
+                "paramset_key": {
+                    "description": "Das paramset_key-Argument für putParamset.",
+                    "name": "Parametersatzschlüssel"
+                },
+                "rx_mode": {
+                    "description": "Der verwendete Empfangsmodus.",
+                    "name": "RX Modus"
+                }
+            },
+            "name": "Parametersatz einer Verknüpfung schreiben"
         },
         "put_paramset": {
             "description": "Aufruf von putParamset auf der RPC-XML-Schnittstelle.",
