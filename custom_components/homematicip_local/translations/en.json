@@ -722,7 +722,7 @@
             },
             "name": "Get device value"
         },
-         "get_link_peers": {
+        "get_link_peers": {
             "description": "Call to getLinkPeers in the RPC XML interface.",
             "fields": {
                 "channel": {

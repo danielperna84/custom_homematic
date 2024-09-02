@@ -98,7 +98,7 @@ class HaHomematicUpdate(UpdateEntity):
     @property
     def in_progress(self) -> bool | int | None:
         """Update installation progress."""
-        return self._hm_entity.in_progress()
+        return self._hm_entity.in_progress
 
     @property
     def latest_version(self) -> str | None:
