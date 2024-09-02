@@ -80,6 +80,19 @@ get_link_peers:
           min: 0
           max: 99
 
+get_link_paramset:
+  fields:
+    channel_address:
+      example: "0008789453:3"
+      required: true
+      selector:
+        text:
+    sender_channel_address:
+      example: "0008789453:3"
+      required: true
+      selector:
+        text:
+
 get_paramset:
   fields:
     device_id:
@@ -106,6 +119,7 @@ get_paramset:
           options:
             - "MASTER"
             - "VALUES"
+
 set_variable_value:
   fields:
     entry_id:
@@ -199,6 +213,31 @@ set_install_mode:
       example: LEQ3948571
       selector:
         text:
+
+put_link_paramset:
+  fields:
+    channel_address:
+      example: "0008789453:3"
+      required: true
+      selector:
+        text:
+    sender_channel_address:
+      example: "0008789453:3"
+      required: true
+      selector:
+        text:
+    paramset:
+      required: true
+      example: '{"WEEK_PROGRAM_POINTER": 1}'
+      selector:
+        object:
+    rx_mode:
+      example: BURST
+      selector:
+        select:
+          options:
+            - "BURST"
+            - "WAKEUP"
 
 put_paramset:
   fields:

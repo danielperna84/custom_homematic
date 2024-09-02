@@ -368,9 +368,18 @@ Returns a dict of link partners
 Call to `getParamset` on the XML-RPC interface.
 Returns a paramset
 
+### `homematicip_local.get_link_paramset`
+
+Call to `getParamset` for links on the XML-RPC interface.
+Returns a paramset
+
 ### `homematicip_local.put_paramset`
 
 Call to `putParamset` on the XML-RPC interface.
+
+### `homematicip_local.put_link_paramset`
+
+Call to `putParamset` for links on the XML-RPC interface.
 
 ### `homematicip_local.set_cover_combined_position`
 
