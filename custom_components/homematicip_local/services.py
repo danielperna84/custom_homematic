@@ -10,6 +10,7 @@ from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import get_device_address, to_bool
+import hahomematic.validator as hmval
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntryState
@@ -75,7 +76,7 @@ DEFAULT_CHANNEL: Final = 1
 BASE_SCHEMA_DEVICE = vol.Schema(
     {
         vol.Optional(CONF_DEVICE_ID): cv.string,
-        vol.Optional(CONF_DEVICE_ADDRESS): cv.string,
+        vol.Optional(CONF_DEVICE_ADDRESS): hmval.device_address,
     }
 )
 
@@ -109,7 +110,7 @@ SCHEMA_SERVICE_GET_DEVICE_VALUE = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): hmval.channel_no,
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
         }
     ),
@@ -120,15 +121,15 @@ SCHEMA_SERVICE_GET_LINK_PEERS = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
+            vol.Optional(CONF_CHANNEL): hmval.channel_no,
         }
     ),
 )
 
 SCHEMA_SERVICE_GET_LINK_PARAMSET = vol.All(
     {
-        vol.Optional(CONF_CHANNEL_ADDRESS): cv.string,
-        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): cv.string,
+        vol.Optional(CONF_CHANNEL_ADDRESS): hmval.channel_address,
+        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): hmval.channel_address,
     }
 )
 
@@ -137,7 +138,7 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
+            vol.Optional(CONF_CHANNEL): hmval.channel_no,
             vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
         }
     ),
@@ -156,7 +157,7 @@ SCHEMA_SERVICE_SET_INSTALL_MODE = vol.Schema(
         vol.Required(CONF_INTERFACE_ID): cv.string,
         vol.Optional(CONF_TIME, default=60): cv.positive_int,
         vol.Optional(CONF_MODE, default=1): vol.All(vol.Coerce(int), vol.In([1, 2])),
-        vol.Optional(CONF_ADDRESS): vol.All(cv.string, vol.Upper),
+        vol.Optional(CONF_ADDRESS): hmval.device_address,
     }
 )
 
@@ -165,10 +166,10 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): vol.Coerce(int),
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): hmval.channel_no,
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
             vol.Required(CONF_VALUE): cv.match_all,
-            vol.Optional(CONF_WAIT_FOR_CALLBACK): cv.positive_int,
+            vol.Optional(CONF_WAIT_FOR_CALLBACK): hmval.wait_for,
             vol.Optional(CONF_VALUE_TYPE): vol.In(
                 ["boolean", "dateTime.iso8601", "double", "int", "string"]
             ),
@@ -179,8 +180,8 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
 
 SCHEMA_SERVICE_PUT_LINK_PARAMSET = vol.All(
     {
-        vol.Optional(CONF_CHANNEL_ADDRESS): cv.string,
-        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): cv.string,
+        vol.Optional(CONF_CHANNEL_ADDRESS): hmval.channel_address,
+        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): hmval.channel_address,
         vol.Required(CONF_PARAMSET): dict,
         vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
     }
@@ -191,10 +192,10 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): vol.Coerce(int),
+            vol.Optional(CONF_CHANNEL): hmval.channel_no,
             vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
             vol.Required(CONF_PARAMSET): dict,
-            vol.Optional(CONF_WAIT_FOR_CALLBACK): cv.positive_int,
+            vol.Optional(CONF_WAIT_FOR_CALLBACK): hmval.wait_for,
             vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
         }
     ),
