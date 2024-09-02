@@ -693,7 +693,7 @@
             "description": "Erzwingt die Verfügbarkeit eines Geräts. Dadurch wird der tatsächliche Status überschrieben.",
             "fields": {
                 "device_address": {
-                    "description": "Geben die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
@@ -733,7 +733,7 @@
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
@@ -751,7 +751,7 @@
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
@@ -783,7 +783,7 @@
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
@@ -835,7 +835,7 @@
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
