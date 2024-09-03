@@ -725,6 +725,20 @@
             },
             "name": "Gerätewert abrufen"
         },
+        "get_link_paramset": {
+            "description": "Abruf von getParamset für eine Direktverknüpfung in der RPC-XML-Schnittstelle.",
+            "fields": {
+                "receiver_channel_address": {
+                    "description": "Kanaladresse des Parametersatzes.",
+                    "name": "Kanaladresse"
+                },
+                "sender_channel_address": {
+                    "description": "Kanaladresse des verknüpften Senders.",
+                    "name": "Sender Kanaladresse"
+                }
+            },
+            "name": "Parametersatz einer Direktverknüpfung lesen"
+        },
         "get_link_peers": {
             "description": "Abruf von getLinkPeers in der RPC-XML-Schnittstelle.",
             "fields": {
@@ -742,20 +756,6 @@
                 }
             },
             "name": "Verbindungsgegenstellen lesen"
-        },
-        "get_link_paramset": {
-            "description": "Abruf von getParamset für eine Verknüpfung in der RPC-XML-Schnittstelle.",
-            "fields": {
-                "channel_address": {
-                    "description": "Kanaladresse des Parametersatzes.",
-                    "name": "Kanaladresse"
-                },
-                "sender_channel_address": {
-                    "description": "Kanaladresse des verknüpften Senders.",
-                    "name": "Sender Kanaladresse"
-                }
-            },
-            "name": "Parametersatz lesen"
         },
         "get_paramset": {
             "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
@@ -790,16 +790,8 @@
             "name": "Stellt die Einschaltdauer eines Lichts ein"
         },
         "put_link_paramset": {
-            "description": "Aufruf von putParamset einer Verknüpfung auf der RPC-XML-Schnittstelle.",
+            "description": "Aufruf von putParamset einer Direktverknüpfung auf der RPC-XML-Schnittstelle.",
             "fields": {
-                "channel_address": {
-                    "description": "Kanaladresse des Parametersatzes.",
-                    "name": "Kanaladresse"
-                },
-                "sender_channel_address": {
-                    "description": "Kanaladresse des verknüpften Senders.",
-                    "name": "Sender Kanaladresse"
-                },
                 "paramset": {
                     "description": "Ein Paramset-Wörterbuch.",
                     "name": "\"Parametersatz"
@@ -808,12 +800,20 @@
                     "description": "Das paramset_key-Argument für putParamset.",
                     "name": "Parametersatzschlüssel"
                 },
+                "receiver_channel_address": {
+                    "description": "Kanaladresse des verknüpften Empfängers.",
+                    "name": "Kanaladresse"
+                },
                 "rx_mode": {
                     "description": "Der verwendete Empfangsmodus.",
                     "name": "RX Modus"
+                },
+                "sender_channel_address": {
+                    "description": "Kanaladresse des verknüpften Senders.",
+                    "name": "Sender Kanaladresse"
                 }
             },
-            "name": "Parametersatz einer Verknüpfung schreiben"
+            "name": "Parametersatz einer Direktverknüpfung schreiben"
         },
         "put_paramset": {
             "description": "Aufruf von putParamset auf der RPC-XML-Schnittstelle.",

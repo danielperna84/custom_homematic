@@ -82,12 +82,12 @@ get_link_peers:
 
 get_link_paramset:
   fields:
-    channel_address:
+    sender_channel_address:
       example: "0008789453:3"
       required: true
       selector:
         text:
-    sender_channel_address:
+    receiver_channel_address:
       example: "0008789453:3"
       required: true
       selector:
@@ -216,12 +216,12 @@ set_install_mode:
 
 put_link_paramset:
   fields:
-    channel_address:
+    sender_channel_address:
       example: "0008789453:3"
       required: true
       selector:
         text:
-    sender_channel_address:
+    receiver_channel_address:
       example: "0008789453:3"
       required: true
       selector:

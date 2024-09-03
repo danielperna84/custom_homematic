@@ -722,6 +722,20 @@
             },
             "name": "Get device value"
         },
+        "get_link_paramset": {
+            "description": "Call to getParamset for links in the RPC XML interface.",
+            "fields": {
+                "receiver_channel_address": {
+                    "description": "Channel address for calling a paramset.",
+                    "name": "Channel Address"
+                },
+                "sender_channel_address": {
+                    "description": "Channel address of the associated sender.",
+                    "name": "Sender Channel Address"
+                }
+            },
+            "name": "Get link paramset"
+        },
         "get_link_peers": {
             "description": "Call to getLinkPeers in the RPC XML interface.",
             "fields": {
@@ -739,20 +753,6 @@
                 }
             },
             "name": "Get link peers"
-        },
-        "get_link_paramset": {
-            "description": "Call to getParamset for links in the RPC XML interface.",
-            "fields": {
-                "channel_address": {
-                    "description": "Channel address for calling a paramset.",
-                    "name": "Channel Address"
-                },
-                "sender_channel_address": {
-                    "description": "Channel address of the associated sender.",
-                    "name": "Sender Channel Address"
-                }
-            },
-            "name": "Get link paramset"
         },
         "get_paramset": {
             "description": "Call to getParamset in the RPC XML interface.",
@@ -789,14 +789,6 @@
         "put_link_paramset": {
             "description": "Call to putParamset on the RPC XML interface.",
             "fields": {
-                "channel_address": {
-                    "description": "Channel address for calling a paramset.",
-                    "name": "Channel Address"
-                },
-                "sender_channel_address": {
-                    "description": "Channel address of the associated sender.",
-                    "name": "Sender Channel Address"
-                },
                 "paramset": {
                     "description": "A paramset dictionary.",
                     "name": "Paramset"
@@ -805,9 +797,17 @@
                     "description": "The paramset_key argument.",
                     "name": "Paramset key"
                 },
+                "receiver_channel_address": {
+                    "description": "Channel address for calling a paramset.",
+                    "name": "Channel Address"
+                },
                 "rx_mode": {
                     "description": "The receive mode used.",
                     "name": "RX mode"
+                },
+                "sender_channel_address": {
+                    "description": "Channel address of the associated sender.",
+                    "name": "Sender Channel Address"
                 }
             },
             "name": "Put paramset"

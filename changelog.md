@@ -1,6 +1,6 @@
 # Version 1.66.0 (2024-09-01)
 
-- Bump hahomematic to 2024.9.3
+- Bump hahomematic to 2024.9.4
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
   - Add paramset_key to entity_key
