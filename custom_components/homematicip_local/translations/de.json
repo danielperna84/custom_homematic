@@ -730,7 +730,7 @@
             "fields": {
                 "receiver_channel_address": {
                     "description": "Kanaladresse des Parametersatzes.",
-                    "name": "Kanaladresse"
+                    "name": "Empfänger Kanaladresse"
                 },
                 "sender_channel_address": {
                     "description": "Kanaladresse des verknüpften Senders.",
@@ -802,7 +802,7 @@
                 },
                 "receiver_channel_address": {
                     "description": "Kanaladresse des verknüpften Empfängers.",
-                    "name": "Kanaladresse"
+                    "name": "Empfänger Kanaladresse"
                 },
                 "rx_mode": {
                     "description": "Der verwendete Empfangsmodus.",
