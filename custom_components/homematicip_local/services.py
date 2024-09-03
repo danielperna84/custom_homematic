@@ -10,7 +10,7 @@ from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
 from hahomematic.exceptions import ClientException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import get_device_address, to_bool
-import hahomematic.validator as hmval
+import hahomematic.validator as haval
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntryState
@@ -64,6 +64,7 @@ CONF_NAME: Final = "name"
 CONF_PARAMETER: Final = "parameter"
 CONF_PARAMSET: Final = "paramset"
 CONF_PARAMSET_KEY: Final = "paramset_key"
+CONF_RECEIVER_CHANNEL_ADDRESS: Final = "receiver_channel_address"
 CONF_RX_MODE: Final = "rx_mode"
 CONF_SENDER_CHANNEL_ADDRESS: Final = "sender_channel_address"
 CONF_TIME: Final = "time"
@@ -76,7 +77,7 @@ DEFAULT_CHANNEL: Final = 1
 BASE_SCHEMA_DEVICE = vol.Schema(
     {
         vol.Optional(CONF_DEVICE_ID): cv.string,
-        vol.Optional(CONF_DEVICE_ADDRESS): hmval.device_address,
+        vol.Optional(CONF_DEVICE_ADDRESS): haval.device_address,
     }
 )
 
@@ -110,7 +111,7 @@ SCHEMA_SERVICE_GET_DEVICE_VALUE = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): hmval.channel_no,
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): haval.channel_no,
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
         }
     ),
@@ -121,15 +122,15 @@ SCHEMA_SERVICE_GET_LINK_PEERS = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): hmval.channel_no,
+            vol.Optional(CONF_CHANNEL): haval.channel_no,
         }
     ),
 )
 
 SCHEMA_SERVICE_GET_LINK_PARAMSET = vol.All(
     {
-        vol.Optional(CONF_CHANNEL_ADDRESS): hmval.channel_address,
-        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): hmval.channel_address,
+        vol.Optional(CONF_RECEIVER_CHANNEL_ADDRESS): haval.channel_address,
+        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): haval.channel_address,
     }
 )
 
@@ -138,8 +139,10 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): hmval.channel_no,
-            vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
+            vol.Optional(CONF_CHANNEL): haval.channel_no,
+            vol.Required(CONF_PARAMSET_KEY): vol.All(
+                haval.paramset_key, vol.In(["MASTER", "VALUES"])
+            ),
         }
     ),
 )
@@ -157,7 +160,7 @@ SCHEMA_SERVICE_SET_INSTALL_MODE = vol.Schema(
         vol.Required(CONF_INTERFACE_ID): cv.string,
         vol.Optional(CONF_TIME, default=60): cv.positive_int,
         vol.Optional(CONF_MODE, default=1): vol.All(vol.Coerce(int), vol.In([1, 2])),
-        vol.Optional(CONF_ADDRESS): hmval.device_address,
+        vol.Optional(CONF_ADDRESS): haval.device_address,
     }
 )
 
@@ -166,10 +169,10 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): hmval.channel_no,
+            vol.Required(CONF_CHANNEL, default=DEFAULT_CHANNEL): haval.channel_no,
             vol.Required(CONF_PARAMETER): vol.All(cv.string, vol.Upper),
             vol.Required(CONF_VALUE): cv.match_all,
-            vol.Optional(CONF_WAIT_FOR_CALLBACK): hmval.wait_for,
+            vol.Optional(CONF_WAIT_FOR_CALLBACK): haval.wait_for,
             vol.Optional(CONF_VALUE_TYPE): vol.In(
                 ["boolean", "dateTime.iso8601", "double", "int", "string"]
             ),
@@ -180,8 +183,8 @@ SCHEMA_SERVICE_SET_DEVICE_VALUE = vol.All(
 
 SCHEMA_SERVICE_PUT_LINK_PARAMSET = vol.All(
     {
-        vol.Optional(CONF_CHANNEL_ADDRESS): hmval.channel_address,
-        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): hmval.channel_address,
+        vol.Optional(CONF_RECEIVER_CHANNEL_ADDRESS): haval.channel_address,
+        vol.Optional(CONF_SENDER_CHANNEL_ADDRESS): haval.channel_address,
         vol.Required(CONF_PARAMSET): dict,
         vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
     }
@@ -192,10 +195,12 @@ SCHEMA_SERVICE_PUT_PARAMSET = vol.All(
     cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_DEVICE_ADDRESS),
     BASE_SCHEMA_DEVICE.extend(
         {
-            vol.Optional(CONF_CHANNEL): hmval.channel_no,
-            vol.Required(CONF_PARAMSET_KEY): vol.In(["MASTER", "VALUES"]),
+            vol.Optional(CONF_CHANNEL): haval.channel_no,
+            vol.Required(CONF_PARAMSET_KEY): vol.All(
+                haval.paramset_key, vol.In(["MASTER", "VALUES"])
+            ),
             vol.Required(CONF_PARAMSET): dict,
-            vol.Optional(CONF_WAIT_FOR_CALLBACK): hmval.wait_for,
+            vol.Optional(CONF_WAIT_FOR_CALLBACK): haval.wait_for,
             vol.Optional(CONF_RX_MODE): vol.All(cv.string, vol.Upper),
         }
     ),
@@ -439,14 +444,14 @@ async def _async_service_get_link_paramset(
     hass: HomeAssistant, service: ServiceCall
 ) -> ServiceResponse:
     """Service to call the getParamset method for links on a Homematic(IP) Local connection."""
-    channel_address = service.data[CONF_CHANNEL_ADDRESS]
     sender_channel_address = service.data[CONF_SENDER_CHANNEL_ADDRESS]
+    receiver_channel_address = service.data[CONF_RECEIVER_CHANNEL_ADDRESS]
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         try:
             return dict(
                 await hm_device.client.get_paramset(
-                    address=channel_address,
+                    address=receiver_channel_address,
                     paramset_key=sender_channel_address,
                 )
             )
@@ -461,7 +466,7 @@ async def _async_service_get_paramset(
 ) -> ServiceResponse:
     """Service to call the getParamset method on a Homematic(IP) Local connection."""
     channel_no = service.data.get(CONF_CHANNEL)
-    paramset_key = service.data[CONF_PARAMSET_KEY]
+    paramset_key = ParamsetKey(service.data[CONF_PARAMSET_KEY])
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
@@ -556,8 +561,8 @@ async def _async_service_fetch_system_variables(hass: HomeAssistant, service: Se
 
 async def _async_service_put_link_paramset(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call the putParamset method for link manipulation on a Homematic(IP) Local connection."""
-    channel_address = service.data[CONF_CHANNEL_ADDRESS]
     sender_channel_address = service.data[CONF_SENDER_CHANNEL_ADDRESS]
+    receiver_channel_address = service.data[CONF_RECEIVER_CHANNEL_ADDRESS]
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
@@ -566,17 +571,18 @@ async def _async_service_put_link_paramset(hass: HomeAssistant, service: Service
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.client.put_paramset(
-            channel_address=channel_address,
+            channel_address=receiver_channel_address,
             paramset_key=sender_channel_address,
             values=values,
             rx_mode=rx_mode,
+            check_against_pd=True,
         )
 
 
 async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall) -> None:
     """Service to call the putParamset method on a Homematic(IP) Local connection."""
     channel_no = service.data.get(CONF_CHANNEL)
-    paramset_key = service.data[CONF_PARAMSET_KEY]
+    paramset_key = ParamsetKey(service.data[CONF_PARAMSET_KEY])
     # When passing in the paramset from a YAML file we get an OrderedDict
     # here instead of a dict, so add this explicit cast.
     # The service schema makes sure that this cast works.
@@ -651,7 +657,18 @@ def _async_get_hm_device_by_service_data(
         if not hm_device:
             _LOGGER.warning(
                 "No device found by channel_address %s for service %s.%s",
-                device_address,
+                channel_address,
+                service.domain,
+                service.service,
+            )
+    elif receiver_channel_address := service.data.get(CONF_RECEIVER_CHANNEL_ADDRESS):
+        hm_device = _async_get_hm_device_by_address(
+            hass=hass, device_address=get_device_address(address=receiver_channel_address)
+        )
+        if not hm_device:
+            _LOGGER.warning(
+                "No device found by receiver_channel_address %s for service %s.%s",
+                receiver_channel_address,
                 service.domain,
                 service.service,
             )
