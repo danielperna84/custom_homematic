@@ -1,6 +1,11 @@
-# Version 1.66.0 (2024-09-01)
+# Version 1.66.0 (2024-09-05)
 
-- Bump hahomematic to 2024.9.4
+## Breaking change:
+- Use service put_link_paramset to manipulate direct connections
+- Use service get_link_paramset to read direct connections
+
+## What's new
+- Bump hahomematic to 2024.9.5
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
   - Add paramset_key to entity_key
@@ -17,7 +22,8 @@
   - Switch typing of paramset_key from str to ParamsetKey
   - Use TypedDict for device_description
   - Use TypedDict for parameter_data
-- Add service get_link_peers
+  - Use validator for local schema
+- Add services get_link_peers, get_link_paramset, put_link_paramset
 - Use select for paramset_key with actions calls
 - Use selector for rx_mode in service description
   
