@@ -4,7 +4,7 @@
 - Use service put_link_paramset to manipulate direct connections
 - Use service get_link_paramset to read direct connections
 
-## What's new
+## What's Changed
 - Bump hahomematic to 2024.9.5
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method

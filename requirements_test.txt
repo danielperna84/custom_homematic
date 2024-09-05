@@ -9,3 +9,4 @@ pre-commit==3.8.0
 pydevccu==0.1.8
 pylint==3.2.7
 pytest-homeassistant-custom-component==0.13.161
+uv==0.4.5
