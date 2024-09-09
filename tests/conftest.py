@@ -10,7 +10,7 @@ import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.plugins import enable_custom_integrations  # noqa: F401
 
-from custom_components.homematicip_local.const import DOMAIN
+from custom_components.homematicip_local.const import DOMAIN as HMIP_DOMAIN
 from custom_components.homematicip_local.control_unit import ControlConfig, ControlUnit
 from homeassistant import config_entries
 from homeassistant.components import ssdp
@@ -70,7 +70,7 @@ def mock_config_entry_v1(entry_data_v1) -> config_entries.ConfigEntry:  # )
     entry = MockConfigEntry(
         entry_id=const.CONFIG_ENTRY_ID,
         version=1,
-        domain=DOMAIN,
+        domain=HMIP_DOMAIN,
         title=const.INSTANCE_NAME,
         data=entry_data_v1,
         options={},
@@ -91,7 +91,7 @@ def mock_config_entry_v2(mock_config_entry_v1, entry_data_v5) -> config_entries.
     entry = MockConfigEntry(
         entry_id=const.CONFIG_ENTRY_ID,
         version=2,
-        domain=DOMAIN,
+        domain=HMIP_DOMAIN,
         title=const.INSTANCE_NAME,
         data=entry_data_v5,
         options={},

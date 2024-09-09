@@ -11,7 +11,7 @@ from pytest_homeassistant_custom_component.common import (
     mock_registry,
 )
 
-from custom_components.homematicip_local import DOMAIN
+from custom_components.homematicip_local import DOMAIN as HMIP_DOMAIN
 from homeassistant.components import automation
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry, entity_registry
@@ -42,7 +42,7 @@ async def no_test_get_actions(
         config_entry_id=config_entry.entry_id,
         connections={(device_registry.CONNECTION_NETWORK_MAC, "12:34:56:AB:CD:EF")},
     )
-    entity_reg.async_get_or_create(DOMAIN, "test", "5678", device_id=device_entry.id)
+    entity_reg.async_get_or_create(HMIP_DOMAIN, "test", "5678", device_id=device_entry.id)
     await async_get_device_automations(hass, "action", device_entry.id)
     # assert_lists_same(actions, expected_actions)
 
@@ -60,7 +60,7 @@ async def no_test_action(hass: HomeAssistant) -> None:
                         "event_type": "test_event_turn_off",
                     },
                     "action": {
-                        "domain": DOMAIN,
+                        "domain": HMIP_DOMAIN,
                         "device_id": "abcdefgh",
                         "entity_id": "homematicip_local.entity",
                         "type": "turn_off",
@@ -72,7 +72,7 @@ async def no_test_action(hass: HomeAssistant) -> None:
                         "event_type": "test_event_turn_on",
                     },
                     "action": {
-                        "domain": DOMAIN,
+                        "domain": HMIP_DOMAIN,
                         "device_id": "abcdefgh",
                         "entity_id": "homematicip_local.entity",
                         "type": "turn_on",
