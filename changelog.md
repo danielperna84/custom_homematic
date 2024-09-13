@@ -27,7 +27,8 @@
 - Use select for paramset_key with actions calls
 - Use selector for rx_mode in service description
 - Use domain alias
-  
+- Improve german descriptions by @baxxy13
+
 # Version 1.65.0 (2024-08-25)
 
 - Bump hahomematic to 2024.8.13
