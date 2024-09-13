@@ -26,6 +26,7 @@
 - Add services get_link_peers, get_link_paramset, put_link_paramset
 - Use select for paramset_key with actions calls
 - Use selector for rx_mode in service description
+- Use domain alias
   
 # Version 1.65.0 (2024-08-25)
 
