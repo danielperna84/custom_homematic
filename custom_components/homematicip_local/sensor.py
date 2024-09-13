@@ -25,12 +25,12 @@ from homeassistant.helpers.typing import StateType
 from . import HomematicConfigEntry
 from .const import TOTAL_SYSVAR, HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
+from .entity_helpers import HmSensorEntityDescription
 from .generic_entity import (
     ATTR_VALUE_STATE,
     HaHomematicGenericEntity,
     HaHomematicGenericSysvarEntity,
 )
-from .entity_helpers import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 

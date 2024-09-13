@@ -127,7 +127,6 @@ class HmEntityType(StrEnum):
     CUSTOM = "custom"
 
 
-
 BLOCK_PLATFORMS: Final[tuple[str, ...]] = ()
 
 
