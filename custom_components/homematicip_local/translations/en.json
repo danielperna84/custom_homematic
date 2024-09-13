@@ -793,10 +793,6 @@
                     "description": "A paramset dictionary.",
                     "name": "Paramset"
                 },
-                "paramset_key": {
-                    "description": "The paramset_key argument.",
-                    "name": "Paramset key"
-                },
                 "receiver_channel_address": {
                     "description": "Channel address for calling a paramset.",
                     "name": "Channel Address"

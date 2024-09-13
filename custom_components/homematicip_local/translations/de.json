@@ -687,7 +687,7 @@
                     "name": "Zentrale"
                 }
             },
-            "name": "Rufe Systemvariablen ab"
+            "name": "Rufe alle Systemvariablen ab"
         },
         "force_device_availability": {
             "description": "Erzwingt die Verfügbarkeit eines Geräts. Dadurch wird der tatsächliche Status überschrieben.",
@@ -704,14 +704,14 @@
             "name": "Geräteverfügbarkeit erzwingen"
         },
         "get_device_value": {
-            "description": "Ruft einen Gerätewert über die RPC-XML-Schnittstelle ab.",
+            "description": "Liest den Wert eines Geräte-Parameters über die XML-RPC-Schnittstelle.",
             "fields": {
                 "channel": {
-                    "description": "Kanal zum Abruf eines Parameters.",
+                    "description": "Kanalnummer zum Abruf des Parameters.",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben Sie eine Homemativ Geräteadresse ein.",
+                    "description": "Geben Sie eine HomeMatic / HmIP Geräteadresse ein.",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
@@ -723,13 +723,13 @@
                     "name": "Parameter"
                 }
             },
-            "name": "Gerätewert abrufen"
+            "name": "Wert eines Geräte-Parameters lesen"
         },
         "get_link_paramset": {
-            "description": "Abruf von getParamset für eine Direktverknüpfung in der RPC-XML-Schnittstelle.",
+            "description": "Liest den Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
             "fields": {
                 "receiver_channel_address": {
-                    "description": "Kanaladresse des Parametersatzes.",
+                    "description": "Kanaladresse des verknüpften Empfängers.",
                     "name": "Empfänger Kanaladresse"
                 },
                 "sender_channel_address": {
@@ -740,10 +740,10 @@
             "name": "Parametersatz einer Direktverknüpfung lesen"
         },
         "get_link_peers": {
-            "description": "Abruf von getLinkPeers in der RPC-XML-Schnittstelle.",
+            "description": "Liest alle Partner einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
             "fields": {
                 "channel": {
-                    "description": "Kanal zum Abruf eines Parametersatzes.",
+                    "description": "Kanal zum Abruf der Direktverküpfungspartner.",
                     "name": "Kanal"
                 },
                 "device_address": {
@@ -755,13 +755,13 @@
                     "name": "Gerät"
                 }
             },
-            "name": "Verbindungsgegenstellen lesen"
+            "name": "Partner einer Direktverknüpfung lesen"
         },
         "get_paramset": {
-            "description": "Abruf von getParamset in der RPC-XML-Schnittstelle.",
+            "description": "Liest den gesamten Parametersatz von einem Gerät oder Kanal über die XML-RPC-Schnittstelle.",
             "fields": {
                 "channel": {
-                    "description": "Kanal zum Abruf eines Parametersatzes.",
+                    "description": "Kanal zum Abruf des Parametersatzes.",
                     "name": "Kanal"
                 },
                 "device_address": {
@@ -773,11 +773,11 @@
                     "name": "Gerät"
                 },
                 "paramset_key": {
-                    "description": "Das paramset_key-Argument für getParamset.",
+                    "description": "Der verwendetet Parametersatz.",
                     "name": "Parametersatz-Schlüssel"
                 }
             },
-            "name": "Parametersatz lesen"
+            "name": "Parametersatz von einem Gerät oder Kanal lesen"
         },
         "light_set_on_time": {
             "description": "Stellt die Einschaltdauer für ein Licht ein. Muss von einem light.turn_on gefolgt werden.",
@@ -790,15 +790,11 @@
             "name": "Stellt die Einschaltdauer eines Lichts ein"
         },
         "put_link_paramset": {
-            "description": "Aufruf von putParamset einer Direktverknüpfung auf der RPC-XML-Schnittstelle.",
+            "description": "Schreibt einen Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
             "fields": {
                 "paramset": {
                     "description": "Ein Paramset-Wörterbuch.",
-                    "name": "\"Parametersatz"
-                },
-                "paramset_key": {
-                    "description": "Das paramset_key-Argument für putParamset.",
-                    "name": "Parametersatzschlüssel"
+                    "name": "Parametersatz"
                 },
                 "receiver_channel_address": {
                     "description": "Kanaladresse des verknüpften Empfängers.",
@@ -816,7 +812,7 @@
             "name": "Parametersatz einer Direktverknüpfung schreiben"
         },
         "put_paramset": {
-            "description": "Aufruf von putParamset auf der RPC-XML-Schnittstelle.",
+            "description": "Schreibt einen Parametersatz auf ein Gerät oder Kanal über die XML-RPC-Schnittstelle.",
             "fields": {
                 "channel": {
                     "description": "Kanal des Parametersatzes.",
@@ -832,10 +828,10 @@
                 },
                 "paramset": {
                     "description": "Ein Paramset-Wörterbuch.",
-                    "name": "\"Parametersatz"
+                    "name": "Parametersatz"
                 },
                 "paramset_key": {
-                    "description": "Das paramset_key-Argument für putParamset.",
+                    "description": "Der verwendete Parametersatz.",
                     "name": "Parametersatzschlüssel"
                 },
                 "rx_mode": {
@@ -847,7 +843,7 @@
                     "name": "Warte auf die Rückmeldung"
                 }
             },
-            "name": "Parametersatz schreiben"
+            "name": "Parametersatz eines Gerätes oder Kanals schreiben"
         },
         "set_cover_combined_position": {
             "description": "Bewegt eine Jalousie in eine bestimmte Position und Neigungsposition.",
@@ -868,7 +864,7 @@
             "name": "Stellt die kombinierte Position der Jalousie ein"
         },
         "set_device_value": {
-            "description": "Schreibe einen Geräteparameter über die XML-RPC-Schnittstelle.",
+            "description": "Schreibt den Wert eines Geräteparameters über die XML-RPC-Schnittstelle.",
             "fields": {
                 "channel": {
                     "description": "Kanal des Parameters.",
@@ -903,10 +899,10 @@
                     "name": "Warte auf die Rückmeldung"
                 }
             },
-            "name": "Gerätewert schreiben"
+            "name": "Wert eines Geräteparameters schreiben"
         },
         "set_install_mode": {
-            "description": "Versetzen Sie eine RPC-XML-Schnittstelle in den Installationsmodus.",
+            "description": "Aktiviert den Anlernmodus auf der Zentrale über die XML-RPC-Schnittstelle.",
             "fields": {
                 "address": {
                     "description": "Adresse des Homematic-Gerätes zum anlernen.",
@@ -925,17 +921,17 @@
                     "name": "Dauer"
                 }
             },
-            "name": "Legt den Installationsmodus fest"
+            "name": "Anlernmodus auf der Homematic-Zentrale aktivieren"
         },
         "set_variable_value": {
-            "description": "Schreiben Sie den Wert einer Homematic Systemvariable.",
+            "description": "Schreibt einen Wert in eine Homematic Systemvariable.",
             "fields": {
                 "entry_id": {
                     "description": "Name der Homematic-Zentrale, um den Wert zu schreiben.",
                     "name": "Zentrale"
                 },
                 "name": {
-                    "description": "Name der zu schreibenden Variable.",
+                    "description": "Name der zu beschreibenden Systemvariable.",
                     "name": "Name"
                 },
                 "value": {
@@ -943,7 +939,7 @@
                     "name": "Wert"
                 }
             },
-            "name": "Variablenwert schreiben"
+            "name": "Wert einer Systemvariable schreiben"
         },
         "switch_set_on_time": {
             "description": "Stellt die Einschaltdauer eines Schalters ein. Muss von einem switch.turn_on gefolgt werden.",

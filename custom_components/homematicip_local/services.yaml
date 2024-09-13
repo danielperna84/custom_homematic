@@ -83,7 +83,7 @@ get_link_peers:
 get_link_paramset:
   fields:
     sender_channel_address:
-      example: "0008789453:3"
+      example: "0008789453:1"
       required: true
       selector:
         text:
@@ -217,7 +217,7 @@ set_install_mode:
 put_link_paramset:
   fields:
     sender_channel_address:
-      example: "0008789453:3"
+      example: "0008789453:1"
       required: true
       selector:
         text:
@@ -228,7 +228,7 @@ put_link_paramset:
         text:
     paramset:
       required: true
-      example: '{"WEEK_PROGRAM_POINTER": 1}'
+      example: '{"SHORT_ON_TIME_FACTOR": 3}'
       selector:
         object:
     rx_mode:
@@ -267,7 +267,7 @@ put_paramset:
             - "VALUES"
     paramset:
       required: true
-      example: '{"WEEK_PROGRAM_POINTER": 1}'
+      example: '{"CHANNEL_OPERATION_MODE": 0}'
       selector:
         object:
     wait_for_callback:
