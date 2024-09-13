@@ -5,7 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 import dataclasses
 import logging
+from dataclasses import dataclass
 from typing import Final
+from enum import StrEnum
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -13,12 +15,13 @@ from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.support import element_matches_key
 
-from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntityDescription
+from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.lock import LockEntityDescription
-from homeassistant.components.number import NumberDeviceClass
+from homeassistant.components.number import NumberDeviceClass, NumberEntityDescription
 from homeassistant.components.select import SelectEntityDescription
-from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass, SensorEntityDescription
 from homeassistant.components.siren import SirenEntityDescription
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
@@ -45,15 +48,8 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.typing import UNDEFINED, UndefinedType
 
-from .const import HmNameSource
 from .support import (
-    HmBinarySensorEntityDescription,
-    HmButtonEntityDescription,
-    HmEntityDescription,
     HmGenericEntity,
-    HmNumberEntityDescription,
-    HmSelectEntityDescription,
-    HmSensorEntityDescription,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -61,6 +57,49 @@ _LOGGER = logging.getLogger(__name__)
 CONCENTRATION_CM3: Final = "1/cm\u00b3"  # HmIP-SFD
 CONCENTRATION_GRAMS_PER_CUBIC_METER: Final = "g/m³"  # HB-UNI-Sensor-THPD-BME280
 LENGTH_MICROMETER: Final = "\u00b5m"  # HmIP-SFD
+
+
+class HmNameSource(StrEnum):
+    """Enum to define the source of a translation."""
+
+    DEVICE_CLASS = "device_class"
+    ENTITY_NAME = "entity_name"
+    PARAMETER = "parameter"
+
+@dataclass(frozen=True, kw_only=True)
+class HmEntityDescription:
+    """Base class describing Homematic(IP) Local entities."""
+
+    name_source: HmNameSource = HmNameSource.PARAMETER
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmNumberEntityDescription(HmEntityDescription, NumberEntityDescription):
+    """Class describing Homematic(IP) Local number entities."""
+
+    multiplier: int | None = None
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmSelectEntityDescription(HmEntityDescription, SelectEntityDescription):
+    """Class describing Homematic(IP) Local select entities."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
+    """Class describing Homematic(IP) Local sensor entities."""
+
+    multiplier: int | None = None
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmBinarySensorEntityDescription(HmEntityDescription, BinarySensorEntityDescription):
+    """Class describing Homematic(IP) Local binary sensor entities."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class HmButtonEntityDescription(HmEntityDescription, ButtonEntityDescription):
+    """Class describing Homematic(IP) Local button entities."""
 
 
 _NUMBER_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
@@ -96,6 +135,8 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
     ),
 }
 
+
+
 _SELECT_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "HEATING_COOLING": HmSelectEntityDescription(
         key="HEATING_COOLING",
@@ -104,6 +145,9 @@ _SELECT_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         translation_key="heating_cooling",
     )
 }
+
+
+
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "AIR_PRESSURE": HmSensorEntityDescription(
@@ -519,6 +563,8 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: Mapping[str, EntityDescription] = {
     ),
 }
 
+
+
 _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "ALARMSTATE": HmBinarySensorEntityDescription(
         key="ALARMSTATE",
@@ -656,6 +702,7 @@ _BINARY_SENSOR_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
         entity_registry_enabled_default=False,
     ),
 }
+
 
 _BUTTOM_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "RESET_MOTION": HmButtonEntityDescription(
@@ -928,3 +975,4 @@ def _param_in_list(params: str | tuple[str, ...], parameter: str) -> bool:
             if parameter.lower() == device.lower():
                 return True
     return False
+

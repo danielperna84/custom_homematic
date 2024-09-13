@@ -11,7 +11,7 @@ from pytest_homeassistant_custom_component.common import (
     mock_registry,
 )
 
-from custom_components.homematicip_local import DOMAIN
+from custom_components.homematicip_local import DOMAIN as HMIP_DOMAIN
 from homeassistant.components import automation
 from homeassistant.const import STATE_OFF, STATE_ON
 from homeassistant.helpers import device_registry
@@ -44,7 +44,7 @@ async def no_test_get_triggers(hass, device_reg, entity_reg):
         config_entry_id=config_entry.entry_id,
         connections={(device_registry.CONNECTION_NETWORK_MAC, "12:34:56:AB:CD:EF")},
     )
-    entity_reg.async_get_or_create(DOMAIN, "test", "5678", device_id=device_entry.id)
+    entity_reg.async_get_or_create(HMIP_DOMAIN, "test", "5678", device_id=device_entry.id)
     await async_get_device_automations(hass, "trigger", device_entry.id)
     # assert_lists_same(triggers, expected_triggers)
 
@@ -55,13 +55,13 @@ async def no_test_if_fires_on_state_change(hass, calls):
 
     assert await async_setup_component(
         hass,
-        automation.DOMAIN,
+        automation.HMIP_DOMAIN,
         {
-            automation.DOMAIN: [
+            automation.HMIP_DOMAIN: [
                 {
                     "trigger": {
                         "platform": "device",
-                        "domain": DOMAIN,
+                        "domain": HMIP_DOMAIN,
                         "device_id": "",
                         "entity_id": "homematicip_local.entity",
                         "type": "turned_on",
@@ -81,7 +81,7 @@ async def no_test_if_fires_on_state_change(hass, calls):
                 {
                     "trigger": {
                         "platform": "device",
-                        "domain": DOMAIN,
+                        "domain": HMIP_DOMAIN,
                         "device_id": "",
                         "entity_id": "homematicip_local.entity",
                         "type": "turned_off",

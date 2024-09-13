@@ -23,7 +23,7 @@ from .generic_entity import (
     HaHomematicGenericEntity,
     HaHomematicGenericSysvarEntity,
 )
-from .support import HmNumberEntityDescription
+from .entity_helpers import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 

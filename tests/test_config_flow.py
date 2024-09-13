@@ -22,7 +22,7 @@ from custom_components.homematicip_local.config_flow import (
     _get_instance_name,
     _get_serial,
 )
-from custom_components.homematicip_local.const import CONF_TLS, DOMAIN
+from custom_components.homematicip_local.const import CONF_TLS, DOMAIN as HMIP_DOMAIN
 from homeassistant import config_entries
 from homeassistant.components import ssdp
 from homeassistant.const import CONF_HOST, CONF_PORT
@@ -52,7 +52,7 @@ async def async_check_form(
         interface_data = {}
 
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
+        HMIP_DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
@@ -85,7 +85,7 @@ async def async_check_form(
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == DOMAIN
+        assert result2["handler"] == HMIP_DOMAIN
         assert result2["step_id"] == "interface"
 
         next(
@@ -101,7 +101,7 @@ async def async_check_form(
         await hass.async_block_till_done()
 
     assert result3["type"] == FlowResultType.CREATE_ENTRY
-    assert result3["handler"] == DOMAIN
+    assert result3["handler"] == HMIP_DOMAIN
     assert result3["title"] == const.INSTANCE_NAME
     data = result3["data"]
     assert data[CONF_INSTANCE_NAME] == const.INSTANCE_NAME
@@ -291,7 +291,7 @@ async def test_form_tls(hass: HomeAssistant) -> None:
 async def test_form_invalid_auth(hass: HomeAssistant) -> None:
     """Test we handle invalid auth."""
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
+        HMIP_DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
@@ -318,7 +318,7 @@ async def test_form_invalid_auth(hass: HomeAssistant) -> None:
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == DOMAIN
+        assert result2["handler"] == HMIP_DOMAIN
         assert result2["step_id"] == "interface"
 
         next(
@@ -389,7 +389,7 @@ async def test_options_form_invalid_auth(
 async def test_form_invalid_password(hass: HomeAssistant) -> None:
     """Test we handle invalid auth."""
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
+        HMIP_DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
@@ -416,7 +416,7 @@ async def test_form_invalid_password(hass: HomeAssistant) -> None:
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == DOMAIN
+        assert result2["handler"] == HMIP_DOMAIN
         assert result2["step_id"] == "interface"
 
         next(
@@ -487,7 +487,7 @@ async def test_options_form_invalid_password(
 async def test_form_cannot_connect(hass: HomeAssistant) -> None:
     """Test we handle cannot connect error."""
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
+        HMIP_DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] is None
@@ -514,7 +514,7 @@ async def test_form_cannot_connect(hass: HomeAssistant) -> None:
         await hass.async_block_till_done()
 
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == DOMAIN
+        assert result2["handler"] == HMIP_DOMAIN
         assert result2["step_id"] == "interface"
 
         next(
@@ -585,7 +585,7 @@ async def test_flow_hassio_discovery(
     """Test hassio discovery flow works."""
 
     result = await hass.config_entries.flow.async_init(
-        DOMAIN,
+        HMIP_DOMAIN,
         data=discovery_info,
         context={"source": config_entries.SOURCE_SSDP},
     )
@@ -625,7 +625,7 @@ async def test_flow_hassio_discovery(
         )
         await hass.async_block_till_done()
         assert result2["type"] == FlowResultType.FORM
-        assert result2["handler"] == DOMAIN
+        assert result2["handler"] == HMIP_DOMAIN
         assert result2["step_id"] == "interface"
 
         next(
@@ -641,7 +641,7 @@ async def test_flow_hassio_discovery(
         await hass.async_block_till_done()
 
     assert result3["type"] == FlowResultType.CREATE_ENTRY
-    assert result3["handler"] == DOMAIN
+    assert result3["handler"] == HMIP_DOMAIN
     assert result3["title"] == const.INSTANCE_NAME
     data = result3["data"]
     assert data[CONF_INSTANCE_NAME] == const.INSTANCE_NAME
@@ -658,7 +658,7 @@ async def test_hassio_discovery_existing_configuration(
     """Test abort on an existing config entry."""
     mock_config_entry_v2.add_to_hass(hass)
     result = await hass.config_entries.flow.async_init(
-        DOMAIN,
+        HMIP_DOMAIN,
         data=discovery_info,
         context={"source": config_entries.SOURCE_SSDP},
     )
