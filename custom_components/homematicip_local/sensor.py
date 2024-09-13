@@ -30,7 +30,7 @@ from .generic_entity import (
     HaHomematicGenericEntity,
     HaHomematicGenericSysvarEntity,
 )
-from .support import HmSensorEntityDescription
+from .entity_helpers import HmSensorEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 

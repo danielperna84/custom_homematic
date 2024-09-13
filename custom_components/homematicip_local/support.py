@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
 import logging
 from typing import Any, TypeAlias, TypeVar, cast
 
@@ -14,11 +13,6 @@ from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 import voluptuous as vol
 
-from homeassistant.components.binary_sensor import BinarySensorEntityDescription
-from homeassistant.components.button import ButtonEntityDescription
-from homeassistant.components.number import NumberEntityDescription
-from homeassistant.components.select import SelectEntityDescription
-from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.const import CONF_TYPE
 from homeassistant.exceptions import HomeAssistantError
 
@@ -32,7 +26,6 @@ from .const import (
     EVENT_NAME,
     EVENT_TITLE,
     EVENT_UNAVAILABLE,
-    HmNameSource,
 )
 
 # Union for entity types used as base class for entities
@@ -113,42 +106,6 @@ def get_device_address_at_interface_from_identifiers(
         if IDENTIFIER_SEPARATOR in identifier[1]:
             return cast(tuple[str, str], identifier[1].split(IDENTIFIER_SEPARATOR))
     return None
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmEntityDescription:
-    """Base class describing Homematic(IP) Local entities."""
-
-    name_source: HmNameSource = HmNameSource.PARAMETER
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmBinarySensorEntityDescription(HmEntityDescription, BinarySensorEntityDescription):
-    """Class describing Homematic(IP) Local binary sensor entities."""
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmButtonEntityDescription(HmEntityDescription, ButtonEntityDescription):
-    """Class describing Homematic(IP) Local button entities."""
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmNumberEntityDescription(HmEntityDescription, NumberEntityDescription):
-    """Class describing Homematic(IP) Local number entities."""
-
-    multiplier: int | None = None
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmSelectEntityDescription(HmEntityDescription, SelectEntityDescription):
-    """Class describing Homematic(IP) Local select entities."""
-
-
-@dataclass(frozen=True, kw_only=True)
-class HmSensorEntityDescription(HmEntityDescription, SensorEntityDescription):
-    """Class describing Homematic(IP) Local sensor entities."""
-
-    multiplier: int | None = None
 
 
 def get_hm_entity(hm_entity: T) -> T:
