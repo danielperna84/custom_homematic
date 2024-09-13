@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import dataclasses
-import logging
 from dataclasses import dataclass
-from typing import Final
 from enum import StrEnum
+import logging
+from typing import Final
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom.entity import CustomEntity
@@ -15,13 +15,20 @@ from hahomematic.platforms.generic.entity import GenericEntity
 from hahomematic.platforms.hub.entity import GenericHubEntity
 from hahomematic.support import element_matches_key
 
-from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntityDescription
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntityDescription,
+)
 from homeassistant.components.button import ButtonEntityDescription
 from homeassistant.components.cover import CoverDeviceClass, CoverEntityDescription
 from homeassistant.components.lock import LockEntityDescription
 from homeassistant.components.number import NumberDeviceClass, NumberEntityDescription
 from homeassistant.components.select import SelectEntityDescription
-from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass, SensorEntityDescription
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntityDescription,
+    SensorStateClass,
+)
 from homeassistant.components.siren import SirenEntityDescription
 from homeassistant.components.switch import SwitchDeviceClass, SwitchEntityDescription
 from homeassistant.const import (
@@ -48,9 +55,7 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.typing import UNDEFINED, UndefinedType
 
-from .support import (
-    HmGenericEntity,
-)
+from .support import HmGenericEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +70,7 @@ class HmNameSource(StrEnum):
     DEVICE_CLASS = "device_class"
     ENTITY_NAME = "entity_name"
     PARAMETER = "parameter"
+
 
 @dataclass(frozen=True, kw_only=True)
 class HmEntityDescription:
@@ -136,7 +142,6 @@ _NUMBER_DESCRIPTIONS_BY_DEVICE_AND_PARAM: Mapping[
 }
 
 
-
 _SELECT_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "HEATING_COOLING": HmSelectEntityDescription(
         key="HEATING_COOLING",
@@ -145,8 +150,6 @@ _SELECT_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription]
         translation_key="heating_cooling",
     )
 }
-
-
 
 
 _SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
@@ -564,7 +567,6 @@ _SENSOR_DESCRIPTIONS_BY_UNIT: Mapping[str, EntityDescription] = {
 }
 
 
-
 _BINARY_SENSOR_DESCRIPTIONS_BY_PARAM: Mapping[str | tuple[str, ...], EntityDescription] = {
     "ALARMSTATE": HmBinarySensorEntityDescription(
         key="ALARMSTATE",
@@ -975,4 +977,3 @@ def _param_in_list(params: str | tuple[str, ...], parameter: str) -> bool:
             if parameter.lower() == device.lower():
                 return True
     return False
-

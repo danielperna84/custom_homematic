@@ -18,12 +18,12 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import HomematicConfigEntry
 from .const import HmEntityState
 from .control_unit import ControlUnit, signal_new_hm_entity
+from .entity_helpers import HmNumberEntityDescription
 from .generic_entity import (
     ATTR_VALUE_STATE,
     HaHomematicGenericEntity,
     HaHomematicGenericSysvarEntity,
 )
-from .entity_helpers import HmNumberEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 

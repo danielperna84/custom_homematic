@@ -5,10 +5,12 @@
 - Use service get_link_paramset to read direct connections
 
 ## What's Changed
-- Bump hahomematic to 2024.9.5
+- Bump hahomematic to 2024.9.6
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
+  - Add missing PayloadMixin
   - Add paramset_key to entity_key
+  - Adjust payload and path
   - Avoid permanent cache save on remove device
   - Check rx_mode
   - Do not create update entities that are not updatable (manually remove obsolete update entities)
@@ -18,16 +20,17 @@
   - Mark only level as relevant entity for DALI
   - Only try device update refresh if device is updatable
   - Refactor update entity
+  - Rename value_property to state_property
   - Small definition fix for DALI
   - Switch typing of paramset_key from str to ParamsetKey
   - Use TypedDict for device_description
   - Use TypedDict for parameter_data
   - Use validator for local schema
 - Add services get_link_peers, get_link_paramset, put_link_paramset
+- Improve german descriptions by @baxxy13
+- Use domain alias
 - Use select for paramset_key with actions calls
 - Use selector for rx_mode in service description
-- Use domain alias
-- Improve german descriptions by @baxxy13
 
 # Version 1.65.0 (2024-08-25)
 
