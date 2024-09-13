@@ -168,8 +168,8 @@ class BaseControlUnit:
     def _create_central(self) -> CentralUnit:
         """Create the central unit for ccu callbacks."""
         interface_configs: set[InterfaceConfig] = set()
-        for interface_name in self.config.interface_config:
-            interface = self.config.interface_config[interface_name]
+        for interface_name in self._config.interface_config:
+            interface = self._config.interface_config[interface_name]
             interface_configs.add(
                 InterfaceConfig(
                     central_name=self._instance_name,
@@ -183,24 +183,24 @@ class BaseControlUnit:
         return CentralConfig(
             name=self._instance_name,
             storage_folder=get_storage_folder(self._hass),
-            host=self.config.host,
-            username=self.config.username,
-            password=self.config.password,
+            host=self._config.host,
+            username=self._config.username,
+            password=self._config.password,
             central_id=central_id,
-            tls=self.config.tls,
-            verify_tls=self.config.verify_tls,
+            tls=self._config.tls,
+            verify_tls=self._config.verify_tls,
             client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self.config.json_port,
-            callback_host=self.config.callback_host
-            if self.config.callback_host != IP_ANY_V4
+            json_port=self._config.json_port,
+            callback_host=self._config.callback_host
+            if self._config.callback_host != IP_ANY_V4
             else None,
-            callback_port=self.config.callback_port
-            if self.config.callback_port != PORT_ANY
+            callback_port=self._config.callback_port
+            if self._config.callback_port != PORT_ANY
             else None,
             default_callback_port=self._default_callback_port,
             interface_configs=interface_configs,
             start_direct=self._start_direct,
-            un_ignore_list=self.config.un_ignore,
+            un_ignore_list=self._config.un_ignore,
         ).create_central()
 
 
