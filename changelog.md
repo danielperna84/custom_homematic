@@ -5,7 +5,8 @@
 - Use service get_link_paramset to read direct connections
 
 ## What's Changed
-- Bump hahomematic to 2024.9.6
+- Bump hahomematic to 2024.9.7
+  - Add bind_collector to all relevant methods with option to disable it
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
   - Add missing PayloadMixin
@@ -15,8 +16,10 @@
   - Check rx_mode
   - Do not create update entities that are not updatable (manually remove obsolete update entities)
   - Ensure only one load/save of cache file at time
+  - Identify bind_collector annotated methods
   - Improve paramset key check
   - Load all paramsets
+  - Mark externally accessed services with service_call if bind_collector is not appropriate
   - Mark only level as relevant entity for DALI
   - Only try device update refresh if device is updatable
   - Refactor update entity
