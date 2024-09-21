@@ -89,14 +89,14 @@ class HaHomematicEvent(EventEntity):
         self._hm_channel_events = hm_channel_events
         self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(".", "_")
 
-        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel_unique_id}"
+        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel.unique_id}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
         )
         self._attr_extra_state_attributes = {
             EVENT_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
-            EVENT_ADDRESS: self._hm_primary_entity.channel_address,
-            EVENT_MODEL: self._hm_primary_entity.device.device_type,
+            EVENT_ADDRESS: self._hm_primary_entity.channel.address,
+            EVENT_MODEL: self._hm_primary_entity.device.model,
         }
         self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug(

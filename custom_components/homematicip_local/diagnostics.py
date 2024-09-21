@@ -38,7 +38,7 @@ async def async_get_config_entry_diagnostics(
 
 def get_devices_per_type_stats(central: CentralUnit) -> tuple[str, ...]:
     """Return the central statistics for devices by type."""
-    return tuple(sorted({d.device_type for d in central.devices}))
+    return tuple(sorted({d.model for d in central.devices}))
 
 
 def get_entities_by_platform_stats(

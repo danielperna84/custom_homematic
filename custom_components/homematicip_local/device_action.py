@@ -62,7 +62,7 @@ async def async_get_actions(hass: HomeAssistant, device_id: str) -> list[dict[st
                         CONF_DOMAIN: DOMAIN,
                         CONF_DEVICE_ID: device_id,
                         CONF_TYPE: entity.parameter.lower(),
-                        CONF_SUBTYPE: entity.channel_no,
+                        CONF_SUBTYPE: entity.channel.no,
                     }
                     actions.append(action)
 
@@ -102,6 +102,6 @@ async def async_call_action_from_config(
                         continue
                     if (
                         entity.parameter == action_type.upper()
-                        and entity.channel_no == action_subtype
+                        and entity.channel.no == action_subtype
                     ):
                         await entity.send_value(True)
