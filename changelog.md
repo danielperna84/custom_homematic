@@ -5,7 +5,7 @@
 - Use service get_link_paramset to read direct connections
 
 ## What's Changed
-- Bump hahomematic to 2024.9.8
+- Bump hahomematic to 2024.9.9
   - Add bind_collector to all relevant methods with option to disable it
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
@@ -29,6 +29,7 @@
   - Shorten names
   - Small definition fix for DALI
   - Switch typing of paramset_key from str to ParamsetKey
+  - Use channel instead of channel_addresses
   - Use TypedDict for device_description
   - Use TypedDict for parameter_data
   - Use validator for local schema
