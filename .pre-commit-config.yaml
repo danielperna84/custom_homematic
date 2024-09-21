@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.6.5pur -r requirements_test.txt
+    rev: v0.6.6
     hooks:
       - id: ruff
         args:

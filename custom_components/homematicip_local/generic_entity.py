@@ -74,9 +74,9 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, hm_device.identifier)},
             manufacturer=hm_device.manufacturer,
-            model=hm_device.device_type,
+            model=hm_device.model,
             name=hm_device.name,
-            serial_number=hm_device.device_address,
+            serial_number=hm_device.address,
             sw_version=hm_device.firmware,
             suggested_area=hm_device.room,
             # Link to the homematic control unit.
@@ -109,8 +109,8 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         """Return the static attributes of the generic entity."""
         attributes: dict[str, Any] = {
             ATTR_INTERFACE_ID: self._hm_entity.device.interface_id,
-            ATTR_ADDRESS: self._hm_entity.channel_address,
-            ATTR_MODEL: self._hm_entity.device.device_type,
+            ATTR_ADDRESS: self._hm_entity.channel.address,
+            ATTR_MODEL: self._hm_entity.device.model,
         }
         if isinstance(self._hm_entity, GenericEntity):
             attributes[ATTR_ENTITY_TYPE] = HmEntityType.GENERIC.value

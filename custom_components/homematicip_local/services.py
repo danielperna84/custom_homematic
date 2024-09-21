@@ -379,7 +379,7 @@ async def _async_service_export_device_definition(
         _LOGGER.debug(
             "Called export_device_definition: %s, %s",
             hm_device.name,
-            hm_device.device_address,
+            hm_device.address,
         )
 
 
@@ -392,7 +392,7 @@ async def _async_service_force_device_availability(
         _LOGGER.debug(
             "Called force_device_availability: %s, %s",
             hm_device.name,
-            hm_device.device_address,
+            hm_device.address,
         )
 
 
@@ -407,7 +407,7 @@ async def _async_service_get_device_value(
         try:
             if (
                 value := await hm_device.client.get_value(
-                    channel_address=f"{hm_device.device_address}:{channel_no}",
+                    channel_address=f"{hm_device.address}:{channel_no}",
                     paramset_key=ParamsetKey.VALUES,
                     parameter=parameter,
                 )
@@ -426,9 +426,7 @@ async def _async_service_get_link_peers(
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
-            f"{hm_device.device_address}:{channel_no}"
-            if channel_no is not None
-            else hm_device.device_address
+            f"{hm_device.address}:{channel_no}" if channel_no is not None else hm_device.address
         )
         try:
             return cast(
@@ -470,9 +468,7 @@ async def _async_service_get_paramset(
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         address = (
-            f"{hm_device.device_address}:{channel_no}"
-            if channel_no is not None
-            else hm_device.device_address
+            f"{hm_device.address}:{channel_no}" if channel_no is not None else hm_device.address
         )
         try:
             return dict(
@@ -512,7 +508,7 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         await hm_device.client.set_value(
-            channel_address=f"{hm_device.device_address}:{channel_no}",
+            channel_address=f"{hm_device.address}:{channel_no}",
             paramset_key=ParamsetKey.VALUES,
             parameter=parameter,
             value=value,
@@ -592,9 +588,7 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
         channel_address = (
-            f"{hm_device.device_address}:{channel_no}"
-            if channel_no is not None
-            else hm_device.device_address
+            f"{hm_device.address}:{channel_no}" if channel_no is not None else hm_device.address
         )
         await hm_device.client.put_paramset(
             channel_address=channel_address,

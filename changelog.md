@@ -1,11 +1,11 @@
-# Version 1.66.0 (2024-09-05)
+# Version 1.66.0 (2024-09-21)
 
 ## Breaking change:
 - Use service put_link_paramset to manipulate direct connections
 - Use service get_link_paramset to read direct connections
 
 ## What's Changed
-- Bump hahomematic to 2024.9.7
+- Bump hahomematic to 2024.9.9
   - Add bind_collector to all relevant methods with option to disable it
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
@@ -22,10 +22,14 @@
   - Mark externally accessed services with service_call if bind_collector is not appropriate
   - Mark only level as relevant entity for DALI
   - Only try device update refresh if device is updatable
+  - Refactor device/entity to extract channel
   - Refactor update entity
   - Rename value_property to state_property
+  - Replace device_type by model
+  - Shorten names
   - Small definition fix for DALI
   - Switch typing of paramset_key from str to ParamsetKey
+  - Use channel instead of channel_addresses
   - Use TypedDict for device_description
   - Use TypedDict for parameter_data
   - Use validator for local schema

@@ -280,7 +280,7 @@ class ControlUnit(BaseControlUnit):
                 },
                 manufacturer=Manufacturer.EQ3,
                 name=virtual_remote.name,
-                model=virtual_remote.device_type,
+                model=virtual_remote.model,
                 sw_version=virtual_remote.firmware,
                 # Link to the homematic control unit.
                 via_device=cast(tuple[str, str], self._central.name),

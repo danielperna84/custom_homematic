@@ -891,7 +891,7 @@ def _find_entity_description(
 ) -> EntityDescription | None:
     """Find the entity_description for platform."""
     if isinstance(hm_entity, GenericEntity):
-        if entity_desc := _get_entity_description_by_device_type_and_param(hm_entity=hm_entity):
+        if entity_desc := _get_entity_description_by_model_and_param(hm_entity=hm_entity):
             return entity_desc
 
         if entity_desc := _get_entity_description_by_param(hm_entity=hm_entity):
@@ -905,7 +905,7 @@ def _find_entity_description(
             return entity_desc
 
     if isinstance(hm_entity, CustomEntity):
-        if entity_desc := _get_entity_description_by_device_type(hm_entity=hm_entity):
+        if entity_desc := _get_entity_description_by_model(hm_entity=hm_entity):
             return entity_desc
 
         if entity_desc := _get_entity_description_by_postfix(hm_entity=hm_entity):
@@ -914,10 +914,10 @@ def _find_entity_description(
     return _DEFAULT_PLATFORM_DESCRIPTION.get(hm_entity.platform)
 
 
-def _get_entity_description_by_device_type_and_param(
+def _get_entity_description_by_model_and_param(
     hm_entity: GenericEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter."""
+    """Get entity_description by model and parameter."""
     if platform_device_and_param_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE_AND_PARAM.get(  # noqa: E501
         hm_entity.platform
     ):
@@ -925,7 +925,7 @@ def _get_entity_description_by_device_type_and_param(
             if data[1] == hm_entity.parameter and (
                 element_matches_key(
                     search_elements=data[0],
-                    compare_with=hm_entity.device.device_type,
+                    compare_with=hm_entity.device.model,
                 )
             ):
                 return entity_desc
@@ -935,7 +935,7 @@ def _get_entity_description_by_device_type_and_param(
 def _get_entity_description_by_param(
     hm_entity: GenericEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter."""
+    """Get entity_description by model and parameter."""
     if platform_param_descriptions := _ENTITY_DESCRIPTION_BY_PARAM.get(hm_entity.platform):
         for params, entity_desc in platform_param_descriptions.items():
             if _param_in_list(params=params, parameter=hm_entity.parameter):
@@ -946,7 +946,7 @@ def _get_entity_description_by_param(
 def _get_entity_description_by_postfix(
     hm_entity: CustomEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type and parameter."""
+    """Get entity_description by model and parameter."""
     if platform_postfix_descriptions := _ENTITY_DESCRIPTION_BY_POSTFIX.get(hm_entity.platform):
         for postfix, entity_desc in platform_postfix_descriptions.items():
             if _param_in_list(params=postfix, parameter=hm_entity.entity_name_postfix):
@@ -954,15 +954,15 @@ def _get_entity_description_by_postfix(
     return None
 
 
-def _get_entity_description_by_device_type(
+def _get_entity_description_by_model(
     hm_entity: HmGenericEntity,
 ) -> EntityDescription | None:
-    """Get entity_description by device_type."""
+    """Get entity_description by model."""
     if platform_device_descriptions := _ENTITY_DESCRIPTION_BY_DEVICE.get(hm_entity.platform):
         for devices, entity_desc in platform_device_descriptions.items():
             if element_matches_key(
                 search_elements=devices,
-                compare_with=hm_entity.device.device_type,
+                compare_with=hm_entity.device.model,
             ):
                 return entity_desc
     return None
