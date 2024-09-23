@@ -38,6 +38,7 @@ from hahomematic.const import (
     ParamsetKey,
     SystemInformation,
 )
+from hahomematic.exceptions import BaseHomematicException
 from hahomematic.platforms.entity import CallbackEntity
 from hahomematic.support import check_config
 
@@ -123,8 +124,13 @@ class BaseControlUnit:
             "Starting central unit %s",
             self._instance_name,
         )
-        await self._central.start()
-        _LOGGER.info("Started central unit for %s", self._instance_name)
+        try:
+            await self._central.start()
+            _LOGGER.info("Started central unit for %s", self._instance_name)
+        except BaseHomematicException:
+            _LOGGER.warning(
+                "START_CENTRAL: Failed to start central unit for %s", self._instance_name
+            )
 
     async def stop_central(self, *args: Any) -> None:
         """Stop the control unit."""
