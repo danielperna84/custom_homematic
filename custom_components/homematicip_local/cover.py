@@ -166,7 +166,7 @@ class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], Cove
         self, position: int, tilt_position: int | None = None, wait_for_callback: int | None = None
     ) -> None:
         """Move the cover to a specific position incl. tilt."""
-        collector = CallParameterCollector(device=self._hm_entity.device)
+        collector = CallParameterCollector(client=self._hm_entity.device.client)
         await self._hm_entity.set_position(
             position=position, tilt_position=tilt_position, collector=collector
         )

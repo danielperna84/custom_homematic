@@ -12,6 +12,7 @@ from hahomematic.const import (
     EVENT_INTERFACE_ID,
     HmPlatform,
 )
+from hahomematic.platforms.device import HmChannel, HmDevice
 from hahomematic.platforms.event import GenericEvent
 
 from homeassistant.components.event import EventDeviceClass, EventEntity
@@ -38,7 +39,7 @@ async def async_setup_entry(
     control_unit: ControlUnit = entry.runtime_data
 
     @callback
-    def async_add_event(hm_entities: tuple[list[GenericEvent], ...]) -> None:
+    def async_add_event(hm_entities: tuple[tuple[GenericEvent, ...], ...]) -> None:
         """Add event from Homematic(IP) Local."""
         _LOGGER.debug("ASYNC_ADD_EVENT: Adding %i entities", len(hm_entities))
 
@@ -61,9 +62,7 @@ async def async_setup_entry(
 
     for event_type in ENTITY_EVENTS:
         async_add_event(
-            hm_entities=control_unit.central.get_channel_events(
-                event_type=event_type, registered=False
-            )
+            hm_entities=control_unit.central.get_events(event_type=event_type, registered=False)
         )
 
 
@@ -80,40 +79,41 @@ class HaHomematicEvent(EventEntity):
     def __init__(
         self,
         control_unit: ControlUnit,
-        hm_channel_events: list[GenericEvent],
+        hm_channel_events: tuple[GenericEvent, ...],
     ) -> None:
         """Initialize the event."""
         self._cu: ControlUnit = control_unit
         self._attr_event_types = [event.parameter.lower() for event in hm_channel_events]
         self._hm_primary_entity: GenericEvent = hm_channel_events[0]
+        self._hm_channel: HmChannel = hm_channel_events[0].channel
+        self._hm_device: HmDevice = hm_channel_events[0].channel.device
         self._hm_channel_events = hm_channel_events
         self._attr_translation_key = self._hm_primary_entity.event_type.value.replace(".", "_")
 
-        self._attr_unique_id = f"{DOMAIN}_{self._hm_primary_entity.channel.unique_id}"
+        self._attr_unique_id = f"{DOMAIN}_{self._hm_channel.unique_id}"
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._hm_primary_entity.device.identifier)},
+            identifiers={(DOMAIN, self._hm_device.identifier)},
         )
         self._attr_extra_state_attributes = {
-            EVENT_INTERFACE_ID: self._hm_primary_entity.device.interface_id,
-            EVENT_ADDRESS: self._hm_primary_entity.channel.address,
-            EVENT_MODEL: self._hm_primary_entity.device.model,
+            EVENT_INTERFACE_ID: self._hm_device.interface_id,
+            EVENT_ADDRESS: self._hm_channel.address,
+            EVENT_MODEL: self._hm_device.model,
         }
         self._unregister_callbacks: list[CALLBACK_TYPE] = []
         _LOGGER.debug(
             "init: Setting up %s %s",
-            self._hm_primary_entity.device.name,
-            self._hm_primary_entity.name_data.channel_name,
+            self._hm_device.name,
+            self._hm_channel.name,
         )
 
     @property
     def available(self) -> bool:
         """Return if event is available."""
-        return self._hm_primary_entity.device.available
+        return self._hm_device.available
 
     @property
     def name(self) -> str | UndefinedType | None:
         """Return the name of the entity."""
-
         return self._hm_primary_entity.name_data.channel_name
 
     async def async_added_to_hass(self) -> None:

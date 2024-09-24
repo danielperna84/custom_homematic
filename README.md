@@ -151,27 +151,6 @@ json_port:
   required: false
   description: Port used the access the JSON-RPC API.
   type: integer
-sysvar_scan_enabled:
-  required: true
-  description: Enable system variable/program scanning.
-  type: boolean
-  default: true
-sysvar_scan_interval:
-  required: true
-  description:
-    Interval in seconds between system variable/program scans. The minimum value is 5.
-    Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular.
-    Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended.
-  type: integer
-  default: 30
-enable_system_notifications:
-  required: true
-  description:
-    Control if system notification should be displayed. Affects CALLBACK and PINGPONG notifications.
-    It's not recommended to disable this option, because this would hide problems on your system.
-    A better option is to solve the communication problems in your environment.
-  type: integer
-  default: true
 ```
 
 #### Interface
@@ -229,9 +208,14 @@ hs485d_port:
 #### Advanced
 
 ```yaml
+program_scan_enabled:
+  required: true
+  description: Enable program scanning.
+  type: boolean
+  default: true
 sysvar_scan_enabled:
   required: true
-  description: Enable system variable/program scanning.
+  description: Enable system program scanning.
   type: boolean
   default: true
 sysvar_scan_interval:
@@ -250,7 +234,7 @@ enable_system_notifications:
     A better option is to solve the communication problems in your environment.
   type: integer
   default: true
-un_ignore:
+un_ignore: (Only visible when reconfiguring the integration)
   required: false
   description:
     Add additional datapoints/parameters to your instance. See Unignore device parameters

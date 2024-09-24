@@ -7,6 +7,7 @@ from unittest.mock import patch
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 import custom_components.homematicip_local
+from custom_components.homematicip_local.config_flow import DomainConfigFlow
 from custom_components.homematicip_local.const import CONF_ADVANCED_CONFIG, DOMAIN as HMIP_DOMAIN
 from custom_components.homematicip_local.control_unit import ControlUnit
 from homeassistant.config_entries import ConfigEntryState
@@ -80,9 +81,10 @@ async def test_migrate_entry(
         assert len(config_entries) == 1
         config_entry = config_entries[0]
         assert config_entry.state == ConfigEntryState.LOADED
-        assert config_entry.version == 6
+        assert config_entry.version == DomainConfigFlow.VERSION
         assert config_entry.data[CONF_ADVANCED_CONFIG] == {
             "enable_system_notifications": True,
+            "program_scan_enabled": False,
             "sysvar_scan_enabled": False,
             "sysvar_scan_interval": 30,
             "un_ignore": [],

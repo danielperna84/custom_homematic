@@ -20,12 +20,13 @@ from homeassistant.util.hass_dict import HassKey
 from .const import (
     CONF_ADVANCED_CONFIG,
     CONF_ENABLE_SYSTEM_NOTIFICATIONS,
+    CONF_PROGRAM_SCAN_ENABLED,
+    CONF_SYS_SCAN_INTERVAL,
     CONF_SYSVAR_SCAN_ENABLED,
-    CONF_SYSVAR_SCAN_INTERVAL,
     CONF_UN_IGNORE,
     DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_SYS_SCAN_INTERVAL,
     DEFAULT_SYSVAR_SCAN_ENABLED,
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DEFAULT_UN_IGNORE,
     DOMAIN,
     HMIP_LOCAL_MIN_VERSION,
@@ -169,9 +170,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
             CONF_SYSVAR_SCAN_ENABLED: data.get(
                 CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
             ),
-            CONF_SYSVAR_SCAN_INTERVAL: data.get(
-                CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
-            ),
+            CONF_SYS_SCAN_INTERVAL: data.get(CONF_SYS_SCAN_INTERVAL, DEFAULT_SYS_SCAN_INTERVAL),
             CONF_ENABLE_SYSTEM_NOTIFICATIONS: data.get(
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
             ),
@@ -179,7 +178,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
         }
         default_advanced_config = {
             CONF_SYSVAR_SCAN_ENABLED: DEFAULT_SYSVAR_SCAN_ENABLED,
-            CONF_SYSVAR_SCAN_INTERVAL: DEFAULT_SYSVAR_SCAN_INTERVAL,
+            CONF_SYS_SCAN_INTERVAL: DEFAULT_SYS_SCAN_INTERVAL,
             CONF_ENABLE_SYSTEM_NOTIFICATIONS: DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
             CONF_UN_IGNORE: DEFAULT_UN_IGNORE,
         }
@@ -192,7 +191,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
                 del data[name]
 
         del_param(name=CONF_SYSVAR_SCAN_ENABLED)
-        del_param(name=CONF_SYSVAR_SCAN_INTERVAL)
+        del_param(name=CONF_SYS_SCAN_INTERVAL)
         del_param(name=CONF_ENABLE_SYSTEM_NOTIFICATIONS)
         del_param(name=CONF_UN_IGNORE)
 
@@ -206,5 +205,12 @@ async def async_migrate_entry(hass: HomeAssistant, entry: HomematicConfigEntry) 
             instance_name=entry.data["instance_name"], storage_folder=get_storage_folder(hass=hass)
         )
         hass.config_entries.async_update_entry(entry, version=6, data=data)
+    if entry.version == 6:
+        data = dict(entry.data)
+        if data.get(CONF_ADVANCED_CONFIG):
+            data[CONF_ADVANCED_CONFIG][CONF_PROGRAM_SCAN_ENABLED] = data[CONF_ADVANCED_CONFIG][
+                CONF_SYSVAR_SCAN_ENABLED
+            ]
+        hass.config_entries.async_update_entry(entry, version=7, data=data)
     _LOGGER.info("Migration to version %s successful", entry.version)
     return True

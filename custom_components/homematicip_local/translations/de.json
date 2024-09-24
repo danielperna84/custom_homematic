@@ -9,6 +9,15 @@
         },
         "flow_title": "{name}/{host}",
         "step": {
+            "advanced": {
+                "data": {
+                    "enable_system_notifications": "Systembenachrichtigungen aktivieren",
+                    "program_scan_enabled": "Programm Scan aktivieren",
+                    "sysvar_scan_enabled": "Systemvariablen Scan aktivieren",
+                    "sysvar_scan_interval": "Sysvar/Program Scan Interval"
+                },
+                "description": "Konfiguration der erweiterten Parameter"
+            },
             "central": {
                 "data": {
                     "callback_host": "Callback Hostname/IP-Adresse",
@@ -33,14 +42,15 @@
             },
             "interface": {
                 "data": {
-                    "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
+                    "advanced_config": "erweiterte Konfiguration",
+                    "bidcos_rf_enabled": "Homematic (Bidcos-RF) aktivieren",
                     "bidcos_rf_port": "HM-RF Port",
-                    "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
+                    "bidcos_wired_enabled": "Homematic-Wired (BidCos-Wired) aktivieren",
                     "bidcos_wired_port": "BidCos-Wired Port",
-                    "hmip_rf_enabled": "aktiviere Homematic IP",
+                    "hmip_rf_enabled": "Homematic IP aktivieren",
                     "hmip_rf_port": "HmIP-RF Port",
-                    "virtual_devices_enabled": "aktiviere Heizgruppen",
-                    "virtual_devices_path": "Gruppen Path",
+                    "virtual_devices_enabled": "Heizgruppen aktivieren",
+                    "virtual_devices_path": "Gruppen Pfad",
                     "virtual_devices_port": "Gruppen Port"
                 },
                 "description": "Konfiguration der CCU Schnittstellen"
@@ -575,8 +585,9 @@
         "step": {
             "advanced": {
                 "data": {
-                    "enable_system_notifications": "aktiviere Systembenachrichtigungen",
-                    "sysvar_scan_enabled": "aktiviere Sysvar Scan",
+                    "enable_system_notifications": "Systembenachrichtigungen aktivieren",
+                    "program_scan_enabled": "Programm Scan aktivieren",
+                    "sysvar_scan_enabled": "Systemvariablen Scan aktivieren",
                     "sysvar_scan_interval": "Sysvar/Program Scan Interval",
                     "un_ignore": "UN-IGNORE Parameter"
                 },
@@ -608,13 +619,13 @@
             "interface": {
                 "data": {
                     "advanced_config": "erweiterte Konfiguration",
-                    "bidcos_rf_enabled": "aktiviere Homematic (Bidcos-RF)",
+                    "bidcos_rf_enabled": "Homematic (Bidcos-RF) aktivieren",
                     "bidcos_rf_port": "HM-RF Port",
-                    "bidcos_wired_enabled": "aktiviere Homematic-Wired (BidCos-Wired)",
+                    "bidcos_wired_enabled": "Homematic-Wired (BidCos-Wired) aktivieren",
                     "bidcos_wired_port": "BidCos-Wired Port",
-                    "hmip_rf_enabled": "aktiviere Homematic IP",
+                    "hmip_rf_enabled": "Homematic IP aktivieren",
                     "hmip_rf_port": "HmIP-RF Port",
-                    "virtual_devices_enabled": "aktiviere Heizgruppen",
+                    "virtual_devices_enabled": "Heizgruppen aktivieren",
                     "virtual_devices_path": "Gruppen Pfad",
                     "virtual_devices_port": "Gruppen Port"
                 },
