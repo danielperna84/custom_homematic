@@ -30,6 +30,7 @@
   - Remove unnecessary checks
   - Rename value_property to state_property
   - Replace device_type by model
+  - Separate enable/disable sysvar and program scan
   - Shorten names
   - Small definition fix for DALI
   - Switch typing of paramset_key from str to ParamsetKey
@@ -38,6 +39,8 @@
   - Use channel instead of channel_addresses
   - Use paramset_description from channel
   - Use validator for local schema
+- Add advanced options to config flow
+- Add option to enable/disable program scan to advanced options
 - Add services get_link_peers, get_link_paramset, put_link_paramset
 - Improve german descriptions by @baxxy13
 - Use domain alias

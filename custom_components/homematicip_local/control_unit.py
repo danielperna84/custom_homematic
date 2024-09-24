@@ -62,8 +62,9 @@ from .const import (
     CONF_INSTANCE_NAME,
     CONF_INTERFACE,
     CONF_JSON_PORT,
+    CONF_PROGRAM_SCAN_ENABLED,
+    CONF_SYS_SCAN_INTERVAL,
     CONF_SYSVAR_SCAN_ENABLED,
-    CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
     CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
@@ -72,8 +73,9 @@ from .const import (
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_PROGRAM_SCAN_ENABLED,
+    DEFAULT_SYS_SCAN_INTERVAL,
     DEFAULT_SYSVAR_SCAN_ENABLED,
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DEFAULT_UN_IGNORE,
     DOMAIN,
     EVENT_DEVICE_ID,
@@ -207,6 +209,8 @@ class BaseControlUnit:
             interface_configs=interface_configs,
             start_direct=self._start_direct,
             un_ignore_list=self._config.un_ignore,
+            program_scan_enabled=self._config.program_scan_enabled,
+            sysvar_scan_enabled=self._config.sysvar_scan_enabled,
         ).create_central()
 
 
@@ -322,15 +326,15 @@ class ControlUnit(BaseControlUnit):
         elif system_event == BackendSystemEvent.HUB_REFRESHED:
             if not self._scheduler.initialized:
                 self._hass.create_task(target=self._scheduler.init())
-            if self._config.sysvar_scan_enabled:
-                # Handle event of new hub entity creation in Homematic(IP) Local.
-                for platform, hm_hub_entities in kwargs["new_hub_entities"].items():
-                    if hm_hub_entities and len(hm_hub_entities) > 0:
-                        async_dispatcher_send(
-                            self._hass,
-                            signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
-                            hm_hub_entities,
-                        )
+
+            # Handle event of new hub entity creation in Homematic(IP) Local.
+            for platform, hm_hub_entities in kwargs["new_hub_entities"].items():
+                if hm_hub_entities and len(hm_hub_entities) > 0:
+                    async_dispatcher_send(
+                        self._hass,
+                        signal_new_hm_entity(entry_id=self._entry_id, platform=platform),
+                        hm_hub_entities,
+                    )
             return
         return
 
@@ -596,8 +600,11 @@ class ControlConfig:
         self.sysvar_scan_enabled: Final = advanced_config.get(
             CONF_SYSVAR_SCAN_ENABLED, DEFAULT_SYSVAR_SCAN_ENABLED
         )
-        self.sysvar_scan_interval: Final = advanced_config.get(
-            CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+        self.program_scan_enabled: Final = advanced_config.get(
+            CONF_PROGRAM_SCAN_ENABLED, DEFAULT_PROGRAM_SCAN_ENABLED
+        )
+        self.sys_scan_interval: Final = advanced_config.get(
+            CONF_SYS_SCAN_INTERVAL, DEFAULT_SYS_SCAN_INTERVAL
         )
         self.un_ignore: Final = advanced_config.get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
 
@@ -654,7 +661,7 @@ class HmScheduler:
         self._remove_device_firmware_delivering_check_listener: Callable | None = None
         self._remove_device_firmware_updating_check_listener: Callable | None = None
         self._remove_master_listener: Callable | None = None
-        self._remove_sysvar_listener: Callable | None = None
+        self._remove_sys_listener: Callable | None = None
         self._sema_init: Final = asyncio.Semaphore()
 
     @property
@@ -668,12 +675,15 @@ class HmScheduler:
             if self._initialized:
                 return
             self._initialized = True
-            if self._control.config.sysvar_scan_enabled:
-                # sysvar_scan_interval == 0 means sysvar scanning is disabled
-                self._remove_sysvar_listener = async_track_time_interval(
+            if (
+                self._control.config.sysvar_scan_enabled
+                or self._control.config.program_scan_enabled
+            ):
+                # sys_scan_interval == 0 means sysvar scanning is disabled
+                self._remove_sys_listener = async_track_time_interval(
                     hass=self._hass,
-                    action=self._fetch_data,
-                    interval=timedelta(seconds=self._control.config.sysvar_scan_interval),
+                    action=self._fetch_sys_data,
+                    interval=timedelta(seconds=self._control.config.sys_scan_interval),
                     cancel_on_shutdown=True,
                 )
             self._remove_master_listener = async_track_time_interval(
@@ -711,8 +721,8 @@ class HmScheduler:
 
     def de_init(self) -> None:
         """De_init the hub scheduler."""
-        if self._remove_sysvar_listener and callable(self._remove_sysvar_listener):
-            self._remove_sysvar_listener()
+        if self._remove_sys_listener and callable(self._remove_sys_listener):
+            self._remove_sys_listener()
         if self._remove_master_listener and callable(self._remove_master_listener):
             self._remove_master_listener()
         if self._remove_device_firmware_check_listener and callable(
@@ -729,31 +739,14 @@ class HmScheduler:
             self._remove_device_firmware_updating_check_listener()
         self._initialized = False
 
-    async def _fetch_data(self, now: datetime) -> None:
+    async def _fetch_sys_data(self, now: datetime) -> None:
         """Fetch data from backend."""
-        if self._control.config.sysvar_scan_enabled is False:
-            _LOGGER.warning(
-                "Scheduled fetching of programs and sysvars for %s is disabled",
-                self._central.name,
-            )
-            return
-        _LOGGER.debug(
-            "Scheduled fetching of programs and sysvars for %s",
-            self._central.name,
-        )
-        await self._central.fetch_sysvar_data()
-        await self._central.fetch_program_data()
+        await self._central.fetch_program_data(scheduled=True)
+        await self._central.fetch_sysvar_data(scheduled=True)
 
     async def fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
-        if self._control.config.sysvar_scan_enabled is False:
-            _LOGGER.warning(
-                "Manually fetching of sysvars for %s is disabled",
-                self._central.name,
-            )
-            return
-        _LOGGER.debug("Manually fetching of sysvars for %s", self._central.name)
-        await self._central.fetch_sysvar_data()
+        await self._central.fetch_sysvar_data(scheduled=False)
 
     async def _fetch_master_data(self, now: datetime) -> None:
         """Fetch master entities from backend."""

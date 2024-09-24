@@ -9,6 +9,15 @@
         },
         "flow_title": "{name}/{host}",
         "step": {
+            "advanced": {
+                "data": {
+                    "enable_system_notifications": "Enable system notifications",
+                    "program_scan_enabled": "enable program scan",
+                    "sysvar_scan_enabled": "enable system variable scan",
+                    "sysvar_scan_interval": "Sysvar/Program scan interval"
+                },
+                "description": "Configure the advanced parameters"
+            },
             "central": {
                 "data": {
                     "callback_host": "Callback Hostname/IP-Address",
@@ -573,7 +582,8 @@
             "advanced": {
                 "data": {
                     "enable_system_notifications": "Enable system notifications",
-                    "sysvar_scan_enabled": "enable Sysvar scan",
+                    "program_scan_enabled": "enable program scan",
+                    "sysvar_scan_enabled": "enable system variable scan",
                     "sysvar_scan_interval": "Sysvar/Program scan interval",
                     "un_ignore": "UN-IGNORE Parameters"
                 },

@@ -51,14 +51,16 @@ from .const import (
     CONF_INSTANCE_NAME,
     CONF_INTERFACE,
     CONF_JSON_PORT,
+    CONF_PROGRAM_SCAN_ENABLED,
+    CONF_SYS_SCAN_INTERVAL,
     CONF_SYSVAR_SCAN_ENABLED,
-    CONF_SYSVAR_SCAN_INTERVAL,
     CONF_TLS,
     CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
     DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_PROGRAM_SCAN_ENABLED,
+    DEFAULT_SYS_SCAN_INTERVAL,
     DEFAULT_SYSVAR_SCAN_ENABLED,
-    DEFAULT_SYSVAR_SCAN_INTERVAL,
     DEFAULT_UN_IGNORE,
     DOMAIN,
 )
@@ -205,8 +207,14 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
         for p in data.get(CONF_ADVANCED_CONFIG, {}).get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
         if p in all_un_ignore_parameters
     ]
-    return vol.Schema(
+    advanced_schema = vol.Schema(
         {
+            vol.Required(
+                CONF_PROGRAM_SCAN_ENABLED,
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
+                    CONF_PROGRAM_SCAN_ENABLED, DEFAULT_PROGRAM_SCAN_ENABLED
+                ),
+            ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_SYSVAR_SCAN_ENABLED,
                 default=data.get(CONF_ADVANCED_CONFIG, {}).get(
@@ -214,9 +222,9 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
                 ),
             ): BOOLEAN_SELECTOR,
             vol.Required(
-                CONF_SYSVAR_SCAN_INTERVAL,
+                CONF_SYS_SCAN_INTERVAL,
                 default=data.get(CONF_ADVANCED_CONFIG, {}).get(
-                    CONF_SYSVAR_SCAN_INTERVAL, DEFAULT_SYSVAR_SCAN_INTERVAL
+                    CONF_SYS_SCAN_INTERVAL, DEFAULT_SYS_SCAN_INTERVAL
                 ),
             ): SCAN_INTERVAL_SELECTOR,
             vol.Required(
@@ -225,7 +233,7 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
                     CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
                 ),
             ): BOOLEAN_SELECTOR,
-            vol.Required(
+            vol.Optional(
                 CONF_UN_IGNORE,
                 default=existing_parameters,
             ): SelectSelector(
@@ -238,6 +246,9 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
             ),
         }
     )
+    if not all_un_ignore_parameters:
+        del advanced_schema.schema[CONF_UN_IGNORE]
+    return advanced_schema
 
 
 async def _async_validate_config_and_get_system_information(
@@ -253,7 +264,7 @@ async def _async_validate_config_and_get_system_information(
 class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle the instance flow for Homematic(IP) Local."""
 
-    VERSION = 6
+    VERSION = 7
     CONNECTION_CLASS = CONN_CLASS_LOCAL_PUSH
 
     def __init__(self) -> None:
@@ -279,17 +290,38 @@ class DomainConfigFlow(ConfigFlow, domain=DOMAIN):
         self,
         interface_input: ConfigType | None = None,
     ) -> ConfigFlowResult:
-        """Handle the initial step."""
-        if interface_input is None:
-            _LOGGER.debug("ConfigFlow.step_interface, no user input")
+        """Handle the interface step."""
+        if interface_input is not None:
+            _update_interface_input(data=self.data, interface_input=interface_input)
+            if interface_input.get(CONF_ADVANCED_CONFIG):
+                return await self.async_step_advanced()
+            return await self._validate_and_finish_config_flow()
+
+        _LOGGER.debug("ConfigFlow.step_interface, no user input")
+        return self.async_show_form(
+            step_id="interface",
+            data_schema=get_interface_schema(
+                use_tls=self.data[CONF_TLS],
+                data=self.data,
+                from_config_flow=False,
+            ),
+        )
+
+    async def async_step_advanced(
+        self,
+        advanced_input: ConfigType | None = None,
+    ) -> ConfigFlowResult:
+        """Handle the advanced step."""
+        if advanced_input is None:
+            _LOGGER.debug("ConfigFlow.step_advanced, no user input")
             return self.async_show_form(
-                step_id="interface",
-                data_schema=get_interface_schema(
-                    use_tls=self.data[CONF_TLS], data=self.data, from_config_flow=True
+                step_id="advanced",
+                data_schema=get_advanced_schema(
+                    data=self.data,
+                    all_un_ignore_parameters=[],
                 ),
             )
-
-        _update_interface_input(data=self.data, interface_input=interface_input)
+        _update_advanced_input(data=self.data, advanced_input=advanced_input)
         return await self._validate_and_finish_config_flow()
 
     async def _validate_and_finish_config_flow(self) -> ConfigFlowResult:
@@ -372,7 +404,7 @@ class HomematicIPLocalOptionsFlowHandler(OptionsFlow):
         self,
         interface_input: ConfigType | None = None,
     ) -> ConfigFlowResult:
-        """Handle the initial step."""
+        """Handle the interface step."""
         if interface_input is not None:
             _update_interface_input(data=self.data, interface_input=interface_input)
             if interface_input.get(CONF_ADVANCED_CONFIG):
@@ -490,16 +522,18 @@ def _update_interface_input(data: ConfigType, interface_input: ConfigType) -> No
 def _update_advanced_input(data: ConfigType, advanced_input: ConfigType) -> None:
     if advanced_input is not None:
         data[CONF_ADVANCED_CONFIG] = {}
+        data[CONF_ADVANCED_CONFIG][CONF_PROGRAM_SCAN_ENABLED] = advanced_input[
+            CONF_PROGRAM_SCAN_ENABLED
+        ]
         data[CONF_ADVANCED_CONFIG][CONF_SYSVAR_SCAN_ENABLED] = advanced_input[
             CONF_SYSVAR_SCAN_ENABLED
         ]
-        data[CONF_ADVANCED_CONFIG][CONF_SYSVAR_SCAN_INTERVAL] = advanced_input[
-            CONF_SYSVAR_SCAN_INTERVAL
-        ]
+        data[CONF_ADVANCED_CONFIG][CONF_SYS_SCAN_INTERVAL] = advanced_input[CONF_SYS_SCAN_INTERVAL]
         data[CONF_ADVANCED_CONFIG][CONF_ENABLE_SYSTEM_NOTIFICATIONS] = advanced_input[
             CONF_ENABLE_SYSTEM_NOTIFICATIONS
         ]
-        data[CONF_ADVANCED_CONFIG][CONF_UN_IGNORE] = advanced_input[CONF_UN_IGNORE]
+        if advanced_input.get(CONF_UN_IGNORE):
+            data[CONF_ADVANCED_CONFIG][CONF_UN_IGNORE] = advanced_input[CONF_UN_IGNORE]
 
 
 def _get_instance_name(friendly_name: Any | None) -> str | None:
