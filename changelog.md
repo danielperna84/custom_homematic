@@ -3,9 +3,10 @@
 ## Breaking change:
 - Use service put_link_paramset to manipulate direct connections
 - Use service get_link_paramset to read direct connections
+- Remove customization (it's not a pure dimmer) for ELV-SH-WUA / HmIP-WUA. Remove obsolete entities if necessary
 
 ## What's Changed
-- Bump hahomematic to 2024.9.10
+- Bump hahomematic to 2024.9.11
   - Add bind_collector to all relevant methods with option to disable it
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
@@ -27,6 +28,7 @@
   - Refactor device/entity to extract channel
   - Refactor get_events, get_new_entities
   - Refactor update entity
+  - Remove CED for ELV-SH-WUA / HmIP-WUA
   - Remove unnecessary checks
   - Rename value_property to state_property
   - Replace device_type by model
