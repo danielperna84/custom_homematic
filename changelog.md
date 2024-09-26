@@ -6,8 +6,9 @@
 - Remove customization (it's not a pure dimmer) for ELV-SH-WUA / HmIP-WUA. Remove obsolete entities if necessary
 
 ## What's Changed
-- Bump hahomematic to 2024.9.11
+- Bump hahomematic to 2024.9.12
   - Add bind_collector to all relevant methods with option to disable it
+  - Add config option for listen ip address and port
   - Add check for link paramsets
   - Add getLinkPeers XmlRPC method
   - Add missing PayloadMixin
