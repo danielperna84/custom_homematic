@@ -73,6 +73,7 @@ from .const import (
     DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
     DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
     DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_LISTEN_ON_ALL_IP,
     DEFAULT_PROGRAM_SCAN_ENABLED,
     DEFAULT_SYS_SCAN_INTERVAL,
     DEFAULT_SYSVAR_SCAN_ENABLED,
@@ -604,6 +605,10 @@ class ControlConfig:
         )
         self.sys_scan_interval: Final = advanced_config.get(
             CONF_SYS_SCAN_INTERVAL, DEFAULT_SYS_SCAN_INTERVAL
+        )
+
+        self.listen_on_all_ip = advanced_config.get(
+            CONF_LISTEN_ON_ALL_IP, DEFAULT_LISTEN_ON_ALL_IP
         )
         self.un_ignore: Final = advanced_config.get(CONF_UN_IGNORE, DEFAULT_UN_IGNORE)
 

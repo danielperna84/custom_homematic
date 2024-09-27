@@ -237,7 +237,7 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
             ): BOOLEAN_SELECTOR,
             vol.Required(
                 CONF_LISTEN_ON_ALL_IP,
-                default=data.get(CONF_LISTEN_ON_ALL_IP, {}).get(
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_LISTEN_ON_ALL_IP, DEFAULT_LISTEN_ON_ALL_IP
                 ),
             ): BOOLEAN_SELECTOR,
