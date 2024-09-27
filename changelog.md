@@ -12,6 +12,7 @@
   - Raise exception on set_value, put_paramset
   - Remove command queue
   - Simplify entity imports
+- Add option to config flow/advanced to listen on all ip addresses
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update
 
