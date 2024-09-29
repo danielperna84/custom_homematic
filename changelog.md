@@ -1,3 +1,11 @@
+# Version 1.67.0 (2024-09-27)
+
+- Bump hahomematic to 2024.9.13
+  - Make UPDATEABLE optional due to homegear support
+  - Raise exception on set_value, put_paramset
+  - Reduce logging when raising exception
+- Raise HomeAssistantError on service exception
+
 # Version 1.66.0 (2024-09-21)
 
 ## Breaking change:

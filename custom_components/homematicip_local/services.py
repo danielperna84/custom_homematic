@@ -7,7 +7,7 @@ import logging
 from typing import TYPE_CHECKING, Final, cast
 
 from hahomematic.const import ForcedDeviceAvailability, ParamsetKey
-from hahomematic.exceptions import ClientException
+from hahomematic.exceptions import BaseHomematicException
 from hahomematic.platforms.device import HmDevice
 from hahomematic.support import get_device_address, to_bool
 import hahomematic.validator as haval
@@ -374,7 +374,10 @@ async def _async_service_export_device_definition(
 ) -> None:
     """Service to call setValue method for Homematic(IP) Local devices."""
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
-        await hm_device.export_device_definition()
+        try:
+            await hm_device.export_device_definition()
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
 
         _LOGGER.debug(
             "Called export_device_definition: %s, %s",
@@ -413,8 +416,8 @@ async def _async_service_get_device_value(
                 )
             ) is not None:
                 return {"result": value}
-        except ClientException as cex:
-            raise HomeAssistantError(cex) from cex
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
     return None
 
 
@@ -432,9 +435,8 @@ async def _async_service_get_link_peers(
             return cast(
                 ServiceResponse, {address: await hm_device.client.get_link_peers(address=address)}
             )
-        except ClientException as cex:
-            raise HomeAssistantError(cex) from cex
-
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
     return None
 
 
@@ -453,9 +455,8 @@ async def _async_service_get_link_paramset(
                     paramset_key=sender_channel_address,
                 )
             )
-        except ClientException as cex:
-            raise HomeAssistantError(cex) from cex
-
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
     return None
 
 
@@ -477,9 +478,8 @@ async def _async_service_get_paramset(
                     paramset_key=paramset_key,
                 )
             )
-        except ClientException as cex:
-            raise HomeAssistantError(cex) from cex
-
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
     return None
 
 
@@ -507,15 +507,18 @@ async def _async_service_set_device_value(hass: HomeAssistant, service: ServiceC
             value = str(value)
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
-        await hm_device.client.set_value(
-            channel_address=f"{hm_device.address}:{channel_no}",
-            paramset_key=ParamsetKey.VALUES,
-            parameter=parameter,
-            value=value,
-            wait_for_callback=wait_for_callback,
-            rx_mode=rx_mode,
-            check_against_pd=True,
-        )
+        try:
+            await hm_device.client.set_value(
+                channel_address=f"{hm_device.address}:{channel_no}",
+                paramset_key=ParamsetKey.VALUES,
+                parameter=parameter,
+                value=value,
+                wait_for_callback=wait_for_callback,
+                rx_mode=rx_mode,
+                check_against_pd=True,
+            )
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
 
 
 async def _async_service_set_variable_value(hass: HomeAssistant, service: ServiceCall) -> None:
@@ -566,13 +569,16 @@ async def _async_service_put_link_paramset(hass: HomeAssistant, service: Service
     rx_mode = service.data.get(CONF_RX_MODE)
 
     if hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
-        await hm_device.client.put_paramset(
-            channel_address=receiver_channel_address,
-            paramset_key=sender_channel_address,
-            values=values,
-            rx_mode=rx_mode,
-            check_against_pd=True,
-        )
+        try:
+            await hm_device.client.put_paramset(
+                channel_address=receiver_channel_address,
+                paramset_key=sender_channel_address,
+                values=values,
+                rx_mode=rx_mode,
+                check_against_pd=True,
+            )
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
 
 
 async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall) -> None:
@@ -590,14 +596,17 @@ async def _async_service_put_paramset(hass: HomeAssistant, service: ServiceCall)
         channel_address = (
             f"{hm_device.address}:{channel_no}" if channel_no is not None else hm_device.address
         )
-        await hm_device.client.put_paramset(
-            channel_address=channel_address,
-            paramset_key=paramset_key,
-            values=values,
-            wait_for_callback=wait_for_callback,
-            rx_mode=rx_mode,
-            check_against_pd=True,
-        )
+        try:
+            await hm_device.client.put_paramset(
+                channel_address=channel_address,
+                paramset_key=paramset_key,
+                values=values,
+                wait_for_callback=wait_for_callback,
+                rx_mode=rx_mode,
+                check_against_pd=True,
+            )
+        except BaseHomematicException as ex:
+            raise HomeAssistantError(ex) from ex
 
 
 async def _async_service_update_device_firmware_data(
@@ -626,47 +635,31 @@ def _async_get_hm_device_by_service_data(
 ) -> HmDevice | None:
     """Service to force device availability on a Homematic(IP) Local devices."""
     hm_device: HmDevice | None = None
+    message = "No device found"
+
     if device_id := service.data.get(CONF_DEVICE_ID):
         hm_device = _asnyc_get_hm_device_by_id(hass=hass, device_id=device_id)
         if not hm_device:
-            _LOGGER.warning(
-                "No device found by device_id %s for service %s.%s",
-                device_id,
-                service.domain,
-                service.service,
-            )
+            message = f"No device found by device_id {device_id} for service {service.domain}.{service.service}"
     elif device_address := service.data.get(CONF_DEVICE_ADDRESS):
         hm_device = _async_get_hm_device_by_address(hass=hass, device_address=device_address)
         if not hm_device:
-            _LOGGER.warning(
-                "No device found by device_address %s for service %s.%s",
-                device_address,
-                service.domain,
-                service.service,
-            )
+            message = f"No device found by device_address {device_address} for service {service.domain}.{service.service}"
     elif channel_address := service.data.get(CONF_CHANNEL_ADDRESS):
         hm_device = _async_get_hm_device_by_address(
             hass=hass, device_address=get_device_address(address=channel_address)
         )
         if not hm_device:
-            _LOGGER.warning(
-                "No device found by channel_address %s for service %s.%s",
-                channel_address,
-                service.domain,
-                service.service,
-            )
+            message = f"No device found by channel_address {channel_address} for service {service.domain}.{service.service}"
     elif receiver_channel_address := service.data.get(CONF_RECEIVER_CHANNEL_ADDRESS):
         hm_device = _async_get_hm_device_by_address(
             hass=hass, device_address=get_device_address(address=receiver_channel_address)
         )
         if not hm_device:
-            _LOGGER.warning(
-                "No device found by receiver_channel_address %s for service %s.%s",
-                receiver_channel_address,
-                service.domain,
-                service.service,
-            )
-
+            message = f"No device found by receiver_channel_address {receiver_channel_address} for service {service.domain}.{service.service}"
+    if not hm_device:
+        _LOGGER.warning(message)
+        raise HomeAssistantError(message)
     return hm_device
 
 
