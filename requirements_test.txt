@@ -9,4 +9,4 @@ pre-commit==3.8.0
 pur==7.3.2
 pydevccu==0.1.8
 pylint==3.3.1
-pytest-homeassistant-custom-component==0.13.164
+pytest-homeassistant-custom-component==0.13.169
