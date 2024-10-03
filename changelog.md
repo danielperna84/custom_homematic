@@ -1,9 +1,13 @@
-# Version 1.67.0 (2024-09-27)
+# Version 1.67.0 (2024-10-03)
 
-- Bump hahomematic to 2024.9.13
+- Bump hahomematic to 2024.10.0
+  - Add config option for max read workers
+  - Disable collector for stop events
+  - Improve logging when raising exception
+  - Log exception at the most outer service
   - Make UPDATEABLE optional due to homegear support
   - Raise exception on set_value, put_paramset
-  - Reduce logging when raising exception
+  - Remove command queue
 - Raise HomeAssistantError on service exception
 
 # Version 1.66.0 (2024-09-21)
