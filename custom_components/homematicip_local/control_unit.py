@@ -189,28 +189,29 @@ class BaseControlUnit:
         # use last 10 chars of entry_id for central_id uniqueness
         central_id = self._entry_id[-10:]
         return CentralConfig(
-            name=self._instance_name,
-            storage_folder=get_storage_folder(self._hass),
-            host=self._config.host,
-            username=self._config.username,
-            password=self._config.password,
-            central_id=central_id,
-            tls=self._config.tls,
-            verify_tls=self._config.verify_tls,
-            client_session=aiohttp_client.async_get_clientsession(self._hass),
-            json_port=self._config.json_port,
             callback_host=self._config.callback_host
             if self._config.callback_host != IP_ANY_V4
             else None,
             callback_port=self._config.callback_port
             if self._config.callback_port != PORT_ANY
             else None,
+            central_id=central_id,
+            client_session=aiohttp_client.async_get_clientsession(self._hass),
             default_callback_port=self._default_callback_port,
+            host=self._config.host,
             interface_configs=interface_configs,
-            start_direct=self._start_direct,
-            un_ignore_list=self._config.un_ignore,
+            json_port=self._config.json_port,
+            max_read_workers=1,
+            name=self._instance_name,
+            password=self._config.password,
             program_scan_enabled=self._config.program_scan_enabled,
+            start_direct=self._start_direct,
+            storage_folder=get_storage_folder(self._hass),
             sysvar_scan_enabled=self._config.sysvar_scan_enabled,
+            tls=self._config.tls,
+            un_ignore_list=self._config.un_ignore,
+            username=self._config.username,
+            verify_tls=self._config.verify_tls,
         ).create_central()
 
 
