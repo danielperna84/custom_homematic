@@ -1,11 +1,14 @@
-# Version 1.67.0 (2024-10-03)
+# Version 1.67.0 (2024-10-06)
 
-- Bump hahomematic to 2024.10.0
+## What's Changed
+- Bump hahomematic to 2024.10.1
   - Add config option for max read workers
   - Disable collector for stop events
+  - Fix rx_mode lazy_config
   - Improve logging when raising exception
   - Log exception at the most outer service
-  - Make UPDATEABLE optional due to homegear support
+  - Make DEFAULT and UPDATEABLE optional due to homegear support
+  - Move context var to own module
   - Raise exception on set_value, put_paramset
   - Remove command queue
 - Raise HomeAssistantError on service exception
