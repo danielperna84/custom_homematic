@@ -12,6 +12,7 @@
   - Raise exception on set_value, put_paramset
   - Remove command queue
 - Raise HomeAssistantError on service exception
+- Remove periodic master entity update
 
 # Version 1.66.0 (2024-09-21)
 

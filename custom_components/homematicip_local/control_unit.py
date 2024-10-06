@@ -35,7 +35,6 @@ from hahomematic.const import (
     InterfaceName,
     Manufacturer,
     Parameter,
-    ParamsetKey,
     SystemInformation,
 )
 from hahomematic.exceptions import BaseHomematicException
@@ -89,7 +88,6 @@ from .const import (
     FILTER_ERROR_EVENT_PARAMETERS,
     LEARN_MORE_URL_PONG_MISMATCH,
     LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS,
-    MASTER_SCAN_INTERVAL,
 )
 from .support import (
     CLICK_EVENT_SCHEMA,
@@ -561,7 +559,6 @@ class ControlConfig:
         device_firmware_check_interval: int = DEFAULT_DEVICE_FIRMWARE_CHECK_INTERVAL,
         device_firmware_delivering_check_interval: int = DEFAULT_DEVICE_FIRMWARE_DELIVERING_CHECK_INTERVAL,
         device_firmware_updating_check_interval: int = DEFAULT_DEVICE_FIRMWARE_UPDATING_CHECK_INTERVAL,
-        master_scan_interval: int = MASTER_SCAN_INTERVAL,
     ) -> None:
         """Create the required config for the ControlUnit."""
         self.hass: Final = hass
@@ -577,7 +574,6 @@ class ControlConfig:
         self.device_firmware_updating_check_interval: Final = (
             device_firmware_updating_check_interval
         )
-        self.master_scan_interval: Final = master_scan_interval
 
         # central
         self.instance_name = data[CONF_INSTANCE_NAME]
@@ -661,7 +657,6 @@ class HmScheduler:
         self._remove_device_firmware_check_listener: Callable | None = None
         self._remove_device_firmware_delivering_check_listener: Callable | None = None
         self._remove_device_firmware_updating_check_listener: Callable | None = None
-        self._remove_master_listener: Callable | None = None
         self._remove_sys_listener: Callable | None = None
         self._sema_init: Final = asyncio.Semaphore()
 
@@ -687,12 +682,6 @@ class HmScheduler:
                     interval=timedelta(seconds=self._control.config.sys_scan_interval),
                     cancel_on_shutdown=True,
                 )
-            self._remove_master_listener = async_track_time_interval(
-                hass=self._hass,
-                action=self._fetch_master_data,
-                interval=timedelta(seconds=self._control.config.master_scan_interval),
-                cancel_on_shutdown=True,
-            )
 
             if self._control.config.device_firmware_check_enabled:
                 self._remove_device_firmware_check_listener = async_track_time_interval(
@@ -724,8 +713,6 @@ class HmScheduler:
         """De_init the hub scheduler."""
         if self._remove_sys_listener and callable(self._remove_sys_listener):
             self._remove_sys_listener()
-        if self._remove_master_listener and callable(self._remove_master_listener):
-            self._remove_master_listener()
         if self._remove_device_firmware_check_listener and callable(
             self._remove_device_firmware_check_listener
         ):
@@ -748,14 +735,6 @@ class HmScheduler:
     async def fetch_sysvars(self) -> None:
         """Fetch sysvars from backend."""
         await self._central.fetch_sysvar_data(scheduled=False)
-
-    async def _fetch_master_data(self, now: datetime) -> None:
-        """Fetch master entities from backend."""
-        _LOGGER.debug(
-            "Scheduled fetching of master entities for %s",
-            self._central.name,
-        )
-        await self._central.load_and_refresh_entity_data(paramset_key=ParamsetKey.MASTER)
 
     async def _fetch_device_firmware_update_data(self, now: datetime) -> None:
         """Fetch device firmware update data from backend."""
