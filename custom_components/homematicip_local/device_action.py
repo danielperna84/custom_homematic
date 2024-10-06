@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from hahomematic.const import Parameter
-from hahomematic.platforms.generic.action import HmAction
-from hahomematic.platforms.generic.button import HmButton
+from hahomematic.platforms.generic import HmAction, HmButton
 import voluptuous as vol
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_DOMAIN, CONF_TYPE

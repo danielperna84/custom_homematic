@@ -6,12 +6,7 @@ import logging
 from typing import Any, Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.light import (
-    CeDimmer,
-    CeIpFixedColorLight,
-    LightOffArgs,
-    LightOnArgs,
-)
+from hahomematic.platforms.custom import CeDimmer, CeIpFixedColorLight, LightOffArgs, LightOnArgs
 import voluptuous as vol
 
 from homeassistant.components.light import (

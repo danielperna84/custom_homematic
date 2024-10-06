@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import cast
 
-from hahomematic.platforms.hub.switch import HmSysvarSwitch
+from hahomematic.platforms.hub import HmSysvarSwitch
 import pytest
 
 from homeassistant.const import STATE_OFF, STATE_ON

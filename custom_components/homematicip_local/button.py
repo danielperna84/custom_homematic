@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.generic.button import HmButton
-from hahomematic.platforms.hub.button import HmProgramButton
+from hahomematic.platforms.generic import HmButton
+from hahomematic.platforms.hub import HmProgramButton
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.core import HomeAssistant, callback

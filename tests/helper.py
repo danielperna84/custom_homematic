@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, Mock, patch
 from hahomematic import const as hahomematic_const
 from hahomematic.central import CentralConfig
 from hahomematic.client import InterfaceConfig, _ClientConfig
-from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.custom import CustomEntity
 from hahomematic.platforms.entity import BaseParameterEntity
 from hahomematic_support.client_local import ClientLocal, LocalRessources
 from pytest_homeassistant_custom_component.common import MockConfigEntry

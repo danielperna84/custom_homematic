@@ -8,7 +8,7 @@ import logging
 from typing import Any, Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.climate import (
+from hahomematic.platforms.custom import (
     PRESET_MODE_PREFIX,
     BaseClimateEntity,
     HvacAction as HmHvacAction,

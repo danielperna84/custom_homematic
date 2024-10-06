@@ -8,8 +8,8 @@ import logging
 from typing import Any
 
 from hahomematic.const import HmPlatform, ParameterType, SysvarType
-from hahomematic.platforms.generic.sensor import HmSensor
-from hahomematic.platforms.hub.sensor import HmSysvarSensor
+from hahomematic.platforms.generic import HmSensor
+from hahomematic.platforms.hub import HmSysvarSensor
 
 from homeassistant.components.sensor import (
     RestoreSensor,

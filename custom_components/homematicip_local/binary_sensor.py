@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.generic.binary_sensor import HmBinarySensor
-from hahomematic.platforms.hub.binary_sensor import HmSysvarBinarySensor
+from hahomematic.platforms.generic import HmBinarySensor
+from hahomematic.platforms.hub import HmSysvarBinarySensor
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.const import STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
