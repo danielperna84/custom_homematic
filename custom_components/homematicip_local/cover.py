@@ -170,11 +170,7 @@ class HaHomematicBaseCover(HaHomematicGenericRestoreEntity[HmGenericCover], Cove
         await self._hm_entity.set_position(
             position=position, tilt_position=tilt_position, collector=collector
         )
-        await collector.send_data(
-            wait_for_callback=wait_for_callback,
-            use_command_queue=False,
-            use_put_paramset=True,
-        )
+        await collector.send_data(wait_for_callback=wait_for_callback)
 
     async def async_open_cover(self, **kwargs: Any) -> None:
         """Open the cover."""
