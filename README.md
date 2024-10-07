@@ -240,6 +240,7 @@ listen_on_all_ip:
     By default the XMLRPC server only listens to the ip address, that is used for the communication to the CCU, because, for security reasons, it's better to only listen on needed ports.
     This works for most of the installations, but in rare cases, when double virtualization is used (Docker on Windows/Mac), this doesn't work.
     In those cases it is necessary, that the XMLRPC server listens an all ('0.0.0.0') ip addresses.
+    If you have multiple instances running ensure that all are configured equally.
   type: integer
   default: false
 un_ignore: (Only visible when reconfiguring the integration)
