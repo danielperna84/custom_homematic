@@ -12,6 +12,7 @@
             "advanced": {
                 "data": {
                     "enable_system_notifications": "Enable system notifications",
+                    "listen_on_all_ip": "listen on all ip",
                     "program_scan_enabled": "enable program scan",
                     "sysvar_scan_enabled": "enable system variable scan",
                     "sysvar_scan_interval": "Sysvar/Program scan interval"
@@ -582,6 +583,7 @@
             "advanced": {
                 "data": {
                     "enable_system_notifications": "Enable system notifications",
+                    "listen_on_all_ip": "listen on all ip",
                     "program_scan_enabled": "enable program scan",
                     "sysvar_scan_enabled": "enable system variable scan",
                     "sysvar_scan_interval": "Sysvar/Program scan interval",

@@ -51,6 +51,7 @@ from .const import (
     CONF_INSTANCE_NAME,
     CONF_INTERFACE,
     CONF_JSON_PORT,
+    CONF_LISTEN_ON_ALL_IP,
     CONF_PROGRAM_SCAN_ENABLED,
     CONF_SYS_SCAN_INTERVAL,
     CONF_SYSVAR_SCAN_ENABLED,
@@ -58,6 +59,7 @@ from .const import (
     CONF_UN_IGNORE,
     CONF_VERIFY_TLS,
     DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS,
+    DEFAULT_LISTEN_ON_ALL_IP,
     DEFAULT_PROGRAM_SCAN_ENABLED,
     DEFAULT_SYS_SCAN_INTERVAL,
     DEFAULT_SYSVAR_SCAN_ENABLED,
@@ -231,6 +233,12 @@ def get_advanced_schema(data: ConfigType, all_un_ignore_parameters: list[str]) -
                 CONF_ENABLE_SYSTEM_NOTIFICATIONS,
                 default=data.get(CONF_ADVANCED_CONFIG, {}).get(
                     CONF_ENABLE_SYSTEM_NOTIFICATIONS, DEFAULT_ENABLE_SYSTEM_NOTIFICATIONS
+                ),
+            ): BOOLEAN_SELECTOR,
+            vol.Required(
+                CONF_LISTEN_ON_ALL_IP,
+                default=data.get(CONF_ADVANCED_CONFIG, {}).get(
+                    CONF_LISTEN_ON_ALL_IP, DEFAULT_LISTEN_ON_ALL_IP
                 ),
             ): BOOLEAN_SELECTOR,
             vol.Optional(
@@ -532,6 +540,7 @@ def _update_advanced_input(data: ConfigType, advanced_input: ConfigType) -> None
         data[CONF_ADVANCED_CONFIG][CONF_ENABLE_SYSTEM_NOTIFICATIONS] = advanced_input[
             CONF_ENABLE_SYSTEM_NOTIFICATIONS
         ]
+        data[CONF_ADVANCED_CONFIG][CONF_LISTEN_ON_ALL_IP] = advanced_input[CONF_LISTEN_ON_ALL_IP]
         if advanced_input.get(CONF_UN_IGNORE):
             data[CONF_ADVANCED_CONFIG][CONF_UN_IGNORE] = advanced_input[CONF_UN_IGNORE]
 
