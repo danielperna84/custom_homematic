@@ -1,7 +1,7 @@
-# Version 1.67.0 (2024-10-06)
+# Version 1.67.0 (2024-10-07)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.1
+- Bump hahomematic to 2024.10.3
   - Add config option for max read workers
   - Disable collector for stop events
   - Fix rx_mode lazy_config
@@ -11,7 +11,9 @@
   - Move context var to own module
   - Raise exception on set_value, put_paramset
   - Remove command queue
+  - Simplify entity imports
 - Raise HomeAssistantError on service exception
+- Remove periodic master entity update
 
 # Version 1.66.0 (2024-09-21)
 

@@ -6,7 +6,7 @@ import logging
 from typing import Any, TypeVar
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.cover import CeBlind, CeCover, CeGarage, CeIpBlind
+from hahomematic.platforms.custom import CeBlind, CeCover, CeGarage, CeIpBlind
 from hahomematic.platforms.entity import CallParameterCollector
 import voluptuous as vol
 

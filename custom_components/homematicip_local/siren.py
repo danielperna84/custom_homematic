@@ -6,7 +6,7 @@ import logging
 from typing import Any, Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom.siren import BaseSiren, SirenOnArgs
+from hahomematic.platforms.custom import BaseSiren, SirenOnArgs
 import voluptuous as vol
 
 from homeassistant.components.siren import (

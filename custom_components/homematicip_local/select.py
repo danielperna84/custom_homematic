@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.generic.select import HmSelect
-from hahomematic.platforms.hub.select import HmSysvarSelect
+from hahomematic.platforms.generic import HmSelect
+from hahomematic.platforms.hub import HmSysvarSelect
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN

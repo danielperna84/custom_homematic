@@ -7,10 +7,10 @@ import logging
 from typing import Any, Final, Generic
 
 from hahomematic.const import CALLBACK_TYPE, CallSource
-from hahomematic.platforms.custom.entity import CustomEntity
+from hahomematic.platforms.custom import CustomEntity
 from hahomematic.platforms.entity import CallbackEntity
-from hahomematic.platforms.generic.entity import GenericEntity
-from hahomematic.platforms.hub.entity import GenericHubEntity, GenericSystemVariable
+from hahomematic.platforms.generic import GenericEntity
+from hahomematic.platforms.hub import GenericHubEntity, GenericSystemVariable
 
 from homeassistant.core import State, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
@@ -247,7 +247,7 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
             )
 
     async def async_update(self) -> None:
-        """Update entities from MASTER paramset."""
+        """Update entities."""
         if isinstance(self._hm_entity, GenericEntity | CustomEntity):
             await self._hm_entity.load_entity_value(call_source=CallSource.MANUAL_OR_SCHEDULED)
 

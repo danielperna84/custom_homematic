@@ -5,8 +5,8 @@ from __future__ import annotations
 import logging
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.generic.text import HmText
-from hahomematic.platforms.hub.text import HmSysvarText
+from hahomematic.platforms.generic import HmText
+from hahomematic.platforms.hub import HmSysvarText
 
 from homeassistant.components.text import TextEntity
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
