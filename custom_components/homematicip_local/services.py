@@ -721,6 +721,8 @@ def _asnyc_get_hm_device_by_id(hass: HomeAssistant, device_id: str) -> HmDevice 
         return None
     device_address, interface_id = data
     for control_unit in _async_get_control_units(hass=hass):
-        if hm_device := control_unit.central.get_device(address=device_address):
+        if control_unit.central.has_client(interface_id=interface_id) and (
+            hm_device := control_unit.central.get_device(address=device_address)
+        ):
             return hm_device
     return None

@@ -17,6 +17,7 @@
 - Add action to fetch climate device schedule
 - Add action to store climate device schedule (experimental)
 - Add option to config flow/advanced to listen on all ip addresses
+- Fix issue with duplicate device addresses over multiple backends
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update
 
