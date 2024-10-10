@@ -11,6 +11,7 @@ from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom import BaseClimateEntity
 from hahomematic.platforms.custom.const import (
     HM_PRESET_MODE_PREFIX,
+    WEEKDAY_DICT,
     HmHvacAction,
     HmHvacMode,
     HmPresetMode,
@@ -45,6 +46,7 @@ from .const import (
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
     SERVICE_GET_SCHEDULE_PROFILE_WEEKDAY,
+    SERVICE_SET_SCHEDULE_PROFILE_WEEKDAY,
 )
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
@@ -57,6 +59,7 @@ ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
 ATTR_AWAY_START: Final = "start"
 ATTR_PROFILE: Final = "profile"
 ATTR_WEEKDAY: Final = "weekday"
+ATTR_WEEKDAY_DATA: Final = "weekday_data"
 
 SUPPORTED_HA_PRESET_MODES: Final = [
     PRESET_AWAY,
@@ -152,6 +155,16 @@ async def async_setup_entry(
         },
         supports_response=SupportsResponse.OPTIONAL,
         func="async_get_schedule_profile_weekday",
+    )
+
+    platform.async_register_entity_service(
+        name=SERVICE_SET_SCHEDULE_PROFILE_WEEKDAY,
+        schema={
+            vol.Required(ATTR_PROFILE): cv.string,
+            vol.Required(ATTR_WEEKDAY): cv.string,
+            vol.Required(ATTR_WEEKDAY_DATA): dict,
+        },
+        func="async_set_schedule_profile_weekday",
     )
 
 
@@ -336,3 +349,12 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     ) -> ServiceResponse:
         """Return the schedule profile weekday."""
         return await self._hm_entity.get_profile_weekday(profile=profile, weekday=weekday)  # type: ignore[no-any-return]
+
+    async def async_set_schedule_profile_weekday(
+        self, profile: str, weekday: str, weekday_data: WEEKDAY_DICT
+    ) -> None:
+        """Set the schedule profile weekday."""
+        weekday_data = {int(key): value for key, value in weekday_data.items()}
+        await self._hm_entity.set_profile_weekday(
+            profile=profile, weekday=weekday, weekday_data=weekday_data
+        )

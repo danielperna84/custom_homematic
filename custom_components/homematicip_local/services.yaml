@@ -150,6 +150,41 @@ get_schedule_profile_weekday:
             - "FRIDAY"
             - "SATURDAY"
             - "SUNDAY"
+set_schedule_profile_weekday:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+    weekday:
+      required: true
+      example: MONDAY
+      selector:
+        select:
+          options:
+            - "MONDAY"
+            - "TUESDAY"
+            - "WEDNESDAY"
+            - "THURSDAY"
+            - "FRIDAY"
+            - "SATURDAY"
+            - "SUNDAY"
+    weekday_data:
+      required: true
+      selector:
+        object:
 set_variable_value:
   fields:
     entry_id:

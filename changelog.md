@@ -15,6 +15,7 @@
   - Rename climate enums and constants to better distinguish from HA
   - Simplify entity imports
 - Add action to fetch climate device schedule
+- Add action to store climate device schedule
 - Add option to config flow/advanced to listen on all ip addresses
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update

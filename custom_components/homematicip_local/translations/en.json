@@ -946,6 +946,24 @@
             },
             "name": "Set install mode"
         },
+        "set_schedule_profile_weekday": {
+            "description": "Call to store a schedule on a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
+                "weekday": {
+                    "description": "Select a weekday.",
+                    "name": "Weekday"
+                },
+                "weekday_data": {
+                    "description": "Data for a weekday profile",
+                    "name": "Weekday profile data"
+                }
+            },
+            "name": "Set schedule profile weekday"
+        },
         "set_variable_value": {
             "description": "Write a value to a variable.",
             "fields": {

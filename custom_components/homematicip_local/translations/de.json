@@ -950,6 +950,24 @@
             },
             "name": "Anlernmodus auf der Homematic-Zentrale aktivieren"
         },
+        "set_schedule_profile_weekday": {
+            "description": "Speichert einen Zeitplan auf einem Thermostat",
+            "fields": {
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
+                },
+                "weekday": {
+                    "description": "Wähle einen Wochentag",
+                    "name": "Wochentag"
+                },
+                "weekday_data": {
+                    "description": "Daten für ein Profil zu einem Wochentag",
+                    "name": "Wochentag Profildaten"
+                }
+            },
+            "name": "Zeitplan speichern"
+        },
         "set_variable_value": {
             "description": "Schreibt einen Wert in eine Homematic Systemvariable.",
             "fields": {
