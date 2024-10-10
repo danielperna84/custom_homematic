@@ -8,10 +8,10 @@ import logging
 from typing import Any, Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom import BaseClimateEntity
-from hahomematic.platforms.custom.const import (
+from hahomematic.platforms.custom import (
     HM_PRESET_MODE_PREFIX,
     WEEKDAY_DICT,
+    BaseClimateEntity,
     HmHvacAction,
     HmHvacMode,
     HmPresetMode,
