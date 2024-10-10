@@ -223,7 +223,7 @@ sysvar_scan_interval:
   description:
     Interval in seconds between system variable/program scans. The minimum value is 5.
     Intervals of less than 15s are not recommended, and put a lot of strain on slow backend systems in particular.
-    Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` service is recommended.
+    Instead, a higher interval with an on-demand call from the `homematicip_local.fetch_system_variables` action is recommended.
   type: integer
   default: 30
 enable_system_notifications:
@@ -267,7 +267,7 @@ These two options are required for _special_ network environments. If for exampl
 
 ## System variables
 
-System variables are fetched every 30 seconds from backend (CCU/Homegear) and belong to a device of type CCU. You could also click on service on the integration's overview in HA.
+System variables are fetched every 30 seconds from backend (CCU/Homegear) and belong to a device of type CCU. You could also click on action on the integration's overview in HA.
 
 System variables are initially created as **[deactivated](https://github.com/danielperna84/custom_homematic#deactivated-entities)** entity.
 
@@ -300,13 +300,13 @@ When using Homegear system variables are handled like the DEFAULT.
 Using `select`, `number`, `switch` and `text` results in the following advantages:
 
 - System variables can be changed directly in the UI without additional logic.
-- The general services for `select`, `number`, `switch` and `text` can be used.
-- The service `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
+- The general actions for `select`, `number`, `switch` and `text` can be used.
+- The action `homematicip_local.set_variable_value` can, but no longer has to, be used to write system variables.
 - Use of device based automations (actions) is possible.
 
-## Services
+## Actions
 
-The Homematic(IP) Local integration makes various custom services available.
+The Homematic(IP) Local integration makes various custom actions available.
 
 ### `homematicip_local.clear_cache`
 
@@ -336,13 +336,13 @@ This data can be used by the developers to add customized entities for new devic
 
 ### `homematicip_local.fetch_system_variables`
 
-Service to fetch system variables on demand from backend independent from default 30s schedule.
-Using this service too often could have a negative effect on the stability of your backend.
+action to fetch system variables on demand from backend independent from default 30s schedule.
+Using this action too often could have a negative effect on the stability of your backend.
 
 ### `homematicip_local.force_device_availability`
 
 Reactivate a device in Home Assistant that has been made unavailable by an UNREACH event from CCU.
-This service will only override the availability status of a device and all its dependent entities. There is no communication to the backend to enforce a reactivation!
+This action will only override the availability status of a device and all its dependent entities. There is no communication to the backend to enforce a reactivation!
 
 This is not a solution for communication problems with homematic devices.
 Use this only to reactivate devices with flaky communication to gain control again.
@@ -415,9 +415,9 @@ Use 0 to reset the on time.
 
 Update the value of an entity (only required for edge cases). An entity can be updated at most every 60 seconds.
 
-This service is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this service, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices).
+This action is not needed to update entities in general, because 99,9% of the entities and values are getting updated by this integration automatically. But with this action, you can manually update the value of an entity - **if you really need this in special cases**, e.g. if the value is not updated or not available, because of design gaps or bugs in the backend or device firmware (e.g. rssi-values of some HM-devices).
 
-Attention: This service gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this service, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
+Attention: This action gets the value for the entity via a 'getValue' from the backend, so the values are updated afterwards from the backend cache (for battery devices) or directly from the device (for non-battery devices). So even with using this action, the values are still not guaranteed for the battery devices and there is a negative impact on the duty cycle of the backend for non-battery devices.
 
 ### `homeassistant.update_device_firmware_data`
 
@@ -512,7 +512,7 @@ We try to avoid backend calls if value/state doesn't change:
   if one of these parameter values sent is not identical to its current state.
 - Not covered by this approach:
   - platforms: lock and siren.
-  - services: `stop_cover`, `stop_cover_tilt`, `enable_away_mode_*`, `disable_away_mode`, `set_on_time_value`
+  - actions: `stop_cover`, `stop_cover_tilt`, `enable_away_mode_*`, `disable_away_mode`, `set_on_time_value`
   - system variables
 
 ### Rename of device/channel in CCU not reflected in Home Assistant
@@ -556,10 +556,10 @@ If you need the `LEVEL` parameter as number entity, then this can be done by usi
 
 ### Pressing buttons via automation
 
-It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `homematicip_local.set_device_value` service. In YAML-mode the service call to press button `3` on a CCU could look like this:
+It is possible to press buttons of devices from Home Assistant. A common usecase is to press a virtual button of your CCU, which on the CCU is configured to perform a specific action. For this you can use the `homematicip_local.set_device_value` action. In YAML-mode the action call to press button `3` on a CCU could look like this:
 
 ```yaml
-service: homematicip_local.set_device_value
+action: homematicip_local.set_device_value
 data:
   device_id: abcdefg...
   parameter: PRESS_SHORT
@@ -583,7 +583,7 @@ To receive button-press events for Homematic(IP) devices like WRC2 / WRC6 (wall 
 9. When your channels are working now, you can set the program to "inactive". Don't delete the program!
 
 Hint: To deactivate the event for one channel, remove that channel from the program
-Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a service message should appear.
+Hint: With RaspberryMatic no program is needed for buttons. Events can directly activated/deactivated within ->Settings->Devices. Click the "+" of e.g. a remote control then click directly the "button-channel". Press "activate". There is no direct feedback but a action message should appear.
 
 ## Updating a device firmware
 
@@ -601,7 +601,7 @@ As soon as the firmware has been successfully transferred to the device, it can 
 
 Depending on whether an update command can be transmitted immediately or with a delay, either the updated firmware version is displayed after a short delay, or `in process`/`installing` is displayed again because a command transmission is being waited for. This state is now updated every **5 minutes** until the installation is finished.
 
-If shorter update cycles are desired, these can be triggered by the service `homeassistant.update_device_firmware_data`, but this might have a negative impact on you CCU!
+If shorter update cycles are desired, these can be triggered by the action `homeassistant.update_device_firmware_data`, but this might have a negative impact on you CCU!
 
 ## Frequently asked questions
 
@@ -623,67 +623,62 @@ Set boolean variable to true:
 
 ```yaml
 ---
-action:
-  service: homematicip_local.set_variable_value
-  data:
-    entity_id: sesnsor.ccu2
-    name: Variablename
-    value: "3"
+action: homematicip_local.set_variable_value
+data:
+  entity_id: sesnsor.ccu2
+  name: Variablename
+  value: "3"
 ```
 
 Manually turn on a switch actor:
 
 ```yaml
 ---
-action:
-  service: homematicip_local.set_device_value
-  data:
-    device_id: abcdefg...
-    channel: 1
-    parameter: STATE
-    value: "true"
-    value_type: boolean
+action: homematicip_local.set_device_value
+data:
+  device_id: abcdefg...
+  channel: 1
+  parameter: STATE
+  value: "true"
+  value_type: boolean
 ```
 
 Manually set temperature on thermostat:
 
 ```yaml
 ---
-action:
-  service: homematicip_local.set_device_value
-  data:
-    device_id: abcdefg...
-    channel: 4
-    parameter: SET_TEMPERATURE
-    value: "23.0"
-    value_type: double
+action: homematicip_local.set_device_value
+data:
+  device_id: abcdefg...
+  channel: 4
+  parameter: SET_TEMPERATURE
+  value: "23.0"
+  value_type: double
 ```
 
 Set the week program of a wall thermostat:
 
 ```yaml
 ---
-action:
-  service: homematicip_local.put_paramset
-  data:
-    device_id: abcdefg...
-    paramset_key: MASTER
-    paramset:
-      WEEK_PROGRAM_POINTER: 1
+action: homematicip_local.put_paramset
+data:
+  device_id: abcdefg...
+  paramset_key: MASTER
+  paramset:
+    WEEK_PROGRAM_POINTER: 1
 ```
 
 Set the week program of a wall thermostat with explicit `rx_mode` (BidCos-RF only):
 
 ```yaml
 ---
-action:
-  service: homematicip_local.put_paramset
-  data:
-    device_id: abcdefg...
-    paramset_key: MASTER
-    rx_mode: WAKEUP
-    paramset:
-      WEEK_PROGRAM_POINTER: 1
+action: homematicip_local.put_paramset
+data:
+  device_id: abcdefg...
+  paramset_key: MASTER
+  rx_mode: WAKEUP
+  paramset:
+    WEEK_PROGRAM_POINTER: 1
 ```
 
 BidCos-RF devices have an optional parameter for put_paramset which defines the way the configuration data is sent to the device.

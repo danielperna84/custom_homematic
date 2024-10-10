@@ -20,6 +20,7 @@
 - Fix issue with duplicate device addresses over multiple backends
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update
+- Rename service to action in README.md
 
 # Version 1.66.0 (2024-09-21)
 
