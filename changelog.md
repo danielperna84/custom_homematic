@@ -1,7 +1,8 @@
-# Version 1.67.0 (2024-10-07)
+# Version 1.67.0 (2024-10-10)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.3
+- Bump hahomematic to 2024.10.4
+  - Add basic climate schedule services
   - Add config option for max read workers
   - Disable collector for stop events
   - Fix rx_mode lazy_config
@@ -11,7 +12,10 @@
   - Move context var to own module
   - Raise exception on set_value, put_paramset
   - Remove command queue
+  - Rename climate enums and constants to better distinguish from HA
   - Simplify entity imports
+- Add action to fetch climate device schedule
+- Add action to store climate device schedule (experimental)
 - Add option to config flow/advanced to listen on all ip addresses
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update
