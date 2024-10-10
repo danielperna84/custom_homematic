@@ -366,6 +366,10 @@ Returns a paramset
 Call to `getParamset` for direct connections on the XML-RPC interface.
 Returns a paramset
 
+### `homematicip_local.get_schedule_profile_weekday`
+
+Returns the schedule of a climate profile for a certain weekday.
+
 ### `homematicip_local.put_paramset`
 
 Call to `putParamset` on the XML-RPC interface.
@@ -385,6 +389,27 @@ Set a device parameter via the XML-RPC interface. Preferred when using the UI. W
 ### `homematicip_local.set_install_mode`
 
 Turn on the install mode on the provided Interface to pair new devices.
+
+### `homematicip_local.set_schedule_profile_weekday` (experimental)
+
+Sends the schedule of a climate profile for a certain weekday to a device.
+
+See the [sample](#sample-for-set_schedule_profile_weekday) below
+
+__Disclaimer: To much writing to the device could kill your device's eeprom.__
+
+Remarks:
+- Not all devices support schedules. This is currently only supported by this integration for HmIP devices.
+- Not all devices support six profiles.
+- There is currently no matching UI component or entity component in HA.
+
+Relevant rules for modifying a schedule:
+- The content of `weekday_data` looks identically to the [sample](#sample-for-set_schedule_profile_weekday) below. Only the values should be changed.
+- All slots (1-13) must be included.
+- The temperature must be in the defined temperature range of the device.
+- The time of a slot is defined in minutes from midnight.
+- The slot is defined by the end time. The start time is the end time of the previous slot or 0.
+- The time of a slot must be equal or higher then the previous slot, and must be in a range between 0 and 1440. If you have retrieved a schedule with `homematicip_local.set_schedule_profile_weekday` this might not be the case, but must be fixed before sending.
 
 ### `homematicip_local.set_variable_value`
 
@@ -619,6 +644,8 @@ A: Before creating an issue, you should review the HA log files for `error` or `
 
 ## Examples in YAML
 
+
+### Sample for set_variable_value
 Set boolean variable to true:
 
 ```yaml
@@ -630,6 +657,7 @@ data:
   value: "3"
 ```
 
+### Sample for set_device_value
 Manually turn on a switch actor:
 
 ```yaml
@@ -643,6 +671,7 @@ data:
   value_type: boolean
 ```
 
+### Sample 2 for set_device_value
 Manually set temperature on thermostat:
 
 ```yaml
@@ -656,6 +685,60 @@ data:
   value_type: double
 ```
 
+### Sample for set_schedule_profile_weekday
+Send a climate profile for a certain weekday to the device:
+
+```yaml
+---
+action: homematicip_local.set_schedule_profile_weekday
+target:
+  entity_id: climate.heizkorperthermostat_db
+data:
+  profile: P3
+  weekday: SUNDAY
+  weekday_data:
+    "1":
+      ENDTIME: 600
+      TEMPERATURE: 20
+    "2":
+      ENDTIME: 1000
+      TEMPERATURE: 17
+    "3":
+      ENDTIME: 1440
+      TEMPERATURE: 20
+    "4":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "5":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "6":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "7":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "8":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "9":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "10":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "11":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "12":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+    "13":
+      ENDTIME: 1440
+      TEMPERATURE: 17
+```
+
+### Sample for put_paramset
 Set the week program of a wall thermostat:
 
 ```yaml
@@ -668,6 +751,7 @@ data:
     WEEK_PROGRAM_POINTER: 1
 ```
 
+### Sample 2 for put_paramset
 Set the week program of a wall thermostat with explicit `rx_mode` (BidCos-RF only):
 
 ```yaml
