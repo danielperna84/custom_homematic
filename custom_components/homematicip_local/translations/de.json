@@ -792,6 +792,20 @@
             },
             "name": "Parametersatz von einem Gerät oder Kanal lesen"
         },
+        "get_schedule_profile_weekday": {
+            "description": "Aufruf um einen Zeitplan von einem Thermostat abzurufen",
+            "fields": {
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
+                },
+                "weekday": {
+                    "description": "Wähle einen Wochentag",
+                    "name": "Wochentag"
+                }
+            },
+            "name": "Zeitplan abrufen"
+        },
         "light_set_on_time": {
             "description": "Stellt die Einschaltdauer für ein Licht ein. Muss von einem light.turn_on gefolgt werden.",
             "fields": {

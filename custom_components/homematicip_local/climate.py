@@ -8,12 +8,12 @@ import logging
 from typing import Any, Final
 
 from hahomematic.const import HmPlatform
-from hahomematic.platforms.custom import (
-    PRESET_MODE_PREFIX,
-    BaseClimateEntity,
-    HvacAction as HmHvacAction,
-    HvacMode as HmHvacMode,
-    PresetMode,
+from hahomematic.platforms.custom import BaseClimateEntity
+from hahomematic.platforms.custom.const import (
+    HM_PRESET_MODE_PREFIX,
+    HmHvacAction,
+    HmHvacMode,
+    HmPresetMode,
 )
 import voluptuous as vol
 
@@ -33,7 +33,7 @@ from homeassistant.components.climate import (
     HVACMode,
 )
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant, ServiceResponse, SupportsResponse, callback
 from homeassistant.helpers import entity_platform
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -44,6 +44,7 @@ from .const import (
     SERVICE_DISABLE_AWAY_MODE,
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
+    SERVICE_GET_SCHEDULE_PROFILE_WEEKDAY,
 )
 from .control_unit import ControlUnit, signal_new_hm_entity
 from .generic_entity import HaHomematicGenericRestoreEntity
@@ -54,6 +55,8 @@ ATTR_AWAY_END: Final = "end"
 ATTR_AWAY_HOURS: Final = "hours"
 ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
 ATTR_AWAY_START: Final = "start"
+ATTR_PROFILE: Final = "profile"
+ATTR_WEEKDAY: Final = "weekday"
 
 SUPPORTED_HA_PRESET_MODES: Final = [
     PRESET_AWAY,
@@ -115,30 +118,40 @@ async def async_setup_entry(
     platform = entity_platform.async_get_current_platform()
 
     platform.async_register_entity_service(
-        SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
-        {
+        name=SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
+        schema={
             vol.Optional(ATTR_AWAY_START): cv.datetime,
             vol.Required(ATTR_AWAY_END): cv.datetime,
             vol.Required(ATTR_AWAY_TEMPERATURE, default=18.0): vol.All(
                 vol.Coerce(float), vol.Range(min=5.0, max=30.5)
             ),
         },
-        "async_enable_away_mode_by_calendar",
+        func="async_enable_away_mode_by_calendar",
     )
     platform.async_register_entity_service(
-        SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
-        {
+        name=SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
+        schema={
             vol.Required(ATTR_AWAY_HOURS): cv.positive_int,
             vol.Required(ATTR_AWAY_TEMPERATURE, default=18.0): vol.All(
                 vol.Coerce(float), vol.Range(min=5.0, max=30.5)
             ),
         },
-        "async_enable_away_mode_by_duration",
+        func="async_enable_away_mode_by_duration",
     )
     platform.async_register_entity_service(
-        SERVICE_DISABLE_AWAY_MODE,
-        {},
-        "async_disable_away_mode",
+        name=SERVICE_DISABLE_AWAY_MODE,
+        schema={},
+        func="async_disable_away_mode",
+    )
+
+    platform.async_register_entity_service(
+        name=SERVICE_GET_SCHEDULE_PROFILE_WEEKDAY,
+        schema={
+            vol.Required(ATTR_PROFILE): cv.string,
+            vol.Required(ATTR_WEEKDAY): cv.string,
+        },
+        supports_response=SupportsResponse.OPTIONAL,
+        func="async_get_schedule_profile_weekday",
     )
 
 
@@ -239,7 +252,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         if (
             self._hm_entity.is_valid
             and self._hm_entity.preset_mode in SUPPORTED_HA_PRESET_MODES
-            or str(self._hm_entity.preset_mode).startswith(PRESET_MODE_PREFIX)
+            or str(self._hm_entity.preset_mode).startswith(HM_PRESET_MODE_PREFIX)
         ):
             return self._hm_entity.preset_mode
         if self.is_restored and self._restored_state:
@@ -253,7 +266,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         for hm_preset_mode in self._hm_entity.preset_modes:
             if hm_preset_mode in SUPPORTED_HA_PRESET_MODES:
                 preset_modes.append(hm_preset_mode.value)
-            if str(hm_preset_mode).startswith(PRESET_MODE_PREFIX):
+            if str(hm_preset_mode).startswith(HM_PRESET_MODE_PREFIX):
                 preset_modes.append(hm_preset_mode.value)
         return preset_modes
 
@@ -292,7 +305,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
                 self.hvac_mode,
             )
             return
-        await self._hm_entity.set_preset_mode(PresetMode(preset_mode))
+        await self._hm_entity.set_preset_mode(HmPresetMode(preset_mode))
 
     async def async_enable_away_mode_by_calendar(
         self,
@@ -317,3 +330,9 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     async def async_disable_away_mode(self) -> None:
         """Disable the away mode on thermostat."""
         await self._hm_entity.disable_away_mode()
+
+    async def async_get_schedule_profile_weekday(
+        self, profile: str, weekday: str
+    ) -> ServiceResponse:
+        """Return the schedule profile weekday."""
+        return await self._hm_entity.get_profile_weekday(profile=profile, weekday=weekday)  # type: ignore[no-any-return]

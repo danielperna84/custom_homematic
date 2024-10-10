@@ -788,6 +788,20 @@
             },
             "name": "Get paramset"
         },
+        "get_schedule_profile_weekday": {
+            "description": "Call to get a schedule of a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
+                "weekday": {
+                    "description": "Select a weekday.",
+                    "name": "Weekday"
+                }
+            },
+            "name": "Get schedule profile weekday"
+        },
         "light_set_on_time": {
             "description": "Set on time for a light entity. Must be followed by a light.turn_on.",
             "fields": {
