@@ -1004,7 +1004,7 @@
                     "name": "Profile data"
                 }
             },
-            "name": "Set schedule profile"
+            "name": "Set simple schedule profile"
         },
         "set_schedule_simple_profile_weekday": {
             "description": "Call to store a schedule on a climate device.",
@@ -1026,7 +1026,7 @@
                     "name": "Weekday profile data"
                 }
             },
-            "name": "Set schedule profile weekday"
+            "name": "Set simple schedule profile weekday"
         },
         "set_variable_value": {
             "description": "Write a value to a variable.",

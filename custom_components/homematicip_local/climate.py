@@ -212,7 +212,7 @@ async def async_setup_entry(
             vol.Required(ATTR_PROFILE): cv.string,
             vol.Required(ATTR_WEEKDAY): cv.string,
             vol.Required(ATTR_BASE_TEMPERATURE): cv.positive_float,
-            vol.Required(ATTR_SIMPLE_WEEKDAY_LIST): dict,
+            vol.Required(ATTR_SIMPLE_WEEKDAY_LIST): list,
         },
         func="async_set_schedule_simple_profile_weekday",
     )

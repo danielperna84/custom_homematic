@@ -1008,7 +1008,7 @@
                     "name": "Profildaten"
                 }
             },
-            "name": "Zeitplan speichern"
+            "name": "Einfachen Zeitplan speichern"
         },
         "set_schedule_simple_profile_weekday": {
             "description": "Speichert einen Zeitplan auf einem Thermostat",
@@ -1030,7 +1030,7 @@
                     "name": "Wochentag Profildaten"
                 }
             },
-            "name": "Zeitplan speichern"
+            "name": "Einfachen Wochentag speichern"
         },
         "set_variable_value": {
             "description": "Schreibt einen Wert in eine Homematic Systemvariable.",
