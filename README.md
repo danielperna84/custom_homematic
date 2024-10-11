@@ -366,6 +366,10 @@ Returns a paramset
 Call to `getParamset` for direct connections on the XML-RPC interface.
 Returns a paramset
 
+### `homematicip_local.get_schedule_profile`
+
+Returns the schedule of a climate profile.
+
 ### `homematicip_local.get_schedule_profile_weekday`
 
 Returns the schedule of a climate profile for a certain weekday.
@@ -390,6 +394,15 @@ Set a device parameter via the XML-RPC interface. Preferred when using the UI. W
 
 Turn on the install mode on the provided Interface to pair new devices.
 
+### `homematicip_local.set_schedule_profile` (experimental)
+
+Sends the schedule of a climate profile to a device.
+
+Relevant rules for modifying a schedule:
+- All weekdays must be included
+- All rules of `homematicip_local.set_schedule_profile_weekday` are relevant
+- The required data structure can be retrieved with `homematicip_local.get_schedule_profile`
+
 ### `homematicip_local.set_schedule_profile_weekday` (experimental)
 
 Sends the schedule of a climate profile for a certain weekday to a device.
@@ -409,7 +422,7 @@ Relevant rules for modifying a schedule:
 - The temperature must be in the defined temperature range of the device.
 - The time of a slot is defined in minutes from midnight.
 - The slot is defined by the end time. The start time is the end time of the previous slot or 0.
-- The time of a slot must be equal or higher then the previous slot, and must be in a range between 0 and 1440. If you have retrieved a schedule with `homematicip_local.set_schedule_profile_weekday` this might not be the case, but must be fixed before sending.
+- The time of a slot must be equal or higher then the previous slot, and must be in a range between 0 and 1440. If you have retrieved a schedule with `homematicip_local.get_schedule_profile_weekday` this might not be the case, but must be fixed before sending.
 
 ### `homematicip_local.set_variable_value`
 
