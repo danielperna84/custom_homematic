@@ -399,7 +399,6 @@ Turn on the install mode on the provided Interface to pair new devices.
 Sends the schedule of a climate profile to a device.
 
 Relevant rules for modifying a schedule:
-- All weekdays must be included
 - All rules of `homematicip_local.set_schedule_profile_weekday` are relevant
 - The required data structure can be retrieved with `homematicip_local.get_schedule_profile`
 
@@ -420,9 +419,18 @@ Relevant rules for modifying a schedule:
 - The content of `weekday_data` looks identically to the [sample](#sample-for-set_schedule_profile_weekday) below. Only the values should be changed.
 - All slots (1-13) must be included.
 - The temperature must be in the defined temperature range of the device.
-- The time of a slot is defined in minutes from midnight.
 - The slot is defined by the end time. The start time is the end time of the previous slot or 0.
 - The time of a slot must be equal or higher then the previous slot, and must be in a range between 0 and 1440. If you have retrieved a schedule with `homematicip_local.get_schedule_profile_weekday` this might not be the case, but must be fixed before sending.
+
+### `homematicip_local.set_schedule_simple_profile` (experimental)
+
+Sends the schedule of a climate profile to a device.
+This is a simplified version of `homematicip_local.set_schedule_profile` 
+
+### `homematicip_local.set_schedule_simple_profile_weekday` (experimental)
+
+Sends the schedule of a climate profile for a certain weekday to a device.
+This is a simplified version of `homematicip_local.set_schedule_profile_weekday` 
 
 ### `homematicip_local.set_variable_value`
 
@@ -708,47 +716,105 @@ target:
   entity_id: climate.heizkorperthermostat_db
 data:
   profile: P3
-  weekday: SUNDAY
+  weekday: MONDAY
   weekday_data:
     "1":
-      ENDTIME: 600
-      TEMPERATURE: 20
+      ScheduleSlotType.ENDTIME: "05:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "2":
-      ENDTIME: 1000
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "06:00"
+      ScheduleSlotType.TEMPERATURE: 17
     "3":
-      ENDTIME: 1440
-      TEMPERATURE: 20
+      ScheduleSlotType.ENDTIME: "09:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "4":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "15:00"
+      ScheduleSlotType.TEMPERATURE: 17
     "5":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "19:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "6":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "22:00"
+      ScheduleSlotType.TEMPERATURE: 22
     "7":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "8":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "9":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "10":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "11":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "12":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
     "13":
-      ENDTIME: 1440
-      TEMPERATURE: 17
+      ScheduleSlotType.ENDTIME: "24:00"
+      ScheduleSlotType.TEMPERATURE: 16
+```
+
+### Sample for set_schedule_simple_profile
+Send a simple climate profile to the device:
+
+```yaml
+---
+action: homematicip_local.set_schedule_simple_profile
+target:
+  entity_id: climate.heizkorperthermostat_db
+data:
+  base_temperature: 4.5
+  profile: P1
+  simple_profile_data:
+    MONDAY:
+      - TEMPERATURE: 17
+        STARTTIME: "05:00"
+        ENDTIME: "06:00"
+      - TEMPERATURE: 22
+        STARTTIME: "19:00"
+        ENDTIME: "22:00"
+      - TEMPERATURE: 17
+        STARTTIME: "09:00"
+        ENDTIME: "15:00"
+    TUESDAY:
+      - TEMPERATURE: 17
+        STARTTIME: "05:00"
+        ENDTIME: "06:00"
+      - TEMPERATURE: 22
+        STARTTIME: "19:00"
+        ENDTIME: "22:00"
+      - TEMPERATURE: 17
+        STARTTIME: "09:00"
+        ENDTIME: "15:00"
+```
+
+### Sample for set_schedule_profile_weekday
+Send a climate profile for a certain weekday to the device:
+
+```yaml
+---
+action: homematicip_local.set_schedule_simple_profile_weekday
+target:
+  entity_id: climate.heizkorperthermostat_db
+data:
+  profile: P3
+  weekday: MONDAY
+  base_temperature: 16
+  simple_weekday_list:
+    - TEMPERATURE: 17
+      STARTTIME: "05:00"
+      ENDTIME: "06:00"
+    - TEMPERATURE: 22
+      STARTTIME: "19:00"
+      ENDTIME: "22:00"
+    - TEMPERATURE: 17
+      STARTTIME: "09:00"
+      ENDTIME: "15:00"
 ```
 
 ### Sample for put_paramset
