@@ -788,6 +788,16 @@
             },
             "name": "Get paramset"
         },
+        "get_schedule_profile": {
+            "description": "Call to get a schedule of a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                }
+            },
+            "name": "Get schedule profile"
+        },
         "get_schedule_profile_weekday": {
             "description": "Call to get a schedule of a climate device.",
             "fields": {
@@ -945,6 +955,20 @@
                 }
             },
             "name": "Set install mode"
+        },
+        "set_schedule_profile": {
+            "description": "Call to store a schedule on a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
+                "profile_data": {
+                    "description": "Data for a profile",
+                    "name": "Profile data"
+                }
+            },
+            "name": "Set schedule profile"
         },
         "set_schedule_profile_weekday": {
             "description": "Call to store a schedule on a climate device.",

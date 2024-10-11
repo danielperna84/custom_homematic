@@ -10,6 +10,7 @@ from typing import Any, Final
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom import (
     HM_PRESET_MODE_PREFIX,
+    PROFILE_DICT,
     WEEKDAY_DICT,
     BaseClimateEntity,
     HmHvacAction,
@@ -45,7 +46,9 @@ from .const import (
     SERVICE_DISABLE_AWAY_MODE,
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
+    SERVICE_GET_SCHEDULE_PROFILE,
     SERVICE_GET_SCHEDULE_PROFILE_WEEKDAY,
+    SERVICE_SET_SCHEDULE_PROFILE,
     SERVICE_SET_SCHEDULE_PROFILE_WEEKDAY,
 )
 from .control_unit import ControlUnit, signal_new_hm_entity
@@ -55,9 +58,10 @@ _LOGGER = logging.getLogger(__name__)
 
 ATTR_AWAY_END: Final = "end"
 ATTR_AWAY_HOURS: Final = "hours"
-ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
 ATTR_AWAY_START: Final = "start"
+ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
 ATTR_PROFILE: Final = "profile"
+ATTR_PROFILE_DATA: Final = "profile_data"
 ATTR_WEEKDAY: Final = "weekday"
 ATTR_WEEKDAY_DATA: Final = "weekday_data"
 
@@ -148,6 +152,15 @@ async def async_setup_entry(
     )
 
     platform.async_register_entity_service(
+        name=SERVICE_GET_SCHEDULE_PROFILE,
+        schema={
+            vol.Required(ATTR_PROFILE): cv.string,
+        },
+        supports_response=SupportsResponse.OPTIONAL,
+        func="async_get_schedule_profile",
+    )
+
+    platform.async_register_entity_service(
         name=SERVICE_GET_SCHEDULE_PROFILE_WEEKDAY,
         schema={
             vol.Required(ATTR_PROFILE): cv.string,
@@ -155,6 +168,15 @@ async def async_setup_entry(
         },
         supports_response=SupportsResponse.OPTIONAL,
         func="async_get_schedule_profile_weekday",
+    )
+
+    platform.async_register_entity_service(
+        name=SERVICE_SET_SCHEDULE_PROFILE,
+        schema={
+            vol.Required(ATTR_PROFILE): cv.string,
+            vol.Required(ATTR_PROFILE_DATA): dict,
+        },
+        func="async_set_schedule_profile",
     )
 
     platform.async_register_entity_service(
@@ -344,11 +366,21 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         """Disable the away mode on thermostat."""
         await self._hm_entity.disable_away_mode()
 
+    async def async_get_schedule_profile(self, profile: str) -> ServiceResponse:
+        """Return the schedule profile."""
+        return await self._hm_entity.get_profile(profile=profile)  # type: ignore[no-any-return]
+
     async def async_get_schedule_profile_weekday(
         self, profile: str, weekday: str
     ) -> ServiceResponse:
         """Return the schedule profile weekday."""
         return await self._hm_entity.get_profile_weekday(profile=profile, weekday=weekday)  # type: ignore[no-any-return]
+
+    async def async_set_schedule_profile(self, profile: str, profile_data: PROFILE_DICT) -> None:
+        """Set the schedule profile."""
+        for p_key, p_value in profile_data.items():
+            profile_data[p_key] = {int(key): value for key, value in p_value.items()}
+        await self._hm_entity.set_profile(profile=profile, profile_data=profile_data)
 
     async def async_set_schedule_profile_weekday(
         self, profile: str, weekday: str, weekday_data: WEEKDAY_DICT

@@ -119,6 +119,24 @@ get_paramset:
           options:
             - "MASTER"
             - "VALUES"
+get_schedule_profile:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
 get_schedule_profile_weekday:
   target:
     entity:
@@ -150,6 +168,28 @@ get_schedule_profile_weekday:
             - "FRIDAY"
             - "SATURDAY"
             - "SUNDAY"
+set_schedule_profile:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+    profile_data:
+      required: true
+      selector:
+        object:
 set_schedule_profile_weekday:
   target:
     entity:

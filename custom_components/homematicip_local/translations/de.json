@@ -792,6 +792,16 @@
             },
             "name": "Parametersatz von einem Gerät oder Kanal lesen"
         },
+        "get_schedule_profile": {
+            "description": "Aufruf um einen Zeitplan von einem Thermostat abzurufen",
+            "fields": {
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
+                }
+            },
+            "name": "Zeitplan abrufen"
+        },
         "get_schedule_profile_weekday": {
             "description": "Aufruf um einen Zeitplan von einem Thermostat abzurufen",
             "fields": {
@@ -949,6 +959,20 @@
                 }
             },
             "name": "Anlernmodus auf der Homematic-Zentrale aktivieren"
+        },
+        "set_schedule_profile": {
+            "description": "Speichert einen Zeitplan auf einem Thermostat",
+            "fields": {
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
+                },
+                "profile_data": {
+                    "description": "Daten für ein Profil",
+                    "name": "Profildaten"
+                }
+            },
+            "name": "Zeitplan speichern"
         },
         "set_schedule_profile_weekday": {
             "description": "Speichert einen Zeitplan auf einem Thermostat",
