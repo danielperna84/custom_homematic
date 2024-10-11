@@ -225,6 +225,81 @@ set_schedule_profile_weekday:
       required: true
       selector:
         object:
+set_schedule_simple_profile:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+    base_temperature:
+      required: true
+      default: 18.0
+      selector:
+        number:
+          min: 4.5
+          max: 30.5
+          step: 0.5
+          mode: slider
+    simple_profile_data:
+      required: true
+      selector:
+        object:
+set_schedule_simple_profile_weekday:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+    weekday:
+      required: true
+      example: MONDAY
+      selector:
+        select:
+          options:
+            - "MONDAY"
+            - "TUESDAY"
+            - "WEDNESDAY"
+            - "THURSDAY"
+            - "FRIDAY"
+            - "SATURDAY"
+            - "SUNDAY"
+    base_temperature:
+      required: true
+      default: 18.0
+      selector:
+        number:
+          min: 4.5
+          max: 30.5
+          step: 0.5
+          mode: slider
+    simple_weekday_list:
+      required: true
+      selector:
+        object:
 set_variable_value:
   fields:
     entry_id:

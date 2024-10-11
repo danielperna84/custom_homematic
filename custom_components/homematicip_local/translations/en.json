@@ -988,6 +988,46 @@
             },
             "name": "Set schedule profile weekday"
         },
+        "set_schedule_simple_profile": {
+            "description": "Call to store a schedule on a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
+                "base_temperature": {
+                    "description": "Select a base temperature.",
+                    "name": "Base temperature"
+                },
+                "simple_profile_data": {
+                    "description": "Data for a profile",
+                    "name": "Profile data"
+                }
+            },
+            "name": "Set schedule profile"
+        },
+        "set_schedule_simple_profile_weekday": {
+            "description": "Call to store a schedule on a climate device.",
+            "fields": {
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
+                "weekday": {
+                    "description": "Select a weekday.",
+                    "name": "Weekday"
+                },
+                "base_temperature": {
+                    "description": "Select a base temperature.",
+                    "name": "Base temperature"
+                },
+                "simple_weekday_list": {
+                    "description": "Data for a weekday profile",
+                    "name": "Weekday profile data"
+                }
+            },
+            "name": "Set schedule profile weekday"
+        },
         "set_variable_value": {
             "description": "Write a value to a variable.",
             "fields": {

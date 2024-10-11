@@ -1,9 +1,11 @@
-# Version 1.67.0 (2024-10-10)
+# Version 1.67.0 (2024-10-11)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.4
+- Bump hahomematic to 2024.10.6
   - Add basic climate schedule services
   - Add config option for max read workers
+  - Add simple climate schedule service to store profiles
+  - Convert schedule time from minutes to hh:mm
   - Disable collector for stop events
   - Fix rx_mode lazy_config
   - Improve logging when raising exception
@@ -13,6 +15,7 @@
   - Raise exception on set_value, put_paramset
   - Remove command queue
   - Rename climate enums and constants to better distinguish from HA
+  - Reuse existing dict types
   - Simplify entity imports
 - Add action to fetch climate device schedule
 - Add action to store climate device schedule (experimental)
