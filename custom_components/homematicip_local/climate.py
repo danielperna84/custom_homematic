@@ -56,7 +56,7 @@ from .const import (
     SERVICE_SET_SCHEDULE_SIMPLE_PROFILE_WEEKDAY,
 )
 from .control_unit import ControlUnit, signal_new_hm_entity
-from .generic_entity import HaHomematicGenericRestoreEntity
+from .generic_entity import HaHomematicGenericEntity, HaHomematicGenericRestoreEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,10 +65,12 @@ ATTR_AWAY_HOURS: Final = "hours"
 ATTR_AWAY_START: Final = "start"
 ATTR_AWAY_TEMPERATURE: Final = "away_temperature"
 ATTR_BASE_TEMPERATURE: Final = "base_temperature"
+ATTR_OPTIMUM_START_STOP: Final = "optimum_start_stop"
 ATTR_PROFILE: Final = "profile"
 ATTR_PROFILE_DATA: Final = "profile_data"
 ATTR_SIMPLE_PROFILE_DATA: Final = "simple_profile_data"
 ATTR_SIMPLE_WEEKDAY_LIST: Final = "simple_weekday_list"
+ATTR_TEMPERATURE_OFFSET: Final = "temperature_offset"
 ATTR_WEEKDAY: Final = "weekday"
 ATTR_WEEKDAY_DATA: Final = "weekday_data"
 
@@ -223,6 +225,9 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
 
     _attr_translation_key = "hmip_climate"
     _enable_turn_on_off_backwards_compatibility: bool = False
+    __no_recored_attributes = HaHomematicGenericEntity.NO_RECORED_ATTRIBUTES
+    __no_recored_attributes.update({ATTR_OPTIMUM_START_STOP, ATTR_TEMPERATURE_OFFSET})
+    _unrecorded_attributes = frozenset(__no_recored_attributes)
 
     def __init__(
         self,
@@ -344,6 +349,22 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         if self._hm_entity.supports_preset:
             supported_features |= ClimateEntityFeature.PRESET_MODE
         return supported_features
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes of the climate entity."""
+        attributes = super().extra_state_attributes
+        if (
+            hasattr(self._hm_entity, "temperature_offset")
+            and (temperature_offset := self._hm_entity.temperature_offset) is not None
+        ):
+            attributes[ATTR_TEMPERATURE_OFFSET] = temperature_offset
+        if (
+            hasattr(self._hm_entity, "optimum_start_stop")
+            and (optimum_start_stop := self._hm_entity.optimum_start_stop) is not None
+        ):
+            attributes[ATTR_OPTIMUM_START_STOP] = optimum_start_stop
+        return attributes
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""

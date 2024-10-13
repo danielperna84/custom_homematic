@@ -1,7 +1,8 @@
 # Version 1.67.0 (2024-10-11)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.6
+- Bump hahomematic to 2024.10.7
+  - Add MIN_MAX_VALUE_NOT_RELEVANT_FOR_MANU_MODE, OPTIMUM_START_STOP and TEMPERATURE_OFFSET to climate
   - Add basic climate schedule services
   - Add config option for max read workers
   - Add simple climate schedule service to store profiles
@@ -9,6 +10,7 @@
   - Disable collector for stop events
   - Fix rx_mode lazy_config
   - Improve logging when raising exception
+  - Improve profile validation
   - Log exception at the most outer service
   - Make DEFAULT and UPDATEABLE optional due to homegear support
   - Move context var to own module
@@ -17,9 +19,11 @@
   - Rename climate enums and constants to better distinguish from HA
   - Reuse existing dict types
   - Simplify entity imports
+  - Use regex to identify schedule profiles
 - Add action to fetch climate device schedule
 - Add action to store climate device schedule (experimental)
 - Add option to config flow/advanced to listen on all ip addresses
+- Add OPTIMUM_START_STOP and TEMPERATURE_OFFSET to climate attributes
 - Fix issue with duplicate device addresses over multiple backends
 - Raise HomeAssistantError on service exception
 - Remove periodic master entity update

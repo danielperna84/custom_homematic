@@ -246,6 +246,9 @@
             },
             "pipe_level": {
                 "name": "valve opening"
+            },
+            "temperature_offset": {
+                "name": "temperature offset"
             }
         },
         "select": {
@@ -255,6 +258,9 @@
                     "cooling": "cooling",
                     "heating": "heating"
                 }
+            },
+            "temperature_offset": {
+                "name": "temperature offset"
             }
         },
         "sensor": {
