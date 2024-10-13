@@ -250,6 +250,9 @@
             },
             "pipe_level": {
                 "name": "Ventilöffnung"
+            },
+            "temperature_offset": {
+                "name": "Temperaturverschiebung"
             }
         },
         "select": {
@@ -259,6 +262,9 @@
                     "cooling": "Kühlung",
                     "heating": "Heizung"
                 }
+            },
+            "temperature_offset": {
+                "name": "Temperaturverschiebung"
             }
         },
         "sensor": {

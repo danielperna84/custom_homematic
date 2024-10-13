@@ -41,17 +41,17 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
     _attr_has_entity_name = True
     _attr_should_poll = False
 
-    _unrecorded_attributes = frozenset(
-        {
-            ATTR_ADDRESS,
-            ATTR_ENTITY_TYPE,
-            ATTR_FUNCTION,
-            ATTR_INTERFACE_ID,
-            ATTR_MODEL,
-            ATTR_PARAMETER,
-            ATTR_VALUE_STATE,
-        }
-    )
+    NO_RECORED_ATTRIBUTES = {
+        ATTR_ADDRESS,
+        ATTR_ENTITY_TYPE,
+        ATTR_FUNCTION,
+        ATTR_INTERFACE_ID,
+        ATTR_MODEL,
+        ATTR_PARAMETER,
+        ATTR_VALUE_STATE,
+    }
+
+    _unrecorded_attributes = frozenset(NO_RECORED_ATTRIBUTES)
 
     def __init__(
         self,
