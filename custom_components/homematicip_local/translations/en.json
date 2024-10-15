@@ -651,9 +651,9 @@
         "copy_schedule": {
             "description": "Copy a schedule to another device",
             "fields": {
-                "target_entity_id": {
-                    "description": "Climate entity to copy schedule to",
-                    "name": "Target entity"
+                "source_entity_id": {
+                    "description": "Climate entity to copy the schedule from",
+                    "name": "Source entity"
                 }
             },
             "name": "Copy schedule"
@@ -661,13 +661,13 @@
         "copy_schedule_profile": {
             "description": "Copy a schedule profile to another device",
             "fields": {
+                "source_entity_id": {
+                    "description": "Climate entity to copy the schedule from",
+                    "name": "Source entity"
+                },
                 "source_profile": {
                     "description": "Source profile to copy from",
                     "name": "Source profile"
-                },
-                "target_entity_id": {
-                    "description": "Climate entity to copy schedule to",
-                    "name": "Target entity"
                 },
                 "target_profile": {
                     "description": "Target profile to copy to",

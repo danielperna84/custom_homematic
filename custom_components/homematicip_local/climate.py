@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from datetime import datetime, timedelta
 import logging
-from typing import Any, Final
+from typing import Any, Final, cast
 
 from hahomematic.const import HmPlatform
 from hahomematic.platforms.custom import (
@@ -72,8 +72,8 @@ ATTR_PROFILE: Final = "profile"
 ATTR_PROFILE_DATA: Final = "profile_data"
 ATTR_SIMPLE_PROFILE_DATA: Final = "simple_profile_data"
 ATTR_SIMPLE_WEEKDAY_LIST: Final = "simple_weekday_list"
+ATTR_SOURCE_ENTITY_ID: Final = "source_entity_id"
 ATTR_SOURCE_PROFILE: Final = "source_profile"
-ATTR_TARGET_ENTITY_ID: Final = "target_entity_id"
 ATTR_TARGET_PROFILE: Final = "target_profile"
 ATTR_TEMPERATURE_OFFSET: Final = "temperature_offset"
 ATTR_WEEKDAY: Final = "weekday"
@@ -168,7 +168,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         name=SERVICE_COPY_SCHEDULE,
         schema={
-            vol.Required(ATTR_TARGET_ENTITY_ID): cv.string,
+            vol.Required(ATTR_SOURCE_ENTITY_ID): cv.string,
         },
         func="async_copy_schedule",
     )
@@ -176,7 +176,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         name=SERVICE_COPY_SCHEDULE_PROFILE,
         schema={
-            vol.Optional(ATTR_TARGET_ENTITY_ID): cv.string,
+            vol.Optional(ATTR_SOURCE_ENTITY_ID): cv.string,
             vol.Required(ATTR_SOURCE_PROFILE): cv.string,
             vol.Required(ATTR_TARGET_PROFILE): cv.string,
         },
@@ -439,26 +439,28 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         """Disable the away mode on thermostat."""
         await self._hm_entity.disable_away_mode()
 
-    async def async_copy_schedule(self, target_entity_id: str) -> None:
-        """Copy  a schedule from this entity to another."""
-        if target_climate_entity := self._hm_entity.device.central.get_entity_by_custom_id(
-            custom_id=target_entity_id
+    async def async_copy_schedule(self, source_entity_id: str) -> None:
+        """Copy a schedule from this entity to another."""
+        if source_climate_entity := cast(
+            BaseClimateEntity,
+            self._hm_entity.device.central.get_entity_by_custom_id(custom_id=source_entity_id),
         ):
-            await self._hm_entity.copy_schedule(target_climate_entity=target_climate_entity)
+            await source_climate_entity.copy_schedule(target_climate_entity=self._hm_entity)
 
     async def async_copy_schedule_profile(
-        self, source_profile: str, target_profile: str, target_entity_id: str | None = None
+        self, source_profile: str, target_profile: str, source_entity_id: str | None = None
     ) -> None:
-        """Copy  a schedule profile."""
-        if target_entity_id and (
-            target_climate_entity := self._hm_entity.device.central.get_entity_by_custom_id(
-                custom_id=target_entity_id
+        """Copy a schedule profile."""
+        if source_entity_id and (
+            source_climate_entity := cast(
+                BaseClimateEntity,
+                self._hm_entity.device.central.get_entity_by_custom_id(custom_id=source_entity_id),
             )
         ):
-            await self._hm_entity.copy_schedule_profile(
+            await source_climate_entity.copy_schedule_profile(
                 source_profile=source_profile,
                 target_profile=target_profile,
-                target_climate_entity=target_climate_entity,
+                target_climate_entity=self._hm_entity,
             )
         else:
             await self._hm_entity.copy_schedule_profile(
