@@ -417,25 +417,25 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
 
     async def async_get_schedule_profile(self, profile: str) -> ServiceResponse:
         """Return the schedule profile."""
-        return await self._hm_entity.get_profile(profile=profile)  # type: ignore[no-any-return]
+        return await self._hm_entity.get_schedule_profile(profile=profile)  # type: ignore[no-any-return]
 
     async def async_get_schedule_profile_weekday(
         self, profile: str, weekday: str
     ) -> ServiceResponse:
         """Return the schedule profile weekday."""
-        return await self._hm_entity.get_profile_weekday(profile=profile, weekday=weekday)  # type: ignore[no-any-return]
+        return await self._hm_entity.get_schedule_profile_weekday(profile=profile, weekday=weekday)  # type: ignore[no-any-return]
 
     async def async_set_schedule_profile(self, profile: str, profile_data: PROFILE_DICT) -> None:
         """Set the schedule profile."""
         for p_key, p_value in profile_data.items():
             profile_data[p_key] = {int(key): value for key, value in p_value.items()}
-        await self._hm_entity.set_profile(profile=profile, profile_data=profile_data)
+        await self._hm_entity.set_schedule_profile(profile=profile, profile_data=profile_data)
 
     async def async_set_schedule_simple_profile(
         self, profile: str, base_temperature: float, simple_profile_data: SIMPLE_PROFILE_DICT
     ) -> None:
         """Set the schedule simple profile."""
-        await self._hm_entity.set_simple_profile(
+        await self._hm_entity.set_simple_schedule_profile(
             profile=profile,
             base_temperature=base_temperature,
             simple_profile_data=simple_profile_data,
@@ -446,7 +446,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     ) -> None:
         """Set the schedule profile weekday."""
         weekday_data = {int(key): value for key, value in weekday_data.items()}
-        await self._hm_entity.set_profile_weekday(
+        await self._hm_entity.set_schedule_profile_weekday(
             profile=profile, weekday=weekday, weekday_data=weekday_data
         )
 
@@ -458,7 +458,7 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
         simple_weekday_list: SIMPLE_WEEKDAY_LIST,
     ) -> None:
         """Set the schedule simple profile weekday."""
-        await self._hm_entity.set_simple_profile_weekday(
+        await self._hm_entity.set_simple_schedule_profile_weekday(
             profile=profile,
             weekday=weekday,
             base_temperature=base_temperature,
