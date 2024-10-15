@@ -14,7 +14,7 @@ copy_schedule:
       domain: climate
       integration: homematicip_local
   fields:
-    target_entity_id:
+    source_entity_id:
       required: true
       selector:
         entity:
@@ -27,7 +27,7 @@ copy_schedule_profile:
       domain: climate
       integration: homematicip_local
   fields:
-    target_entity_id:
+    source_entity_id:
       required: false
       selector:
         entity:
