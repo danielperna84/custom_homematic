@@ -314,9 +314,13 @@ Clears the cache for a central unit from Home Assistant. Requires a restart.
 
 ### `homematicip_local.copy_schedule`
 
+__Disclaimer: To much writing to the device MASTER paramset could kill your device's storage.__
+
 Copy the schedule of a climate device to another device
 
 ### `homematicip_local.copy_schedule_profile`
+
+__Disclaimer: To much writing to the device MASTER paramset could kill your device's storage.__
 
 Copy the schedule profile of a climate device to another/the same device
 
