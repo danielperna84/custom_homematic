@@ -670,7 +670,7 @@
                     "name": "Quellprofil"
                 },
                 "target_entity_id": {
-                    "description": "Climate entity to copy schedule to",
+                    "description": "Klimaentität, in die der Zeitplan kopiert werden soll",
                     "name": "Zielentität"
                 },
                 "target_profile": {
