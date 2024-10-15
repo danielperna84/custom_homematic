@@ -312,6 +312,14 @@ The Homematic(IP) Local integration makes various custom actions available.
 
 Clears the cache for a central unit from Home Assistant. Requires a restart.
 
+### `homematicip_local.copy_schedule`
+
+Copy the schedule of a climate device to another device
+
+### `homematicip_local.copy_schedule_profile`
+
+Copy the schedule profile of a climate device to another/the same device
+
 ### `homematicip_local.disable_away_mode`
 
 Disable the away mode for `climate` devices. This only works with HomematicIP devices.

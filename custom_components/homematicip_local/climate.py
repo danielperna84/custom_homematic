@@ -45,6 +45,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HomematicConfigEntry
 from .const import (
+    SERVICE_COPY_SCHEDULE,
+    SERVICE_COPY_SCHEDULE_PROFILE,
     SERVICE_DISABLE_AWAY_MODE,
     SERVICE_ENABLE_AWAY_MODE_BY_CALENDAR,
     SERVICE_ENABLE_AWAY_MODE_BY_DURATION,
@@ -70,6 +72,9 @@ ATTR_PROFILE: Final = "profile"
 ATTR_PROFILE_DATA: Final = "profile_data"
 ATTR_SIMPLE_PROFILE_DATA: Final = "simple_profile_data"
 ATTR_SIMPLE_WEEKDAY_LIST: Final = "simple_weekday_list"
+ATTR_SOURCE_PROFILE: Final = "source_profile"
+ATTR_TARGET_ENTITY_ID: Final = "target_entity_id"
+ATTR_TARGET_PROFILE: Final = "target_profile"
 ATTR_TEMPERATURE_OFFSET: Final = "temperature_offset"
 ATTR_WEEKDAY: Final = "weekday"
 ATTR_WEEKDAY_DATA: Final = "weekday_data"
@@ -158,6 +163,25 @@ async def async_setup_entry(
         name=SERVICE_DISABLE_AWAY_MODE,
         schema={},
         func="async_disable_away_mode",
+    )
+
+    platform.async_register_entity_service(
+        name=SERVICE_COPY_SCHEDULE,
+        schema={
+            vol.Required(ATTR_TARGET_ENTITY_ID): cv.string,
+        },
+        func="async_copy_schedule",
+    )
+
+    platform.async_register_entity_service(
+        name=SERVICE_COPY_SCHEDULE_PROFILE,
+        schema={
+            vol.Optional(ATTR_TARGET_ENTITY_ID): cv.string,
+            vol.Required(ATTR_SOURCE_PROFILE): cv.string,
+            vol.Required(ATTR_TARGET_PROFILE): cv.string,
+        },
+        supports_response=SupportsResponse.OPTIONAL,
+        func="async_copy_schedule_profile",
     )
 
     platform.async_register_entity_service(
@@ -414,6 +438,32 @@ class HaHomematicClimate(HaHomematicGenericRestoreEntity[BaseClimateEntity], Cli
     async def async_disable_away_mode(self) -> None:
         """Disable the away mode on thermostat."""
         await self._hm_entity.disable_away_mode()
+
+    async def async_copy_schedule(self, target_entity_id: str) -> None:
+        """Copy  a schedule from this entity to another."""
+        if target_climate_entity := self._hm_entity.device.central.get_entity_by_custom_id(
+            custom_id=target_entity_id
+        ):
+            await self._hm_entity.copy_schedule(target_climate_entity=target_climate_entity)
+
+    async def async_copy_schedule_profile(
+        self, source_profile: str, target_profile: str, target_entity_id: str | None = None
+    ) -> None:
+        """Copy  a schedule profile."""
+        if target_entity_id and (
+            target_climate_entity := self._hm_entity.device.central.get_entity_by_custom_id(
+                custom_id=target_entity_id
+            )
+        ):
+            await self._hm_entity.copy_schedule_profile(
+                source_profile=source_profile,
+                target_profile=target_profile,
+                target_climate_entity=target_climate_entity,
+            )
+        else:
+            await self._hm_entity.copy_schedule_profile(
+                source_profile=source_profile, target_profile=target_profile
+            )
 
     async def async_get_schedule_profile(self, profile: str) -> ServiceResponse:
         """Return the schedule profile."""

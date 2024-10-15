@@ -1,10 +1,11 @@
-# Version 1.67.0 (2024-10-11)
+# Version 1.67.0 (2024-10-15)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.7
+- Bump hahomematic to 2024.10.8
   - Add MIN_MAX_VALUE_NOT_RELEVANT_FOR_MANU_MODE, OPTIMUM_START_STOP and TEMPERATURE_OFFSET to climate
   - Add basic climate schedule services
   - Add config option for max read workers
+  - Add services to copy climate schedules
   - Add simple climate schedule service to store profiles
   - Convert schedule time from minutes to hh:mm
   - Disable collector for stop events
@@ -13,6 +14,7 @@
   - Improve profile validation
   - Log exception at the most outer service
   - Make DEFAULT and UPDATEABLE optional due to homegear support
+  - Make validation for climate schedules optional
   - Move context var to own module
   - Raise exception on set_value, put_paramset
   - Remove command queue
@@ -22,6 +24,7 @@
   - Use regex to identify schedule profiles
 - Add action to fetch climate device schedule
 - Add action to store climate device schedule (experimental)
+- Add action to copy climate schedules
 - Add option to config flow/advanced to listen on all ip addresses
 - Add OPTIMUM_START_STOP and TEMPERATURE_OFFSET to climate attributes
 - Fix issue with duplicate device addresses over multiple backends
