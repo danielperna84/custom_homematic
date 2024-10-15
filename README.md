@@ -384,9 +384,13 @@ Returns the schedule of a climate profile for a certain weekday.
 
 ### `homematicip_local.put_paramset`
 
+__Disclaimer: To much writing to the device MASTER paramset could kill your device's storage.__
+
 Call to `putParamset` on the XML-RPC interface.
 
 ### `homematicip_local.put_link_paramset`
+
+__Disclaimer: To much writing to the device MASTER paramset could kill your device's storage.__
 
 Call to `putParamset` for direct connections on the XML-RPC interface.
 
@@ -396,6 +400,8 @@ Move a blind to a specific position and tilt position.
 
 ### `homematicip_local.set_device_value`
 
+__Disclaimer: To much writing to the device MASTER paramset could kill your device's storage.__
+
 Set a device parameter via the XML-RPC interface. Preferred when using the UI. Works with device selection.
 
 ### `homematicip_local.set_install_mode`
@@ -403,6 +409,8 @@ Set a device parameter via the XML-RPC interface. Preferred when using the UI. W
 Turn on the install mode on the provided Interface to pair new devices.
 
 ### `homematicip_local.set_schedule_profile`
+
+__Disclaimer: To much writing to the device could kill your device's storage.__
 
 Sends the schedule of a climate profile to a device.
 
@@ -412,11 +420,10 @@ Relevant rules for modifying a schedule:
 
 ### `homematicip_local.set_schedule_profile_weekday`
 
+__Disclaimer: To much writing to the device could kill your device's storage.__
+
 Sends the schedule of a climate profile for a certain weekday to a device.
-
 See the [sample](#sample-for-set_schedule_profile_weekday) below
-
-__Disclaimer: To much writing to the device could kill your device's eeprom.__
 
 Remarks:
 - Not all devices support schedules. This is currently only supported by this integration for HmIP devices.
@@ -430,12 +437,16 @@ Relevant rules for modifying a schedule:
 - The slot is defined by the end time. The start time is the end time of the previous slot or 0.
 - The time of a slot must be equal or higher then the previous slot, and must be in a range between 0 and 1440. If you have retrieved a schedule with `homematicip_local.get_schedule_profile_weekday` this might not be the case, but must be fixed before sending.
 
-### `homematicip_local.set_schedule_simple_profile` (experimental)
+### `homematicip_local.set_schedule_simple_profile`
+
+__Disclaimer: To much writing to the device could kill your device's storage.__
 
 Sends the schedule of a climate profile to a device.
 This is a simplified version of `homematicip_local.set_schedule_profile` 
 
-### `homematicip_local.set_schedule_simple_profile_weekday` (experimental)
+### `homematicip_local.set_schedule_simple_profile_weekday`
+
+__Disclaimer: To much writing to the device could kill your device's storage.__
 
 Sends the schedule of a climate profile for a certain weekday to a device.
 This is a simplified version of `homematicip_local.set_schedule_profile_weekday` 
