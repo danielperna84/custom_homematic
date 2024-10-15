@@ -997,13 +997,13 @@
         "set_schedule_simple_profile": {
             "description": "Call to store a schedule on a climate device.",
             "fields": {
-                "profile": {
-                    "description": "Select a profile.",
-                    "name": "Profile"
-                },
                 "base_temperature": {
                     "description": "Select a base temperature.",
                     "name": "Base temperature"
+                },
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
                 },
                 "simple_profile_data": {
                     "description": "Data for a profile",
@@ -1015,21 +1015,21 @@
         "set_schedule_simple_profile_weekday": {
             "description": "Call to store a schedule on a climate device.",
             "fields": {
-                "profile": {
-                    "description": "Select a profile.",
-                    "name": "Profile"
-                },
-                "weekday": {
-                    "description": "Select a weekday.",
-                    "name": "Weekday"
-                },
                 "base_temperature": {
                     "description": "Select a base temperature.",
                     "name": "Base temperature"
                 },
+                "profile": {
+                    "description": "Select a profile.",
+                    "name": "Profile"
+                },
                 "simple_weekday_list": {
                     "description": "Data for a weekday profile",
                     "name": "Weekday profile data"
+                },
+                "weekday": {
+                    "description": "Select a weekday.",
+                    "name": "Weekday"
                 }
             },
             "name": "Set simple schedule profile weekday"
