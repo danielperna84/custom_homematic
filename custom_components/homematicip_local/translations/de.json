@@ -665,7 +665,7 @@
         "copy_schedule_profile": {
             "description": "Kopiert einen Zeitplan auf ein anderes Gerät",
             "fields": {
-                "soure_profile": {
+                "source_profile": {
                     "description": "Quellprofil zum Kopieren",
                     "name": "Quellprofil"
                 },

@@ -661,7 +661,7 @@
         "copy_schedule_profile": {
             "description": "Copy a schedule profile to another device",
             "fields": {
-                "soure_profile": {
+                "source_profile": {
                     "description": "Source profile to copy from",
                     "name": "Source profile"
                 },
