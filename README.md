@@ -402,7 +402,7 @@ Set a device parameter via the XML-RPC interface. Preferred when using the UI. W
 
 Turn on the install mode on the provided Interface to pair new devices.
 
-### `homematicip_local.set_schedule_profile` (experimental)
+### `homematicip_local.set_schedule_profile`
 
 Sends the schedule of a climate profile to a device.
 
@@ -410,7 +410,7 @@ Relevant rules for modifying a schedule:
 - All rules of `homematicip_local.set_schedule_profile_weekday` are relevant
 - The required data structure can be retrieved with `homematicip_local.get_schedule_profile`
 
-### `homematicip_local.set_schedule_profile_weekday` (experimental)
+### `homematicip_local.set_schedule_profile_weekday`
 
 Sends the schedule of a climate profile for a certain weekday to a device.
 
