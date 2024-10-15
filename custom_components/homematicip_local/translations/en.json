@@ -2,7 +2,7 @@
     "config": {
         "abort": {},
         "error": {
-            "cannot_connect": "Failed to connect. Check the HA log for further details.",
+            "cannot_connect": "Failed to connect. Check the HA log for further details",
             "invalid_auth": "Invalid authentication",
             "invalid_config": "Invalid config: {invalid_items}",
             "unknown": "Unexpected error"
@@ -32,14 +32,14 @@
                     "verify_tls": "verify TLS connection"
                 },
                 "data_description": {
-                    "callback_host": "To reset the callback host it must be set to one blank character.",
-                    "callback_port": "To reset the callback port it must be set to 0.",
-                    "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance.",
-                    "json_port": "To reset the JSON-RPC Port it must be set to 0.",
+                    "callback_host": "To reset the callback host it must be set to one blank character",
+                    "callback_port": "To reset the callback port it must be set to 0",
+                    "instance_name": "Name of the HA instance.\n If you want to connect to the same CCU instance from multiple HA installations this instance_name must be unique on every HA instance",
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0",
                     "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role."
+                    "username": "Case sensitive. User must be in admin role"
                 },
-                "description": "Please fill the required fields."
+                "description": "Please fill the required fields"
             },
             "interface": {
                 "data": {
@@ -565,22 +565,22 @@
     },
     "issues": {
         "interface_not_reachable": {
-            "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect.\n\nCheck the Home Assistant log files for more details.",
+            "description": "No connection to interface {interface_id}.\n\nThis Integration tries an automatic reconnect.\n\nCheck the Home Assistant log files for more details",
             "title": "Interface {interface_id} not reachable"
         },
         "pending_pong_mismatch": {
-            "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise this HA instance will not receive update events from your CCU.\n - Something is stuck on the CCU or hasn't been cleaned up. Therefore, try a restart.\n - Your setup is misconfigured and HA is not able to receive events from the CCU.",
+            "description": "There is a mismatch between send ping events and received pong events for HA instance {instance_name}.\n\nPossible reasons:\n - You are running multiple instances of HA with the same instance name configured for this integration. Re-add one instance! Otherwise this HA instance will not receive update events from your CCU.\n - Something is stuck on the CCU or hasn't been cleaned up. Therefore, try a restart.\n - Your setup is misconfigured and HA is not able to receive events from the CCU",
             "title": "Pending Pong mismatch on interface {interface_id}"
         },
         "xmlrpc_server_receives_no_events": {
-            "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect.",
-            "title": "XmlRPC-Server received no events."
+            "description": "Callback for {interface_id} has not received events for {seconds_since_last_event}s.\n\nThis Integration tries an automatic reconnect",
+            "title": "XmlRPC-Server received no events"
         }
     },
     "options": {
         "abort": {},
         "error": {
-            "cannot_connect": "Failed to connect. Check the HA log for further details.",
+            "cannot_connect": "Failed to connect. Check the HA log for further details",
             "invalid_auth": "Invalid authentication",
             "invalid_config": "Invalid config: {invalid_items}",
             "unknown": "Unexpected error"
@@ -612,11 +612,11 @@
                     "verify_tls": "verify TLS connection"
                 },
                 "data_description": {
-                    "callback_host": "To reset the callback host it must be set to one blank character.",
-                    "callback_port": "To reset the callback port it must be set to 0.",
-                    "json_port": "To reset the JSON-RPC Port it must be set to 0.",
+                    "callback_host": "To reset the callback host it must be set to one blank character",
+                    "callback_port": "To reset the callback port it must be set to 0",
+                    "json_port": "To reset the JSON-RPC Port it must be set to 0",
                     "password": "Case sensitive. Allowed characters: A-Z, a-z, 0-9 and .!$():;#-",
-                    "username": "Case sensitive. User must be in admin role."
+                    "username": "Case sensitive. User must be in admin role"
                 },
                 "description": "Re-Configure the CCU"
             },
@@ -639,334 +639,362 @@
     },
     "services": {
         "clear_cache": {
-            "description": "Clear the cache. Requires a restart.",
+            "description": "Clear the cache. Requires a restart",
             "fields": {
                 "entry_id": {
-                    "description": "Name(s) of homematic central to clear the cache.",
+                    "description": "Name(s) of homematic central to clear the cache",
                     "name": "Central"
                 }
             },
             "name": "Clear the cache"
         },
+        "copy_schedule": {
+            "description": "Copy a schedule to another device",
+            "fields": {
+                "target_entity_id": {
+                    "description": "Climate entity to copy schedule to",
+                    "name": "Target entity"
+                }
+            },
+            "name": "Copy schedule"
+        },
+        "copy_schedule_profile": {
+            "description": "Copy a schedule profile to another device",
+            "fields": {
+                "source_profile": {
+                    "description": "Source profile to copy from",
+                    "name": "Source profile"
+                },
+                "target_entity_id": {
+                    "description": "Climate entity to copy schedule to",
+                    "name": "Target entity"
+                },
+                "target_profile": {
+                    "description": "Target profile to copy to",
+                    "name": "Target profile"
+                }
+            },
+            "name": "Copy schedule profile"
+        },
         "disable_away_mode": {
-            "description": "Disable climate away mode.",
+            "description": "Disable climate away mode",
             "name": "Disable climate away mode"
         },
         "enable_away_mode_by_calendar": {
-            "description": "Enable climate away mode by calendar.",
+            "description": "Enable climate away mode by calendar",
             "fields": {
                 "away_temperature": {
-                    "description": "The temperature for the away mode.",
+                    "description": "The temperature for the away mode",
                     "name": "Set point temperature"
                 },
                 "end": {
-                    "description": "The time when the away mode should automatically be disabled.",
+                    "description": "The time when the away mode should automatically be disabled",
                     "name": "End time"
                 },
                 "start": {
-                    "description": "The time when the away mode should automatically be enabled.",
+                    "description": "The time when the away mode should automatically be enabled",
                     "name": "Start time"
                 }
             },
             "name": "Enable climate away mode by calendar"
         },
         "enable_away_mode_by_duration": {
-            "description": "Enable climate away mode by duration.",
+            "description": "Enable climate away mode by duration",
             "fields": {
                 "away_temperature": {
-                    "description": "The temperature for the away mode.",
+                    "description": "The temperature for the away mode",
                     "name": "Set point temperature"
                 },
                 "hours": {
-                    "description": "The number of hours after the away mode should automatically be disabled.",
+                    "description": "The number of hours after the away mode should automatically be disabled",
                     "name": "Hours"
                 }
             },
             "name": "Enable climate away mode by duration"
         },
         "export_device_definition": {
-            "description": "Export a device definition to 'Your home-assistant config directory'/homematicip_local/export*.",
+            "description": "Export a device definition to 'Your home-assistant config directory'/homematicip_local/export*",
             "fields": {
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 }
             },
             "name": "Export device definition"
         },
         "fetch_system_variables": {
-            "description": "Fetch system variables from backend.",
+            "description": "Fetch system variables from backend",
             "fields": {
                 "entry_id": {
-                    "description": "Name(s) of homematic central to fetch system variables from.",
+                    "description": "Name(s) of homematic central to fetch system variables from",
                     "name": "Central"
                 }
             },
             "name": "Fetch system variables"
         },
         "force_device_availability": {
-            "description": "Force a device to be available, this will override the real state.",
+            "description": "Force a device to be available, this will override the real state",
             "fields": {
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 }
             },
             "name": "Force device availability"
         },
         "get_device_value": {
-            "description": "Get a device value on RPC XML interface.",
+            "description": "Get a device value on RPC XML interface",
             "fields": {
                 "channel": {
-                    "description": "Channel for calling a parameter.",
+                    "description": "Channel for calling a parameter",
                     "name": "Channel"
                 },
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 },
                 "parameter": {
-                    "description": "Parameter to get i.e STATE.",
+                    "description": "Parameter to get i.e STATE",
                     "name": "Parameter"
                 }
             },
             "name": "Get device value"
         },
         "get_link_paramset": {
-            "description": "Call to getParamset for links in the RPC XML interface.",
+            "description": "Call to getParamset for links in the RPC XML interface",
             "fields": {
                 "receiver_channel_address": {
-                    "description": "Channel address for calling a paramset.",
+                    "description": "Channel address for calling a paramset",
                     "name": "Channel Address"
                 },
                 "sender_channel_address": {
-                    "description": "Channel address of the associated sender.",
+                    "description": "Channel address of the associated sender",
                     "name": "Sender Channel Address"
                 }
             },
             "name": "Get link paramset"
         },
         "get_link_peers": {
-            "description": "Call to getLinkPeers in the RPC XML interface.",
+            "description": "Call to getLinkPeers in the RPC XML interface",
             "fields": {
                 "channel": {
-                    "description": "Channel for calling a paramset.",
+                    "description": "Channel for calling a paramset",
                     "name": "Channel"
                 },
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 }
             },
             "name": "Get link peers"
         },
         "get_paramset": {
-            "description": "Call to getParamset in the RPC XML interface.",
+            "description": "Call to getParamset in the RPC XML interface",
             "fields": {
                 "channel": {
-                    "description": "Channel for calling a paramset.",
+                    "description": "Channel for calling a paramset",
                     "name": "Channel"
                 },
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 },
                 "paramset_key": {
-                    "description": "The paramset_key argument to getParamset.",
+                    "description": "The paramset_key argument to getParamset",
                     "name": "Paramset key"
                 }
             },
             "name": "Get paramset"
         },
         "get_schedule_profile": {
-            "description": "Call to get a schedule of a climate device.",
+            "description": "Call to get a schedule of a climate device",
             "fields": {
                 "profile": {
-                    "description": "Select a profile.",
+                    "description": "Select a profile",
                     "name": "Profile"
                 }
             },
             "name": "Get schedule profile"
         },
         "get_schedule_profile_weekday": {
-            "description": "Call to get a schedule of a climate device.",
+            "description": "Call to get a schedule of a climate device",
             "fields": {
                 "profile": {
-                    "description": "Select a profile.",
+                    "description": "Select a profile",
                     "name": "Profile"
                 },
                 "weekday": {
-                    "description": "Select a weekday.",
+                    "description": "Select a weekday",
                     "name": "Weekday"
                 }
             },
             "name": "Get schedule profile weekday"
         },
         "light_set_on_time": {
-            "description": "Set on time for a light entity. Must be followed by a light.turn_on.",
+            "description": "Set on time for a light entity. Must be followed by a light.turn_on",
             "fields": {
                 "on_time": {
-                    "description": "On time for a light in seconds. Use 0 to reset the on time.",
+                    "description": "On time for a light in seconds. Use 0 to reset the on time",
                     "name": "On Time"
                 }
             },
             "name": "Set light on time"
         },
         "put_link_paramset": {
-            "description": "Call to putParamset on the RPC XML interface.",
+            "description": "Call to putParamset on the RPC XML interface",
             "fields": {
                 "paramset": {
-                    "description": "A paramset dictionary.",
+                    "description": "A paramset dictionary",
                     "name": "Paramset"
                 },
                 "receiver_channel_address": {
-                    "description": "Channel address for calling a paramset.",
+                    "description": "Channel address for calling a paramset",
                     "name": "Channel Address"
                 },
                 "rx_mode": {
-                    "description": "The receive mode used.",
+                    "description": "The receive mode used",
                     "name": "RX mode"
                 },
                 "sender_channel_address": {
-                    "description": "Channel address of the associated sender.",
+                    "description": "Channel address of the associated sender",
                     "name": "Sender Channel Address"
                 }
             },
             "name": "Put paramset"
         },
         "put_paramset": {
-            "description": "Call to putParamset on the RPC XML interface.",
+            "description": "Call to putParamset on the RPC XML interface",
             "fields": {
                 "channel": {
-                    "description": "Channel for calling a paramset.",
+                    "description": "Channel for calling a paramset",
                     "name": "Channel"
                 },
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 },
                 "paramset": {
-                    "description": "A paramset dictionary.",
+                    "description": "A paramset dictionary",
                     "name": "Paramset"
                 },
                 "paramset_key": {
-                    "description": "The paramset_key argument.",
+                    "description": "The paramset_key argument",
                     "name": "Paramset key"
                 },
                 "rx_mode": {
-                    "description": "The receive mode used.",
+                    "description": "The receive mode used",
                     "name": "RX mode"
                 },
                 "wait_for_callback": {
-                    "description": "Wait for the callback of the service call.",
+                    "description": "Wait for the callback of the service call",
                     "name": "Wait for callback"
                 }
             },
             "name": "Put paramset"
         },
         "set_cover_combined_position": {
-            "description": "Move a blind to a specific position and tilt position.",
+            "description": "Move a blind to a specific position and tilt position",
             "fields": {
                 "position": {
-                    "description": "Position of the cover.",
+                    "description": "Position of the cover",
                     "name": "Position"
                 },
                 "tilt_position": {
-                    "description": "Tilt position of the cover.",
+                    "description": "Tilt position of the cover",
                     "name": "Tilt position"
                 },
                 "wait_for_callback": {
-                    "description": "Wait for the callback of the service call.",
+                    "description": "Wait for the callback of the service call",
                     "name": "Wait for callback"
                 }
             },
             "name": "Set cover combined position"
         },
         "set_device_value": {
-            "description": "Set a device parameter via the XML-RPC interface.",
+            "description": "Set a device parameter via the XML-RPC interface",
             "fields": {
                 "channel": {
-                    "description": "Channel for calling a parameter.",
+                    "description": "Channel for calling a parameter",
                     "name": "Channel"
                 },
                 "device_address": {
-                    "description": "Enter a device address.",
+                    "description": "Enter a device address",
                     "name": "Device address"
                 },
                 "device_id": {
-                    "description": "Select a device.",
+                    "description": "Select a device",
                     "name": "Device"
                 },
                 "parameter": {
-                    "description": "Parameter to send i.e STATE.",
+                    "description": "Parameter to send i.e STATE",
                     "name": "Parameter"
                 },
                 "rx_mode": {
-                    "description": "The receive mode used.",
+                    "description": "The receive mode used",
                     "name": "RX mode"
                 },
                 "value": {
-                    "description": "New value.",
+                    "description": "New value",
                     "name": "Value"
                 },
                 "value_type": {
-                    "description": "Type for new value.",
+                    "description": "Type for new value",
                     "name": "Value type"
                 },
                 "wait_for_callback": {
-                    "description": "Wait for the callback of the service call.",
+                    "description": "Wait for the callback of the service call",
                     "name": "Wait for callback"
                 }
             },
             "name": "Set device value"
         },
         "set_install_mode": {
-            "description": "Set a RPC XML interface into installation mode.",
+            "description": "Set a RPC XML interface into installation mode",
             "fields": {
                 "address": {
-                    "description": "Address of homematic device or BidCoS-RF to learn.",
+                    "description": "Address of homematic device or BidCoS-RF to learn",
                     "name": "Address"
                 },
                 "interface_id": {
-                    "description": "Select the given interface into install mode.",
+                    "description": "Select the given interface into install mode",
                     "name": "Interface"
                 },
                 "mode": {
-                    "description": "1= Normal mode / 2= Remove exists old links.",
+                    "description": "1= Normal mode / 2= Remove exists old links",
                     "name": "Mode"
                 },
                 "time": {
-                    "description": "Time to run in install mode.",
+                    "description": "Time to run in install mode",
                     "name": "Time"
                 }
             },
             "name": "Set install mode"
         },
         "set_schedule_profile": {
-            "description": "Call to store a schedule on a climate device.",
+            "description": "Call to store a schedule on a climate device",
             "fields": {
                 "profile": {
-                    "description": "Select a profile.",
+                    "description": "Select a profile",
                     "name": "Profile"
                 },
                 "profile_data": {
@@ -977,14 +1005,14 @@
             "name": "Set schedule profile"
         },
         "set_schedule_profile_weekday": {
-            "description": "Call to store a schedule on a climate device.",
+            "description": "Call to store a schedule on a climate device",
             "fields": {
                 "profile": {
-                    "description": "Select a profile.",
+                    "description": "Select a profile",
                     "name": "Profile"
                 },
                 "weekday": {
-                    "description": "Select a weekday.",
+                    "description": "Select a weekday",
                     "name": "Weekday"
                 },
                 "weekday_data": {
@@ -995,15 +1023,15 @@
             "name": "Set schedule profile weekday"
         },
         "set_schedule_simple_profile": {
-            "description": "Call to store a schedule on a climate device.",
+            "description": "Call to store a schedule on a climate device",
             "fields": {
-                "profile": {
-                    "description": "Select a profile.",
-                    "name": "Profile"
-                },
                 "base_temperature": {
-                    "description": "Select a base temperature.",
+                    "description": "Select a base temperature",
                     "name": "Base temperature"
+                },
+                "profile": {
+                    "description": "Select a profile",
+                    "name": "Profile"
                 },
                 "simple_profile_data": {
                     "description": "Data for a profile",
@@ -1013,36 +1041,36 @@
             "name": "Set simple schedule profile"
         },
         "set_schedule_simple_profile_weekday": {
-            "description": "Call to store a schedule on a climate device.",
+            "description": "Call to store a schedule on a climate device",
             "fields": {
-                "profile": {
-                    "description": "Select a profile.",
-                    "name": "Profile"
-                },
-                "weekday": {
-                    "description": "Select a weekday.",
-                    "name": "Weekday"
-                },
                 "base_temperature": {
-                    "description": "Select a base temperature.",
+                    "description": "Select a base temperature",
                     "name": "Base temperature"
+                },
+                "profile": {
+                    "description": "Select a profile",
+                    "name": "Profile"
                 },
                 "simple_weekday_list": {
                     "description": "Data for a weekday profile",
                     "name": "Weekday profile data"
+                },
+                "weekday": {
+                    "description": "Select a weekday",
+                    "name": "Weekday"
                 }
             },
             "name": "Set simple schedule profile weekday"
         },
         "set_variable_value": {
-            "description": "Write a value to a variable.",
+            "description": "Write a value to a variable",
             "fields": {
                 "entry_id": {
-                    "description": "Name(s) of homematic central to set value.",
+                    "description": "Name(s) of homematic central to set value",
                     "name": "Central"
                 },
                 "name": {
-                    "description": "Name of the variable to set.",
+                    "description": "Name of the variable to set",
                     "name": "Name"
                 },
                 "value": {
@@ -1053,38 +1081,38 @@
             "name": "Set variable value"
         },
         "switch_set_on_time": {
-            "description": "Set on time for a switch entity. Must be followed by a switch.turn_on.",
+            "description": "Set on time for a switch entity. Must be followed by a switch.turn_on",
             "fields": {
                 "on_time": {
-                    "description": "On time for a switch in seconds. Use 0 to reset the on time.",
+                    "description": "On time for a switch in seconds. Use 0 to reset the on time",
                     "name": "On Time"
                 }
             },
             "name": "Set switch on time"
         },
         "turn_on_siren": {
-            "description": "Turn siren on.",
+            "description": "Turn siren on",
             "fields": {
                 "duration": {
-                    "description": "The duration in seconds of the noise to emit when turning the siren on.",
+                    "description": "The duration in seconds of the noise to emit when turning the siren on",
                     "name": "Duration"
                 },
                 "light": {
-                    "description": "The light to emit when turning the siren on.",
+                    "description": "The light to emit when turning the siren on",
                     "name": "Light"
                 },
                 "tone": {
-                    "description": "The tone to emit when turning the siren on.",
+                    "description": "The tone to emit when turning the siren on",
                     "name": "Tone"
                 }
             },
             "name": "Turn on siren"
         },
         "update_device_firmware_data": {
-            "description": "Update device firmware data for all homematic data.",
+            "description": "Update device firmware data for all homematic data",
             "fields": {
                 "entry_id": {
-                    "description": "Name(s) of homematic central to update the device firmware data for.",
+                    "description": "Name(s) of homematic central to update the device firmware data for",
                     "name": "Central"
                 }
             },

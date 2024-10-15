@@ -141,6 +141,11 @@ class HaHomematicGenericEntity(Generic[HmGenericEntity], Entity):
         return attributes
 
     @property
+    def hm_entity(self) -> HmGenericEntity:
+        """Return the homematic entity."""
+        return self._hm_entity
+
+    @property
     def name(self) -> str | UndefinedType | None:
         """
         Return the name of the entity.

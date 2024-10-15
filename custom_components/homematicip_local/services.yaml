@@ -8,6 +8,56 @@ clear_cache:
         config_entry:
           integration: homematicip_local
 
+copy_schedule:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    target_entity_id:
+      required: true
+      selector:
+        entity:
+          domain: climate
+          integration: homematicip_local
+
+copy_schedule_profile:
+  target:
+    entity:
+      domain: climate
+      integration: homematicip_local
+  fields:
+    target_entity_id:
+      required: false
+      selector:
+        entity:
+          domain: climate
+          integration: homematicip_local
+    source_profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+    target_profile:
+      required: true
+      example: P1
+      selector:
+        select:
+          options:
+            - "P1"
+            - "P2"
+            - "P3"
+            - "P4"
+            - "P5"
+            - "P6"
+
 export_device_definition:
   fields:
     device_id:
@@ -119,6 +169,7 @@ get_paramset:
           options:
             - "MASTER"
             - "VALUES"
+
 get_schedule_profile:
   target:
     entity:
@@ -137,6 +188,7 @@ get_schedule_profile:
             - "P4"
             - "P5"
             - "P6"
+
 get_schedule_profile_weekday:
   target:
     entity:
@@ -168,6 +220,7 @@ get_schedule_profile_weekday:
             - "FRIDAY"
             - "SATURDAY"
             - "SUNDAY"
+
 set_schedule_profile:
   target:
     entity:
@@ -190,6 +243,7 @@ set_schedule_profile:
       required: true
       selector:
         object:
+
 set_schedule_profile_weekday:
   target:
     entity:
@@ -225,6 +279,7 @@ set_schedule_profile_weekday:
       required: true
       selector:
         object:
+
 set_schedule_simple_profile:
   target:
     entity:
@@ -256,6 +311,7 @@ set_schedule_simple_profile:
       required: true
       selector:
         object:
+
 set_schedule_simple_profile_weekday:
   target:
     entity:
@@ -300,6 +356,7 @@ set_schedule_simple_profile_weekday:
       required: true
       selector:
         object:
+
 set_variable_value:
   fields:
     entry_id:

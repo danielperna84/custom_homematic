@@ -652,6 +652,34 @@
             },
             "name": "Lösche den Cache"
         },
+        "copy_schedule": {
+            "description": "Kopiert einen Zeitplan zu einem anderen Gerät",
+            "fields": {
+                "target_entity_id": {
+                    "description": "Klimaentität, in die der Zeitplan kopiert werden soll",
+                    "name": "Zielentität"
+                }
+            },
+            "name": "Zeitplan kopieren"
+        },
+        "copy_schedule_profile": {
+            "description": "Kopiert einen Zeitplan auf ein anderes Gerät",
+            "fields": {
+                "source_profile": {
+                    "description": "Quellprofil zum Kopieren",
+                    "name": "Quellprofil"
+                },
+                "target_entity_id": {
+                    "description": "Klimaentität, in die der Zeitplan kopiert werden soll",
+                    "name": "Zielentität"
+                },
+                "target_profile": {
+                    "description": "Zielprofil zum Kopieren",
+                    "name": "Zielprofil"
+                }
+            },
+            "name": "Zeitplan kopieren"
+        },
         "disable_away_mode": {
             "description": "Deaktiviert den Klima-Abwesenheitsmodus.",
             "name": "Deaktiviert den Klima-Abwesenheitsmodus"
@@ -1001,13 +1029,13 @@
         "set_schedule_simple_profile": {
             "description": "Speichert einen Zeitplan auf einem Thermostat",
             "fields": {
-                "profile": {
-                    "description": "Wähle ein Profil",
-                    "name": "Profil"
-                },
                 "base_temperature": {
                     "description": "Wähle die Basistemperatur.",
                     "name": "Basistemperatur"
+                },
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
                 },
                 "simple_profile_data": {
                     "description": "Daten für ein Profil",
@@ -1019,21 +1047,21 @@
         "set_schedule_simple_profile_weekday": {
             "description": "Speichert einen Zeitplan auf einem Thermostat",
             "fields": {
-                "profile": {
-                    "description": "Wähle ein Profil",
-                    "name": "Profil"
-                },
-                "weekday": {
-                    "description": "Wähle einen Wochentag",
-                    "name": "Wochentag"
-                },
                 "base_temperature": {
                     "description": "Wähle die Basistemperatur.",
                     "name": "Basistemperatur"
                 },
+                "profile": {
+                    "description": "Wähle ein Profil",
+                    "name": "Profil"
+                },
                 "simple_weekday_list": {
                     "description": "Daten für ein Profil zu einem Wochentag",
                     "name": "Wochentag Profildaten"
+                },
+                "weekday": {
+                    "description": "Wähle einen Wochentag",
+                    "name": "Wochentag"
                 }
             },
             "name": "Einfachen Wochentag speichern"
