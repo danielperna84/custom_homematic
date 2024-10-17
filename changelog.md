@@ -1,3 +1,13 @@
+# Version 1.68.0 (2024-10-17)
+
+## What's Changed
+- Bump hahomematic to 2024.10.9
+  - Add central link methods to click event
+  - Add reportValueUsage, addLink, removeLink and getLinks to client
+  - Add version to code
+  - Fix wrong channel assignment for HmIP-DRBLI4
+  - Add operation_mode to channel
+
 # Version 1.67.0 (2024-10-15)
 
 ## What's Changed

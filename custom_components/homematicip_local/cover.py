@@ -51,10 +51,7 @@ async def async_setup_entry(
 
         for hm_entity in hm_entities:
             if isinstance(hm_entity, CeIpBlind):
-                if (
-                    hm_entity.channel_operation_mode
-                    and hm_entity.channel_operation_mode == "SHUTTER"
-                ):
+                if hm_entity.operation_mode and hm_entity.operation_mode == "SHUTTER":
                     entities.append(
                         HaHomematicCover(
                             control_unit=control_unit,
