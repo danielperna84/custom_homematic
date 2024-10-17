@@ -32,6 +32,7 @@ from .const import (
     DOMAIN,
     HMIP_LOCAL_SERVICES,
     SERVICE_CLEAR_CACHE,
+    SERVICE_CREATE_CENTRAL_LINKS,
     SERVICE_EXPORT_DEVICE_DEFINITION,
     SERVICE_FETCH_SYSTEM_VARIABLES,
     SERVICE_FORCE_DEVICE_AVAILABILITY,
@@ -41,6 +42,7 @@ from .const import (
     SERVICE_GET_PARAMSET,
     SERVICE_PUT_LINK_PARAMSET,
     SERVICE_PUT_PARAMSET,
+    SERVICE_REMOVE_CENTRAL_LINKS,
     SERVICE_SET_DEVICE_VALUE,
     SERVICE_SET_INSTALL_MODE,
     SERVICE_SET_VARIABLE_VALUE,
@@ -81,6 +83,18 @@ BASE_SCHEMA_DEVICE = vol.Schema(
     }
 )
 
+SCHEMA_SERVICE_CREATE_CENTRAL_LINKS = vol.All(
+    {
+        cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+        cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+    },
+    vol.Schema(
+        {
+            vol.Optional(CONF_ENTRY_ID): cv.string,
+            vol.Optional(CONF_DEVICE_ID): cv.string,
+        }
+    ),
+)
 
 SCHEMA_SERVICE_CLEAR_CACHE = vol.Schema(
     {
@@ -143,6 +157,19 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
             vol.Required(CONF_PARAMSET_KEY): vol.All(
                 haval.paramset_key, vol.In(["MASTER", "VALUES"])
             ),
+        }
+    ),
+)
+
+SCHEMA_SERVICE_REMOVE_CENTRAL_LINKS = vol.All(
+    {
+        cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+        cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+    },
+    vol.Schema(
+        {
+            vol.Optional(CONF_ENTRY_ID): cv.string,
+            vol.Optional(CONF_DEVICE_ID): cv.string,
         }
     ),
 )
@@ -221,7 +248,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         """Call correct Homematic(IP) Local service."""
         service_name = service.service
 
-        if service_name == SERVICE_CLEAR_CACHE:
+        if service_name == SERVICE_CREATE_CENTRAL_LINKS:
+            await _async_service_create_central_link(hass=hass, service=service)
+        elif service_name == SERVICE_CLEAR_CACHE:
             await _async_service_clear_cache(hass=hass, service=service)
         elif service_name == SERVICE_EXPORT_DEVICE_DEFINITION:
             await _async_service_export_device_definition(hass=hass, service=service)
@@ -241,6 +270,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
             await _async_service_put_link_paramset(hass=hass, service=service)
         elif service_name == SERVICE_PUT_PARAMSET:
             await _async_service_put_paramset(hass=hass, service=service)
+        elif service_name == SERVICE_REMOVE_CENTRAL_LINKS:
+            await _async_service_remove_central_link(hass=hass, service=service)
         elif service_name == SERVICE_SET_INSTALL_MODE:
             await _async_service_set_install_mode(hass=hass, service=service)
         elif service_name == SERVICE_SET_DEVICE_VALUE:
@@ -250,6 +281,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         elif service_name == SERVICE_UPDATE_DEVICE_FIRMWARE_DATA:
             await _async_service_update_device_firmware_data(hass=hass, service=service)
         return None
+
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_CREATE_CENTRAL_LINKS,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_CREATE_CENTRAL_LINKS,
+    )
 
     async_register_admin_service(
         hass=hass,
@@ -315,6 +354,14 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         supports_response=SupportsResponse.OPTIONAL,
     )
 
+    async_register_admin_service(
+        hass=hass,
+        domain=DOMAIN,
+        service=SERVICE_REMOVE_CENTRAL_LINKS,
+        service_func=async_call_hmip_local_service,
+        schema=SCHEMA_SERVICE_REMOVE_CENTRAL_LINKS,
+    )
+
     hass.services.async_register(
         domain=DOMAIN,
         service=SERVICE_SET_VARIABLE_VALUE,
@@ -367,6 +414,34 @@ async def async_unload_services(hass: HomeAssistant) -> None:
 
     for hmip_local_service in HMIP_LOCAL_SERVICES:
         hass.services.async_remove(domain=DOMAIN, service=hmip_local_service)
+
+
+async def _async_service_create_central_link(hass: HomeAssistant, service: ServiceCall) -> None:
+    """Service to create central links for Homematic(IP) Local devices."""
+    try:
+        if (entry_id := service.data.get(CONF_ENTRY_ID)) is not None and (
+            control := _async_get_control_unit(hass=hass, entry_id=entry_id)
+        ) is not None:
+            await control.central.create_central_links()
+        elif hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
+            await hm_device.create_central_links()
+    except BaseHomematicException as ex:
+        raise HomeAssistantError(ex) from ex
+    _LOGGER.debug("Called create_central_links")
+
+
+async def _async_service_remove_central_link(hass: HomeAssistant, service: ServiceCall) -> None:
+    """Service to remove central links for Homematic(IP) Local devices."""
+    try:
+        if (entry_id := service.data.get(CONF_ENTRY_ID)) is not None and (
+            control := _async_get_control_unit(hass=hass, entry_id=entry_id)
+        ) is not None:
+            await control.central.create_central_links()
+        elif hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
+            await hm_device.remove_central_links()
+    except BaseHomematicException as ex:
+        raise HomeAssistantError(ex) from ex
+    _LOGGER.debug("Called remove_central_links")
 
 
 async def _async_service_export_device_definition(
