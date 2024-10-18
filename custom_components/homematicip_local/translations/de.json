@@ -2,7 +2,7 @@
     "config": {
         "abort": {},
         "error": {
-            "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll.",
+            "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll",
             "invalid_auth": "Ung\u00fcltige Authentifizierung",
             "invalid_config": "Ung\u00fcltiges Konfiguration: {invalid_items}",
             "unknown": "Unerwarteter Fehler"
@@ -32,12 +32,12 @@
                     "verify_tls": "TLS Verbindung überprüfen"
                 },
                 "data_description": {
-                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
-                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
-                    "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein.",
-                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden",
+                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden",
+                    "instance_name": "Name der HA-Instanz.\n Wenn von mehreren HA-Installationen aus eine Verbindung mit derselben CCU-Instanz herstellt werden soll, muss dieser Instanzname auf jeder HA-Instanz eindeutig sein",
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden",
                     "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
-                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben."
+                    "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben"
                 },
                 "description": "Bitte Pflichtfelder ausfüllen"
             },
@@ -569,22 +569,22 @@
     },
     "issues": {
         "interface_not_reachable": {
-            "description": "Keine Verbindung zu Schnittstelle {interface_id}.\n\nDiese Integration versucht eine automatische Wiederverbindung.\n\nWeitere Informationen finden Sie in den Protokolldateien von Home Assistant.",
-            "title": "Interface {interface_id} nicht erreichbar."
+            "description": "Keine Verbindung zu Schnittstelle {interface_id}.\n\nDiese Integration versucht eine automatische Wiederverbindung.\n\nWeitere Informationen finden Sie in den Protokolldateien von Home Assistant",
+            "title": "Interface {interface_id} nicht erreichbar"
         },
         "pending_pong_mismatch": {
-            "description": "Es besteht eine Differenz zwischen gesendeten Ping-Ereignissen und empfangenen Pong-Ereignissen für die HA-Instanz {instance_name}.\n\nMögliche Gründe:\n - Sie führen mehrere Instanzen von HA mit demselben Instanznamen aus, der für diese Integration konfiguriert ist. Fügen Sie eine Instanz erneut hinzu! Andernfalls empfängt diese HA-Instanz keine Aktualisierungsereignisse von Ihrer CCU.\n - Etwas hängt in der CCU oder wurde nicht bereinigt, also versuchen Sie einen CCU Neustart.\n - Ihr Setup ist falsch konfiguriert und HA kann keine Ereignisse von der CCU empfangen.",
-            "title": "Austehende Pong Ereignisse auf Interface {interface_id}."
+            "description": "Es besteht eine Differenz zwischen gesendeten Ping-Ereignissen und empfangenen Pong-Ereignissen für die HA-Instanz {instance_name}.\n\nMögliche Gründe:\n - Sie führen mehrere Instanzen von HA mit demselben Instanznamen aus, der für diese Integration konfiguriert ist. Fügen Sie eine Instanz erneut hinzu! Andernfalls empfängt diese HA-Instanz keine Aktualisierungsereignisse von Ihrer CCU.\n - Etwas hängt in der CCU oder wurde nicht bereinigt, also versuchen Sie einen CCU Neustart.\n - Ihr Setup ist falsch konfiguriert und HA kann keine Ereignisse von der CCU empfangen",
+            "title": "Austehende Pong Ereignisse auf Interface {interface_id}"
         },
         "xmlrpc_server_receives_no_events": {
-            "description": "Callback für {interface_id} hat keine Ereignisse in den letzten {seconds_since_last_event}s empfangen.\n\nDiese Integration versucht eine automatische Wiederverbindung.",
-            "title": "XmlRPC-Server empfängt keine Ereignisse."
+            "description": "Callback für {interface_id} hat keine Ereignisse in den letzten {seconds_since_last_event}s empfangen.\n\nDiese Integration versucht eine automatische Wiederverbindung",
+            "title": "XmlRPC-Server empfängt keine Ereignisse"
         }
     },
     "options": {
         "abort": {},
         "error": {
-            "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll.",
+            "cannot_connect": "Verbindung fehlgeschlagen. Weitere Details finden Sie im HA-Protokoll",
             "invalid_auth": "Ung\u00fcltige Authentifizierung",
             "invalid_config": "Ung\u00fcltige Konfiguration: {invalid_items}",
             "unknown": "Unerwarteter Fehler"
@@ -616,9 +616,9 @@
                     "verify_tls": "TLS Verbindung überprüfen"
                 },
                 "data_description": {
-                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden.",
-                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
-                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden.",
+                    "callback_host": "Um den Callback-Host zurückzusetzen, muss der Wert auf ein Leerzeichen gesetzt werden",
+                    "callback_port": "Um den Callback-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden",
+                    "json_port": "Um den JSON-Port zurückzusetzen, muss der Wert auf 0 gesetzt werden",
                     "password": "Groß-/Kleinschreibung beachten. Erlaubte Zeichen: A-Z, a-z, 0-9 und .!$():;#-",
                     "username": "Groß-/Kleinschreibung beachten. Benutzer muss die Administratorrolle haben"
                 },
@@ -643,10 +643,10 @@
     },
     "services": {
         "clear_cache": {
-            "description": "Löscht den Cache. Benötigt einen Neustart.",
+            "description": "Löscht den Cache. Benötigt einen Neustart",
             "fields": {
                 "entry_id": {
-                    "description": "Name der Homematic Zentrale, deren Cache gelöscht werden soll.",
+                    "description": "Name der Homematic Zentrale, deren Cache gelöscht werden soll",
                     "name": "Zentrale"
                 }
             },
@@ -680,147 +680,161 @@
             },
             "name": "Zeitplan kopieren"
         },
+                "create_central_links": {
+            "description": "Erstellt Verknüpfungen zur Zentrale, um Tastendruck-Ereignisse zu ermöglichen",
+            "fields": {
+                "device_id": {
+                    "description": "Wähle ein Gerät",
+                    "name": "Gerät"
+                },
+                "entry_id": {
+                    "description": "Name der Homematic Zentrale",
+                    "name": "Zentrale"
+                }
+            },
+            "name": "Erstellt Zentralenverknüpfungen"
+        },
         "disable_away_mode": {
-            "description": "Deaktiviert den Klima-Abwesenheitsmodus.",
+            "description": "Deaktiviert den Klima-Abwesenheitsmodus",
             "name": "Deaktiviert den Klima-Abwesenheitsmodus"
         },
         "enable_away_mode_by_calendar": {
-            "description": "Aktiviert den Klima-Abwesenheitsmodus per Kalender.",
+            "description": "Aktiviert den Klima-Abwesenheitsmodus per Kalender",
             "fields": {
                 "away_temperature": {
-                    "description": "Die Temperatur für den Abwesenheitsmodus.",
+                    "description": "Die Temperatur für den Abwesenheitsmodus",
                     "name": "Solltemperatur"
                 },
                 "end": {
-                    "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch deaktiviert werden soll.",
+                    "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch deaktiviert werden soll",
                     "name": "Endzeit"
                 },
                 "start": {
-                    "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch aktiviert werden soll.",
+                    "description": "Der Zeitpunkt, zu dem der Abwesenheitsmodus automatisch aktiviert werden soll",
                     "name": "Startzeit"
                 }
             },
             "name": "Aktiviert den Klima-Abwesenheitsmodus per Kalender"
         },
         "enable_away_mode_by_duration": {
-            "description": "Aktiviert den Klima-Abwesenheitsmodus nach Dauer.",
+            "description": "Aktiviert den Klima-Abwesenheitsmodus nach Dauer",
             "fields": {
                 "away_temperature": {
-                    "description": "Die Temperatur für den Abwesenheitsmodus.",
+                    "description": "Die Temperatur für den Abwesenheitsmodus",
                     "name": "Solltemperatur"
                 },
                 "hours": {
-                    "description": "Die Anzahl der Stunden nach dem der Abwesenheitsmodus automatisch deaktiviert wird.",
+                    "description": "Die Anzahl der Stunden nach dem der Abwesenheitsmodus automatisch deaktiviert wird",
                     "name": "Stunde"
                 }
             },
             "name": "Aktiviert den Klima-Abwesenheitsmodus nach Dauer"
         },
         "export_device_definition": {
-            "description": "Exportiert die Beschreibungen eines Gerätes nach 'Dein Home-Assistant Konfigurationsverzeichnis'/homematicip_local/export*.",
+            "description": "Exportiert die Beschreibungen eines Gerätes nach 'Dein Home-Assistant Konfigurationsverzeichnis'/homematicip_local/export*",
             "fields": {
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 }
             },
             "name": "Exportiere Geräte-Beschreibungen"
         },
         "fetch_system_variables": {
-            "description": "Ruft die Systemvariablen von einer Zentrale ab.",
+            "description": "Ruft die Systemvariablen von einer Zentrale ab",
             "fields": {
                 "entry_id": {
-                    "description": "Name der Homematic-Zentrale, von der Systemvariablen abgerufen werden sollen.",
+                    "description": "Name der Homematic-Zentrale, von der Systemvariablen abgerufen werden sollen",
                     "name": "Zentrale"
                 }
             },
             "name": "Rufe alle Systemvariablen ab"
         },
         "force_device_availability": {
-            "description": "Erzwingt die Verfügbarkeit eines Geräts. Dadurch wird der tatsächliche Status überschrieben.",
+            "description": "Erzwingt die Verfügbarkeit eines Geräts. Dadurch wird der tatsächliche Status überschrieben",
             "fields": {
                 "device_address": {
-                    "description": "Gib die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 }
             },
             "name": "Geräteverfügbarkeit erzwingen"
         },
         "get_device_value": {
-            "description": "Liest den Wert eines Geräte-Parameters über die XML-RPC-Schnittstelle.",
+            "description": "Liest den Wert eines Geräte-Parameters über die XML-RPC-Schnittstelle",
             "fields": {
                 "channel": {
-                    "description": "Kanalnummer zum Abruf des Parameters.",
+                    "description": "Kanalnummer zum Abruf des Parameters",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Geben Sie eine HomeMatic / HmIP Geräteadresse ein.",
+                    "description": "Geben Sie eine HomeMatic / HmIP Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 },
                 "parameter": {
-                    "description": "Abzurufender Parameter, z. B. STATE.",
+                    "description": "Abzurufender Parameter, z. B. STATE",
                     "name": "Parameter"
                 }
             },
             "name": "Wert eines Geräte-Parameters lesen"
         },
         "get_link_paramset": {
-            "description": "Liest den Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
+            "description": "Liest den Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle",
             "fields": {
                 "receiver_channel_address": {
-                    "description": "Kanaladresse des verknüpften Empfängers.",
+                    "description": "Kanaladresse des verknüpften Empfängers",
                     "name": "Empfänger Kanaladresse"
                 },
                 "sender_channel_address": {
-                    "description": "Kanaladresse des verknüpften Senders.",
+                    "description": "Kanaladresse des verknüpften Senders",
                     "name": "Sender Kanaladresse"
                 }
             },
             "name": "Parametersatz einer Direktverknüpfung lesen"
         },
         "get_link_peers": {
-            "description": "Liest alle Partner einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
+            "description": "Liest alle Partner einer Direktverknüpfung über die XML-RPC-Schnittstelle",
             "fields": {
                 "channel": {
-                    "description": "Kanal zum Abruf der Direktverküpfungspartner.",
+                    "description": "Kanal zum Abruf der Direktverküpfungspartner",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Gib die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 }
             },
             "name": "Partner einer Direktverknüpfung lesen"
         },
         "get_paramset": {
-            "description": "Liest den gesamten Parametersatz von einem Gerät oder Kanal über die XML-RPC-Schnittstelle.",
+            "description": "Liest den gesamten Parametersatz von einem Gerät oder Kanal über die XML-RPC-Schnittstelle",
             "fields": {
                 "channel": {
-                    "description": "Kanal zum Abruf des Parametersatzes.",
+                    "description": "Kanal zum Abruf des Parametersatzes",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Gib die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 },
                 "paramset_key": {
-                    "description": "Der verwendetet Parametersatz.",
+                    "description": "Der verwendetet Parametersatz",
                     "name": "Parametersatz-Schlüssel"
                 }
             },
@@ -851,144 +865,158 @@
             "name": "Zeitplan abrufen"
         },
         "light_set_on_time": {
-            "description": "Stellt die Einschaltdauer für ein Licht ein. Muss von einem light.turn_on gefolgt werden.",
+            "description": "Stellt die Einschaltdauer für ein Licht ein. Muss von einem light.turn_on gefolgt werden",
             "fields": {
                 "on_time": {
-                    "description": "Einschaltdauer für ein Licht in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen.",
+                    "description": "Einschaltdauer für ein Licht in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen",
                     "name": "Einschaltdauer"
                 }
             },
             "name": "Stellt die Einschaltdauer eines Lichts ein"
         },
         "put_link_paramset": {
-            "description": "Schreibt einen Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle.",
+            "description": "Schreibt einen Parametersatz einer Direktverknüpfung über die XML-RPC-Schnittstelle",
             "fields": {
                 "paramset": {
-                    "description": "Ein Paramset-Wörterbuch.",
+                    "description": "Ein Paramset-Wörterbuch",
                     "name": "Parametersatz"
                 },
                 "receiver_channel_address": {
-                    "description": "Kanaladresse des verknüpften Empfängers.",
+                    "description": "Kanaladresse des verknüpften Empfängers",
                     "name": "Empfänger Kanaladresse"
                 },
                 "rx_mode": {
-                    "description": "Der verwendete Empfangsmodus.",
+                    "description": "Der verwendete Empfangsmodus",
                     "name": "RX Modus"
                 },
                 "sender_channel_address": {
-                    "description": "Kanaladresse des verknüpften Senders.",
+                    "description": "Kanaladresse des verknüpften Senders",
                     "name": "Sender Kanaladresse"
                 }
             },
             "name": "Parametersatz einer Direktverknüpfung schreiben"
         },
         "put_paramset": {
-            "description": "Schreibt einen Parametersatz auf ein Gerät oder Kanal über die XML-RPC-Schnittstelle.",
+            "description": "Schreibt einen Parametersatz auf ein Gerät oder Kanal über die XML-RPC-Schnittstelle",
             "fields": {
                 "channel": {
-                    "description": "Kanal des Parametersatzes.",
+                    "description": "Kanal des Parametersatzes",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Gib die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 },
                 "paramset": {
-                    "description": "Ein Paramset-Wörterbuch.",
+                    "description": "Ein Paramset-Wörterbuch",
                     "name": "Parametersatz"
                 },
                 "paramset_key": {
-                    "description": "Der verwendete Parametersatz.",
+                    "description": "Der verwendete Parametersatz",
                     "name": "Parametersatzschlüssel"
                 },
                 "rx_mode": {
-                    "description": "Der verwendete Empfangsmodus.",
+                    "description": "Der verwendete Empfangsmodus",
                     "name": "RX Modus"
                 },
                 "wait_for_callback": {
-                    "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+                    "description": "Warte auf die Rückmeldung des Serviceaufrufs",
                     "name": "Warte auf die Rückmeldung"
                 }
             },
             "name": "Parametersatz eines Gerätes oder Kanals schreiben"
         },
+        "remove_central_links": {
+            "description": "Entfernt Verknüpfungen zur Zentrale, um Tastendruck-Ereignisse zu deaktivieren",
+            "fields": {
+                "device_id": {
+                    "description": "Wähle ein Gerät",
+                    "name": "Gerät"
+                },
+                "entry_id": {
+                    "description": "Name der Homematic Zentrale",
+                    "name": "Zentrale"
+                }
+            },
+            "name": "Entfernt Zentralenverknüpfungen"
+        },
         "set_cover_combined_position": {
-            "description": "Bewegt eine Jalousie in eine bestimmte Position und Neigungsposition.",
+            "description": "Bewegt eine Jalousie in eine bestimmte Position und Neigungsposition",
             "fields": {
                 "position": {
-                    "description": "Position der Jalousie.",
+                    "description": "Position der Jalousie",
                     "name": "Position"
                 },
                 "tilt_position": {
-                    "description": "Neigungsposition der Jalousie.",
+                    "description": "Neigungsposition der Jalousie",
                     "name": "Neigungsposition"
                 },
                 "wait_for_callback": {
-                    "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+                    "description": "Warte auf die Rückmeldung des Serviceaufrufs",
                     "name": "Warte auf die Rückmeldung"
                 }
             },
             "name": "Stellt die kombinierte Position der Jalousie ein"
         },
         "set_device_value": {
-            "description": "Schreibt den Wert eines Geräteparameters über die XML-RPC-Schnittstelle.",
+            "description": "Schreibt den Wert eines Geräteparameters über die XML-RPC-Schnittstelle",
             "fields": {
                 "channel": {
-                    "description": "Kanal des Parameters.",
+                    "description": "Kanal des Parameters",
                     "name": "Kanal"
                 },
                 "device_address": {
-                    "description": "Gib die Geräteadresse ein.",
+                    "description": "Gib die Geräteadresse ein",
                     "name": "Geräteadresse"
                 },
                 "device_id": {
-                    "description": "Wähle ein Gerät.",
+                    "description": "Wähle ein Gerät",
                     "name": "Gerät"
                 },
                 "parameter": {
-                    "description": "Zu sendender Parameter, z. B. STATE.",
+                    "description": "Zu sendender Parameter, z. B. STATE",
                     "name": "Parameter"
                 },
                 "rx_mode": {
-                    "description": "Der verwendete Empfangsmodus.",
+                    "description": "Der verwendete Empfangsmodus",
                     "name": "RX mode"
                 },
                 "value": {
-                    "description": "Neuer Wert.",
+                    "description": "Neuer Wert",
                     "name": "Wert"
                 },
                 "value_type": {
-                    "description": "Typ des neuen Wertes.",
+                    "description": "Typ des neuen Wertes",
                     "name": "Werttyp"
                 },
                 "wait_for_callback": {
-                    "description": "Warte auf die Rückmeldung des Serviceaufrufs.",
+                    "description": "Warte auf die Rückmeldung des Serviceaufrufs",
                     "name": "Warte auf die Rückmeldung"
                 }
             },
             "name": "Wert eines Geräteparameters schreiben"
         },
         "set_install_mode": {
-            "description": "Aktiviert den Anlernmodus auf der Zentrale über die XML-RPC-Schnittstelle.",
+            "description": "Aktiviert den Anlernmodus auf der Zentrale über die XML-RPC-Schnittstelle",
             "fields": {
                 "address": {
-                    "description": "Adresse des Homematic-Gerätes zum anlernen.",
+                    "description": "Adresse des Homematic-Gerätes zum anlernen",
                     "name": "Adresse"
                 },
                 "interface_id": {
-                    "description": "Wählen Sie die Schnittstelle für den Installationsmodus aus.",
+                    "description": "Wählen Sie die Schnittstelle für den Installationsmodus aus",
                     "name": "Schnittstelle"
                 },
                 "mode": {
-                    "description": "1= Normaler Modus / 2= Entfernt die vorhandenen alten Links.",
+                    "description": "1= Normaler Modus / 2= Entfernt die vorhandenen alten Links",
                     "name": "Modus"
                 },
                 "time": {
-                    "description": "Dauer für die Ausführung im Installationsmodus.",
+                    "description": "Dauer für die Ausführung im Installationsmodus",
                     "name": "Dauer"
                 }
             },
@@ -1030,7 +1058,7 @@
             "description": "Speichert einen Zeitplan auf einem Thermostat",
             "fields": {
                 "base_temperature": {
-                    "description": "Wähle die Basistemperatur.",
+                    "description": "Wähle die Basistemperatur",
                     "name": "Basistemperatur"
                 },
                 "profile": {
@@ -1048,7 +1076,7 @@
             "description": "Speichert einen Zeitplan auf einem Thermostat",
             "fields": {
                 "base_temperature": {
-                    "description": "Wähle die Basistemperatur.",
+                    "description": "Wähle die Basistemperatur",
                     "name": "Basistemperatur"
                 },
                 "profile": {
@@ -1067,56 +1095,56 @@
             "name": "Einfachen Wochentag speichern"
         },
         "set_variable_value": {
-            "description": "Schreibt einen Wert in eine Homematic Systemvariable.",
+            "description": "Schreibt einen Wert in eine Homematic Systemvariable",
             "fields": {
                 "entry_id": {
-                    "description": "Name der Homematic-Zentrale, um den Wert zu schreiben.",
+                    "description": "Name der Homematic-Zentrale, um den Wert zu schreiben",
                     "name": "Zentrale"
                 },
                 "name": {
-                    "description": "Name der zu beschreibenden Systemvariable.",
+                    "description": "Name der zu beschreibenden Systemvariable",
                     "name": "Name"
                 },
                 "value": {
-                    "description": "Der neue Wert.",
+                    "description": "Der neue Wert",
                     "name": "Wert"
                 }
             },
             "name": "Wert einer Systemvariable schreiben"
         },
         "switch_set_on_time": {
-            "description": "Stellt die Einschaltdauer eines Schalters ein. Muss von einem switch.turn_on gefolgt werden.",
+            "description": "Stellt die Einschaltdauer eines Schalters ein. Muss von einem switch.turn_on gefolgt werden",
             "fields": {
                 "on_time": {
-                    "description": "Einschaltdauer für einn Schalter in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen.",
+                    "description": "Einschaltdauer für einn Schalter in Sekunden. Verwenden Sie 0, um die Einschaltdauer zurückzusetzen",
                     "name": "Einschaltdauer"
                 }
             },
             "name": "Stellt die Einschaltdauer eines Schalters ein"
         },
         "turn_on_siren": {
-            "description": "Schaltet die Sirene ein.",
+            "description": "Schaltet die Sirene ein",
             "fields": {
                 "duration": {
-                    "description": "Die Dauer in Sekunden, die die Sirene eingeschaltet wird.",
+                    "description": "Die Dauer in Sekunden, die die Sirene eingeschaltet wird",
                     "name": "Dauer"
                 },
                 "light": {
-                    "description": "Das Licht, das beim Einschalten der Sirene ausgestrahlt wird.",
+                    "description": "Das Licht, das beim Einschalten der Sirene ausgestrahlt wird",
                     "name": "Licht"
                 },
                 "tone": {
-                    "description": "Der Ton, der beim Einschalten der Sirene ausgegeben wird.",
+                    "description": "Der Ton, der beim Einschalten der Sirene ausgegeben wird",
                     "name": "Ton"
                 }
             },
             "name": "Sirene einschalten"
         },
         "update_device_firmware_data": {
-            "description": "Geräte-Firmware-Daten für alle Homematic Geräte aktualisieren.",
+            "description": "Geräte-Firmware-Daten für alle Homematic Geräte aktualisieren",
             "fields": {
                 "entry_id": {
-                    "description": "Name der Homematic-Zentrale, für die die Geräte-Firmware-Daten aktualisiert werden sollen.",
+                    "description": "Name der Homematic-Zentrale, für die die Geräte-Firmware-Daten aktualisiert werden sollen",
                     "name": "Zentrale"
                 }
             },

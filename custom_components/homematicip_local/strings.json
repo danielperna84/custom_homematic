@@ -676,6 +676,20 @@
             },
             "name": "Copy schedule profile"
         },
+        "create_central_links": {
+            "description": "Create links to the central to enable support key press events",
+            "fields": {
+                "device_id": {
+                    "description": "Select a device",
+                    "name": "Device"
+                },
+                "entry_id": {
+                    "description": "Name(s) of homematic central",
+                    "name": "Central"
+                }
+            },
+            "name": "Create central links"
+        },
         "disable_away_mode": {
             "description": "Disable climate away mode",
             "name": "Disable climate away mode"
@@ -911,6 +925,20 @@
                 }
             },
             "name": "Put paramset"
+        },
+        "remove_central_links": {
+            "description": "Remove links to the central to disable support key press events",
+            "fields": {
+                "device_id": {
+                    "description": "Select a device",
+                    "name": "Device"
+                },
+                "entry_id": {
+                    "description": "Name(s) of homematic central",
+                    "name": "Central"
+                }
+            },
+            "name": "Remove central links"
         },
         "set_cover_combined_position": {
             "description": "Move a blind to a specific position and tilt position",

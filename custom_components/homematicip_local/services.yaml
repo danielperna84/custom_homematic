@@ -1,4 +1,16 @@
 # Describes the format for available component services
+create_central_links:
+  fields:
+    entry_id:
+      required: false
+      selector:
+        config_entry:
+          integration: homematicip_local
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
 
 clear_cache:
   fields:
@@ -220,6 +232,19 @@ get_schedule_profile_weekday:
             - "FRIDAY"
             - "SATURDAY"
             - "SUNDAY"
+
+remove_central_links:
+  fields:
+    entry_id:
+      required: false
+      selector:
+        config_entry:
+          integration: homematicip_local
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: homematicip_local
 
 set_schedule_profile:
   target:
