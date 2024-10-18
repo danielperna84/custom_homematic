@@ -84,10 +84,8 @@ BASE_SCHEMA_DEVICE = vol.Schema(
 )
 
 SCHEMA_SERVICE_CREATE_CENTRAL_LINKS = vol.All(
-    {
-        cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
-        cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
-    },
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
     vol.Schema(
         {
             vol.Optional(CONF_ENTRY_ID): cv.string,
@@ -162,10 +160,8 @@ SCHEMA_SERVICE_GET_PARAMSET = vol.All(
 )
 
 SCHEMA_SERVICE_REMOVE_CENTRAL_LINKS = vol.All(
-    {
-        cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
-        cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
-    },
+    cv.has_at_least_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
+    cv.has_at_most_one_key(CONF_DEVICE_ID, CONF_ENTRY_ID),
     vol.Schema(
         {
             vol.Optional(CONF_ENTRY_ID): cv.string,
