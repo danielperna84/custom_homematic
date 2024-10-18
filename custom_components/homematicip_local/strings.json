@@ -638,20 +638,6 @@
         }
     },
     "services": {
-        "create_central_links": {
-            "description": "Create links to the central to enable support key press events",
-            "fields": {
-                "entry_id": {
-                    "description": "Name(s) of homematic central",
-                    "name": "Central"
-                },
-                "device_id": {
-                    "description": "Select a device",
-                    "name": "Device"
-                }
-            },
-            "name": "Create central links"
-        },
         "clear_cache": {
             "description": "Clear the cache. Requires a restart",
             "fields": {
@@ -689,6 +675,20 @@
                 }
             },
             "name": "Copy schedule profile"
+        },
+        "create_central_links": {
+            "description": "Create links to the central to enable support key press events",
+            "fields": {
+                "device_id": {
+                    "description": "Select a device",
+                    "name": "Device"
+                },
+                "entry_id": {
+                    "description": "Name(s) of homematic central",
+                    "name": "Central"
+                }
+            },
+            "name": "Create central links"
         },
         "disable_away_mode": {
             "description": "Disable climate away mode",
@@ -927,15 +927,15 @@
             "name": "Put paramset"
         },
         "remove_central_links": {
-            "description": "Remove links to the central to disable support key press events.",
+            "description": "Remove links to the central to disable support key press events",
             "fields": {
-                "entry_id": {
-                    "description": "Name(s) of homematic central",
-                    "name": "Central"
-                },
                 "device_id": {
                     "description": "Select a device",
                     "name": "Device"
+                },
+                "entry_id": {
+                    "description": "Name(s) of homematic central",
+                    "name": "Central"
                 }
             },
             "name": "Remove central links"

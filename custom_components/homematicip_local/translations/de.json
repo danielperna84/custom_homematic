@@ -642,20 +642,6 @@
         }
     },
     "services": {
-        "create_central_links": {
-            "description": "Erstellt Verknüpfungen zur Zentrale, um Tastendruck-Ereignisse zu ermöglichen",
-            "fields": {
-                "entry_id": {
-                    "description": "Name der Homematic Zentrale",
-                    "name": "Zentrale"
-                },
-                "device_id": {
-                    "description": "Wähle ein Gerät",
-                    "name": "Gerät"
-                }
-            },
-            "name": "Erstellt Zentralenverknüpfungen"
-        },
         "clear_cache": {
             "description": "Löscht den Cache. Benötigt einen Neustart",
             "fields": {
@@ -693,6 +679,20 @@
                 }
             },
             "name": "Zeitplan kopieren"
+        },
+                "create_central_links": {
+            "description": "Erstellt Verknüpfungen zur Zentrale, um Tastendruck-Ereignisse zu ermöglichen",
+            "fields": {
+                "device_id": {
+                    "description": "Wähle ein Gerät",
+                    "name": "Gerät"
+                },
+                "entry_id": {
+                    "description": "Name der Homematic Zentrale",
+                    "name": "Zentrale"
+                }
+            },
+            "name": "Erstellt Zentralenverknüpfungen"
         },
         "disable_away_mode": {
             "description": "Deaktiviert den Klima-Abwesenheitsmodus",
@@ -933,13 +933,13 @@
         "remove_central_links": {
             "description": "Entfernt Verknüpfungen zur Zentrale, um Tastendruck-Ereignisse zu deaktivieren",
             "fields": {
-                "entry_id": {
-                    "description": "Name der Homematic Zentrale",
-                    "name": "Zentrale"
-                },
                 "device_id": {
                     "description": "Wähle ein Gerät",
                     "name": "Gerät"
+                },
+                "entry_id": {
+                    "description": "Name der Homematic Zentrale",
+                    "name": "Zentrale"
                 }
             },
             "name": "Entfernt Zentralenverknüpfungen"
