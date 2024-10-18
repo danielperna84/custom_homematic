@@ -878,9 +878,9 @@ BidCos-RF devices have an optional parameter for put_paramset which defines the 
 The following blueprints can be used to simplify the usage of HomeMatic and HomematicIP device:
 
 - [Support for 2-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-2-button.yaml): Support for two button remote like HmIP-WRC2.
-- [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for two button remote like HmIP-KRCA.
-- [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for two button remote like HmIP-WRC6.
-- [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml): Support for two button remote like HmIP-RC8.
+- [Support for 4-button Key Ring Remote Control](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-key_ring_remote_control.yaml): Support for four button remote like HmIP-KRCA.
+- [Support for 6-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-6-button.yaml): Support for six button remote like HmIP-WRC6.
+- [Support for 8-button Remotes](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local-actions-for-8-button.yaml): Support for eight button remote like HmIP-RC8.
 - [Support for persistent notifications for unavailable devices](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_persistent_notification.yaml): Enable persistent notifications about unavailable devices.
 - [Reactivate device by type](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_by_type.yaml). Reactivate unavailable devices by device type.
 - [Reactivate every device](https://github.com/danielperna84/custom_homematic/blob/devel/blueprints/automation/homematicip_local_reactivate_device_full.yaml). Reactivate all unavailable devices. NOT recommended. Usage of `by device type` or `single device` should be preferred.
