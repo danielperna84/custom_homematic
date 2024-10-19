@@ -432,7 +432,7 @@ async def _async_service_remove_central_link(hass: HomeAssistant, service: Servi
         if (entry_id := service.data.get(CONF_ENTRY_ID)) is not None and (
             control := _async_get_control_unit(hass=hass, entry_id=entry_id)
         ) is not None:
-            await control.central.create_central_links()
+            await control.central.remove_central_links()
         elif hm_device := _async_get_hm_device_by_service_data(hass=hass, service=service):
             await hm_device.remove_central_links()
     except BaseHomematicException as ex:
