@@ -1,7 +1,7 @@
 # Version 1.68.0 (2024-10-19)
 
 ## What's Changed
-- Bump hahomematic to 2024.10.11
+- Bump hahomematic to 2024.10.12
   - Add central link methods to click event
   - Add create_central_links and remove_central_links to device and central
   - Add operation_mode to channel
