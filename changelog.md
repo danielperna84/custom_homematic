@@ -1,4 +1,40 @@
-# Version [2.11.0](https://github.com/SukramJ/homematicip_local/compare/2.10.0...2.11.0) (unreleased)
+# Version [2.11.1](https://github.com/SukramJ/homematicip_local/compare/2.11.0...2.11.1) (unreleased)
+
+## What's Changed
+
+### Integration
+
+- Beyond the dependency bumps below, the integration's own changes in this release are openccu-loom backend (Beta) work; its details stay out of scope for this changelog until it leaves Beta
+
+### Dependencies
+
+#### Bump aiohomematic to [2026.9.2](https://github.com/SukramJ/aiohomematic/compare/2026.9.1...2026.9.2)
+
+- **Fix: a cover command was dropped while the cover was moving.** `cover.set_cover_position` with the position the cover had set off from, and `cover.close_cover` while it was opening (mirrored for the other direction), never reached the CCU. Nothing was sent, nothing was logged above DEBUG, and the service call reported success.
+
+  Classic shutter actuators (`HM-LC-Bl1-*` and relatives) re-report the *old* level when they start working and only report the new one once the movement has finished. That echo clears the optimistic value, so for the whole travel the cover reads as if it were still at its starting position — and a command aiming back there compared equal to the current position and was discarded as "no state change". Whether it happened at all depended on a race between the echo and the second command, which made it look intermittent. Commands with any other target were unaffected.
+
+  A running movement counts as a state change now; `DIRECTION` is the only signal left at that point, because the echo has already cleared the optimistic value. While the cover stands still, an identical command is still suppressed as before
+
+- The `NO_STATE_CHANGE` debug line names the data point it belongs to. It logged `name`, which is empty for a primary custom data point whose channel name equals the device name — so the line that tells you a command was suppressed did not say which data point suppressed it
+
+#### Bump openccu-data to `2026.9.0`
+
+`openccu-data` is not imported by this integration. It is pulled in by aiohomematic and pinned in the manifest so a user installs the version this release was tested against. aiohomematic reads it for a channel's translated type name (`aiohomematic/model/device.py:1020`) and for the per-value labels of a parameter's `VALUE_LIST` (`aiohomematic/model/data_point.py:735`).
+
+- **The three `CHANNEL_OPERATION_MODE` enums of the HmIP door-lock drive have labels of their own now.** The parameter appears on three channel types of an HmIP-DLP with a different `VALUE_LIST` on each, and no source carried a label for any of their tokens — not the extract, not the CCU's own `stringtable_de.txt`, not the WebUI language files. Consumers fell back to whatever the unqualified `channel_operation_mode=<index>` entries happened to say, which came from an unrelated device. The curated overlay names all three enums now, keyed by channel type so no other type can borrow them
+- **The German channel type of the door-lock drive read "Tüschlossantrieb".** The typo is upstream — `translate.lang.channelDescription.js` carries it while every neighbouring string in the same file spells "Türschlossantrieb" — and the curated overlay corrects it
+- The bump also carries `2026.8.1`, whose one breaking change is confined to how `openccu-data` extracts its own data (the local source is an OpenCCU-Base checkout now, `OCCU_PATH` renamed to `OPENCCUBASE_PATH`). The published artifacts and their format are unaffected, so nothing of it reaches a consumer of the package
+
+#### Bump openccu-loom-client to `2026.9.4`
+
+- Bump for the openccu-loom backend (Beta); it has no runtime effect on the direct-CCU backend, where the client is not loaded. It regenerates the wire bindings against daemon api 11.2.0 (openccu-loom 0.76.0) and lets a channel say which side of a direct link it can take. Kept to one line: loom details stay out of scope while the backend is Beta
+
+### Development
+
+- Test framework `pytest-homeassistant-custom-component-framework` `1.0.52` → `1.0.53`. A patch there follows a Home Assistant core release; the package's own structure is unchanged
+
+# Version [2.11.0](https://github.com/SukramJ/homematicip_local/compare/2.10.0...2.11.0) (2026-09-04)
 
 ## What's Changed
 
