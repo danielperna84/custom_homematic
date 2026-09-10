@@ -5,11 +5,13 @@ blueprint:
     keep in mind, that long-press actions might be executed multiple times, according
     to your configured minimum duration for long press. This can be configured in
     your CCU.
+    The actions are driven by the event entities of the selected device, which are
+    enabled by default. An event entity you have disabled or hidden cannot trigger them.
     Tested with HmIP-RC8. Should work with other device too.
-    v2026-09-04
+    v2026-09-10
   domain: automation
   homeassistant:
-    min_version: "2026.3.0"
+    min_version: "2026.8.0"
   source_url: https://github.com/sukramj/homematicip_local/blob/main/blueprints/automation/homematicip_local-actions-for-8-button.yaml
   input:
     remote:
@@ -134,7 +136,6 @@ blueprint:
         action: {}
 
 variables:
-  remotes: !input remote
   notify_on_direct_links: !input notify_on_direct_links
   skip_actions_when_direct_link: !input skip_actions_when_direct_link
 
@@ -155,22 +156,32 @@ variables:
   action_8_short: !input action_8_short
   action_8_long: !input action_8_long
 
-trigger:
-  - platform: event
-    event_type: homematic.keypress
+# The device target is expanded to the device's event entities and the press type
+# is matched before the automation starts, so a press on a device that is not
+# selected never runs it -- where the global homematic.keypress bus event started
+# every such automation on every keypress of every device and sorted it out in a
+# condition afterwards.
+triggers:
+  - trigger: event.received
+    target:
+      device_id: !input remote
+    options:
+      event_type:
+        - press_short
+        - press_long
 
-condition:
-  - condition: template
-    value_template: >-
-      {% set selected = remotes if remotes is list else [remotes] %}
-      {{ trigger.event.data.device_id in selected }}
-
-action:
+actions:
   - variables:
-      channel: "{{ trigger.event.data.subtype }}"
+      press_type: "{{ trigger.to_state.attributes.event_type }}"
+      # channel_no is carried by the event entity. The int() default of -1
+      # matches no button below, so an entity without the attribute -- a
+      # keypress channel the integration could not number -- runs no action
+      # instead of the one of channel 0.
+      channel: "{{ trigger.to_state.attributes.channel_no | int(-1) }}"
+      remote_device_id: "{{ device_id(trigger.entity_id) }}"
       has_configured_action: >-
-        {% set t = trigger.event.data.type %}
-        {% set s = trigger.event.data.subtype %}
+        {% set t = press_type %}
+        {% set s = channel %}
         {% if t == 'press_short' and s == 1 %}{{ (action_1_short | default([])) | length > 0 }}
         {% elif t == 'press_long' and s == 1 %}{{ (action_1_long | default([])) | length > 0 }}
         {% elif t == 'press_short' and s == 2 %}{{ (action_2_short | default([])) | length > 0 }}
@@ -202,7 +213,7 @@ action:
         sequence:
           - action: homematicip_local.get_link_peers
             data:
-              device_id: "{{ trigger.event.data.device_id }}"
+              device_id: "{{ remote_device_id }}"
               channel: "{{ channel }}"
             response_variable: link_peers
 
@@ -219,7 +230,7 @@ action:
                     data:
                       title: "Homematic CCU direct connection detected"
                       message: >-
-                        Device {{ trigger.event.data.device_id }}, channel {{ channel }} has direct CCU links (peers).
+                        Device {{ remote_device_id }}, channel {{ channel }} has direct CCU links (peers).
                         A Home Assistant action is configured for this button, but the CCU may also handle it directly.
 
           - choose:
@@ -228,37 +239,37 @@ action:
                   - stop: "Skipped blueprint actions: CCU direct connection exists for this channel."
 
   - choose:
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 1 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 1 }}"
         sequence: !input "action_1_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 1 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 1 }}"
         sequence: !input "action_1_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 2 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 2 }}"
         sequence: !input "action_2_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 2 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 2 }}"
         sequence: !input "action_2_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 3 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 3 }}"
         sequence: !input "action_3_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 3 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 3 }}"
         sequence: !input "action_3_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 4 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 4 }}"
         sequence: !input "action_4_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 4 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 4 }}"
         sequence: !input "action_4_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 5 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 5 }}"
         sequence: !input "action_5_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 5 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 5 }}"
         sequence: !input "action_5_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 6 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 6 }}"
         sequence: !input "action_6_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 6 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 6 }}"
         sequence: !input "action_6_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 7 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 7 }}"
         sequence: !input "action_7_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 7 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 7 }}"
         sequence: !input "action_7_long"
-      - conditions: "{{ trigger.event.data.type == 'press_short' and trigger.event.data.subtype == 8 }}"
+      - conditions: "{{ press_type == 'press_short' and channel == 8 }}"
         sequence: !input "action_8_short"
-      - conditions: "{{ trigger.event.data.type == 'press_long' and trigger.event.data.subtype == 8 }}"
+      - conditions: "{{ press_type == 'press_long' and channel == 8 }}"
         sequence: !input "action_8_long"
 
 mode: parallel

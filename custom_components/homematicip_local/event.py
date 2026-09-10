@@ -8,6 +8,7 @@ from typing import Final
 from aiohomematic.central.events import DataPointStateChangedEvent, DeviceRemovedEvent, SubscriptionGroup
 from aiohomematic.const import DATA_POINT_EVENTS, DataPointCategory, Parameter
 from aiohomematic.interfaces import ChannelEventGroupProtocol
+from aiohomematic.support.address import get_channel_no
 from homeassistant.components.event import DoorbellEventType, EventDeviceClass, EventEntity
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
@@ -17,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import UndefinedType
 
 from . import HomematicConfigEntry
-from .const import DOMAIN, EVENT_ADDRESS, EVENT_INTERFACE_ID, EVENT_MODEL
+from .const import DOMAIN, EVENT_ADDRESS, EVENT_CHANNEL_NO, EVENT_INTERFACE_ID, EVENT_MODEL
 from .control_unit import ControlUnit, signal_new_data_point
 from .entity_helpers.base import HmEventEntityDescription
 from .entity_helpers.registry import REGISTRY
@@ -65,8 +66,12 @@ async def async_setup_entry(
         try:
             event_groups = control_unit.central.query_facade.get_event_groups(event_type=event_type, registered=False)
         except NotImplementedError as nie:
-            # The loom backend does not model per-device event groups yet; set up
-            # the platform without bootstrap entities instead of failing the entry.
+            # Both backends answer this call — aiohomematic in
+            # central/query_facade.py, the loom client in
+            # compat/aiohomematic/central/adapter.py — so this is a guard, not a
+            # description of one of them: a backend that does not model event
+            # groups sets up the platform without bootstrap entities instead of
+            # failing the whole config entry.
             _LOGGER.debug("ASYNC_SETUP_ENTRY: Event groups unavailable for %s: %s", event_type, nie)
             continue
         async_add_event(event_groups=event_groups)
@@ -79,7 +84,7 @@ class AioHomematicEvent(EventEntity):
     _attr_has_entity_name = True
     _attr_should_poll = False
 
-    _unrecorded_attributes = frozenset({EVENT_ADDRESS, EVENT_INTERFACE_ID, EVENT_MODEL})
+    _unrecorded_attributes = frozenset({EVENT_ADDRESS, EVENT_CHANNEL_NO, EVENT_INTERFACE_ID, EVENT_MODEL})
 
     def __init__(
         self,
@@ -125,6 +130,14 @@ class AioHomematicEvent(EventEntity):
         self._attr_extra_state_attributes = {
             EVENT_INTERFACE_ID: event_group.device.interface_id,
             EVENT_ADDRESS: event_group.channel.address,
+            # Parsed out of the channel address, not read off the channel: the
+            # two backends spell the channel number differently — aiohomematic
+            # has ChannelProtocol.no, the loom client's compat channel has
+            # .number — while the address above is the one value both carry, in
+            # the same '<address>:<no>' form. Automations need the number on its
+            # own; deriving it here keeps that backend difference out of every
+            # blueprint that would otherwise split the address itself.
+            EVENT_CHANNEL_NO: get_channel_no(address=event_group.channel.address),
             EVENT_MODEL: event_group.device.model,
         }
         self._subscription_group: Final[SubscriptionGroup] = control_unit.central.event_bus.create_subscription_group(

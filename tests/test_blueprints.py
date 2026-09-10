@@ -2,19 +2,31 @@
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import Mapping
+from dataclasses import dataclass
+from datetime import timedelta
+from itertools import count
 from pathlib import Path
 from typing import Any
 
 import pytest
-from pytest_homeassistant_custom_component.common import async_mock_service
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_mock_service
 
+from custom_components.homematicip_local.const import DOMAIN
 from homeassistant.components.automation import DOMAIN as AUTOMATION_DOMAIN
 from homeassistant.components.automation.config import AUTOMATION_BLUEPRINT_SCHEMA
 from homeassistant.components.blueprint.errors import MissingInput
 from homeassistant.components.blueprint.models import Blueprint, BlueprintInputs
+from homeassistant.const import STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, SupportsResponse
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 from homeassistant.util.yaml import load_yaml_dict
+
+from tests import const
+from tests.helper import Factory
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -26,6 +38,11 @@ _COMMUNITY_DIR = _REPO_ROOT / "blueprints" / "community"
 _ALL_BLUEPRINT_FILES: list[Path] = sorted(list(_AUTOMATION_DIR.glob("*.yaml")) + list(_COMMUNITY_DIR.glob("*.yaml")))
 
 _BUTTON_BLUEPRINT_FILES: list[Path] = [p for p in _ALL_BLUEPRINT_FILES if "actions-for" in p.name]
+# The blueprints shipped by this repository trigger on the devices' event
+# entities; the contributed ones in blueprints/community still drive off the
+# homematic.keypress bus event, which stays supported.
+_OFFICIAL_BUTTON_BLUEPRINT_FILES: list[Path] = [p for p in _BUTTON_BLUEPRINT_FILES if p.parent == _AUTOMATION_DIR]
+_COMMUNITY_BUTTON_BLUEPRINT_FILES: list[Path] = [p for p in _BUTTON_BLUEPRINT_FILES if p.parent == _COMMUNITY_DIR]
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +109,109 @@ async def setup_automation_from_blueprint(
     )
     await hass.async_block_till_done()
     return config
+
+
+# ---------------------------------------------------------------------------
+# Event entities – the button blueprints' trigger source
+# ---------------------------------------------------------------------------
+_TEST_ADDRESS = "0001D3C99C5A72"
+
+# One microsecond offset per press, so two presses of the same button are two
+# distinct states regardless of the clock's resolution.
+_press_offsets = count(1)
+
+
+@dataclass(frozen=True, kw_only=True, slots=True)
+class Remote:
+    """A registered device with one keypress event entity per channel."""
+
+    address: str
+    device_id: str
+    entity_ids: Mapping[int, str]
+
+
+def register_remote(
+    *,
+    hass: HomeAssistant,
+    name: str,
+    channel_count: int,
+    address: str = _TEST_ADDRESS,
+) -> Remote:
+    """
+    Register a device with one keypress event entity per channel.
+
+    The button blueprints trigger on ``event.received`` with the selected
+    devices as the target, and HA expands that target through the device and
+    entity registries. A bare device-id string — all the ``homematic.keypress``
+    bus event ever needed — therefore reaches nothing on its own: the device
+    and its event entities have to exist.
+    """
+    config_entry = MockConfigEntry(domain=DOMAIN, title=name, unique_id=f"{name}-entry")
+    config_entry.add_to_hass(hass)
+    device_entry = dr.async_get(hass).async_get_or_create(
+        config_entry_id=config_entry.entry_id,
+        identifiers={(DOMAIN, f"{address}@{name}")},
+        name=name,
+    )
+    entity_registry = er.async_get(hass)
+    entity_ids: dict[int, str] = {}
+    for channel_no in range(1, channel_count + 1):
+        entity_entry = entity_registry.async_get_or_create(
+            "event",
+            DOMAIN,
+            f"{DOMAIN}_event_group_keypress_{address.lower()}_{channel_no}",
+            device_id=device_entry.id,
+            suggested_object_id=f"{name}_ch{channel_no}",
+        )
+        # Mirrors AioHomematicEvent: state unknown until the first press, the
+        # channel number and the channel address as attributes.
+        hass.states.async_set(
+            entity_entry.entity_id,
+            STATE_UNKNOWN,
+            {
+                "address": f"{address}:{channel_no}",
+                "channel_no": channel_no,
+                "device_class": "button",
+                "event_type": None,
+                "event_types": ["press_short", "press_long"],
+                "interface_id": "hmip_rf",
+            },
+        )
+        entity_ids[channel_no] = entity_entry.entity_id
+    return Remote(address=address, device_id=device_entry.id, entity_ids=entity_ids)
+
+
+async def wait_for_calls(*, hass: HomeAssistant, calls: list[Any]) -> None:
+    """
+    Poll until the automation's action has been called.
+
+    Used where the press comes from the integration instead of from
+    ``press_button``: that chain crosses aiohomematic task hops which
+    ``block_till_done`` does not track, so a fixed number of loop ticks is not
+    deterministic. Raises ``TimeoutError`` when the action never runs.
+    """
+    async with asyncio.timeout(5):
+        while not calls:
+            await hass.async_block_till_done()
+            await asyncio.sleep(0.01)
+
+
+async def press_button(
+    *,
+    hass: HomeAssistant,
+    remote: Remote,
+    channel_no: int,
+    press_type: str = "press_short",
+) -> None:
+    """Press one button of *remote* the way its event entity would, and settle."""
+    entity_id = remote.entity_ids[channel_no]
+    attributes = dict(hass.states.get(entity_id).attributes) | {"event_type": press_type}
+    hass.states.async_set(
+        entity_id,
+        (dt_util.utcnow() + timedelta(microseconds=next(_press_offsets))).isoformat(),
+        attributes,
+    )
+    await hass.async_block_till_done()
 
 
 # ---------------------------------------------------------------------------
@@ -227,14 +347,25 @@ class TestBlueprintInputValidation:
 class TestBlueprintSubstitution:
     """Verify that resolved configs have the expected structure."""
 
-    @pytest.mark.parametrize("path", _BUTTON_BLUEPRINT_FILES, ids=_bp_id)
-    def test_button_blueprints_trigger_on_keypress(self, *, path: Path) -> None:
-        """All button blueprints must trigger on homematic.keypress."""
+    @pytest.mark.parametrize("path", _OFFICIAL_BUTTON_BLUEPRINT_FILES, ids=_bp_id)
+    def test_button_blueprints_trigger_on_the_event_entity(self, *, path: Path) -> None:
+        """
+        The button blueprints must trigger on the selected devices' event entities.
+
+        Both halves of the filter belong to the trigger: the device target and
+        the press types. With the keypress bus event, every such automation was
+        started on every keypress of every device and sorted the press out in a
+        condition afterwards - so the condition must be gone, too.
+        """
         bp = load_blueprint(path=path)
         config = resolve_config(blueprint=bp)
         triggers = config.get("triggers", config.get("trigger", []))
         trigger = triggers[0] if isinstance(triggers, list) else triggers
-        assert trigger["event_type"] == "homematic.keypress"
+        assert trigger["trigger"] == "event.received"
+        assert trigger["target"] == {"device_id": "dummy_device_id"}
+        assert trigger["options"] == {"event_type": ["press_short", "press_long"]}
+        assert "condition" not in config
+        assert "conditions" not in config
 
     @pytest.mark.parametrize("path", _BUTTON_BLUEPRINT_FILES, ids=_bp_id)
     def test_button_blueprints_use_parallel_mode(self, *, path: Path) -> None:
@@ -242,6 +373,15 @@ class TestBlueprintSubstitution:
         bp = load_blueprint(path=path)
         config = resolve_config(blueprint=bp)
         assert config.get("mode") == "parallel"
+
+    @pytest.mark.parametrize("path", _COMMUNITY_BUTTON_BLUEPRINT_FILES, ids=_bp_id)
+    def test_community_button_blueprints_trigger_on_keypress(self, *, path: Path) -> None:
+        """The contributed button blueprints still trigger on homematic.keypress."""
+        bp = load_blueprint(path=path)
+        config = resolve_config(blueprint=bp)
+        triggers = config.get("triggers", config.get("trigger", []))
+        trigger = triggers[0] if isinstance(triggers, list) else triggers
+        assert trigger["event_type"] == "homematic.keypress"
 
     @pytest.mark.parametrize(
         ("filename", "event_type"),
@@ -294,11 +434,14 @@ class TestBlueprintFullFlow:
 
         test_calls = async_mock_service(hass, "test", "action_top_short")
 
+        remote = register_remote(hass=hass, name="selected_device", channel_count=2)
+        other_remote = register_remote(hass=hass, name="wrong_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["selected_device"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
             },
         )
@@ -311,17 +454,7 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "XXXXXX",
-                "device_id": "wrong_device",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=other_remote, channel_no=2, press_type="press_short")
 
         assert len(test_calls) == 0
 
@@ -336,11 +469,13 @@ class TestBlueprintFullFlow:
         # Register a mock service that the blueprint action will call
         test_calls = async_mock_service(hass, "test", "action_top_short")
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
             },
         )
@@ -354,17 +489,7 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "test_device_id",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         assert len(test_calls) == 1
 
@@ -385,27 +510,19 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="krca", channel_count=4)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["krca"],
+                "remote": [remote.device_id],
                 "action_1_short": [{"action": "test.btn1"}],
             },
         )
 
         # Button 1 on KRCA = subtype 2
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "krca",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         assert len(test_calls) == 1
 
@@ -426,26 +543,18 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev6", channel_count=6)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev6"],
+                "remote": [remote.device_id],
                 "action_right_middle_long": [{"action": "test.right_middle_long"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev6",
-                "type": "press_long",
-                "subtype": 4,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=4, press_type="press_long")
 
         assert len(test_calls) == 1
 
@@ -466,26 +575,18 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev8", channel_count=8)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev8"],
+                "remote": [remote.device_id],
                 "action_5_short": [{"action": "test.btn5"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev8",
-                "type": "press_short",
-                "subtype": 5,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=5, press_type="press_short")
 
         assert len(test_calls) == 1
 
@@ -506,41 +607,24 @@ class TestBlueprintFullFlow:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote_a = register_remote(hass=hass, name="device_a", channel_count=2)
+        remote_b = register_remote(hass=hass, name="device_b", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["device_a", "device_b"],
+                "remote": [remote_a.device_id, remote_b.device_id],
                 "action_top_short": [{"action": "test.multi"}],
             },
         )
 
         # Device A
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "AAA",
-                "device_id": "device_a",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote_a, channel_no=2, press_type="press_short")
         assert len(test_calls) == 1
 
         # Device B
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "BBB",
-                "device_id": "device_b",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote_b, channel_no=2, press_type="press_short")
         assert len(test_calls) == 2
 
     @pytest.mark.asyncio
@@ -560,24 +644,16 @@ class TestBlueprintFullFlow:
         )
 
         # All actions default to [] – no overrides
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
-            overrides={"remote": ["dev"]},
+            overrides={"remote": [remote.device_id]},
         )
 
         # Fire a keypress – nothing should be called (no crash either)
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
     @pytest.mark.asyncio
     async def test_persistent_notification_dismissed_on_available(
@@ -586,6 +662,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Device becoming available again must dismiss the notification."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_persistent_notification.yaml")
+
         await setup_automation_from_blueprint(hass=hass, blueprint=bp)
 
         dismiss_calls = async_mock_service(hass, "persistent_notification", "dismiss")
@@ -612,6 +689,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Device becoming unavailable must trigger a persistent notification."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_persistent_notification.yaml")
+
         await setup_automation_from_blueprint(hass=hass, blueprint=bp)
 
         create_calls = async_mock_service(hass, "persistent_notification", "create")
@@ -639,6 +717,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Reactivate-by-model must only react to the configured model."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_reactivate_device_by_model.yaml")
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
@@ -689,6 +768,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Unavailability event must trigger force_device_availability after delay."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_reactivate_device_full.yaml")
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
@@ -721,6 +801,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Reactivate-single must only react to the configured device_id."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_reactivate_single_device.yaml")
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
@@ -768,6 +849,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Firing a device_error event with error=true must call persistent_notification.create."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_show_device_error.yaml")
+
         await setup_automation_from_blueprint(hass=hass, blueprint=bp)
 
         create_calls = async_mock_service(hass, "persistent_notification", "create")
@@ -799,6 +881,7 @@ class TestBlueprintFullFlow:
     ) -> None:
         """Firing a device_error event with error=false must dismiss the notification."""
         bp = load_blueprint(path=_AUTOMATION_DIR / "homematicip_local_show_device_error.yaml")
+
         await setup_automation_from_blueprint(hass=hass, blueprint=bp)
 
         dismiss_calls = async_mock_service(hass, "persistent_notification", "dismiss")
@@ -848,26 +931,18 @@ class TestDirectLinkDetection:
         )
 
         # action_top_short is NOT configured (defaults to [])
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 "notify_on_direct_links": True,
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         # No notification because no action is configured for that button
         assert len(notify_calls) == 0
@@ -892,28 +967,20 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 "notify_on_direct_links": True,
                 "skip_actions_when_direct_link": False,
                 "action_top_short": [{"action": "test.my_action"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         # Notification must have been created
         assert len(notify_calls) == 1
@@ -940,28 +1007,20 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="krca", channel_count=4)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["krca"],
+                "remote": [remote.device_id],
                 "skip_actions_when_direct_link": True,
                 "action_1_short": [{"action": "test.btn1"}],
             },
         )
 
         # Button 1 on KRCA = subtype 2
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "krca",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         assert len(test_calls) == 0
 
@@ -984,27 +1043,19 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev6", channel_count=6)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev6"],
+                "remote": [remote.device_id],
                 "skip_actions_when_direct_link": True,
                 "action_left_middle_short": [{"action": "test.skip_me"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev6",
-                "type": "press_short",
-                "subtype": 3,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=3, press_type="press_short")
 
         assert len(test_calls) == 0
 
@@ -1027,28 +1078,20 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev8", channel_count=8)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev8"],
+                "remote": [remote.device_id],
                 "notify_on_direct_links": True,
                 "skip_actions_when_direct_link": False,
                 "action_3_short": [{"action": "test.btn3"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev8",
-                "type": "press_short",
-                "subtype": 3,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=3, press_type="press_short")
 
         assert len(notify_calls) == 1
         assert len(test_calls) == 1
@@ -1073,28 +1116,20 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 "notify_on_direct_links": False,
                 "skip_actions_when_direct_link": True,
                 "action_top_short": [{"action": "test.should_not_run"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         # Action must NOT have been called
         assert len(test_calls) == 0
@@ -1119,28 +1154,20 @@ class TestDirectLinkDetection:
             supports_response=SupportsResponse.OPTIONAL,
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 "notify_on_direct_links": True,
                 "skip_actions_when_direct_link": True,
                 "action_top_short": [{"action": "test.my_action"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=2, press_type="press_short")
 
         # No notification (no peers)
         assert len(notify_calls) == 0
@@ -1338,26 +1365,18 @@ class TestAllButtonSubtypes:
             hass, "homematicip_local", "get_link_peers", response={}, supports_response=SupportsResponse.OPTIONAL
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 action_name: [{"action": f"test.{action_name}"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": press_type,
-                "subtype": subtype,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=subtype, press_type=press_type)
 
         assert len(test_calls) == 1
 
@@ -1391,26 +1410,18 @@ class TestAllButtonSubtypes:
             hass, "homematicip_local", "get_link_peers", response={}, supports_response=SupportsResponse.OPTIONAL
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=4)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 action_name: [{"action": f"test.{action_name}"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": press_type,
-                "subtype": subtype,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=subtype, press_type=press_type)
 
         assert len(test_calls) == 1
 
@@ -1448,26 +1459,18 @@ class TestAllButtonSubtypes:
             hass, "homematicip_local", "get_link_peers", response={}, supports_response=SupportsResponse.OPTIONAL
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=6)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 action_name: [{"action": f"test.{action_name}"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": press_type,
-                "subtype": subtype,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=subtype, press_type=press_type)
 
         assert len(test_calls) == 1
 
@@ -1509,26 +1512,18 @@ class TestAllButtonSubtypes:
             hass, "homematicip_local", "get_link_peers", response={}, supports_response=SupportsResponse.OPTIONAL
         )
 
+        remote = register_remote(hass=hass, name="dev", channel_count=8)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=bp,
             overrides={
-                "remote": ["dev"],
+                "remote": [remote.device_id],
                 action_name: [{"action": f"test.{action_name}"}],
             },
         )
 
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "dev",
-                "type": press_type,
-                "subtype": subtype,
-            },
-        )
-        await hass.async_block_till_done()
+        await press_button(hass=hass, remote=remote, channel_no=subtype, press_type=press_type)
 
         assert len(test_calls) == 1
 
@@ -1559,17 +1554,9 @@ class TestDirectLinkCheckIsOptional:
         )
 
     @staticmethod
-    def _press(hass: HomeAssistant) -> None:
-        hass.bus.async_fire(
-            "homematic.keypress",
-            {
-                "interface_id": "hmip_rf",
-                "address": "0001D3C99C5A72",
-                "device_id": "test_device_id",
-                "type": "press_short",
-                "subtype": 2,
-            },
-        )
+    async def _press(hass: HomeAssistant, *, remote: Remote) -> None:
+        """Press the top button (channel 2) of *remote*."""
+        await press_button(hass=hass, remote=remote, channel_no=2)
 
     @pytest.mark.asyncio
     async def test_action_runs_when_the_option_is_on_but_no_link_exists(self, hass: HomeAssistant) -> None:
@@ -1577,17 +1564,18 @@ class TestDirectLinkCheckIsOptional:
         test_calls = async_mock_service(hass, "test", "action_top_short")
         self._mock_link_peers(hass, peers={"0001D3C99C5A72:2": []})
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=load_blueprint(path=self._BP),
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
                 "skip_actions_when_direct_link": True,
             },
         )
-        self._press(hass)
-        await hass.async_block_till_done()
+        await self._press(hass, remote=remote)
 
         assert len(test_calls) == 1
 
@@ -1596,18 +1584,19 @@ class TestDirectLinkCheckIsOptional:
         """A press on a button with nothing configured must not cost a round trip either."""
         peer_calls = self._mock_link_peers(hass)
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=load_blueprint(path=self._BP),
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 # Only the bottom button is configured; the press below is the top one.
                 "action_bottom_short": [{"action": "test.action_bottom_short"}],
                 "notify_on_direct_links": True,
             },
         )
-        self._press(hass)
-        await hass.async_block_till_done()
+        await self._press(hass, remote=remote)
 
         assert len(peer_calls) == 0
 
@@ -1617,18 +1606,19 @@ class TestDirectLinkCheckIsOptional:
         test_calls = async_mock_service(hass, "test", "action_top_short")
         peer_calls = self._mock_link_peers(hass)
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=load_blueprint(path=self._BP),
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
                 "notify_on_direct_links": False,
                 "skip_actions_when_direct_link": False,
             },
         )
-        self._press(hass)
-        await hass.async_block_till_done()
+        await self._press(hass, remote=remote)
 
         assert len(peer_calls) == 0, "the CCU was asked even though no option reads the answer"
         assert len(test_calls) == 1, "the action must still run"
@@ -1640,18 +1630,19 @@ class TestDirectLinkCheckIsOptional:
         peer_calls = self._mock_link_peers(hass, peers={"0001D3C99C5A72:2": ["ABC123:1"]})
         notifications = async_mock_service(hass, "persistent_notification", "create")
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=load_blueprint(path=self._BP),
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
                 "notify_on_direct_links": True,
                 "skip_actions_when_direct_link": False,
             },
         )
-        self._press(hass)
-        await hass.async_block_till_done()
+        await self._press(hass, remote=remote)
 
         assert len(peer_calls) == 1
         assert len(notifications) == 1, "a direct link must still be reported"
@@ -1668,18 +1659,75 @@ class TestDirectLinkCheckIsOptional:
         test_calls = async_mock_service(hass, "test", "action_top_short")
         peer_calls = self._mock_link_peers(hass, peers={"0001D3C99C5A72:2": ["ABC123:1"]})
 
+        remote = register_remote(hass=hass, name="test_device", channel_count=2)
+
         await setup_automation_from_blueprint(
             hass=hass,
             blueprint=load_blueprint(path=self._BP),
             overrides={
-                "remote": ["test_device_id"],
+                "remote": [remote.device_id],
                 "action_top_short": [{"action": "test.action_top_short"}],
                 "notify_on_direct_links": False,
                 "skip_actions_when_direct_link": True,
             },
         )
-        self._press(hass)
-        await hass.async_block_till_done()
+        await self._press(hass, remote=remote)
 
         assert len(peer_calls) == 1
         assert len(test_calls) == 0, "the action must be skipped when a direct link exists"
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 6. Against the running integration – the whole chain instead of a stand-in
+# ═══════════════════════════════════════════════════════════════════════════
+class TestButtonBlueprintOnRealEventEntities:
+    """Drive a button blueprint from a press delivered by the integration."""
+
+    @pytest.mark.asyncio
+    async def test_press_on_a_real_device_runs_the_configured_action(
+        self,
+        factory_homegear: Factory,
+    ) -> None:
+        """
+        A press delivered by the integration must run the blueprint's action.
+
+        Every other test in this file builds the event entities by hand, which
+        cannot show whether the entities the integration actually creates carry
+        what the blueprint reads: the channel number, the event type, and a
+        device that the trigger's target expansion finds.
+        """
+        hass, control = await factory_homegear.setup_environment({"VCU7935803": "HMIP-WRC2.json"})
+
+        hm_device = control.central.device_coordinator.get_device(address="VCU7935803")
+        assert hm_device is not None
+        # Composed by the integration, never taken from the backend's own id.
+        device_entry = dr.async_get(hass).async_get_device_by_identifier(
+            (DOMAIN, control.device_identifier(device=hm_device)),
+            factory_homegear.mock_config_entry.entry_id,
+        )
+        assert device_entry is not None
+
+        test_calls = async_mock_service(hass, "test", "action_top_short")
+
+        await setup_automation_from_blueprint(
+            hass=hass,
+            blueprint=load_blueprint(path=_AUTOMATION_DIR / "homematicip_local-actions-for-2-button.yaml"),
+            overrides={
+                "remote": [device_entry.id],
+                "action_top_short": [{"action": "test.action_top_short"}],
+                # The CCU round trip has its own tests; keep it out of this one.
+                "notify_on_direct_links": False,
+                "skip_actions_when_direct_link": False,
+            },
+        )
+
+        # Channel 2 is the top button of a 2-button device.
+        await control.central.event_coordinator.data_point_event(
+            interface_id=const.INTERFACE_ID,
+            channel_address="VCU7935803:2",
+            parameter="PRESS_SHORT",
+            value=True,
+        )
+        await wait_for_calls(hass=hass, calls=test_calls)
+
+        assert len(test_calls) == 1

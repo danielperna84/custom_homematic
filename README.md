@@ -136,7 +136,12 @@ Ready-to-use automation blueprints are available in the [blueprints/automation](
 
 Copy the desired blueprint files to your `config/blueprints/automation` directory.
 
-Blueprints that react to devices are driven by the integration's events — see the
+The button blueprints (2/4/6/8-button) react to the selected device's **event entities**
+(`event.*`, one per button channel). These are enabled by default; a button whose event
+entity you have disabled or hidden cannot trigger the automation. They require Home
+Assistant 2026.8 or newer.
+
+The remaining blueprints are driven by the integration's **events** — see the
 [Events Reference](https://sukramj.github.io/aiohomematic/user/features/homeassistant_events/)
 for which parameters trigger which event. Note that CCU service messages (`CONFIG_PENDING`,
 `UPDATE_PENDING`, …) are not events; they are available through the

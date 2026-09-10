@@ -4,7 +4,15 @@
 
 ### Integration
 
-- Beyond the dependency bumps below, the integration's own changes in this release are openccu-loom backend (Beta) work; its details stay out of scope for this changelog until it leaves Beta
+- **The button blueprints trigger on the devices' event entities instead of the `homematic.keypress` bus event.** This covers the 2-, 4-, 6- and 8-button blueprints in `blueprints/automation`. The contributed ones in `blueprints/community` are unchanged, and the bus event itself is untouched — device triggers and hand-written automations that listen for it work exactly as before.
+
+  Home Assistant's `event.received` trigger takes the selected devices as its target and the press types as an option, so both halves of the filter now sit in the trigger: HA expands each device to its event entities and matches `press_short`/`press_long` before the automation is started. Until now every such automation was started on every keypress of every device, in every installation, and threw the press away afterwards in a template condition. It also takes one self-built schema out of the path between a button and its action — the one that silently dropped every keypress on HA 2026.9, fixed in 2.11.0 below.
+
+  Existing automations survive the blueprint update: no input changed, the device selector's value only moves from the condition into the trigger target. Two things are new. The automation now depends on the device's event entities, which are enabled by default but cannot trigger anything if you have disabled or hidden them. And the blueprints require HA 2026.8 (`min_version`, raised from 2026.3), because purpose-specific triggers left Home Assistant Labs in 2026.7
+
+- Event entities carry the channel number as a `channel_no` attribute of their own, so a blueprint or template can match a button without splitting the channel address. It is derived from that address rather than read off the channel, which keeps the two backends' different spellings of the channel number (`.no` vs. `.number`) out of every consumer, and it is kept out of the recorder like the entity's other identifying attributes
+
+- Beyond that and the dependency bumps below, the integration's own changes in this release are openccu-loom backend (Beta) work; its details stay out of scope for this changelog until it leaves Beta
 
 ### Dependencies
 
