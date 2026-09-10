@@ -106,6 +106,30 @@ class TestAioHomematicEvent:
         await _wait_for_event_type(hass=hass, entity_id=entity_id, expected="press_long")
 
     @pytest.mark.asyncio
+    async def test_event_attributes_carry_channel_no(
+        self,
+        factory_homegear: Factory,
+    ) -> None:
+        """
+        Event entities expose the channel number as an attribute of its own.
+
+        The button blueprints match a press by channel. Without this attribute
+        they would have to split the channel address themselves, which is how
+        the two backends' channel spellings (aiohomematic ``.no`` vs. the loom
+        client's ``.number``) would end up in every blueprint.
+        """
+        hass, _control = await factory_homegear.setup_environment(TEST_DEVICES)
+
+        for channel_no in (1, 2):
+            entity_id = await _wait_for_entity(
+                hass=hass, unique_id=f"homematicip_local_event_group_keypress_vcu7935803_{channel_no}"
+            )
+            attributes = hass.states.get(entity_id).attributes
+            assert attributes["channel_no"] == channel_no
+            assert attributes["address"] == f"VCU7935803:{channel_no}"
+            assert attributes["interface_id"] == const.INTERFACE_ID
+
+    @pytest.mark.asyncio
     async def test_event_device_info_carries_device_name(
         self,
         factory_homegear: Factory,

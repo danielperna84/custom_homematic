@@ -1047,6 +1047,23 @@ These rules govern how the AI assistant communicates and works with the develope
      produces no error and no trace — cover such paths end to end (payload → schema → bus),
      never each half on its own.
 
+8. **The button blueprints trigger on event entities, the other blueprints on the bus event:**
+   - `blueprints/automation/*actions-for-*` use HA's `event.received` entity trigger with the
+     selected devices as `target.device_id` and `options.event_type: [press_short, press_long]`.
+     They read `trigger.to_state.attributes.channel_no` / `event_type` and resolve the device
+     with `device_id(trigger.entity_id)` — there is no `trigger.event.data` any more, and no
+     device condition. `min_version` is 2026.8.0 (purpose-specific triggers left HA Labs in
+     2026.7). `blueprints/community/*` still use `homematic.keypress`; both paths are supported
+     and both are covered in `tests/test_blueprints.py`.
+   - A device target is expanded through the device **and entity registry**, so a test needs a
+     real device entry plus registered event entities (`register_remote()` in
+     `tests/test_blueprints.py`); firing a bus event with an invented `device_id` no longer
+     reaches anything. HA skips hidden entities and entities with an `entity_category` on that
+     expansion (`helpers/target.py`), which is why event entities must keep neither.
+   - `channel_no` is derived in `event.py` from `channel.address`, never read off the channel:
+     aiohomematic spells it `ChannelProtocol.no`, the loom client's compat channel `.number`.
+     The address is the one value both backends carry in `<address>:<no>` form.
+
 ### Refactoring Workflow
 
 When performing a refactoring task, follow this workflow:
