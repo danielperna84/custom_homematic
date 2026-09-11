@@ -1,4 +1,27 @@
-# Version [2.11.1](https://github.com/SukramJ/homematicip_local/compare/2.11.0...2.11.1) (unreleased)
+# Version [2.11.2](https://github.com/SukramJ/homematicip_local/compare/2.11.1...2.11.2) (unreleased)
+
+## What's Changed
+
+### Integration
+
+- Nothing of the integration's own code has changed since 2.11.1; this release carries the two pins below
+
+### Dependencies
+
+#### Bump aiohomematic to [2026.9.3](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.3)
+
+- **Fix: devices stayed unavailable after a reconnect.** A device that became reachable again while the connection to the CCU was down — the CCU restarts and resets the flag, or the device recovers while the proxy is gone — stayed unavailable in Home Assistant for as long as the central ran. Events flowed and commands worked; the entities of that device remained greyed out until the integration was reloaded or `homematicip_local.force_device_availability` was applied by hand.
+
+  The CCU announces `UNREACH` only when the value changes, so that recovery transition is never delivered after such an outage. Nothing closed the gap afterwards: `UN_REACH` and `STICKY_UN_REACH` are hidden parameters and carry `DataPointUsage.NO_CREATE`, which is exactly what the recovery data load skips — it iterates the readable generic data points — while the one path that does read them over RPC runs only for newly created devices.
+
+  The connection recovery re-reads the channel 0 `VALUES` paramset of every device on the interface now and applies `UN_REACH`, `STICKY_UN_REACH` and `CONFIG_PENDING` through the regular event path, in the staged data load as well as in the circuit-breaker recovery. It reads them with `getParamset` rather than the per-parameter `getValue` fallback, because that fallback is skipped on BidCos-RF, VirtualDevices, CUxD and CCU-Jack — building on it would have produced a fix that does nothing on four of six interfaces. A read that fails, or a paramset that does not carry the parameter, leaves the data point untouched instead of defaulting it: a boolean without a value falls back to `false`, so a swallowed read error would have reported every unreachable device as reachable
+
+### Development
+
+- `aiohomematic-test-support` `2026.9.2` → `2026.9.3`, following the aiohomematic pin above — CI runs against `requirements_test.txt`, so the two move together
+- `ruff` `0.16.6` → `0.16.7`, in the prek hook revision and in `requirements_test_pre_commit.txt`, which have to name the same version
+
+# Version [2.11.1](https://github.com/SukramJ/homematicip_local/compare/2.11.0...2.11.1) (2026-09-10)
 
 ## What's Changed
 
