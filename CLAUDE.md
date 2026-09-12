@@ -118,7 +118,7 @@ homematicip_local/
 
 ### Runtime Dependencies
 
-- **aiohomematic** (v2026.9.3) - Core async library for Homematic device communication
+- **aiohomematic** (v2026.9.4) - Core async library for Homematic device communication
 - **aiohomematic-config** (v2026.8.1) - Device configuration metadata
 - **openccu-data** (v2026.9.0) - CCU configuration metadata (translations, easymodes, link profiles); pulled in by aiohomematic and pinned in the manifest, not imported here
 - **openccu-loom-client** (v2026.9.4) - Client for the openccu-loom backend (Beta)
@@ -132,7 +132,7 @@ homematicip_local/
 - **pylint** (4.0.8) - Code linting
 - **ruff** (0.16.7) - Fast Python linter and formatter
 - **prek** (0.5.2) - Git hooks manager (Rust-based pre-commit alternative)
-- **aiohomematic-test-support** (2026.9.3) - Mock test data
+- **aiohomematic-test-support** (2026.9.4) - Mock test data
 - **async-upnp-client** (0.48.1) - UPnP discovery
 - **uv** - Fast Python package installer (preferred over pip)
 
@@ -1064,6 +1064,25 @@ These rules govern how the AI assistant communicates and works with the develope
      aiohomematic spells it `ChannelProtocol.no`, the loom client's compat channel `.number`.
      The address is the one value both backends carry in `<address>:<no>` form.
 
+9. **A repair issue outlives the object that would withdraw it:**
+   - The issue registry survives a reload, a reconfigure and a restart; the per-session
+     objects that take a repair back do not. `CentralConnectionState` publishes the
+     `connected=True` event only for an interface it holds and is rebuilt empty with the
+     central, and a client's `_is_callback_alive` starts `True`, so a healthy fresh client
+     never reports its callback as restored. A repair of that shape is therefore permanent
+     once its session ends — which is why `_STALE_ISSUE_TYPES` in `__init__.py` withdraws
+     `connection` and `callback` on every setup of the entry. Before adding a type there,
+     check that a fault which is still present raises it again after the start; `client`
+     is not in the list because a fresh client's CONNECTED transition withdraws it anyway.
+   - Compose every interface-scoped repair id with `support.get_issue_id()` and sweep with
+     `support.async_delete_issues()`, which matches the prefix that helper produces. Do not
+     rebuild an id from `{instance_name}-{interface}`: that is the aiohomematic interface
+     id, while the loom daemon names the leading component itself. The trailing part is not
+     always an interface id either — a JSON-RPC session issue carries the url there.
+   - Cover such a path end to end (raise the repair through the handler, then sweep), never
+     each half on its own: the type token in the id is the only thing that links them, and
+     the issue registry does not persist the translation key.
+
 ### Refactoring Workflow
 
 When performing a refactoring task, follow this workflow:
@@ -1166,7 +1185,7 @@ make hass
 - **Current Version:** 2.11.2
 - **Minimum HA Version:** 2026.8.0+
 - **Python Target:** 3.14+ (CI tests on 3.14)
-- **aiohomematic Version:** 2026.9.3
+- **aiohomematic Version:** 2026.9.4
 - **openccu-loom-client Version:** 2026.9.4. Its wire layer is generated against daemon API `11.2.0`
   (`openccu_loom_client.wire.const.DAEMON_API_VERSION`), but that number no longer gates the
   connection: `_report_api_version` **logs and never raises** — a warning when the majors differ,
@@ -1190,5 +1209,5 @@ make hass
 
 ---
 
-**Last Updated**: 2026-09-11
+**Last Updated**: 2026-09-12
 **Version**: 2.11.2

@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from datetime import datetime
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from aiohomematic.central.events import SystemStatusChangedEvent
 from aiohomematic.const import IDENTIFIER_SEPARATOR, CentralState, DeviceTriggerEventType
 from aiohomematic.exceptions import AuthFailure
 import custom_components.homematicip_local
@@ -20,6 +22,7 @@ from custom_components.homematicip_local import (
     _async_migrate_loom_unique_ids,
     _async_reanchor_hub_unique_ids_on_serial_change,
     _async_restore_aiohomematic_unique_ids,
+    _cleanup_stale_issues,
     _cuxd_scoped_unique_id,
     _loom_migrated_unique_id,
 )
@@ -30,12 +33,15 @@ from custom_components.homematicip_local.const import (
     CONF_ADVANCED_CONFIG,
     CONF_OPTIONAL_SETTINGS,
     DOMAIN as HMIP_DOMAIN,
+    ISSUE_TYPE_CALLBACK,
+    ISSUE_TYPE_CLIENT,
+    ISSUE_TYPE_CONNECTION,
 )
 from custom_components.homematicip_local.control_unit import ControlUnit, hub_key_from_name_slug
-from custom_components.homematicip_local.support import realign_hub_unique_id
+from custom_components.homematicip_local.support import get_issue_id, realign_hub_unique_id
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er, issue_registry as ir
 
 from tests import const
 
@@ -2069,3 +2075,124 @@ class TestDeviceIdentifierMigrationAtScale:
             name=f"Device {address}{suffix}",
         )
         return pre_switch, twin
+
+
+class TestStaleIssueCleanup:
+    """A repair nothing can withdraw any more is withdrawn by the next setup.
+
+    The connection repair is raised from a ``connection_state`` event and
+    taken back by the opposite one — and that one is only published for an
+    interface the central's connection state tracker holds. The tracker is
+    rebuilt empty with every setup of the entry, so a repair that outlived a
+    reload (a CCU host change and its reconfigure is the ordinary way there)
+    would have stayed visible next to two healthy connection sensors for as
+    long as the entry was never torn down again.
+    """
+
+    _INTERFACE_ID = f"{const.INSTANCE_NAME}-HmIP-RF"
+
+    @staticmethod
+    def _control_unit(hass: HomeAssistant, entry: MockConfigEntry) -> SimpleNamespace:
+        """Return the attributes the issue handlers of a control unit read."""
+        return SimpleNamespace(_hass=hass, _entry_id=entry.entry_id, _instance_name=const.INSTANCE_NAME)
+
+    @staticmethod
+    def _issue_ids(hass: HomeAssistant) -> set[str]:
+        return {issue_id for domain, issue_id in ir.async_get(hass).issues if domain == HMIP_DOMAIN}
+
+    async def test_a_callback_repair_is_withdrawn_for_any_interface_id(
+        self, hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
+    ) -> None:
+        """The sweep reads the ids out of the registry instead of rebuilding them.
+
+        The cleanup this replaces composed ``{instance_name}-{interface}`` to
+        address the repair, which is the aiohomematic interface id. On the
+        openccu-loom backend the daemon names the leading component itself, so
+        a repair raised there was never addressed by the id the integration
+        built for it.
+        """
+        interface_id = "OttoDev-HmIP-RF"
+        assert not interface_id.startswith(const.INSTANCE_NAME)
+        ControlUnit._handle_callback_state(
+            self._control_unit(hass, mock_config_entry_v2),
+            SystemStatusChangedEvent(timestamp=datetime.now(), callback_state=(interface_id, False)),
+        )
+        issue_id = get_issue_id(
+            entry_id=mock_config_entry_v2.entry_id, issue_type=ISSUE_TYPE_CALLBACK, interface_id=interface_id
+        )
+        assert issue_id in self._issue_ids(hass)
+
+        _cleanup_stale_issues(hass=hass, entry_id=mock_config_entry_v2.entry_id)
+
+        assert issue_id not in self._issue_ids(hass)
+
+    async def test_a_connection_repair_from_a_previous_session_is_withdrawn(
+        self, hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
+    ) -> None:
+        """The reported case: the repair survived the reload, nothing took it back."""
+        issue_id = self._raise_connection_repair(hass, mock_config_entry_v2)
+        assert issue_id in self._issue_ids(hass)
+
+        _cleanup_stale_issues(hass=hass, entry_id=mock_config_entry_v2.entry_id)
+
+        assert issue_id not in self._issue_ids(hass)
+
+    async def test_a_fault_that_is_still_present_raises_the_repair_again(
+        self, hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
+    ) -> None:
+        """Withdrawing on setup must not hide an interface that is still down."""
+        issue_id = self._raise_connection_repair(hass, mock_config_entry_v2)
+        _cleanup_stale_issues(hass=hass, entry_id=mock_config_entry_v2.entry_id)
+        assert issue_id not in self._issue_ids(hass)
+
+        assert self._raise_connection_repair(hass, mock_config_entry_v2) == issue_id
+        assert issue_id in self._issue_ids(hass)
+
+    async def test_other_repairs_and_other_entries_are_left_alone(
+        self, hass: HomeAssistant, mock_config_entry_v2: MockConfigEntry
+    ) -> None:
+        """Only the types that cannot withdraw themselves are swept, and only for this entry."""
+        foreign_entry_id = f"{mock_config_entry_v2.entry_id}9"
+        survivors = {
+            # A client repair is taken back by the CONNECTED transition every
+            # fresh client makes, so it withdraws itself.
+            get_issue_id(
+                entry_id=mock_config_entry_v2.entry_id,
+                issue_type=ISSUE_TYPE_CLIENT,
+                interface_id=self._INTERFACE_ID,
+            ): "client_failed",
+            # A paramset inconsistency is a data problem, not a transport state.
+            get_issue_id(
+                entry_id=mock_config_entry_v2.entry_id,
+                issue_type="paramset_inconsistency",
+                interface_id=self._INTERFACE_ID,
+            ): "paramset_inconsistency",
+            f"{mock_config_entry_v2.entry_id}_central_failed": "central_failed",
+            get_issue_id(
+                entry_id=foreign_entry_id, issue_type=ISSUE_TYPE_CONNECTION, interface_id=self._INTERFACE_ID
+            ): "connection_failed",
+        }
+        for issue_id, translation_key in survivors.items():
+            ir.async_create_issue(
+                hass=hass,
+                domain=HMIP_DOMAIN,
+                issue_id=issue_id,
+                is_fixable=False,
+                severity=ir.IssueSeverity.ERROR,
+                translation_key=translation_key,
+            )
+        swept = self._raise_connection_repair(hass, mock_config_entry_v2)
+
+        _cleanup_stale_issues(hass=hass, entry_id=mock_config_entry_v2.entry_id)
+
+        issue_ids = self._issue_ids(hass)
+        assert swept not in issue_ids
+        assert set(survivors) <= issue_ids
+
+    def _raise_connection_repair(self, hass: HomeAssistant, entry: MockConfigEntry) -> str:
+        """Let a control unit raise the repair, so the id under test is the real one."""
+        ControlUnit._handle_connection_state(
+            self._control_unit(hass, entry),
+            SystemStatusChangedEvent(timestamp=datetime.now(), connection_state=(self._INTERFACE_ID, False)),
+        )
+        return get_issue_id(entry_id=entry.entry_id, issue_type=ISSUE_TYPE_CONNECTION, interface_id=self._INTERFACE_ID)

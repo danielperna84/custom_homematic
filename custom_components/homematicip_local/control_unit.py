@@ -134,6 +134,9 @@ from .const import (
     EVENT_UNAVAILABLE,
     EVENT_VALUE,
     FILTER_ERROR_EVENT_PARAMETERS,
+    ISSUE_TYPE_CALLBACK,
+    ISSUE_TYPE_CLIENT,
+    ISSUE_TYPE_CONNECTION,
 )
 from .mqtt import MQTTConsumer
 from .repairs import REPAIR_CALLBACKS
@@ -145,6 +148,7 @@ from .support import (
     cleanup_click_event_data,
     cleanup_instance_name,
     get_device_identifier,
+    get_issue_id,
     is_valid_event,
     realign_hub_unique_id,
 )
@@ -478,10 +482,6 @@ class ControlUnit(BaseControlUnit):
 
     async def start_central(self) -> None:
         """Start the central unit."""
-        # Clean up stale callback repair issues from previous sessions
-        # (e.g., from PingPong race condition bug fixed in aiohomematic 2026.1.3)
-        self._cleanup_callback_issues()
-
         # Subscribe to integration events
         _LOGGER.debug("Subscribing to integration events")
 
@@ -873,17 +873,6 @@ class ControlUnit(BaseControlUnit):
         async_dispatcher_send(self._hass, signal_central_state_changed(entry_id=self._entry_id))
 
     @callback
-    def _cleanup_callback_issues(self) -> None:
-        """Clean up stale callback repair issues from previous sessions."""
-        for interface_name in self._config.interface_config:
-            interface_id = f"{self._instance_name}-{interface_name}"
-            async_delete_issue(
-                hass=self._hass,
-                domain=DOMAIN,
-                issue_id=f"{self._entry_id}_callback_{interface_id}",
-            )
-
-    @callback
     def _fire_device_availability_event(self, *, device_address: str, device_name: str | None, available: bool) -> None:
         """Fire device availability event to HA event bus."""
         hm_device = self._central.device_coordinator.get_device(address=device_address)
@@ -967,7 +956,7 @@ class ControlUnit(BaseControlUnit):
             return
         interface_id, alive = event.callback_state
         _LOGGER.debug("Callback state for %s: alive=%s", interface_id, alive)
-        issue_id = f"{self._entry_id}_callback_{interface_id}"
+        issue_id = get_issue_id(entry_id=self._entry_id, issue_type=ISSUE_TYPE_CALLBACK, interface_id=interface_id)
         if alive:
             async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
         else:
@@ -1012,7 +1001,7 @@ class ControlUnit(BaseControlUnit):
             return
         interface_id, old_state, new_state = event.client_state
         _LOGGER.debug("Client state for %s: %s -> %s", interface_id, old_state, new_state)
-        issue_id = f"{self._entry_id}_client_{interface_id}"
+        issue_id = get_issue_id(entry_id=self._entry_id, issue_type=ISSUE_TYPE_CLIENT, interface_id=interface_id)
         if new_state == ClientState.CONNECTED:
             async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
         elif new_state == ClientState.DISCONNECTED:
@@ -1032,7 +1021,7 @@ class ControlUnit(BaseControlUnit):
             return
         interface_id, connected = event.connection_state
         _LOGGER.debug("Connection state for %s: connected=%s", interface_id, connected)
-        issue_id = f"{self._entry_id}_connection_{interface_id}"
+        issue_id = get_issue_id(entry_id=self._entry_id, issue_type=ISSUE_TYPE_CONNECTION, interface_id=interface_id)
         if connected:
             async_delete_issue(hass=self._hass, domain=DOMAIN, issue_id=issue_id)
         else:

@@ -4,9 +4,29 @@
 
 ### Integration
 
-- Nothing of the integration's own code has changed since 2.11.1; this release carries the two pins below
+- **Fix: a `connection_failed` repair stayed after the connection was healthy again.** Moving the CCU to a different host is the ordinary way there — the interfaces fail, their repairs appear, the entry is reconfigured onto the new address — and afterwards the repairs stayed visible next to connection sensors reading `on`, with every device operating normally. Nothing short of deleting and re-adding the integration took them back.
+
+  The repair is raised from a `connection_state` event and withdrawn by the opposite one, and that one is published only for an interface the central's connection state tracker actually holds (`CentralConnectionState.remove_issue`). That tracker belongs to the central, so it is rebuilt empty with every setup of the config entry — a reload, a reconfigure, a restart. Whatever a previous session left in the issue registry, which does survive all three, therefore had nobody left to withdraw it.
+
+  The startup cleanup that already handled the other transient repair types covers `connection` and `callback` now. It runs before the central starts, so an interface that is still down raises its repair again within seconds. `client` is deliberately left out of it: a fresh client always transitions to CONNECTED, and that transition withdraws the repair on its own.
+
+- Callback repairs are withdrawn by sweeping the issue registry instead of rebuilding every id from `{instance_name}-{interface}`. That composition is the aiohomematic interface id; on the openccu-loom backend the daemon names the leading component itself, so a callback repair raised there was never addressed by the id the integration built for it. Both halves go through one helper now — `support.get_issue_id` composes the id, and the sweep matches the prefix that helper produces — so the two cannot drift apart
+
+- Four issue types the startup cleanup carried as legacy (`pending_pong_mismatch`, `unknown_pong_mismatch`, `interface_not_reachable`, `xmlrpc_server_receives_no_events`) are gone from it. They could never have matched anything: repairs of that generation were keyed `{interface_event_type}-{interface_id}`, so the id carries no entry id in front — which the cleanup requires as a prefix — a hyphen where it looks for an underscore, and the interface event type where the list names the translation key
 
 ### Dependencies
+
+#### Bump aiohomematic to [2026.9.4](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.4)
+
+- **Fix: BidCos-RF data points stayed on `restored` after a start.** The ReGa bulk fetch is the only source of an initial value on the interfaces without a per-parameter `getValue` fallback (BidCos-RF, VirtualDevices, CUxD, CCU-Jack), and its snapshot is taken once during `start_clients()` and expires after `MAX_CACHE_AGE`. Its consumer for any channel but 0 is the integration adding its entities, which happens after the platforms have been forwarded — in a real installation reliably later than that, so the snapshot was gone by then and the data point stayed unset for good. Covers were the visible case, because a shutter reports nothing until it is moved: `HM-LC-Bl1PBU-FM` blinds sat at `value_state=restored` with `current_position: 0` until they were operated by hand. The init path refreshes an expired snapshot now instead of giving up; the `getValue` fallback stays disabled
+
+- **Fix: battery and diagnostic data points stayed on `restored` after a start.** Parameters on the init ignore list (`LOW_BAT`, `LOWBAT`, `OPERATING_VOLTAGE`, `DUTY_CYCLE`, `DUTYCYCLE`, the `ERROR_*`, `RSSI_*` and `*_ERROR` patterns, and every data point of `HmIP-SWSD*` / `HmIP-SWD`) skip the per-parameter `getValue` on purpose so a battery-powered device is not woken, which leaves the bulk snapshot as their only source — and this path read it without refreshing it first. Unlike a cover's `LEVEL` these do not recover on their own: `LOW_BAT` is sent only when it changes, so a device that reported a low battery before the start kept showing a normal one until the battery was replaced. This affected every interface, not only those without the fallback
+
+- **Fix: a fresh snapshot for one interface skipped the others.** `CentralDataCache.load()` left the loop over all clients with `return` instead of `continue` when it hit a recently refreshed interface, so every client behind it was never loaded
+
+- **Fix: `changed_within_seconds()` ignored whole days.** It read `timedelta.seconds`, which drops the day part, so a change from exactly 24 h ago counted as recent
+
+- `MAX_CACHE_AGE` is 15 s instead of 10 s. It governs the lifetime of the central data cache, the device details cache refresh guard (`MAX_CACHE_AGE / 3`) and the default staleness window of `changed_within_seconds()`
 
 #### Bump aiohomematic to [2026.9.3](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.3)
 
@@ -18,7 +38,7 @@
 
 ### Development
 
-- `aiohomematic-test-support` `2026.9.2` → `2026.9.3`, following the aiohomematic pin above — CI runs against `requirements_test.txt`, so the two move together
+- `aiohomematic-test-support` `2026.9.2` → `2026.9.4`, following the aiohomematic pin above — CI runs against `requirements_test.txt`, so the two move together
 - `ruff` `0.16.6` → `0.16.7`, in the prek hook revision and in `requirements_test_pre_commit.txt`, which have to name the same version
 
 # Version [2.11.1](https://github.com/SukramJ/homematicip_local/compare/2.11.0...2.11.1) (2026-09-10)

@@ -29,9 +29,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT, EVENT_HOMEASSISTANT_STOP, __version__ as HA_VERSION_STR
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryError
-from homeassistant.helpers import device_registry as dr, entity_registry as er, issue_registry as ir
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity_registry import async_migrate_entries
-from homeassistant.helpers.issue_registry import async_delete_issue
 from homeassistant.util.hass_dict import HassKey
 
 from .backup import async_notify_backup_listeners
@@ -60,12 +59,19 @@ from .const import (
     DOMAIN,
     HMIP_LOCAL_MIN_HA_VERSION,
     HMIP_LOCAL_PLATFORMS,
+    ISSUE_TYPE_CALLBACK,
+    ISSUE_TYPE_CONNECTION,
 )
 from .control_unit import ControlConfig, ControlUnit, get_storage_directory
 from .device_icon import ICON_VIEW_REGISTERED_KEY, DeviceIconView
 from .panel import async_register_cards, async_register_panel, async_unregister_cards, async_unregister_panel
 from .services import async_get_loaded_config_entries, async_setup_services, async_unload_services
-from .support import get_aiohomematic_version, get_device_address_from_identifiers, realign_hub_unique_id
+from .support import (
+    async_delete_issues,
+    get_aiohomematic_version,
+    get_device_address_from_identifiers,
+    realign_hub_unique_id,
+)
 from .websocket_api import async_register_websocket_commands
 
 HA_VERSION = AwesomeVersion(HA_VERSION_STR)
@@ -82,32 +88,29 @@ class HomematicData:
 HM_KEY: HassKey[HomematicData] = HassKey(DOMAIN)
 _LOGGER = logging.getLogger(__name__)
 
-# Issue types that should be cleared on startup as they are transient
-# and not relevant after a restart
+# Issue types that a setup of the config entry has to withdraw itself, because
+# nothing else ever will: what would take them back is a per-session object
+# that is rebuilt empty together with the entry. A connection issue is only
+# withdrawn for an interface the central's connection state tracker holds
+# (``CentralConnectionState.remove_issue``), and a restored callback only for a
+# client whose ``_is_callback_alive`` had been set to False — both start out
+# blank, so a repair left over from the previous session would stay forever. A
+# fault that is still present raises its issue anew within seconds of the
+# start. ``client`` is deliberately not in this list: a fresh client always
+# transitions to CONNECTED, and that transition withdraws the repair.
 _STALE_ISSUE_TYPES: tuple[str, ...] = (
     IntegrationIssueType.PING_PONG_MISMATCH,
     IntegrationIssueType.FETCH_DATA_FAILED,
     IntegrationIssueType.INCOMPLETE_DEVICE_DATA,
-    # Legacy issue types (may still exist from previous sessions)
-    "pending_pong_mismatch",
-    "unknown_pong_mismatch",
-    "interface_not_reachable",
-    "xmlrpc_server_receives_no_events",
+    ISSUE_TYPE_CALLBACK,
+    ISSUE_TYPE_CONNECTION,
 )
 
 
 def _cleanup_stale_issues(*, hass: HomeAssistant, entry_id: str) -> None:
     """Delete stale issues from previous sessions for this config entry."""
-    issue_registry = ir.async_get(hass)
-    for (domain, issue_id), _issue in list(issue_registry.issues.items()):
-        if domain != DOMAIN or not issue_id.startswith(entry_id):
-            continue
-        # Check if stale issue type is part of issue_id
-        # (issue_id format: {entry_id}_{issue_type}_{interface_id})
-        # Note: translation_key is not persisted in the issue registry storage
-        if any(f"_{issue_type}_" in issue_id for issue_type in _STALE_ISSUE_TYPES):
-            async_delete_issue(hass=hass, domain=DOMAIN, issue_id=issue_id)
-            _LOGGER.debug("Deleted stale issue %s on startup", issue_id)
+    for issue_id in async_delete_issues(hass=hass, entry_id=entry_id, issue_types=_STALE_ISSUE_TYPES):
+        _LOGGER.debug("Deleted stale issue %s on startup", issue_id)
 
 
 def _any_entry_has_panel_enabled(*, hass: HomeAssistant) -> bool:
