@@ -14,6 +14,10 @@
 
 - Four issue types the startup cleanup carried as legacy (`pending_pong_mismatch`, `unknown_pong_mismatch`, `interface_not_reachable`, `xmlrpc_server_receives_no_events`) are gone from it. They could never have matched anything: repairs of that generation were keyed `{interface_event_type}-{interface_id}`, so the id carries no entry id in front — which the cleanup requires as a prefix — a hyphen where it looks for an underscore, and the interface event type where the list names the translation key
 
+- **Fix: the button blueprints asked the CCU for direct links on every keypress, even with the warning switched off.** `Warn if direct connections exist in CCU` defaulted to on, so an automation that had never stored a value for that input inherited it — the option looked off in the automation editor while the CCU round trip ran ahead of every action. That made the guard added in 2.11.0 ineffective for exactly the automations that never touched the option, and it is the delay reported in [#3402](https://github.com/SukramJ/aiohomematic/issues/3402): the action can never be faster than the CCU answers, and that answer time swings from milliseconds to seconds.
+
+  The option defaults to off now in all five blueprints that carry it (2-, 6-, 8-button, key ring remote control, and the 6-button one in `blueprints/community`), and its description says what enabling it costs. **Re-import the blueprints** to pick this up. An automation that has an explicit `true` stored keeps it — the default only applies where nothing was ever saved — so if you want the warning gone there, switch the option off and save
+
 ### Dependencies
 
 #### Bump aiohomematic to [2026.9.4](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.4)

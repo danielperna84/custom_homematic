@@ -8,7 +8,7 @@ blueprint:
     The actions are driven by the event entities of the selected device, which are
     enabled by default. An event entity you have disabled or hidden cannot trigger them.
     Tested with HmIP-KRCA. Should work with other device too.
-    v2026-09-10
+    v2026-09-12
   domain: automation
   homeassistant:
     min_version: "2026.8.0"
@@ -26,7 +26,9 @@ blueprint:
       name: Warn if direct connections exist in CCU
       description: >
         A persistent notification will be sent if there is a direct connection in the CCU for the pressed button.
-      default: true
+        Off by default: while on, every keypress asks the CCU for the direct links of the pressed channel
+        before the action runs, which delays the action by however long the CCU takes to answer.
+      default: false
       selector:
         boolean: {}
 
