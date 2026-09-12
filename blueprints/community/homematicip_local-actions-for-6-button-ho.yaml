@@ -8,7 +8,7 @@ blueprint:
     Tested with HmIP-WRC6. Should work with other device too.
     This variant of the original blueprint supports multiple devices, and alerting the user or skipping execution if there is a conflicting direct device connection in the CCU.
     by @hosswald
-    v2026-09-04
+    v2026-09-12
   domain: automation
   homeassistant:
     min_version: "2026.3.0"
@@ -26,7 +26,9 @@ blueprint:
       name: Warn if direct connections exist in CCU
       description: >
         A persistent notification will be sent if there is a direct connection in the CCU for the pressed button.
-      default: true
+        Off by default: while on, every keypress asks the CCU for the direct links of the pressed channel
+        before the action runs, which delays the action by however long the CCU takes to answer.
+      default: false
       selector:
         boolean: {}
 
