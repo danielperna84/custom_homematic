@@ -8,6 +8,18 @@
 
 ### Dependencies
 
+#### Bump aiohomematic to [2026.9.4](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.4)
+
+- **Fix: BidCos-RF data points stayed on `restored` after a start.** The ReGa bulk fetch is the only source of an initial value on the interfaces without a per-parameter `getValue` fallback (BidCos-RF, VirtualDevices, CUxD, CCU-Jack), and its snapshot is taken once during `start_clients()` and expires after `MAX_CACHE_AGE`. Its consumer for any channel but 0 is the integration adding its entities, which happens after the platforms have been forwarded — in a real installation reliably later than that, so the snapshot was gone by then and the data point stayed unset for good. Covers were the visible case, because a shutter reports nothing until it is moved: `HM-LC-Bl1PBU-FM` blinds sat at `value_state=restored` with `current_position: 0` until they were operated by hand. The init path refreshes an expired snapshot now instead of giving up; the `getValue` fallback stays disabled
+
+- **Fix: battery and diagnostic data points stayed on `restored` after a start.** Parameters on the init ignore list (`LOW_BAT`, `LOWBAT`, `OPERATING_VOLTAGE`, `DUTY_CYCLE`, `DUTYCYCLE`, the `ERROR_*`, `RSSI_*` and `*_ERROR` patterns, and every data point of `HmIP-SWSD*` / `HmIP-SWD`) skip the per-parameter `getValue` on purpose so a battery-powered device is not woken, which leaves the bulk snapshot as their only source — and this path read it without refreshing it first. Unlike a cover's `LEVEL` these do not recover on their own: `LOW_BAT` is sent only when it changes, so a device that reported a low battery before the start kept showing a normal one until the battery was replaced. This affected every interface, not only those without the fallback
+
+- **Fix: a fresh snapshot for one interface skipped the others.** `CentralDataCache.load()` left the loop over all clients with `return` instead of `continue` when it hit a recently refreshed interface, so every client behind it was never loaded
+
+- **Fix: `changed_within_seconds()` ignored whole days.** It read `timedelta.seconds`, which drops the day part, so a change from exactly 24 h ago counted as recent
+
+- `MAX_CACHE_AGE` is 15 s instead of 10 s. It governs the lifetime of the central data cache, the device details cache refresh guard (`MAX_CACHE_AGE / 3`) and the default staleness window of `changed_within_seconds()`
+
 #### Bump aiohomematic to [2026.9.3](https://github.com/SukramJ/aiohomematic/compare/2026.9.2...2026.9.3)
 
 - **Fix: devices stayed unavailable after a reconnect.** A device that became reachable again while the connection to the CCU was down — the CCU restarts and resets the flag, or the device recovers while the proxy is gone — stayed unavailable in Home Assistant for as long as the central ran. Events flowed and commands worked; the entities of that device remained greyed out until the integration was reloaded or `homematicip_local.force_device_availability` was applied by hand.
@@ -18,7 +30,7 @@
 
 ### Development
 
-- `aiohomematic-test-support` `2026.9.2` → `2026.9.3`, following the aiohomematic pin above — CI runs against `requirements_test.txt`, so the two move together
+- `aiohomematic-test-support` `2026.9.2` → `2026.9.4`, following the aiohomematic pin above — CI runs against `requirements_test.txt`, so the two move together
 - `ruff` `0.16.6` → `0.16.7`, in the prek hook revision and in `requirements_test_pre_commit.txt`, which have to name the same version
 
 # Version [2.11.1](https://github.com/SukramJ/homematicip_local/compare/2.11.0...2.11.1) (2026-09-10)
