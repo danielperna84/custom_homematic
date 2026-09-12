@@ -145,7 +145,6 @@ class TestCentralStateSignalWiring:
         control_unit._async_signal_central_state_changed = Mock()
 
         with (
-            patch.object(ControlUnit, "_cleanup_callback_issues"),
             patch.object(ControlUnit, "_async_add_central_to_device_registry"),
             patch.object(BaseControlUnit, "start_central", new=AsyncMock()),
             patch("custom_components.homematicip_local.control_unit.async_call_later"),

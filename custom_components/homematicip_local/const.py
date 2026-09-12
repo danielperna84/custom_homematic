@@ -48,6 +48,13 @@ DEFAULT_SYS_SCAN_INTERVAL: Final = 30
 LEARN_MORE_URL_XMLRPC_SERVER_RECEIVES_NO_EVENTS: Final = "https://github.com/sukramj/homematicip_local?tab=readme-ov-file#what-is-the-meaning-of-xmlrpc-server-received-no-events--xmlrpc-server-empf%C3%A4ngt-keine-ereignisse"
 LEARN_MORE_URL_PONG_MISMATCH: Final = "https://github.com/sukramj/homematicip_local#what-is-the-meaning-of-pending-pong-mismatch-on-interface--austehende-pong-ereignisse-auf-interface"
 
+# Type component of the repair issue ids the integration composes itself
+# (see support.get_issue_id). The issue registry does not persist the
+# translation key, so the type has to travel in the id.
+ISSUE_TYPE_CALLBACK: Final = "callback"
+ISSUE_TYPE_CLIENT: Final = "client"
+ISSUE_TYPE_CONNECTION: Final = "connection"
+
 CONF_ADVANCED_CONFIG: Final = "advanced_config"
 CONF_COMMAND_RETRY_MAX_ATTEMPTS: Final = "command_retry_max_attempts"
 CONF_COMMAND_THROTTLE_INTERVAL: Final = "command_throttle_interval"

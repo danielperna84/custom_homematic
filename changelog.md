@@ -4,7 +4,15 @@
 
 ### Integration
 
-- Nothing of the integration's own code has changed since 2.11.1; this release carries the two pins below
+- **Fix: a `connection_failed` repair stayed after the connection was healthy again.** Moving the CCU to a different host is the ordinary way there — the interfaces fail, their repairs appear, the entry is reconfigured onto the new address — and afterwards the repairs stayed visible next to connection sensors reading `on`, with every device operating normally. Nothing short of deleting and re-adding the integration took them back.
+
+  The repair is raised from a `connection_state` event and withdrawn by the opposite one, and that one is published only for an interface the central's connection state tracker actually holds (`CentralConnectionState.remove_issue`). That tracker belongs to the central, so it is rebuilt empty with every setup of the config entry — a reload, a reconfigure, a restart. Whatever a previous session left in the issue registry, which does survive all three, therefore had nobody left to withdraw it.
+
+  The startup cleanup that already handled the other transient repair types covers `connection` and `callback` now. It runs before the central starts, so an interface that is still down raises its repair again within seconds. `client` is deliberately left out of it: a fresh client always transitions to CONNECTED, and that transition withdraws the repair on its own.
+
+- Callback repairs are withdrawn by sweeping the issue registry instead of rebuilding every id from `{instance_name}-{interface}`. That composition is the aiohomematic interface id; on the openccu-loom backend the daemon names the leading component itself, so a callback repair raised there was never addressed by the id the integration built for it. Both halves go through one helper now — `support.get_issue_id` composes the id, and the sweep matches the prefix that helper produces — so the two cannot drift apart
+
+- Four issue types the startup cleanup carried as legacy (`pending_pong_mismatch`, `unknown_pong_mismatch`, `interface_not_reachable`, `xmlrpc_server_receives_no_events`) are gone from it. They could never have matched anything: repairs of that generation were keyed `{interface_event_type}-{interface_id}`, so the id carries no entry id in front — which the cleanup requires as a prefix — a hyphen where it looks for an underscore, and the interface event type where the list names the translation key
 
 ### Dependencies
 

@@ -37,8 +37,10 @@ from aiohomematic.interfaces import (
 from aiohomematic.model.week_profile_data_point import WeekProfileDataPoint
 from aiohomematic.support.address import get_device_address
 from homeassistant.const import CONF_TYPE
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.issue_registry import async_delete_issue
 from homeassistant.loader import async_get_integration
 
 from .const import (
@@ -382,6 +384,39 @@ def get_device_address_from_identifiers(identifiers: set[tuple[str, str]]) -> st
         if IDENTIFIER_SEPARATOR in identifier:
             return identifier.split(IDENTIFIER_SEPARATOR, 1)[0]
     return None
+
+
+def get_issue_id(*, entry_id: str, issue_type: str, interface_id: str) -> str:
+    """
+    Return the repair issue id for an interface scoped issue of a config entry.
+
+    The issue registry persists the id but not the translation key, so the
+    type has to travel in the id. ``async_delete_issues`` matches on the
+    prefix this composes, which is why both live side by side.
+    """
+    return f"{entry_id}_{issue_type}_{interface_id}"
+
+
+@callback
+def async_delete_issues(*, hass: HomeAssistant, entry_id: str, issue_types: tuple[str, ...]) -> tuple[str, ...]:
+    """
+    Delete a config entry's repair issues of the given types and return their ids.
+
+    Matches the prefix ``get_issue_id`` composes, so the interface id part is
+    irrelevant — which it has to be: it is the XML-RPC interface id for a
+    proxy issue and the JSON-RPC url for a session issue.
+    """
+    # An empty interface id leaves exactly the prefix every id of that type
+    # carries, so the match cannot drift away from the composition.
+    prefixes = tuple(
+        get_issue_id(entry_id=entry_id, issue_type=issue_type, interface_id="") for issue_type in issue_types
+    )
+    deleted: list[str] = []
+    for domain, issue_id in list(ir.async_get(hass).issues):
+        if domain == DOMAIN and issue_id.startswith(prefixes):
+            async_delete_issue(hass=hass, domain=DOMAIN, issue_id=issue_id)
+            deleted.append(issue_id)
+    return tuple(deleted)
 
 
 def get_data_point[DP](data_point: DP) -> DP:

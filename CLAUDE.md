@@ -1064,6 +1064,25 @@ These rules govern how the AI assistant communicates and works with the develope
      aiohomematic spells it `ChannelProtocol.no`, the loom client's compat channel `.number`.
      The address is the one value both backends carry in `<address>:<no>` form.
 
+9. **A repair issue outlives the object that would withdraw it:**
+   - The issue registry survives a reload, a reconfigure and a restart; the per-session
+     objects that take a repair back do not. `CentralConnectionState` publishes the
+     `connected=True` event only for an interface it holds and is rebuilt empty with the
+     central, and a client's `_is_callback_alive` starts `True`, so a healthy fresh client
+     never reports its callback as restored. A repair of that shape is therefore permanent
+     once its session ends — which is why `_STALE_ISSUE_TYPES` in `__init__.py` withdraws
+     `connection` and `callback` on every setup of the entry. Before adding a type there,
+     check that a fault which is still present raises it again after the start; `client`
+     is not in the list because a fresh client's CONNECTED transition withdraws it anyway.
+   - Compose every interface-scoped repair id with `support.get_issue_id()` and sweep with
+     `support.async_delete_issues()`, which matches the prefix that helper produces. Do not
+     rebuild an id from `{instance_name}-{interface}`: that is the aiohomematic interface
+     id, while the loom daemon names the leading component itself. The trailing part is not
+     always an interface id either — a JSON-RPC session issue carries the url there.
+   - Cover such a path end to end (raise the repair through the handler, then sweep), never
+     each half on its own: the type token in the id is the only thing that links them, and
+     the issue registry does not persist the translation key.
+
 ### Refactoring Workflow
 
 When performing a refactoring task, follow this workflow:
